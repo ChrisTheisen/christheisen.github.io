@@ -1,0 +1,25 @@
+Discover
+	filter (text/group/item/qty owned filter)
+
+Manage
+	show input/output of each generator
+	set generator set-points
+
+game loading status text
+	save/load
+
+Settings UI
+	save/load
+	hard reset
+
+
+hotkeys? 
+	12345:main tabs
+	arrows to navigate somehow?
+
+Help: anything besides plain text?
+
+
+Bugs: 
+
+
