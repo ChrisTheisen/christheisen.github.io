@@ -13,8 +13,12 @@ function Menu(parent, input){
 			onclick:()=>{this.current=x.n; this.update()} });
 		x.mb = btn;
 		const div = createUIElement({parent:c, cssClasses:['hide', 'content']});
-		if(x.info){
-			createUIElement({type:'p', parent:div, textContent:x.info, cssClasses:['info']});
+		
+		if(x.info?.length){
+			x.info.forEach(info => createUIElement({type:'p', parent:div, textContent:info, cssClasses:['info']}));
+		}
+		if(x.intro){
+			createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']})
 		}
 		
 		this.content[x.n] = {b:btn, d:div};
@@ -36,7 +40,7 @@ function Menu(parent, input){
 				break;
 			}
 			case 'Manage': {
-				
+				this.renderManage(div);
 				break;
 			}
 			case 'Settings': {
@@ -55,6 +59,8 @@ Menu.prototype.gotoLeaf = function(input){
 	const f = input.n
 	const i = FlavorMap[f].n;
 	const g = ItemMap[i].n;
+	
+	console.log(f,i,g);
 	
 	game.menu.current = 'Create';
 	let temp = game.menu.children.Create;
@@ -77,7 +83,6 @@ Menu.prototype.gotoScale = function(input){
 }
 Menu.prototype.gotoNode = function(input){
 	//TODO: this sometime
-	
 }
 
 Menu.prototype.update = function(){
@@ -90,21 +95,22 @@ Menu.prototype.update = function(){
 		this.content[this.current].b.classList.add('selected');
 		this.content[this.current].d.classList.remove('hide');
 		
-		this.children[this.current]?.update();
+		this.children[this.current]?.update();//needed for gotoLeaf to work.
+		game.inventory.update();//updates the content quick when tab changes.
 }
 Menu.prototype.updateTable = function(){
 	const table = getUIElement('table');
 	const newTable = [];
-	const names = game.table.map(x => x.fullName()).sort();
+	const names = game.table.map(x => x.fullName).sort();
 	newTable.push(createUIElement({type:'h3', textContent:'Matter Mutator'}));
 	names.forEach(x => {
 		const item = createUIElement({cssClasses:['tableItem', 'nowrap']});
 		
 		createUIElement({type:'span', parent:item, textContent:x});
-		createUIElement({type:'button', parent: item, cssClasses:['circleButton'], textContent:'--', title:'Remove From Table',
+		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del'], textContent:'--', title:'Remove From Table',
 			onclick:() => {
 				for(let i=0;i<game.table.length;i++){
-					if(game.table[i].fullName() === x){
+					if(game.table[i].fullName === x){
 						game.table.splice(i,1);
 						game.menu.updateTable();
 						return;
@@ -133,10 +139,25 @@ Menu.prototype.updateResults = function(input){
 }
 
 Menu.prototype.renderDiscover = function(parent){
-	
 	const filter = createUIElement({parent:parent});
 	
-	createUIElement({type:'button', textContent:'Scan', parent:parent,
+	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
+	const search = createUIElement({type:'input', parent:filter, id:'discoverFilter', attr:{type:'search', list:'filterSuggestions'}});
+
+	addUIEventListener(search, (e) => {
+		game.settings.d.s = search.value.toLowerCase(); 
+		game.inventory.update();
+		}, 'keyup');
+	
+	createUIElement({type:'label', parent:filter, textContent:'Only in stock: ', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChk'}});
+	createUIElement({type:'input', parent:filter, title:'Filter out of stock',
+		attr:{type:'checkbox'}, id:'filterChk',
+		onclick:(e) => {
+			game.settings.d.o = !game.settings.d.o;
+			game.inventory.update();
+		}});
+	
+	createUIElement({type:'button', textContent:'Scan', parent:filter, style:{marginLeft:'15px'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -153,10 +174,36 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
-	const bags = createUIElement({parent:w, cssClasses:['cell']});
+	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px'}});
 	game.inventory.renderDiscover(bags);
 	
 	const table = createUIElement({id:'table', cssClasses:['table', 'cell'], parent:w});
+	createUIElement({type:'h3', parent:table, textContent:'Matter Mutator'});
+}
+
+Menu.prototype.renderManage = function(parent){
+	const filter = createUIElement({parent:parent});
+	
+	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'manageFilter'}});
+	const search = createUIElement({type:'input', parent:filter, id:'manageFilter', attr:{type:'search', list:'filterSuggestions'}});
+
+	addUIEventListener(search, (e) => {
+		game.settings.m.s = search.value.toLowerCase(); 
+		game.inventory.update();
+		}, 'keyup');
+
+	const select = createUIElement({type:'select', parent:filter});
+	createUIElement({type:'option', parent:select, textContent:'Show All', attr:{value:'a'}});
+	createUIElement({type:'option', parent:select, textContent:'Show Deficit', attr:{value:'d'}});
+	createUIElement({type:'option', parent:select, textContent:'Show Balanced', attr:{value:'b'}});
+	createUIElement({type:'option', parent:select, textContent:'Show Surplus', attr:{value:'s'}});
+	
+	addUIEventListener(select, (e) => {
+			game.settings.m.d = select.value;
+			game.inventory.update();
+		}, 'change');
+	
+	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }
 
 Menu.prototype.renderHelp = function(parent){
@@ -173,7 +220,13 @@ Menu.prototype.renderHelp = function(parent){
 }
 
 Menu.prototype.renderSettings = function(parent){
-	
+
+
+	createUIElement({type:'button', parent:parent, textContent:'Hide tutorial messages', 
+		cssClasses:['tutorial'], style:{marginLeft:'15px'},
+		onclick:() => Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'))
+	});
+
 	const i = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'label', parent:i, textContent:'Show Info', attr:{htmlFor:'chkSettingsI'}});
 	createUIElement({type:'input', parent:i, title:'Toggle Info Snippets',

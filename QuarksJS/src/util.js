@@ -36,7 +36,7 @@ function createUIElement({type='div', id=null, parent=null, cssClasses=[], style
 	if(id){ e.id = id; }
 
 	for([key, value] of Object.entries(style)){ e.style[key] = value; }
-	for([key, value] of Object.entries(attr)){ e[key] = value; }
+	for([key, value] of Object.entries(attr)){ e.setAttribute(key, value); }
 
 	if(cssClasses.length){ cssClasses.forEach(x => e.classList.add(x)); }
 	if(textContent) { e.textContent = textContent; }
@@ -57,11 +57,11 @@ function addUIEventListener(element, func, event='click'){
 function recipeSearch(input){
 	const output = [];
 
-	ComponentMap[input?.n]?.forEach(f => {
+	ComponentMap[input?.n]?.forEach(x => {
+		const f = x.f;
 		const i = FlavorMap[f.n];
 		const g = ItemMap[i.n];
-		
-		output.push({ g: g, i: i, f: f});
+		output.push({ g: g, i: i, f: f, a: x.a});
 	});
 	
 	return output;
@@ -104,13 +104,12 @@ function buildMaps() {
                     if (!ComponentMap[c.f.n]) {
                         ComponentMap[c.f.n] = [];
                     }
-                    ComponentMap[c.f.n].push(f);
+                    ComponentMap[c.f.n].push({f:f, a:c.a});
                 });
             });
         });
     });
 }
-
 
 function load() {
 }

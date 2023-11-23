@@ -1,9 +1,18 @@
-Discover
-	filter (text/group/item/qty owned filter)
+Bugs: 
 
-Manage
-	show input/output of each generator
-	set generator set-points
+TODO:
+make 'bucket' of items? (eg: Kg of H || Eg of Li)
+
+	-can, jug, tub, vat?
+	-prestige system?
+	-higher tier generator?
+	-??
+
+	-different sizes based on 
+	-programatically generate || hardcoded
+	-on inventory item?
+	-OR just update a to be an object/array of ints?
+
 
 game loading status text
 	save/load
@@ -11,15 +20,20 @@ game loading status text
 Settings UI
 	save/load
 	hard reset
-
-
-hotkeys? 
-	12345:main tabs
-	arrows to navigate somehow?
+	Reset default settings button 
+		re-enable tutorial
+		show info
+		show spoiler warning
+		cheater level = -1
 
 Help: anything besides plain text?
 
+Manage
+	recursive calculateSupply that takes into account deficits
 
-Bugs: 
+
+Update datalist filterSuggestions to include unlocked groups/items/flavors
 
 
+only update current tab? (Create: current flavor, Discover, Manage)
+	-trigger update on tab change.

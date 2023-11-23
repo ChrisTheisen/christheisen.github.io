@@ -80,11 +80,24 @@ function Game(){
 		c: -1,//difficulty/infinite mode level
 		i: true,//show info
 		u: true,//show used-in warning
+		d: { //discover filters
+			o: false,//filter unowned
+			s: null//filter search
+		},
+		m: {//manage filters
+			d: 'a',//ddl value
+			s: null//filter search
+		}
 	};
 	this.table = [];
 }
 
-window.onkeypress = function(e){
+window.onkeydown = function(e){
+	const ids = ['discoverFilter', 'manageFilter']
+	if(ids.includes(document.activeElement.id)){
+		return;
+	}
+	
 	switch(e.key){
 		case '1':{
 			game.menu.gotoRoot('Create');
@@ -137,7 +150,7 @@ window.onkeypress = function(e){
 		}
 
 		default:
-			console.log(e.key);
+			//console.log(e.key);
 			break;
 	}
 }
@@ -147,11 +160,11 @@ function buildUI(){
 	createUIElement({type:'h1', parent:root, textContent:'Quarks'});
 	
 	const tabs = [
-		{n:'Create', u:true, c:data, info:'This is where you will create. Click an item group to get started.'}, 
-		{n:'Discover', u:false, info:'This is the main place for discovering new resources. Try adding different combinations of items to the Matter Mutator.'}, 
-		{n:'Manage', u:false, info:'This is a central location to monitor item input and output.'}, 
-		{n:'Settings', u:true, info:'Settings can effect game mechanics and page contents.'}, 
-		{n:'Help', u:true, info:'This is an idle crafting game focusing on discovery. Click the circular ++ buttons to start creating.'}
+		{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. Click Subatomic below to continue.  These tutorial messages can be hidden from the Settings tab.'}, 
+		{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button.'}, 
+		{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
+		{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.']}, 
+		{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery.']}
 	];
 	game.menu = new Menu(root, tabs);
 }
@@ -161,13 +174,14 @@ function init(){
 	game.clock.update();
 	buildMaps();
 	
-	game.clock.status = 'Initializing UI';
-	game.clock.update();
-	buildUI();
-	
 	game.clock.status = 'Loading Save Data';
 	game.clock.update();
 	load();
+	
+	game.clock.status = 'Initializing UI';
+	game.clock.update();
+	buildUI();
+	//buildUsageMap();
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
