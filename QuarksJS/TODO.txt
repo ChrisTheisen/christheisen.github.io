@@ -1,18 +1,33 @@
+https://periodictable.com/index.html
+
 Bugs: 
-
+	
 TODO:
-make 'bucket' of items? (eg: Kg of H || Eg of Li)
 
-	-can, jug, tub, vat?
-	-prestige system?
-	-higher tier generator?
-	-??
+Research 
+	upgrade generators
+		-reduce upgrade cost (.99^x)
+		-increase output (1.01^x)
+		-could be on inventory page
+			-What does it cost? generator levels?
+	suggest recipes to try in Discover
+		-time based on number of unlocked recipes
+		-coulcd be on dicover page
 
-	-different sizes based on 
-	-programatically generate || hardcoded
-	-on inventory item?
-	-OR just update a to be an object/array of ints?
+settings
+	name display: fullName || shortName (just flavor)	
 
+make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
+	-on inventory item or bulk storage tab?
+	-Max inventory is MAX_SAFE_INTEGER?
+	-upgrade generator with bulk inventory
+		-upgrades output for same input (breaks the universe)
+		-??
+	-create items from bulk storage (EG: star is ~1MO of H)
+
+Upgrades/achievements?
+	-generator multiplier (only output/not input!)
+	-
 
 game loading status text
 	save/load

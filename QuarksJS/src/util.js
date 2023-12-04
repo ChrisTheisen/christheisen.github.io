@@ -54,17 +54,24 @@ function addUIEventListener(element, func, event='click'){
 	element.addEventListener(event, func);
 }
 
-function recipeSearch(input){
-	const output = [];
+function isUnlocked(input){
+	if(!input){return true;}
+	if(!input.u){return false;}
+	return isUnlocked(ParentMap[input.n]);
+}
 
-	ComponentMap[input?.n]?.forEach(x => {
-		const f = x.f;
-		const i = FlavorMap[f.n];
-		const g = ItemMap[i.n];
-		output.push({ g: g, i: i, f: f, a: x.a});
-	});
+function unlock(input){
+	if(!input){return;}
 	
-	return output;
+	input.u = true;
+	input.mb.classList.toggle('hide', false);
+	
+	unlock(ParentMap[input.n]);
+}
+
+function fullName(input, name){
+	if(!input){return name;}
+	return fullName(ParentMap[input.n], `${input?.n}.${name}`);
 }
 
 function arraysOverlap(a,b){
@@ -75,40 +82,34 @@ function arraysOverlap(a,b){
 
 function findLockedFlavorsByComponents(input){
 	const output = [];
-	data.forEach(g => {
-        g.c.forEach(i => {
-			if(i.u){return;}
-            i.c.forEach(f => {
-				if(arraysOverlap(f.c.map(x => x.f), input)){
-					output.push({g:g,i:i,f:f});
-				}
-            });
-        });
+	if(!input?.length){return output;}
+	
+	Object.values(AllFlavors).filter(x => !x.u).forEach(x => {
+		if(arraysOverlap(x.c.map(x => x.inv.f), input)){
+			output.push(x);
+		}
     });
 	return output;
 }
 
-function buildMaps() {
-    data.forEach(g => {
-        g.c.forEach(i => {
-            if (ItemMap[i.n]) {
-                console.error('Item already exists: ' + i.n);
-            }
-            ItemMap[i.n] = g;
-            i.c.forEach(f => {
-                if (FlavorMap[f.n]) {
-                    console.error('Flavor already exists: ' + f.n);
-                }
-                FlavorMap[f.n] = i;
-                f.c.forEach(c => {
-                    if (!ComponentMap[c.f.n]) {
-                        ComponentMap[c.f.n] = [];
-                    }
-                    ComponentMap[c.f.n].push({f:f, a:c.a});
-                });
-            });
-        });
-    });
+function buildMaps(input, parent) {
+	input.forEach(x => {
+		if(parent){
+			//add to parentMap
+			ParentMap[x.n] = parent;
+		}
+		if(x.f){
+			if (!ComponentMap[x.f.n]) {
+				ComponentMap[x.f.n] = [];
+			}
+			const inv = game.inventory.getInvByFlavor(parent);
+			ComponentMap[x.f.n].push({inv: inv, a:x.a, b:x.b});
+		}
+		if(x.c){
+			buildMaps(x.c, x);
+		}
+	});
+	
 }
 
 function load() {

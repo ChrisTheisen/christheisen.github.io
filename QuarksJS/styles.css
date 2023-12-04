@@ -134,7 +134,7 @@ a, a:visited{
 }
 
 .generator{
-	display: inline-flex;
+	display: block;
 }
 
 .nowrap{
@@ -147,10 +147,13 @@ a, a:visited{
 	text-decoration:underline;
 	cursor:pointer;
 	padding-top: 20px;
+	margin-left:10%;
 }
 .helpContent{
 	text-align:left;
 	padding: 10px;
+	margin-left:13%;
+	margin-right:13%;
 }
 
 .settingsRow{
@@ -197,6 +200,79 @@ a, a:visited{
 	padding: 10px;
 	margin-left:25%;
 	width:50%;
+}
+
+.hint{
+	border:solid 2px #F00;
+	animation: hintColor 10s infinite linear;
+}
+@keyframes hintColor {
+	0% {
+		border-color: #F00;
+		color: #0F7;
+		background-color: #000;
+	}
+	8% {
+		border-color: #F70;
+		color: #0FF;
+		background-color: #000;
+	}
+	16% {
+		border-color: #FF0;
+		color: #07F;
+		background-color: #000;
+	}
+	25% {
+		border-color: #7F0;
+		color: #00F;
+		background-color: #FFF;
+	}
+	33% {
+		border-color: #0F0;
+		color: #70F;
+		background-color: #FFF;
+	}
+	41% {
+		border-color: #0F7;
+		color: #F0F;
+		background-color: #FFF;
+	}
+	50% {
+		border-color: #0FF;
+		color: #F07;
+		background-color: #000;
+	}
+	58% {
+		border-color: #07F;
+		color: #F00;
+		background-color: #000;
+	}
+	66% {
+		border-color: #00F;
+		color: #F70;
+		background-color: #000;
+	}
+	75% {
+		border-color: #70F;
+		color: #FF0;
+		background-color: #FFF;
+	}
+	83% {
+		border-color: #F0F;
+		color: #7F0;
+		background-color: #FFF;
+	}
+	91% {
+		border-color: #F07;
+		color: #0F0;
+		background-color: #FFF;
+	}
+	100% {
+		border-color: #F00;
+		color: #0F7;
+		background-color: #000;
+	}
+	
 }
 
 .hide{

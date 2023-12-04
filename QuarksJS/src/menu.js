@@ -1,16 +1,18 @@
-function Menu(parent, input){
+function Menu(parent, input, b, d){
 	this.children = {};
-	this.content = {};
 	this.f = [];
 	this.current = null;
+	this.b = b;
+	this.d = d;
 	
 	const m = createUIElement({parent:parent, cssClasses:['menuButtons']});
 	const c = createUIElement({parent:parent, cssClasses:['menuContentWrapper']});
 
 	input?.forEach(x => {
+		this.children[x.n] = {};
 		const btnClass = x.u ? [] : ['hide']
 		const btn = createUIElement({type:'button', parent:m, textContent:x.n, cssClasses:btnClass, 
-			onclick:()=>{this.current=x.n; this.update()} });
+			onclick:()=>{this.current=x.n; this.update(); game.hint();} });
 		x.mb = btn;
 		const div = createUIElement({parent:c, cssClasses:['hide', 'content']});
 		
@@ -21,11 +23,9 @@ function Menu(parent, input){
 			createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']})
 		}
 		
-		this.content[x.n] = {b:btn, d:div};
-		
+		this.children[x.n] = new Menu(div, x.c, btn, div);
 		if(x?.c){
 			//if it has children make the sub-menu.
-			this.children[x.n] = new Menu(div, x.c);
 
 			if(x?.m){//if it has mass it is an individual flavor aka end of the sub-menus
 				game.inventory.getInvByFlavor(x).renderCreate(div);
@@ -55,45 +55,32 @@ function Menu(parent, input){
 		
 	});
 }
-Menu.prototype.gotoLeaf = function(input){
-	const f = input.n
-	const i = FlavorMap[f].n;
-	const g = ItemMap[i].n;
+Menu.prototype.gotoNode = function(input, parent = null){
+	if(Object.keys(this.children).includes(input)){
+		this.current = input;
+		this.update();
+		return true;
+	}
+	for(let [key, value] of Object.entries(this.children)){
+		if(value?.gotoNode(input, this)){
+			this.current = key;
+			this.update();
+			return true;
+		}
+	}
 	
-	console.log(f,i,g);
-	
-	game.menu.current = 'Create';
-	let temp = game.menu.children.Create;
-	temp.current = g;
-	temp = temp.children[g];
-	temp.current = i;
-	temp = temp.children[i];
-	temp.current = f;
-	game.menu.update();
-}
-Menu.prototype.gotoRoot = function(input){
-	game.menu.current = input;
-	game.menu.update()
-}
-Menu.prototype.gotoScale = function(input){
-	game.menu.current = 'Create';
-	let temp = game.menu.children.Create;
-	temp.current = input;
-	game.menu.update();
-}
-Menu.prototype.gotoNode = function(input){
-	//TODO: this sometime
+	return false;
 }
 
 Menu.prototype.update = function(){
-		Object.values(this.content).forEach(x => {
+		Object.values(this.children).forEach(x => {
 			x.b.classList.remove('selected');
 			x.d.classList.add('hide');
 		});
 		if(!this.current){return;}
 		
-		this.content[this.current].b.classList.add('selected');
-		this.content[this.current].d.classList.remove('hide');
+		this.children[this.current].b.classList.add('selected');
+		this.children[this.current].d.classList.remove('hide');
 		
 		this.children[this.current]?.update();//needed for gotoLeaf to work.
 		game.inventory.update();//updates the content quick when tab changes.
@@ -131,8 +118,7 @@ Menu.prototype.updateResults = function(input){
 
 	newTable.push(createUIElement({type:'h3', textContent:'Scan Results'}));
 	input.forEach(x => {
-		const n = `${x.g.n}.${x.i.n}.${x.f.n}`
-		newTable.push(createUIElement({textContent:n}));
+		newTable.push(createUIElement({textContent:x.fullName}));
 	});
 	
 	table.replaceChildren(...newTable);
@@ -157,7 +143,7 @@ Menu.prototype.renderDiscover = function(parent){
 			game.inventory.update();
 		}});
 	
-	createUIElement({type:'button', textContent:'Scan', parent:filter, style:{marginLeft:'15px'},
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginLeft:'15px'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -222,7 +208,7 @@ Menu.prototype.renderHelp = function(parent){
 Menu.prototype.renderSettings = function(parent){
 
 
-	createUIElement({type:'button', parent:parent, textContent:'Hide tutorial messages', 
+	createUIElement({type:'button', parent:parent, textContent:'Hide "Helpful Tips" with a green border.', 
 		cssClasses:['tutorial'], style:{marginLeft:'15px'},
 		onclick:() => Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'))
 	});
