@@ -175,52 +175,52 @@ window.onkeydown = function(e){
 	}
 	
 	switch(e.key){
-		case '1':{
+		case 'q':{
 			game.menu.gotoNode('Create');
 			break;
 		}
-		case '2':{
+		case 'w':{
 			game.menu.gotoNode('Discover');
 			break;
 		}
-		case '3':{
+		case 'e':{
 			game.menu.gotoNode('Manage');
 			break;
 		}
-		case '4':{
+		case 'r':{
 			game.menu.gotoNode('Settings');
 			break;
 		}
-		case '5':{
+		case 't':{
 			game.menu.gotoNode('Help');
 			break;
 		}
 		
-		case 'q':{
+		case 'a':{
 			game.menu.gotoNode('Subatomic');
 			break;
 		}
-		case 'w':{
+		case 's':{
 			game.menu.gotoNode('Atomic');
 			break;
 		}
-		case 'e':{
+		case 'd':{
 			game.menu.gotoNode('Molecular');
 			break;
 		}
-		case 'r':{
+		case 'f':{
 			game.menu.gotoNode('Human');
 			break;
 		}
-		case 't':{
+		case 'g':{
 			game.menu.gotoNode('Planetary');
 			break;
 		}
-		case 'y':{
+		case 'h':{
 			game.menu.gotoNode('Stellar');
 			break;
 		}
-		case 'u':{
+		case 'j':{
 			game.menu.gotoNode('Black Hole');
 			break;
 		}

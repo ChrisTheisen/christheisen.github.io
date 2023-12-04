@@ -3,13 +3,11 @@ https://periodictable.com/index.html
 Bugs: 
 	
 TODO:
+game loading status text
+	save/load
 
 Research 
 	upgrade generators
-		-reduce upgrade cost (.99^x)
-		-increase output (1.01^x)
-		-could be on inventory page
-			-What does it cost? generator levels?
 	suggest recipes to try in Discover
 		-time based on number of unlocked recipes
 		-coulcd be on dicover page
@@ -28,9 +26,6 @@ make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 Upgrades/achievements?
 	-generator multiplier (only output/not input!)
 	-
-
-game loading status text
-	save/load
 
 Settings UI
 	save/load

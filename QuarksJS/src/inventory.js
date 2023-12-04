@@ -182,6 +182,7 @@ function InventoryItem(input){
 		u:null, //generator upgrade button
 		v:null, //generator uprank button
 		w:null, //spoiler warning
+		x:null, //results/spoiler wrapper
 		y:null, //supply label
 		z:null //demand label
 	};
@@ -293,7 +294,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 	this.renderCreate0(createUIElement({parent: parent, cssClasses:['block', 'flex', 'center']}));
 	this.renderCreate1(createUIElement({parent: parent, cssClasses:['block', 'center']}));
 	const w = createUIElement({parent: parent, cssClasses:['hide']});
-	this.content.v = w;
+	this.content.x = w;
 	this.renderCreate2(createUIElement({parent: w, cssClasses:['block', 'center']}));
 }
 InventoryItem.prototype.renderCreate0 = function(parent){
@@ -402,7 +403,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 
 	const row2 = createUIElement({parent:parent});
 	this.content.h = row2;
-	createUIElement({type:'span', parent:row2, textContent:'Auto-Upgrade'});
+	createUIElement({type:'span', parent:row2, textContent:'Auto-Upgrade Level'});
 	this.content.i = createUIElement({type:'input', parent:row2, title:'Auto-Upgrade',
 		attr:{type:'checkbox', checked:this.i},onclick:() => this.i = !this.i});
 		
@@ -427,7 +428,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	createUIElement({type:'span', parent:row5, textContent:'Create up to '});
 	this.content.s.push(createUIElement({type:'input', parent:row5,
 		attr:{type:'number', min:0, max:this.l, value:0},
-		onchange:(x) => { this.s = parseInt(x.target.value); this.update(); }}));
+		oninput:(x) => { this.s = parseInt(x.target.value); this.update(); } }));
 	createUIElement({type:'span', parent:row5, textContent:' every tick'});
 }
 
@@ -474,7 +475,7 @@ InventoryItem.prototype.renderManage = function(parent){
 	this.content.s.push(createUIElement({type:'input', 
 		parent:createUIElement({parent:parent, cssClasses:['cell'], style:{textAlign:'right'}}), 
 		attr:{type:'number', min:0, max:this.l, value:0},
-		onchange:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
+		oninput:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
 		
 	this.content.z = createUIElement({parent:parent, textContent:this.calculateDemand(), style:{textAlign:'center'}});
 }
@@ -510,6 +511,7 @@ InventoryItem.prototype.update = function(){
 			this.content.u?.classList.toggle('disabled', !canUpgrade);
 			this.content.v?.classList.toggle('disabled', !canUprank);
 			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);
+			this.content.x?.classList.toggle('hide', this.l < 9 && this.k < 1);
 			break;
 		}
 		case 'Discover': {

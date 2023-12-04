@@ -23,7 +23,7 @@ function removeUIElement(input){
 	delete UIElement[input];
 }
 
-function createUIElement({type='div', id=null, parent=null, cssClasses=[], style={}, title=null, attr={}, textContent=null, onclick=null, onchange=null}){
+function createUIElement({type='div', id=null, parent=null, cssClasses=[], style={}, title=null, attr={}, textContent=null, onclick=null, onchange=null, oninput=null}){
 	if(id){
 		let e = getUIElement(id);
 		if(e){
@@ -44,6 +44,7 @@ function createUIElement({type='div', id=null, parent=null, cssClasses=[], style
 	if(parent){ parent.appendChild(e); }
 	if(onclick){ addUIEventListener(e, onclick); }
 	if(onchange){ addUIEventListener(e, onchange, 'change'); }
+	if(oninput){ addUIEventListener(e, oninput, 'input'); }
 	
 	return e;
 }
