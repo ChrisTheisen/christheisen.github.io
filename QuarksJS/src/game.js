@@ -1,14 +1,12 @@
 function GameClock(){
 	//updates per save
-	Object.defineProperty(this, 'saveRate', {value:120, writable: false});
+	Object.defineProperty(this, 'saveRate', {value:60, writable: false});
 	//in ms
 	Object.defineProperty(this, 'tickRate', {value:100, writable: false});
 	//in ms
 	Object.defineProperty(this, 'updateRate', {value:1000, writable: false});
 	//upper limit in ms on away time
 	Object.defineProperty(this, 'maxGameClock', {value:10000, writable: false});
-	//upper limit on catch up cycles per tick
-	Object.defineProperty(this, 'maxCycles', {value:100, writable: false});
 	
 	this.lastSave = 0;//updates since last save
 	this.duration = 0;//time since last update
@@ -30,11 +28,8 @@ GameClock.prototype.tick = function(){
 	const p = Math.min(100 * this.duration / this.updateRate, 100);
 	this.content.p.style.width = `${p}%`;
 	
-	let count = 0;
-	while(this.duration > this.updateRate && count++ < this.maxCycles){
-		this.update();
-	}
-	game.hint();
+	if(this.duration < this.updateRate){ return; }
+	this.update();
 }
 GameClock.prototype.stop = function(){
 	clearInterval(this.intervalID);
@@ -55,8 +50,8 @@ GameClock.prototype.render = function(){
 GameClock.prototype.update = function(){
 	this.content.s.classList.toggle('hide', !this.status);
 	setElementText(this.content.s, this.status);
-	this.content.t.classList.toggle('hide', this.duration < (this.updateRate * this.maxCycles));
-	setElementText(this.content.t, this.duration);
+	this.content.t.classList.toggle('hide', this.duration < (this.updateRate * 2));
+	setElementText(this.content.t, parseInt(this.duration));
 	
 	if(this.duration < this.updateRate){return;}
 	this.duration -= this.updateRate;
@@ -168,68 +163,68 @@ Game.prototype.hint = function(){
 	
 }
 
-window.onkeydown = function(e){
-	const ids = ['discoverFilter', 'manageFilter']
-	if(ids.includes(document.activeElement.id)){
-		return;
-	}
+// window.onkeydown = function(e){
+	// const ids = ['discoverFilter', 'manageFilter']
+	// if(ids.includes(document.activeElement.id)){
+		// return;
+	// }
 	
-	switch(e.key){
-		case 'q':{
-			game.menu.gotoNode('Create');
-			break;
-		}
-		case 'w':{
-			game.menu.gotoNode('Discover');
-			break;
-		}
-		case 'e':{
-			game.menu.gotoNode('Manage');
-			break;
-		}
-		case 'r':{
-			game.menu.gotoNode('Settings');
-			break;
-		}
-		case 't':{
-			game.menu.gotoNode('Help');
-			break;
-		}
+	// switch(e.key){
+		// case 'q':{
+			// game.menu.gotoNode('Create');
+			// break;
+		// }
+		// case 'w':{
+			// game.menu.gotoNode('Discover');
+			// break;
+		// }
+		// case 'e':{
+			// game.menu.gotoNode('Manage');
+			// break;
+		// }
+		// case 'r':{
+			// game.menu.gotoNode('Settings');
+			// break;
+		// }
+		// case 't':{
+			// game.menu.gotoNode('Help');
+			// break;
+		// }
 		
-		case 'a':{
-			game.menu.gotoNode('Subatomic');
-			break;
-		}
-		case 's':{
-			game.menu.gotoNode('Atomic');
-			break;
-		}
-		case 'd':{
-			game.menu.gotoNode('Molecular');
-			break;
-		}
-		case 'f':{
-			game.menu.gotoNode('Human');
-			break;
-		}
-		case 'g':{
-			game.menu.gotoNode('Planetary');
-			break;
-		}
-		case 'h':{
-			game.menu.gotoNode('Stellar');
-			break;
-		}
-		case 'j':{
-			game.menu.gotoNode('Black Hole');
-			break;
-		}
+		// case 'a':{
+			// game.menu.gotoNode('Subatomic');
+			// break;
+		// }
+		// case 's':{
+			// game.menu.gotoNode('Atomic');
+			// break;
+		// }
+		// case 'd':{
+			// game.menu.gotoNode('Molecular');
+			// break;
+		// }
+		// case 'f':{
+			// game.menu.gotoNode('Human');
+			// break;
+		// }
+		// case 'g':{
+			// game.menu.gotoNode('Planetary');
+			// break;
+		// }
+		// case 'h':{
+			// game.menu.gotoNode('Stellar');
+			// break;
+		// }
+		// case 'j':{
+			// game.menu.gotoNode('Black Hole');
+			// break;
+		// }
 
-		default:
-			//console.log(e.key);
-			break;
-	}
-}
+		// default:
+			// //console.log(e.key);
+			// break;
+	// }
+// }
 
 function buildUI(){
 	const root = getUIElement('divRoot');
@@ -250,13 +245,13 @@ function init(){
 	game.clock.update();
 	buildMaps(data, null);
 	
-	game.clock.status = 'Loading Save Data';
-	game.clock.update();
-	load();
-	
 	game.clock.status = 'Initializing UI';
 	game.clock.update();
 	buildUI();
+	
+	game.clock.status = 'Loading Save Data';
+	game.clock.update();
+	load();
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
@@ -264,6 +259,7 @@ function init(){
 
 	game.clock.status = null;
 	game.clock.update();
+	window.addEventListener("beforeunload", saveBeforeUnload);
 	game.clock.start();
 	game.hint();
 }

@@ -3,47 +3,17 @@ https://periodictable.com/index.html
 Bugs: 
 	
 TODO:
-game loading status text
-	save/load
-
-Research 
-	upgrade generators
-	suggest recipes to try in Discover
-		-time based on number of unlocked recipes
-		-coulcd be on dicover page
-
-settings
-	name display: fullName || shortName (just flavor)	
+Manage
+	recursive calculateSupply that takes into account deficits?
+		-or just count used in last tick (another column?)
 
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
-	-on inventory item or bulk storage tab?
-	-Max inventory is MAX_SAFE_INTEGER?
-	-upgrade generator with bulk inventory
-		-upgrades output for same input (breaks the universe)
-		-??
+	-on inventory item
+	-Max inventory is MAX_SAFE_INTEGER of each unit
 	-create items from bulk storage (EG: star is ~1MO of H)
 
 Upgrades/achievements?
 	-generator multiplier (only output/not input!)
-	-
 
-Settings UI
-	save/load
-	hard reset
-	Reset default settings button 
-		re-enable tutorial
-		show info
-		show spoiler warning
-		cheater level = -1
+Update datalist filterSuggestions to only include unlocked groups/items/flavors
 
-Help: anything besides plain text?
-
-Manage
-	recursive calculateSupply that takes into account deficits
-
-
-Update datalist filterSuggestions to include unlocked groups/items/flavors
-
-
-only update current tab? (Create: current flavor, Discover, Manage)
-	-trigger update on tab change.

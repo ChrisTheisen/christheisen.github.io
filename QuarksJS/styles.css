@@ -33,7 +33,7 @@ a, a:visited{
 
 .center{
 	width:50%;
-	min-width: 360px;
+	min-width: 450px;
 	margin:auto;
 }
 
@@ -141,6 +141,12 @@ a, a:visited{
 	white-space:nowrap;
 }
 
+.hintZone{
+	margin-bottom: 10px;
+	min-width: 450px;
+	text-align: left;
+}
+
 .helpTopic{
 	text-align:left;
 	font-weight:bold;
@@ -159,6 +165,7 @@ a, a:visited{
 .settingsRow{
 	text-align:left;
 	padding-left:25%;
+	margin:5px;
 }
 
 .clockProgress{

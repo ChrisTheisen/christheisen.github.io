@@ -81,11 +81,27 @@ function arraysOverlap(a,b){
 	return m&&n;
 }
 
+function unlockedFlavors(){
+	return Object.values(AllFlavors).filter(x => x.f.u);
+}
+
+function generateDiscoverHint(){
+	//locked items that have all components unlocked
+	const a = Object.values(AllFlavors).filter(x => !x.f.u).filter(y => y.c.every(z => z.inv.f.u));
+	if(!a.length){return ' None left, try again later.';}
+
+	const index = Math.floor(Math.random() * a.length);
+	const b = a[index];
+	
+	const c = b.c.map(x => x.inv.f.n);
+	return ` ${c.join()} `;
+}
+
 function findLockedFlavorsByComponents(input){
 	const output = [];
 	if(!input?.length){return output;}
 	
-	Object.values(AllFlavors).filter(x => !x.u).forEach(x => {
+	Object.values(AllFlavors).filter(x => !x.f.u).forEach(x => {
 		if(arraysOverlap(x.c.map(x => x.inv.f), input)){
 			output.push(x);
 		}
@@ -113,8 +129,112 @@ function buildMaps(input, parent) {
 	
 }
 
+function resetSettings(){
+	game.settings.c = -1;
+	game.settings.f = true;
+	game.settings.i = true;
+	game.settings.u = true;
+	game.settings.d.o = false;
+	game.settings.d.s = null;
+	game.settings.m.d = 'a';
+	game.settings.m.s = null;
+
+	getUIElement('numSettingsC').value = game.settings.c;
+	getUIElement('chkSettingsF').checked = game.settings.f;
+	getUIElement('chkSettingsI').checked = game.settings.i;
+	getUIElement('chkSettingsU').checked = game.settings.u;
+	
+	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
+
+	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.remove('hide'));
+}
+
+function loadSaveData(){
+	localStorage.setItem('Q', getUIElement('txtLoad').value);
+	load();
+}
+
 function load() {
+	const temp = localStorage.getItem('Q');
+	if(!temp){return;}
+	const data = JSON.parse(temp);
+	
+	game.settings.c = data.s.c;
+	game.settings.i = data.s.i;
+	game.settings.u = data.s.u;
+	game.settings.d.o = data.s.d.o;
+	game.settings.d.s = data.s.d.s;
+	game.settings.m.d = data.s.m.d;
+	game.settings.m.s = data.s.m.s;
+
+	getUIElement('numSettingsC').value = game.settings.c;
+	getUIElement('chkSettingsI').checked = game.settings.i;
+	getUIElement('chkSettingsU').checked = game.settings.u;
+	
+
+	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
+	//hide green border tips
+	if(Object.keys(data.i).length > 3){
+		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'));
+	}
+	
+	game.clock.lastUpdate = data.c;
+	Object.entries(data.i).forEach(([key, value], index) => {
+		game.inventory.children[key].a = value.a ?? 0;
+		game.inventory.children[key].b = value.b ?? new Amount();
+		game.inventory.children[key].e = value.e ?? true;
+		game.inventory.children[key].i = value.i ?? false;
+		game.inventory.children[key].k = value.k ?? 0;
+		game.inventory.children[key].l = value.l ?? 0;
+		game.inventory.children[key].q = value.q ?? false;
+		game.inventory.children[key].s = value.s ?? 0;
+		if(value.u){
+			game.inventory.children[key].unlock();
+		}
+	});
 }
 
 function save() {
+	const data = {i:{}, s:game.settings, c:game.clock.lastUpdate};
+	Object.entries(game.inventory.children).forEach(([key, value], index) => {
+		//has default values, don't save.
+		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.f.u){
+			return;
+		}
+		
+		data.i[key] = {}
+		//only save non-default values
+		if(!!value.a){ data.i[key].a = value.a; }
+		if(!value.b.isZero()){ data.i[key].b = value.b; }
+		if(!value.e){ data.i[key].e = value.e; }
+		if(value.i){ data.i[key].i = value.i; }
+		if(!!value.k){ data.i[key].k = value.k; }
+		if(!!value.l){ data.i[key].l = value.l; }
+		if(value.q){ data.i[key].q = value.q; }
+		if(!!value.s){ data.i[key].s = value.s; }
+		if(value.f.u){ data.i[key].u = value.f.u; }
+	});
+	
+	const temp = JSON.stringify(data);
+	localStorage.setItem('Q', temp);
+	setElementText(getUIElement('txtSave'), temp);
+	
+	
+	setElementText(getUIElement('lastSave'), new Date().toLocaleString());
+}
+
+function deleteLocalStorage(){
+	localStorage.removeItem(gameKey);
+	localStorage.removeItem(invKey);
+	localStorage.removeItem(optKey);
+}
+
+function saveBeforeUnload(e) {
+	save();
+}
+
+function hardReset(){
+	localStorage.removeItem('Q');
+	window.removeEventListener("beforeunload", saveBeforeUnload);
+	window.location.reload(false);
 }

@@ -118,13 +118,19 @@ Menu.prototype.updateResults = function(input){
 
 	newTable.push(createUIElement({type:'h3', textContent:'Scan Results'}));
 	input.forEach(x => {
-		newTable.push(createUIElement({textContent:x.fullName}));
+		newTable.push(createUIElement({textContent:x.fullName??x}));
 	});
 	
 	table.replaceChildren(...newTable);
 }
 
 Menu.prototype.renderDiscover = function(parent){
+	
+	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
+	createUIElement({type:'button', id:'btnHint', textContent:'Generate Discoverable Recipe', parent:hint, style:{marginLeft:'15px'},
+		onclick:()=> setElementText(hout, generateDiscoverHint())});
+	const hout = createUIElement({type:'span',parent:hint});
+	
 	const filter = createUIElement({parent:parent});
 	
 	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
@@ -147,15 +153,15 @@ Menu.prototype.renderDiscover = function(parent){
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
+			game.table.length = 0;
 			if(results.length){
-				game.table.length = 0;
 				results.forEach(x => {
 					game.inventory.getInvByFlavor(x.f).unlock();
 				});
 				this.updateResults(results);
 			}
 			else{
-				alert('No new items discovered');
+				this.updateResults(['No new items discovered']);
 			}
 		}});
 	
@@ -206,8 +212,6 @@ Menu.prototype.renderHelp = function(parent){
 }
 
 Menu.prototype.renderSettings = function(parent){
-
-
 	createUIElement({type:'button', parent:parent, textContent:'Hide "Helpful Tips" with a green border.', 
 		cssClasses:['tutorial'], style:{marginLeft:'15px'},
 		onclick:() => Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'))
@@ -222,7 +226,7 @@ Menu.prototype.renderSettings = function(parent){
 			Array.from(document.getElementsByClassName('info'))
 				.forEach(x => x.classList.toggle('hide', !game.settings.i) );
 		}});
-		
+
 	const u = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning', attr:{htmlFor:'chkSettingsU'}});
 	createUIElement({type:'input', parent:u, title:'Show Used-In Warning',
@@ -232,10 +236,36 @@ Menu.prototype.renderSettings = function(parent){
 	const c = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'label', parent:c, textContent:'Cheater Level:', attr:{htmlFor:'numSettingsc'}});
 	const num = createUIElement({type:'input', parent:c, title:'Cheater Level (-1 to disable)',
-		attr:{type:'number', min:-1, max:7, value:game.settings.c}, id:'numSettingsD'});
+		attr:{type:'number', min:-1, max:7, value:game.settings.c}, id:'numSettingsC'});
 	addUIEventListener(num, (e) => {
 		game.settings.c = parseInt(e.target.value);
 		game.inventory.update();
 	}, 'change');
-	
+
+	createUIElement({type: 'hr', parent: parent});
+
+	const l = createUIElement({parent: parent, cssClasses:['settingsRow']})
+	createUIElement({type: 'span', parent:l, textContent:'Last save at: '});
+	createUIElement({type: 'span', parent:l, id:'lastSave'});
+
+	const m = createUIElement({parent: parent, cssClasses:['settingsRow']})
+	const n = createUIElement({type: 'textarea', parent: m, id:'txtSave', attr:{rows:'10', cols:'80', disabled:'true'}})
+	createUIElement({parent:m, textContent:'Input Load Data:'});
+	const o = createUIElement({type: 'textarea', parent: m, id:'txtLoad', attr:{rows:'10', cols:'80'}})
+	createUIElement({type:'button', parent:createUIElement({parent: parent, cssClasses:['settingsRow']}), textContent:'Load Data',
+		style:{marginLeft:'15px'}, onclick:() => loadSaveData()
+	});
+
+	createUIElement({type: 'hr', parent: parent});
+
+	const s = createUIElement({parent:parent, cssClasses:['settingsRow']});
+	createUIElement({type:'button', parent:s, textContent:'Restore Default Settings', 
+		style:{marginLeft:'15px'}, onclick:() => resetSettings()
+	});
+
+	const z = createUIElement({parent:parent, cssClasses:['settingsRow']});
+	createUIElement({type:'button', parent:z, textContent:'HARD RESET', 
+		style:{marginLeft:'15px'}, onclick:() => { if(window.confirm("Really lose all data and reset the whole game?")){hardReset();} }
+	});
+
 }
