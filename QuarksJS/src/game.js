@@ -57,6 +57,7 @@ GameClock.prototype.update = function(){
 	this.duration -= this.updateRate;
 	
 	//do generates
+	ActualUsed = {};
 	Object.values(game.inventory.children).forEach(x => {
 		x.generate();
 	});

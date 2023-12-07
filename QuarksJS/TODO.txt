@@ -3,10 +3,6 @@ https://periodictable.com/index.html
 Bugs: 
 	
 TODO:
-Manage
-	recursive calculateSupply that takes into account deficits?
-		-or just count used in last tick (another column?)
-
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item
 	-Max inventory is MAX_SAFE_INTEGER of each unit

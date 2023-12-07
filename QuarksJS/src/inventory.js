@@ -118,8 +118,9 @@ Inventory.prototype.renderManage = function(parent){
 	createUIElement({parent:parent, cssClasses:['cell'], style:{width:'10%'}});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Name', style:{width:'30%', textAlign:'left'}});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Owned', style:{width:'20%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Supply', style:{width:'20%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Demand', style:{width:'20%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Setpoint', style:{width:'20%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Demand', title:'Demand based on generator setpoints' , style:{width:'20%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last update' , style:{width:'20%', textAlign:'left'}});
 	
 	Object.values(this.children).forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['row']});
@@ -181,11 +182,12 @@ function InventoryItem(input){
 		k:null, //generator rank label
 		l:[], //level label
 		m:null, //manage parent row(for hiding locked/filtered)
-		o: null, //auto-uprank wrapper (for show/hide)
+		o:null, //auto-uprank wrapper (for show/hide)
 		p:null, //discover parent row(for hiding locked/filtered)
-		t: null, //auto-uprank checkbox (for checkbox checked)
+		q:null, //actual used label
 		r:null, //used in list container
 		s:[], //set-level
+		t:null, //auto-uprank checkbox (for checkbox checked)
 		u:null, //generator upgrade button
 		v:null, //generator uprank button
 		w:null, //spoiler warning
@@ -225,7 +227,10 @@ InventoryItem.prototype.generate = function(){
 	}
 
 	const amount = Math.floor(Math.min(...this.c.map(x => x.inv.a/x.a), this.s));
-	this.c.forEach(x => x.inv.a -= x.a * amount);
+	this.c.forEach(x => {
+		ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
+		x.inv.a -= x.a * amount
+	});
 	this.a += amount;
 	game.inventory.update();
 }
@@ -480,7 +485,8 @@ InventoryItem.prototype.renderManage = function(parent){
 		attr:{type:'number', min:0, max:this.l, value:0},
 		oninput:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
 		
-	this.content.z = createUIElement({parent:parent, textContent:this.calculateDemand(), style:{textAlign:'center'}});
+	this.content.z = createUIElement({parent:parent, cssClasses:['cell'], textContent:this.calculateDemand(), style:{textAlign:'center'}});
+	this.content.q = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualUsed[this.f.n], style:{textAlign:'center'}});
 }
 
 InventoryItem.prototype.update = function(){
@@ -552,6 +558,7 @@ InventoryItem.prototype.update = function(){
 			this.content.m?.classList.toggle('hide', !isUnlocked || !filterManage || filterManageSearch);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0; });
 			setElementText(this.content.z, demand);
+			setElementText(this.content.q, ActualUsed[this.f.n]??'-');
 			break;
 		}
 	}
