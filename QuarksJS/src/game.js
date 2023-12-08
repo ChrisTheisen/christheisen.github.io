@@ -108,17 +108,20 @@ Game.prototype.hint = function(){
 		(gic.Up.l > 3 && gic.Down.l > 3 && gic.Proton.isUnlocked() && gic.Neutron.isUnlocked());
 	this.menu.children.Create.b.classList.toggle('hint', shouldCreate && game.menu.current !== 'Create');
 	
+	const hintZone = getUIElement('hint');
+	hintZone.classList.toggle('hide', gic.Up.l >= 4 && gic.Down.l >= 4 || game.menu.current == 'Create');
+	
 	const shouldSubatomic = shouldCreate && this.menu.current === 'Create';
 	this.menu.children.Create.children.Subatomic.b.classList.toggle('hint', shouldSubatomic && this.menu.children.Create.current !== 'Subatomic');
 
 	const shouldQuark = shouldSubatomic && this.menu.children.Create.current === 'Subatomic';
-	this.menu.children.Create.children.Subatomic.children.Quark.b.classList.toggle('hint', shouldQuark && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.current !== 'Quark');
+	this.menu.children.Create.children.Subatomic.children.Quark.b.classList.toggle('hint', shouldQuark && this.menu.children.Create.children.Subatomic.current !== 'Quark' && (gic.Up.l < 4 || gic.Down.l < 4));
 
 	const shouldUp = shouldQuark && this.menu.children.Create.children.Subatomic.current === 'Quark';
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Up.b.classList.toggle('hint', shouldUp && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up');
 	
 	const shouldUpCreate = shouldUp && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Up';
-	this.inventory.children.Up.content.b.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12));
+	this.inventory.children.Up.content.b.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12 && gic.Up.l < 1));
 
 	const shouldUpGenerate = shouldUpCreate && gic.Up.a > 0 && gic.Up.l < 4 && gic.Up.upgradeCost() <= gic.Up.a;
 	this.inventory.children.Up.content.u.classList.toggle('hint', shouldUpGenerate);
@@ -127,7 +130,7 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Down.b.classList.toggle('hint', shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Down');
 	
 	const shouldDownCreate = shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Down';
-	this.inventory.children.Down.content.b.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12));
+	this.inventory.children.Down.content.b.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12 && gic.Down.l < 1));
 	
 	const shouldDownGenerate = shouldDownCreate && gic.Down.a > 0 && gic.Down.l < 4 && gic.Down.upgradeCost() <= gic.Down.a;
 	this.inventory.children.Down.content.u.classList.toggle('hint', shouldDownGenerate);
@@ -150,9 +153,8 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Baryon.children.Proton.b.classList.toggle('hint', shouldProton && this.menu.children.Create.children.Subatomic.children.Baryon.current !== 'Proton');
 	
 	if(shouldProton && this.menu.children.Create.children.Subatomic.children.Baryon.current === 'Proton'){
-		const hintZone = getUIElement('hint');
 		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
-		
+		hintZone.classList.toggle('hide');
 		if(!this.hinterval){
 			this.hzw = hintZone.offsetWidth;
 			this.hinterval = setInterval(() => {

@@ -381,7 +381,7 @@ InventoryItem.prototype.renderComponent = function(parent, input){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 		onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:inv.f.n, title:inv.fullName,style:{width:'40%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:inv.f.n, title:inv.fullName,style:{width:'30%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], 
 		style:{width:'40%', textAlign:'left'}})
@@ -464,7 +464,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
-	onclick:() => { if(this.a && !game.table.includes(this)){game.table.push(this); game.menu.updateTable();}} });
+	onclick:() => { if(this.a && !game.table.includes(this)){game.table.push(this); game.menu.updateTable(); this.update()}} });
 	
 	add.classList.toggle('disabled', !this.a);
 	
@@ -475,9 +475,9 @@ InventoryItem.prototype.renderUsedIn = function(parent, input){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName,style:{width:'50%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName,style:{width:'40%', textAlign:'left'}});
 	
-	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left'}})
+	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'40%', textAlign:'left'}})
 	createUIElement({type:'span', parent:ow, textContent:'Need:'});
 	createUIElement({type:'span', parent:ow, textContent:input.a});
 }

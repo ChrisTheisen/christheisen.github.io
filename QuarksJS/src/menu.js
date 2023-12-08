@@ -150,7 +150,7 @@ Menu.prototype.renderDiscover = function(parent){
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:w, style:{marginRight:'75px', float:'right'},
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:w, style:{marginRight:'75px'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			

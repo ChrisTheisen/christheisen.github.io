@@ -23,7 +23,7 @@ button{
 	color: var(--c1);
 	box-shadow: none;
 	border: solid 1px var(--bg1);
-	margin: 0 5px;
+	margin: 1px 5px;
 	padding: 5px;
 	cursor: pointer;
 }
@@ -38,7 +38,7 @@ a, a:visited{
 
 .center{
 	width:50%;
-	min-width: 500px;
+	min-width: 480px;
 	margin:auto;
 }
 
@@ -201,7 +201,7 @@ a, a:visited{
 
 .table{
 	min-height:500px;
-	min-width:200px;
+	min-width:175px;
 	border-left: solid 1px var(--c1);
 }
 
@@ -248,81 +248,80 @@ a, a:visited{
 		border-color: #F00;
 		color: #0F7;
 		background-color: #000;
-		transform: scale(1);
+		transform: scale(1) translate(-2px, -2px);
 	}
 	8% {
 		border-color: #F70;
 		color: #0FF;
 		background-color: #000;
-		transform: scale(1.2);
+		transform: scale(1.2) translate(2px, -2px);
 	}
 	16% {
 		border-color: #FF0;
 		color: #07F;
 		background-color: #000;
-		transform: scale(1.4);
+		transform: scale(1) translate(2px, 2px);
 	}
 	25% {
 		border-color: #7F0;
 		color: #00F;
-		background-color: #FFF;
-		transform: scale(1.6);
+		background-color: #777;
+		transform: scale(1.2) translate(-2px, 2px);
 	}
 	33% {
 		border-color: #0F0;
 		color: #70F;
-		background-color: #FFF;
-		transform: scale(1.4);
+		background-color: #777;
+		transform: scale(1) translate(-2px, -2px);
 	}
 	41% {
 		border-color: #0F7;
 		color: #F0F;
-		background-color: #FFF;
+		background-color: #777;
 		transform: scale(1.2);
 	}
 	50% {
 		border-color: #0FF;
 		color: #F07;
 		background-color: #000;
-		transform: scale(1);
+		transform: scale(1) translate(2px, 2px);
 	}
 	58% {
 		border-color: #07F;
 		color: #F00;
 		background-color: #000;
-		transform: scale(1.2);
+		transform: scale(1.2) translate(2px, -2px);
 	}
 	66% {
 		border-color: #00F;
 		color: #F70;
 		background-color: #000;
-		transform: scale(1.4);
+		transform: scale(1) translate(-2px, -2px);
 	}
 	75% {
 		border-color: #70F;
 		color: #FF0;
-		background-color: #FFF;
-		transform: scale(1.6);
+		background-color: #777;
+		transform: scale(1.2) translate(-2px, 2px);
 	}
 	83% {
 		border-color: #F0F;
 		color: #7F0;
-		background-color: #FFF;
-		transform: scale(1.4);
+		background-color: #777;
+		transform: scale(1) translate(2px, 2px);
 	}
 	91% {
 		border-color: #F07;
 		color: #0F0;
-		background-color: #FFF;
+		background-color: #777;
 		transform: scale(1.2);
 	}
 	100% {
 		border-color: #F00;
 		color: #0F7;
 		background-color: #000;
-		transform: scale(1);
-	}
-	
+		transform: scale(1) translate(-2px, -2px);
+	}	
 }
 
 .hide{
