@@ -72,7 +72,7 @@ function unlock(input){
 
 function fullName(input, name){
 	if(!input){return name;}
-	return fullName(ParentMap[input.n], `${input?.n}.${name}`);
+	return fullName(ParentMap[input.n], `${input?.n} | ${name}`);
 }
 
 function arraysOverlap(a,b){
@@ -174,7 +174,7 @@ function load() {
 
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	//hide green border tips
-	if(Object.keys(data.i).length > 3){
+	if(Object.keys(data.i).length > 5){
 		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'));
 	}
 	
@@ -188,6 +188,7 @@ function load() {
 		game.inventory.children[key].l = value.l ?? 0;
 		game.inventory.children[key].q = value.q ?? false;
 		game.inventory.children[key].s = value.s ?? 0;
+		game.inventory.children[key].t = value.t ?? false;
 		if(value.u){
 			game.inventory.children[key].unlock();
 		}
@@ -198,7 +199,7 @@ function save() {
 	const data = {i:{}, s:game.settings, c:game.clock.lastUpdate};
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
-		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.f.u){
+		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
 			return;
 		}
 		
@@ -212,6 +213,7 @@ function save() {
 		if(!!value.l){ data.i[key].l = value.l; }
 		if(value.q){ data.i[key].q = value.q; }
 		if(!!value.s){ data.i[key].s = value.s; }
+		if(value.t){ data.i[key].t = value.t; }
 		if(value.f.u){ data.i[key].u = value.f.u; }
 	});
 	

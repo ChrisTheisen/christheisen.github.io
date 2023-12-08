@@ -1,7 +1,7 @@
 https://periodictable.com/index.html
 
 Bugs: 
-	
+
 TODO:
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item
@@ -11,5 +11,6 @@ make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 Upgrades/achievements?
 	-generator multiplier (only output/not input!)
 
-Update datalist filterSuggestions to only include unlocked groups/items/flavors
+Update datalist filterSuggestions?
+	-to only include unlocked groups/items/flavors
 

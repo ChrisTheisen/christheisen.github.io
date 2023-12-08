@@ -5,6 +5,7 @@ const ComponentMap = {};//Component Flavor Name -> Flavor[]
 const ParentMap = {};
 const AllFlavors = {};
 let ActualUsed = {};
+let ActualCreated = {};
 
 const MassUnits = {
 	Da:{s:'Da',n:'Dalton',c:602217364335000},
@@ -55,6 +56,8 @@ const Si29 = { n: 'Silicon29', u: false, m: 29, s: MassUnits.Da, c: [{ f: Proton
 const Si30 = { n: 'Silicon30', u: false, m: 30, s: MassUnits.Da, c: [{ f: Proton, a: 14, b:null }, { f: Neutron, a: 16, b:null }, { f: Electron, a: 14, b:null }] };
 const P31 = { n: 'Phosphorus31', u: false, m: 31, s: MassUnits.Da, c: [{ f: Proton, a: 15, b:null }, { f: Neutron, a: 16, b:null }, { f: Electron, a: 15, b:null }] };
 
+
+
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
 const asd = { n: '', u: false, m: 0, s: MassUnits.Da, c: [{ f: Proton, a: 0, b:null }, { f: Neutron, a: 0, b:null }, { f: Electron, a: 0, b:null }] };
@@ -62,7 +65,7 @@ const asd = { n: '', u: false, m: 0, s: MassUnits.Da, c: [{ f: Proton, a: 0, b:n
 
 //items
 const Quark = {
-    n: 'Quark', u: true, t: 0, c: [Q_Up, Q_Down],
+    n: 'Quark', u: true, t:.5, c: [Q_Up, Q_Down],
 	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.']
 };
 const Lepton = {
@@ -550,42 +553,42 @@ const Og = {
 const AlkaliMetal = {
 	n:'Alkali Metal', u:false,
 	info: ['Alkali Metals are soft, shiny, and highly reactive.'],
-	c: [Li, Na]
+	c: [Li, Na, K, Rb, Cs, Fr]
 }
 const AlkalineEarthMetal = {
 	n:'Alkaline Earth Metal', u:false,
 	info: ['Alkaline Earth Metals are not found free in nature, they are only found as compounds with other elements.'],
-	c: [Be, Mg]
+	c: [Be, Mg, Ca, Sr, Ba, Ra]
 }
 const Actinide = {
 	n:'Actinide', u:false,
 	info: ['Actinides are all radioactive and have no stable isotopes. In this game I included isotopes with a decay rate longer than a year.'],
-	c: [Ac227]
+	c: [Ac, Rh, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No]
 }
 const Chalcogen = {
 	n:'Chalcogen', u:false,
 	info:['Chalcogens have an unusual property called catenation, which means atoms will bond to other identical atoms. When oxygen bonds to other oxygen atoms it forms ozone.'],
-	c:[O, S]
+	c:[O, S, Se, Te, Po]
 }
 const Halogen = {
 	n:'Halogen', u:false,
 	info:['Halogens are only found combined with other elements in nature.'],
-	c:[F]
+	c:[F, Cl, Br, I, At, Ts]
 }
 const Lanthanide = {
 	n:'Lanthanide', u:false,
 	info: ['Lanthanide are sometimes called rare-earth elements or rare-earth metals.'],
-	c: []
+	c: [La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb]
 }
 const Metalloid = {
 	n:'Metalloid', u:false,
 	info: ['Metalloids have properties between metals and nonmetals.'],
-	c: [B, Si]
+	c: [B, Si, Ge, As, Sb]
 }
 const NobelGas = {
 	n:'Nobel Gas', u:false,
 	info: ['Noble gasses are naturally occurring and have very low reactivity.'],
-	c: [He, Ne]
+	c: [He, Ne, Ar, Kr, Xe, Rn, Og]
 }
 const Nonmetal = {
 	n:'Other Nonmetal', u:false,
@@ -595,12 +598,12 @@ const Nonmetal = {
 const PoorMetal = {
 	n:'Post-transition Metal', u:false,
 	info:['Post-transition Metals go by a few names including: poor metals, other metals, p-block metals, and chemically weak metals.'],
-	c:[Al]
+	c:[Al, Ga, In, Sn, Tl, Pb, Bi, Nh, Fl, Mc, Lv]
 }
-const TransitionMetal = {
+const TransitionMetal = {//possibly split up this group
 	n:'Transition Metal', u:false,
 	info:['Transition metals are typically hard and are are a large group of elements spanning multiple columns through the middle of the table.'],
-	c:[]
+	c:[Sc, Ti, V, Cr, Mn, Fe, Co, Ni, Cu, Zn, Y, Zr, Nb, Mo, Tc, Ru, Rh, Pd, Ag, Cd, Lu, Hf, Ta, W, Re, Os, Ir, Pt, Au, Hg, Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn]
 }
 
 

@@ -1,9 +1,9 @@
-function Menu(parent, input, b, d){
-	this.children = {};
-	this.f = [];
-	this.current = null;
+function Menu(parent, input, b){
 	this.b = b;
-	this.d = d;
+	this.d = parent;
+	if(!input){return;}
+	this.children = {};
+	this.current = null;
 	
 	const m = createUIElement({parent:parent, cssClasses:['menuButtons']});
 	const c = createUIElement({parent:parent, cssClasses:['menuContentWrapper']});
@@ -21,16 +21,6 @@ function Menu(parent, input, b, d){
 		}
 		if(x.intro){
 			createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']})
-		}
-		
-		this.children[x.n] = new Menu(div, x.c, btn, div);
-		if(x?.c){
-			//if it has children make the sub-menu.
-
-			if(x?.m){//if it has mass it is an individual flavor aka end of the sub-menus
-				game.inventory.getInvByFlavor(x).renderCreate(div);
-			}
-			return;
 		}
 		
 		//special tabs
@@ -51,8 +41,15 @@ function Menu(parent, input, b, d){
 				this.renderHelp(div);
 				break;
 			}
+			default:{
+				if(x?.m){
+					//if it has mass it is an individual flavor aka end of the sub-menus
+					game.inventory.getInvByFlavor(x).renderCreate(div);
+				}
+				break;
+			}
 		}
-		
+		this.children[x.n] = new Menu(div, x.c, btn);
 	});
 }
 Menu.prototype.gotoNode = function(input, parent = null){
@@ -73,31 +70,33 @@ Menu.prototype.gotoNode = function(input, parent = null){
 }
 
 Menu.prototype.update = function(){
-		Object.values(this.children).forEach(x => {
-			x.b.classList.remove('selected');
-			x.d.classList.add('hide');
-		});
-		if(!this.current){return;}
-		
-		this.children[this.current].b.classList.add('selected');
-		this.children[this.current].d.classList.remove('hide');
-		
-		this.children[this.current]?.update();//needed for gotoLeaf to work.
-		game.inventory.update();//updates the content quick when tab changes.
+	if(!this.children){return;}
+	Object.values(this.children).forEach(x => {
+		x.b.classList.remove('selected');
+		x.d.classList.add('hide');
+	});
+	if(!this.current){return;}
+	
+	this.children[this.current].b.classList.add('selected');
+	this.children[this.current].d.classList.remove('hide');
+	
+	this.children[this.current]?.update();//needed for gotoLeaf to work.
+
+	game.inventory.update();//updates the content quick when tab changes.
 }
 Menu.prototype.updateTable = function(){
 	const table = getUIElement('table');
 	const newTable = [];
-	const names = game.table.map(x => x.fullName).sort();
+	const names = game.table.map(x => x.f.n).sort();
 	newTable.push(createUIElement({type:'h3', textContent:'Matter Mutator'}));
 	names.forEach(x => {
-		const item = createUIElement({cssClasses:['tableItem', 'nowrap']});
+		const item = createUIElement({cssClasses:['tableItem', 'nowrap', 'row']});
 		
-		createUIElement({type:'span', parent:item, textContent:x});
-		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del'], textContent:'--', title:'Remove From Table',
+		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell']});
+		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Table',
 			onclick:() => {
 				for(let i=0;i<game.table.length;i++){
-					if(game.table[i].fullName === x){
+					if(game.table[i].f.n === x){
 						game.table.splice(i,1);
 						game.menu.updateTable();
 						return;
@@ -118,7 +117,7 @@ Menu.prototype.updateResults = function(input){
 
 	newTable.push(createUIElement({type:'h3', textContent:'Scan Results'}));
 	input.forEach(x => {
-		newTable.push(createUIElement({textContent:x.fullName??x}));
+		newTable.push(createUIElement({textContent:x.f?.n??x}));
 	});
 	
 	table.replaceChildren(...newTable);
@@ -131,7 +130,7 @@ Menu.prototype.renderDiscover = function(parent){
 		onclick:()=> setElementText(hout, generateDiscoverHint())});
 	const hout = createUIElement({type:'span',parent:hint});
 	
-	const filter = createUIElement({parent:parent});
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper']});
 	
 	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
 	const search = createUIElement({type:'input', parent:filter, id:'discoverFilter', attr:{type:'search', list:'filterSuggestions'}});
@@ -149,7 +148,9 @@ Menu.prototype.renderDiscover = function(parent){
 			game.inventory.update();
 		}});
 	
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginLeft:'15px'},
+	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
+
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:w, style:{marginRight:'75px', float:'right'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -165,7 +166,6 @@ Menu.prototype.renderDiscover = function(parent){
 			}
 		}});
 	
-	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px'}});
 	game.inventory.renderDiscover(bags);
 	
@@ -174,7 +174,7 @@ Menu.prototype.renderDiscover = function(parent){
 }
 
 Menu.prototype.renderManage = function(parent){
-	const filter = createUIElement({parent:parent});
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper']});
 	
 	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'manageFilter'}});
 	const search = createUIElement({type:'input', parent:filter, id:'manageFilter', attr:{type:'search', list:'filterSuggestions'}});

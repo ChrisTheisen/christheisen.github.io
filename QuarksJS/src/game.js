@@ -28,6 +28,7 @@ GameClock.prototype.tick = function(){
 	const p = Math.min(100 * this.duration / this.updateRate, 100);
 	this.content.p.style.width = `${p}%`;
 	
+	if(game.h){	game.hint(); }
 	if(this.duration < this.updateRate){ return; }
 	this.update();
 }
@@ -58,6 +59,7 @@ GameClock.prototype.update = function(){
 	
 	//do generates
 	ActualUsed = {};
+	ActualCreated = {};
 	Object.values(game.inventory.children).forEach(x => {
 		x.generate();
 	});
@@ -74,6 +76,7 @@ function Game(){
 	this.clock = new GameClock();
 	this.inventory = new Inventory();
 	this.menu = new Menu();
+	this.h = true;
 	this.hinterval = null;
 	this.bx = 1;
 	this.by = 1;
@@ -97,6 +100,7 @@ Game.prototype.hint = function(){
 	if(gic.Proton.a > 0 || gic.Neutron.a > 0 || gic.Proton.l > 0 || gic.Neutron.l > 0){
 		clearInterval(this.hinterval);
 		getUIElement('hint').classList.add('hide');
+		this.h = false;
 		return;
 	}//far enough to no more hints
 
@@ -114,7 +118,7 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Up.b.classList.toggle('hint', shouldUp && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up');
 	
 	const shouldUpCreate = shouldUp && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Up';
-	this.inventory.children.Up.content.b.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 9));
+	this.inventory.children.Up.content.b.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12));
 
 	const shouldUpGenerate = shouldUpCreate && gic.Up.a > 0 && gic.Up.l < 4 && gic.Up.upgradeCost() <= gic.Up.a;
 	this.inventory.children.Up.content.u.classList.toggle('hint', shouldUpGenerate);
@@ -123,7 +127,7 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Down.b.classList.toggle('hint', shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Down');
 	
 	const shouldDownCreate = shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Down';
-	this.inventory.children.Down.content.b.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 9));
+	this.inventory.children.Down.content.b.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12));
 	
 	const shouldDownGenerate = shouldDownCreate && gic.Down.a > 0 && gic.Down.l < 4 && gic.Down.upgradeCost() <= gic.Down.a;
 	this.inventory.children.Down.content.u.classList.toggle('hint', shouldDownGenerate);
@@ -147,7 +151,7 @@ Game.prototype.hint = function(){
 	
 	if(shouldProton && this.menu.children.Create.children.Subatomic.children.Baryon.current === 'Proton'){
 		const hintZone = getUIElement('hint');
-		setElementText(hintZone, 'Congratulations! Create a Proton to complete the tutorial and hide this obnoxious message.');
+		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
 		
 		if(!this.hinterval){
 			this.hzw = hintZone.offsetWidth;
@@ -233,9 +237,9 @@ function buildUI(){
 	
 	const tabs = [
 		{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. These "helpful tips" can be hidden from the Settings tab.'}, 
-		{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button.'}, 
+		{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Generate Discoverable Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator.'}, 
 		{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
-		{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these unsightly, but essential for some, messages about how to use a website.'}, 
+		{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these messages about how to use a website.'}, 
 		{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery.'], intro:'Click on a subject category below for more information.'}
 	];
 	game.menu = new Menu(root, tabs);

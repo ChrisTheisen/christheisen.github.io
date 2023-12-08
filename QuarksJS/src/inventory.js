@@ -115,12 +115,13 @@ Inventory.prototype.renderDiscover = function(parent){
 Inventory.prototype.renderManage = function(parent){
 	
 	const hRow = createUIElement({parent: parent, cssClasses:['row']});
-	createUIElement({parent:parent, cssClasses:['cell'], style:{width:'10%'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Name', style:{width:'30%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Owned', style:{width:'20%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Setpoint', style:{width:'20%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Demand', title:'Demand based on generator setpoints' , style:{width:'20%', textAlign:'left'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last update' , style:{width:'20%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], style:{width:'5%'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Name', style:{width:'20%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Owned', title:'The number of this item owned', style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Setpoint', title:'The target amount to create', style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Demand', title:'Demand based on generator setpoints' , style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Created', title:'Actual amount created in last update' , style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last update' , style:{width:'15%', cursor:'help'}});
 	
 	Object.values(this.children).forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['row']});
@@ -162,7 +163,7 @@ function InventoryItem(input){
 	this.p = ParentMap[input.n];//parent item
 	this.q = false;//show used in
 	this.s = 0;//generator set-point
-	this.t = false;//auth-upgrade rank
+	this.t = false;//auto-upgrade rank
 	
 	this.f.u = this.c.length === 0;
 	
@@ -182,6 +183,7 @@ function InventoryItem(input){
 		k:null, //generator rank label
 		l:[], //level label
 		m:null, //manage parent row(for hiding locked/filtered)
+		n:null, //actual-created label
 		o:null, //auto-uprank wrapper (for show/hide)
 		p:null, //discover parent row(for hiding locked/filtered)
 		q:null, //actual used label
@@ -221,16 +223,24 @@ InventoryItem.prototype.generatorClick = function(){
 }
 InventoryItem.prototype.generate = function(){
 	if(!this.e || !this.s){return;}
+	
+	if(this.a >= Number.MAX_SAFE_INTEGER){
+		this.a = Number.MAX_SAFE_INTEGER;
+		console.log('TRUNCATED!');
+		return;
+	}
+
 	if(this.p.t <= game.settings.d){//if cheater then just create
 		this.a += this.s;
 		return;
 	}
-
+	
 	const amount = Math.floor(Math.min(...this.c.map(x => x.inv.a/x.a), this.s));
 	this.c.forEach(x => {
 		ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
 		x.inv.a -= x.a * amount
 	});
+	ActualCreated[this.f.n] = amount;
 	this.a += amount;
 	game.inventory.update();
 }
@@ -454,7 +464,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
-	onclick:() => { if(this.a){game.table.push(this); game.menu.updateTable();}} });
+	onclick:() => { if(this.a && !game.table.includes(this)){game.table.push(this); game.menu.updateTable();}} });
 	
 	add.classList.toggle('disabled', !this.a);
 	
@@ -486,6 +496,9 @@ InventoryItem.prototype.renderManage = function(parent){
 		oninput:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
 		
 	this.content.z = createUIElement({parent:parent, cssClasses:['cell'], textContent:this.calculateDemand(), style:{textAlign:'center'}});
+
+	this.content.n = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualCreated[this.f.n], style:{textAlign:'center'}});
+
 	this.content.q = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualUsed[this.f.n], style:{textAlign:'center'}});
 }
 
@@ -517,6 +530,7 @@ InventoryItem.prototype.update = function(){
 			this.content.o?.classList.toggle('hide', this.k < 9);
 			this.content.r?.classList.toggle('hide', !this.q && game.settings.u);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
+			this.content.t.checked = this.t;
 			this.content.u?.classList.toggle('disabled', !canUpgrade);
 			this.content.v?.classList.toggle('disabled', !canUprank);
 			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);
@@ -524,12 +538,12 @@ InventoryItem.prototype.update = function(){
 			break;
 		}
 		case 'Discover': {
+			const tableContains = game.table.includes(this);
 			const filterDiscoverStock = game.settings.d.o && !this.a;
 			const filterDiscoverSearch = game.settings.d.s && !this.fullName.toLowerCase().includes(game.settings.d.s);
 	
 			this.content.a.forEach(x => setElementText(x, this.a));
-			this.content.b.forEach(x => x.classList.toggle('disabled', !canCreate));
-			this.content.d?.classList.toggle('disabled', !this.a);
+			this.content.d?.classList.toggle('disabled', !this.a || tableContains);
 			this.content.p?.classList.toggle('hide', !isUnlocked || filterDiscoverStock || filterDiscoverSearch);
 			break;
 		}
@@ -558,7 +572,9 @@ InventoryItem.prototype.update = function(){
 			this.content.m?.classList.toggle('hide', !isUnlocked || !filterManage || filterManageSearch);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0; });
 			setElementText(this.content.z, demand);
+			setElementText(this.content.n, ActualCreated[this.f.n]??'-');
 			setElementText(this.content.q, ActualUsed[this.f.n]??'-');
+
 			break;
 		}
 	}
