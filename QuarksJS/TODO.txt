@@ -6,6 +6,7 @@ Manage filter not always correct when switch to tab
 
 TODO:
 Add bullet points or styling to help item contents?
+Pause button
 
 enabled checkbox on Manage tab
 

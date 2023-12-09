@@ -578,6 +578,4 @@ InventoryItem.prototype.update = function(){
 			break;
 		}
 	}
-	
-	this.c.forEach(x => x.inv.update());
 }
