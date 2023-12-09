@@ -456,7 +456,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName, style:{width:'50%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{width:'50%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left'}})
 	createUIElement({type:'span', parent:ow, textContent:'Owned:'});

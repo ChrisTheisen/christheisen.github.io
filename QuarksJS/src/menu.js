@@ -147,10 +147,9 @@ Menu.prototype.renderDiscover = function(parent){
 			game.settings.d.o = !game.settings.d.o;
 			game.inventory.update();
 		}});
-	
-	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:w, style:{marginRight:'75px'},
+
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginLeft:'75px'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -166,6 +165,9 @@ Menu.prototype.renderDiscover = function(parent){
 			}
 		}});
 	
+
+	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
+
 	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px'}});
 	game.inventory.renderDiscover(bags);
 	

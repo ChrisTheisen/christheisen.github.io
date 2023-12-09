@@ -2,7 +2,7 @@ https://periodictable.com/index.html
 
 Bugs: 
 Scan button location is inconsistent on different screen sizes
-Manage filter not always correct when switch to tab
+Manage/Discover filter not always correct when switch to tab
 
 TODO:
 Add bullet points or styling to help item contents?
