@@ -378,9 +378,9 @@ InventoryItem.prototype.renderComponents = function(parent){
 InventoryItem.prototype.renderComponent = function(parent, input){
 	const inv = game.inventory.getInvByFlavor(input.f);
 	
-	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
+	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}, cssClasses:['cell']}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
-		onclick:() => game.menu.gotoNode(this.f.n)});
+		onclick:() => game.menu.gotoNode(inv.f.n)});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:inv.f.n, title:inv.fullName,style:{width:'30%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], 
@@ -419,7 +419,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	this.content.g = createUIElement({type:'span', parent:row1, textContent:`${this.upgradeCost()}`});
 	createUIElement({type:'span', parent:row1, textContent:` ${this.f.n}`});
 
-	const row2 = createUIElement({parent:parent});
+	const row2 = createUIElement({parent:parent, cssClasses:['generator', 'nowrap']});
 	this.content.h = row2;
 	createUIElement({type:'span', parent:row2, textContent:'Auto-Upgrade Level'});
 	this.content.i = createUIElement({type:'input', parent:row2, title:'Auto-Upgrade if affordable',
@@ -437,7 +437,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	this.content.f = createUIElement({type:'span', parent:row3, textContent:`${this.uprankCost()}`});
 	createUIElement({type:'span', parent:row3, textContent:` ${this.f.n} Generators`});
 	
-	const row4 = createUIElement({parent:parent, cssClasses:['generator', 'nowrap', 'cell']});
+	const row4 = createUIElement({parent:parent, cssClasses:['generator', 'nowrap']});
 	this.content.o = row4;
 	createUIElement({type:'span', parent:row4, textContent:'Auto-Upgrade Rank'});
 	this.content.t = createUIElement({type:'input', parent:row4, title:'Auto-Upgrade rank if Level ≥ 2xCost',
@@ -486,7 +486,7 @@ InventoryItem.prototype.renderManage = function(parent){
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 		onclick:() => game.menu.gotoNode(this.f.n)});
 	
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName, style:{textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{textAlign:'left', overflowY:'clip'}});
 	
 	this.content.a.push(createUIElement({parent:parent, textContent:this.a, style:{textAlign:'center'}}));
 	
@@ -522,19 +522,19 @@ InventoryItem.prototype.update = function(){
 			this.content.e.checked = this.e;
 			setElementText(this.content?.f, uprankCost);
 			setElementText(this.content?.g, upgradeCost);
-			this.content.h?.classList.toggle('hide', this.l < 19 && this.k < 1);
+			this.content.h?.classList.toggle('hide', this.l < 9 && this.k < 1);
 			this.content.i.checked = this.i;
-			this.content.j?.classList.toggle('hide', this.l < 29 && this.k < 1);
+			this.content.j?.classList.toggle('hide', this.l < 19 && this.k < 1);
 			setElementText(this.content?.k, this.k??0);
 			this.content.l.forEach(x => setElementText(x, this.l??0));
-			this.content.o?.classList.toggle('hide', this.k < 9);
+			this.content.o?.classList.toggle('hide', this.k < 5);
 			this.content.r?.classList.toggle('hide', !this.q && game.settings.u);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
 			this.content.t.checked = this.t;
 			this.content.u?.classList.toggle('disabled', !canUpgrade);
 			this.content.v?.classList.toggle('disabled', !canUprank);
 			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);
-			this.content.x?.classList.toggle('hide', this.l < 9 && this.k < 1);
+			this.content.x?.classList.toggle('hide', this.l < 5 && this.k < 1);
 			break;
 		}
 		case 'Discover': {

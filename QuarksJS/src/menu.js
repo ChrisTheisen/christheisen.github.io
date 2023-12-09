@@ -53,12 +53,12 @@ function Menu(parent, input, b){
 	});
 }
 Menu.prototype.gotoNode = function(input, parent = null){
-	if(Object.keys(this.children).includes(input)){
+	if(Object.keys(this.children ?? {}).includes(input)){
 		this.current = input;
 		this.update();
 		return true;
 	}
-	for(let [key, value] of Object.entries(this.children)){
+	for(let [key, value] of Object.entries(this.children ?? {})){
 		if(value?.gotoNode(input, this)){
 			this.current = key;
 			this.update();

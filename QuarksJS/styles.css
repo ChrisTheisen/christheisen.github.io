@@ -24,7 +24,7 @@ button{
 	box-shadow: none;
 	border: solid 1px var(--bg1);
 	margin: 1px 5px;
-	padding: 5px;
+	padding: 10px 15px;
 	cursor: pointer;
 }
 
@@ -38,7 +38,7 @@ a, a:visited{
 
 .center{
 	width:50%;
-	min-width: 480px;
+	min-width: 600px;
 	margin:auto;
 }
 
@@ -85,6 +85,7 @@ a, a:visited{
 .cell{
 	display: table-cell;
 	padding: 0 5px;
+	line-height:50px;
 }
 
 .info{
@@ -108,6 +109,7 @@ a, a:visited{
 
 .selected{
 	border: solid 1px var(--c1);
+	filter: brightness(70%);
 }
 
 .mutraction{
@@ -121,14 +123,16 @@ a, a:visited{
 }
 
 .circleButton{
-	font-size: 16px;
-	height: 26px;
-	width:26px;
+	font-size:19px;
+	height: 36px;
+	width:36px;
 	padding:0;
-	margin:0;
+	margin:5px;
 	border: solid 1px var(--c1);
 	border-radius:50%;
 	background-color: var(--bg0);
+	line-height:23px;
+	
 }
 
 .goto{
@@ -218,11 +222,13 @@ a, a:visited{
 .manage{
 	max-height: calc(100vh - 275px);
 	overflow-y:auto;
+	overflow-x:clip;
 }
 
 .discover{
 	max-height: calc(100vh - 350px);
 	overflow-y:auto;
+	overflow-x:clip;
 }
 
 .disabled{
