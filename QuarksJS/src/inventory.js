@@ -148,7 +148,7 @@ Inventory.prototype.update = function(){
 }
 
 function InventoryItem(input){
-	//unused: ot
+	this.tier = Object.keys(MassUnits).indexOf(input.s.s);
 	
 	this.a = 0;//amout
 	this.b = new Amount();//bulk storage
@@ -199,14 +199,14 @@ function InventoryItem(input){
 	};
 }
 InventoryItem.prototype.generatorMax = function(){
-	const s = Math.max(.5, this.p.t)/2*this.rankBonus();
+	const s = .2*this.rankBonus();
 	const a = s*this.l**2;
 	const b = s*this.l;
 	const c = this.l;
 	return Math.floor(a+b+c);
 }
 InventoryItem.prototype.generatorClick = function(){
-	if(this.p.t <= game.settings.d){
+	if(game.settings.c > this.tier){
 		this.a++;
 		return;
 	}
@@ -230,8 +230,9 @@ InventoryItem.prototype.generate = function(){
 		return;
 	}
 
-	if(this.p.t <= game.settings.d){//if cheater then just create
+	if(game.settings.c > this.tier){//if cheater then just create
 		this.a += this.s;
+		game.inventory.update();
 		return;
 	}
 	
@@ -245,7 +246,7 @@ InventoryItem.prototype.generate = function(){
 	game.inventory.update();
 }
 InventoryItem.prototype.upgradeCost = function(){
-	const s = Math.max(.5, this.p.t)/4*this.rankDiscount();
+	const s = .2*this.rankDiscount();
 	const a = s*this.l**3;
 	const b = s*this.l**2;
 	const c = s*this.l;
@@ -271,7 +272,7 @@ InventoryItem.prototype.calculateDemand = function(){
 	return output;
 }
 InventoryItem.prototype.uprankCost = function(){
-	const s = 1+(Math.max(.5, this.p.t)/4);
+	const s = 1.25;
 	const a = s**this.k;
 	return Math.ceil(a);
 }
@@ -297,9 +298,8 @@ InventoryItem.prototype.uprank = function(){
 	this.update();
 }
 
-
 InventoryItem.prototype.canCreate = function(){
-	return this.p.t <= game.settings.d || !this.c.some(x => x.inv.a < x.a );
+	return game.settings.c > this.tier || !this.c.some(x => x.inv.a < x.a );
 }
 InventoryItem.prototype.isUnlocked = function(){
 	return isUnlocked(this.f);
@@ -422,7 +422,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	const row2 = createUIElement({parent:parent, cssClasses:['generator', 'nowrap']});
 	this.content.h = row2;
 	createUIElement({type:'span', parent:row2, textContent:'Auto-Upgrade Level'});
-	this.content.i = createUIElement({type:'input', parent:row2, title:'Auto-Upgrade if affordable',
+	this.content.i = createUIElement({type:'input', parent:row2, title:'Auto-Upgrade if Own ≥ 2xCost',
 		attr:{type:'checkbox'},onclick:() => this.i = !this.i});
 		
 	const row3 = createUIElement({parent:parent, cssClasses:['generator', 'nowrap', 'cell']});
@@ -510,8 +510,8 @@ InventoryItem.prototype.update = function(){
 	const canUpgrade = this.a >= upgradeCost;
 	const canUprank = this.l >= uprankCost;
 	
-	if(canUpgrade && this.i){ this.upgrade(); }
-	if(this.l >= uprankCost*2 && this.t){ this.uprank(); }
+	if(this.i && this.a >= upgradeCost*2){ this.upgrade(); }
+	if(this.t && this.l >= uprankCost*2){ this.uprank(); }
 	
 	switch(game.menu.current){
 		case 'Create': {

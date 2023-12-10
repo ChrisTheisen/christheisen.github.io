@@ -1,8 +1,6 @@
 https://periodictable.com/index.html
 
 Bugs: 
-Scan button location is inconsistent on different screen sizes
-Manage/Discover filter not always correct when switch to tab
 
 TODO:
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)

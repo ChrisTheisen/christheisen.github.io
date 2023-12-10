@@ -109,7 +109,7 @@ a, a:visited{
 
 .selected{
 	border: solid 1px var(--c1);
-	filter: brightness(70%);
+	filter: brightness(150%);
 }
 
 .mutraction{

@@ -80,6 +80,12 @@ const Cr50 = { n: 'Chromium50', u: false, m: 50, s: MassUnits.Da, c: [{ f: Proto
 const Cr52 = { n: 'Chromium52', u: false, m: 52, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 24, b:null }] };
 const Cr53 = { n: 'Chromium53', u: false, m: 53, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 29, b:null }, { f: Electron, a: 24, b:null }] };
 const Cr54 = { n: 'Chromium54', u: false, m: 54, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 24, b:null }] };
+const Mn55 = { n: 'Manganese55', u: false, m: 55, s: MassUnits.Da, c: [{ f: Proton, a: 25, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 25, b:null }] };
+const Fe54 = { n: 'Iron54', u: false, m: 54, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 26, b:null }] };
+const Fe56 = { n: 'Iron56', u: false, m: 56, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 26, b:null }] };
+const Fe57 = { n: 'Iron57', u: false, m: 57, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 31, b:null }, { f: Electron, a: 26, b:null }] };
+const Fe58 = { n: 'Iron58', u: false, m: 58, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 26, b:null }] };
+const Co59 = { n: 'Cobalt59', u: false, m: 59, s: MassUnits.Da, c: [{ f: Proton, a: 27, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 27, b:null }] };
 
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
@@ -88,487 +94,487 @@ const asd = { n: '', u: false, m: 0, s: MassUnits.Da, c: [{ f: Proton, a: 0, b:n
 
 //items
 const Quark = {
-    n: 'Quark', u: true, t:.5, c: [Q_Up, Q_Down],
+    n: 'Quark', u: true, c: [Q_Up, Q_Down],
 	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.']
 };
 const Lepton = {
-    n: 'Lepton', u: true, t: .6, c: [Electron],
+    n: 'Lepton', u: true, c: [Electron],
     info: ['Leptons are some of the most basic building blocks. They come in 6 types: Electron, Muon, Tau, Electron Neutrino, Muon Neutrino, and Tau Neutrino. In this game we are only using Electrons.']
 };
 const Baryon = {
-    n: 'Baryon', u: false, t: .8, c: [Proton, Neutron],
+    n: 'Baryon', u: false, c: [Proton, Neutron],
     info: ['Baryons are made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.']
 };
 const H = {
-    n: 'Hydrogen', u: false, t: 1, c: [H1, H2],
+    n: 'Hydrogen', u: false, c: [H1, H2],
     info: ['Hydrogen is the most common element in the universe, made with only a single proton. Hydrogen is highly flamable and lighter than air.']
 };
 const He = {
-    n: 'Helium', u: false, t: 1, c: [He3, He4],
+    n: 'Helium', u: false, c: [He3, He4],
     info: ['Helium-3 is much more rare than the normal Helium-4. Helium is lighter than air.']
 };
 const Li = {
-    n: 'Lithium', u: false, t: 1, c: [Li6, Li7],
+    n: 'Lithium', u: false, c: [Li6, Li7],
     info: ['Lithium-6 is much more rare than the normal Lithium-7. Lithium is often used in rechargable batteries.']
 };
 const Be = {
-	n: 'Beryllium', u:false, t:1, c: [Be9],
+	n: 'Beryllium', u:false, c: [Be9],
 	info: ['Beryllium has only a single stable isotope. Be10 has a halflife of ~1.4 million years is used in surface exposure dating.']
 };
 const B = {
-	n:'Boron', u:false, t:1, c: [B10, B11],
+	n:'Boron', u:false, c: [B10, B11],
 	info: ['Boron is required for healthy plants.']
 };
 const C = {
-	n:'Carbon', u:false, t:1, c: [C12, C13],
+	n:'Carbon', u:false, c: [C12, C13],
 	info: ['Carbon is used in organic matter and many industries. C14 is has a halflife of ~5700 years and is used to date dead organic matter.']
 };
 const N = {
-	n:'Nitrogen', u:false, t:1, c: [N14, N15],
+	n:'Nitrogen', u:false, c: [N14, N15],
 	info: ['Nitrogen is a very abundant element and is used in many industries.']
 };
 const O = {
-	n:'Oxygen', u:false, t:1, c: [O16, O17, O18],
+	n:'Oxygen', u:false, c: [O16, O17, O18],
 	info: ['Oxygen is needed for all animals that breathe. As of now henneguya salminicola is the only known animal that does not need oxygen.']
 };
 const F = {
-	n:'Fluorine', u: false, t:1, c:[F19],
+	n:'Fluorine', u: false, c:[F19],
 	info: ['Fluorine only has one stable isotope. It is a highly toxic gas and is used in the creation of Teflon.']
 };
 const Ne = {
-	n:'Neon', u:false, t:1, c: [Ne20, Ne21, Ne22],
+	n:'Neon', u:false, c: [Ne20, Ne21, Ne22],
 	info: ['There are three stable isotopes of Neon with Neon20 being the most naturally abundant. Neon is used in lights and advertising signs.']
 };
 const Na = {
-	n:'Sodium', u:false, t:1, c: [Na23],
+	n:'Sodium', u:false, c: [Na23],
 	info: ['Sodium is used in sodium vapor lamps (widely used as street lights) and sodium-ion batteries. Sodium is cheaper than lithium but sodium-ion batteries have a few engineering challenges before they are ready to be more widely used.']
 };
 const Mg = {
-	n:'Magnesium', u:false, t:1, c: [Mg24, Mg25, Mg26],
+	n:'Magnesium', u:false, c: [Mg24, Mg25, Mg26],
 	info: ['Magnesium is essential for many human body functions including healthy bones and heart. It is found in leafy greens, nuts, seeds and more.']
 };
 const Al = {
-	n:'Aluminum', u:false, t:1, c: [Al27],
+	n:'Aluminum', u:false, c: [Al27],
 	info: ['Aluminum, also spelled aluminium, is a very abundant metal on Earth. It is used in food storage and many other industries.']
 };
 const Si = {
-	n:'Silicon', u:false, t:1, c:[Si28, Si29, Si30],
+	n:'Silicon', u:false, c:[Si28, Si29, Si30],
 	info: ['Silicon is used in semiconductors and solar cells. When combined with oxygen it makes silicone, which is used in making parts for toys.']
 };
 const P = {
-	n:'Phosphorus', u:false, t:1, c:[P31],
+	n:'Phosphorus', u:false, c:[P31],
 	info: ['Phosphorus is used in matches.']
 };
 const S = {
-	n:'Sulfur', u:false, t:1, c:[S32,S33,S34,S36],
+	n:'Sulfur', u:false, c:[S32,S33,S34,S36],
 	info: ['Sulfur is found pure in nature, likely from volcanoes.']
 };
 const Cl = {
-	n:'Chlorine', u:false, t:1, c:[Cl35,Cl37],
+	n:'Chlorine', u:false, c:[Cl35,Cl37],
 	info: ['Chlorine is a commonly used to purify drinking water and swimming pools.']
 };
 const Ar = {
-	n:'Argon', u:false, t:1, c:[Ar36,Ar38,Ar40],
+	n:'Argon', u:false, c:[Ar36,Ar38,Ar40],
 	info: ['Argon is intert and colorless but glows blue when excited by an electrical charge.']
 };
 const K = {
-	n:'Potassium', u:false, t:1, c:[K39,K40,K41],
+	n:'Potassium', u:false, c:[K39,K40,K41],
 	info: ['Potassium is an electrolyte the body needs to function but is harmful in larger quantities.']
 };
 const Ca = {
-	n:'Calcium', u:false, t:1, c:[Ca40,Ca42,Ca43,Ca44,Ca46,Ca48],
+	n:'Calcium', u:false, c:[Ca40,Ca42,Ca43,Ca44,Ca46,Ca48],
 	info: ['Calcium in it\'s pure form is rare, it is often associated with bone strength.']
 };
 const Sc = {
-	n:'Scandium', u:false, t:1, c:[Sc45],
+	n:'Scandium', u:false, c:[Sc45],
 	info: ['Scandium has few uses outside of research.']
 };
 const Ti = {
-	n:'Titanium', u:false, t:1, c:[Ti46,Ti47,Ti48,Ti49,Ti50],
+	n:'Titanium', u:false, c:[Ti46,Ti47,Ti48,Ti49,Ti50],
 	info: ['Titanium is a very strong but light and is used in alloys for aerospace industries. It is also used in several other industries.']
 };
 const V = {
-	n:'Vanadium', u:false, t:1, c:[V50,V51],
+	n:'Vanadium', u:false, c:[V50,V51],
 	info: ['Vandium is mostly used in vandium-steel alloys.']
 };
 const Cr = {
-	n:'Chromium', u:false, t:1, c:[Cr50,Cr52,Cr53,Cr54],
+	n:'Chromium', u:false, c:[Cr50,Cr52,Cr53,Cr54],
 	info: ['Chromium is often used to harden steel and increase rust resistance.']
 };
 const Mn = {
-	n:'Manganese', u:false, t:1, c:[],
-	info: ['']
+	n:'Manganese', u:false, c:[Mn55],
+	info: ['Manganese is used as a component in a steel alloy for railroad tracks and other industries.']
 };
 const Fe = {
-	n:'Iron', u:false, t:1, c:[],
-	info: ['']
+	n:'Iron', u:false, c:[],
+	info: ['Iron rusts easily but is the most used metal. It is mostly used to manufacture steel.']
 };
 const Co = {
-	n:'Cobalt', u:false, t:1, c:[],
-	info: ['']
+	n:'Cobalt', u:false, c:[Co59],
+	info: ['Cobalt can be magnetised and is used in industries where high-temperature strength is important.']
 };
 const Ni = {
-	n:'Nickel', u:false, t:1, c:[],
+	n:'Nickel', u:false, c:[],
 	info: ['']
 };
 const Cu = {
-	n:'Copper', u:false, t:1, c:[],
+	n:'Copper', u:false, c:[],
 	info: ['']
 };
 const Zn = {
-	n:'Zinc', u:false, t:1, c:[],
+	n:'Zinc', u:false, c:[],
 	info: ['']
 };
 const Ga = {
-	n:'Gallium', u:false, t:1, c:[],
+	n:'Gallium', u:false, c:[],
 	info: ['']
 };
 const Ge = {
-	n:'Germanium', u:false, t:1, c:[],
+	n:'Germanium', u:false, c:[],
 	info: ['']
 };
 const As = {
-	n:'Arsenic', u:false, t:1, c:[],
+	n:'Arsenic', u:false, c:[],
 	info: ['']
 };
 const Se = {
-	n:'Selenium', u:false, t:1, c:[],
+	n:'Selenium', u:false, c:[],
 	info: ['']
 };
 const Br = {
-	n:'Bromine', u:false, t:1, c:[],
+	n:'Bromine', u:false, c:[],
 	info: ['']
 };
 const Kr = {
-	n:'Krypton', u:false, t:1, c:[],
+	n:'Krypton', u:false, c:[],
 	info: ['']
 };
 const Rb = {
-	n:'Rubidium', u:false, t:1, c:[],
+	n:'Rubidium', u:false, c:[],
 	info: ['']
 };
 const Sr = {
-	n:'Strontium', u:false, t:1, c:[],
+	n:'Strontium', u:false, c:[],
 	info: ['']
 };
 const Y = {
-	n:'Yttrium', u:false, t:1, c:[],
+	n:'Yttrium', u:false, c:[],
 	info: ['']
 };
 const Zr = {
-	n:'Zirconium', u:false, t:1, c:[],
+	n:'Zirconium', u:false, c:[],
 	info: ['']
 };
 const Nb = {
-	n:'Niobium', u:false, t:1, c:[],
+	n:'Niobium', u:false, c:[],
 	info: ['']
 };
 const Mo = {
-	n:'Molybdenum', u:false, t:1, c:[],
+	n:'Molybdenum', u:false, c:[],
 	info: ['']
 };
 const Tc = {
-	n:'Technetium', u:false, t:1, c:[],
+	n:'Technetium', u:false, c:[],
 	info: ['']
 };
 const Ru = {
-	n:'Ruthenium', u:false, t:1, c:[],
+	n:'Ruthenium', u:false, c:[],
 	info: ['']
 };
 const Rh = {
-	n:'Rhodium', u:false, t:1, c:[],
+	n:'Rhodium', u:false, c:[],
 	info: ['']
 };
 const Pd = {
-	n:'Palladium', u:false, t:1, c:[],
+	n:'Palladium', u:false, c:[],
 	info: ['']
 };
 const Ag = {
-	n:'Silver', u:false, t:1, c:[],
+	n:'Silver', u:false, c:[],
 	info: ['']
 };
 const Cd = {
-	n:'Cadmium', u:false, t:1, c:[],
+	n:'Cadmium', u:false, c:[],
 	info: ['']
 };
 const In = {
-	n:'Indium', u:false, t:1, c:[],
+	n:'Indium', u:false, c:[],
 	info: ['']
 };
 const Sn = {
-	n:'Tin', u:false, t:1, c:[],
+	n:'Tin', u:false, c:[],
 	info: ['']
 };
 const Sb = {
-	n:'Antimony', u:false, t:1, c:[],
+	n:'Antimony', u:false, c:[],
 	info: ['']
 };
 const Te = {
-	n:'Tellurium', u:false, t:1, c:[],
+	n:'Tellurium', u:false, c:[],
 	info: ['']
 };
 const I = {
-	n:'Iodine', u:false, t:1, c:[],
+	n:'Iodine', u:false, c:[],
 	info: ['']
 };
 const Xe = {
-	n:'Xenon', u:false, t:1, c:[],
+	n:'Xenon', u:false, c:[],
 	info: ['']
 };
 const Cs = {
-	n:'Cesium', u:false, t:1, c:[],
+	n:'Cesium', u:false, c:[],
 	info: ['']
 };
 const Ba = {
-	n:'Barium', u:false, t:1, c:[],
+	n:'Barium', u:false, c:[],
 	info: ['']
 };
 const La = {
-	n:'Lanthanum', u:false, t:1, c:[],
+	n:'Lanthanum', u:false, c:[],
 	info: ['']
 };
 const Ce = {
-	n:'Cerium', u:false, t:1, c:[],
+	n:'Cerium', u:false, c:[],
 	info: ['']
 };
 const Pr = {
-	n:'Praseodymium', u:false, t:1, c:[],
+	n:'Praseodymium', u:false, c:[],
 	info: ['']
 };
 const Nd = {
-	n:'Neodymium', u:false, t:1, c:[],
+	n:'Neodymium', u:false, c:[],
 	info: ['']
 };
 const Pm = {
-	n:'Promethium', u:false, t:1, c:[],
+	n:'Promethium', u:false, c:[],
 	info: ['']
 };
 const Sm = {
-	n:'Samarium', u:false, t:1, c:[],
+	n:'Samarium', u:false, c:[],
 	info: ['']
 };
 const Eu = {
-	n:'Europium', u:false, t:1, c:[],
+	n:'Europium', u:false, c:[],
 	info: ['']
 };
 const Gd = {
-	n:'Gadolinium', u:false, t:1, c:[],
+	n:'Gadolinium', u:false, c:[],
 	info: ['']
 };
 const Tb = {
-	n:'Terbium', u:false, t:1, c:[],
+	n:'Terbium', u:false, c:[],
 	info: ['']
 };
 const Dy = {
-	n:'Dysprosium', u:false, t:1, c:[],
+	n:'Dysprosium', u:false, c:[],
 	info: ['']
 };
 const Ho = {
-	n:'Holmium', u:false, t:1, c:[],
+	n:'Holmium', u:false, c:[],
 	info: ['']
 };
 const Er = {
-	n:'Erbium', u:false, t:1, c:[],
+	n:'Erbium', u:false, c:[],
 	info: ['']
 };
 const Tm = {
-	n:'Thulium', u:false, t:1, c:[],
+	n:'Thulium', u:false, c:[],
 	info: ['']
 };
 const Yb = {
-	n:'Ytterbium', u:false, t:1, c:[],
+	n:'Ytterbium', u:false, c:[],
 	info: ['']
 };
 const Lu = {
-	n:'Lutetium', u:false, t:1, c:[],
+	n:'Lutetium', u:false, c:[],
 	info: ['']
 };
 const Hf = {
-	n:'Hafnium', u:false, t:1, c:[],
+	n:'Hafnium', u:false, c:[],
 	info: ['']
 };
 const Ta = {
-	n:'Tantalum', u:false, t:1, c:[],
+	n:'Tantalum', u:false, c:[],
 	info: ['']
 };
 const W = {
-	n:'Tungsten', u:false, t:1, c:[],
+	n:'Tungsten', u:false, c:[],
 	info: ['']
 };
 const Re = {
-	n:'Rhenium', u:false, t:1, c:[],
+	n:'Rhenium', u:false, c:[],
 	info: ['']
 };
 const Os = {
-	n:'Osmium', u:false, t:1, c:[],
+	n:'Osmium', u:false, c:[],
 	info: ['']
 };
 const Ir = {
-	n:'Iridium', u:false, t:1, c:[],
+	n:'Iridium', u:false, c:[],
 	info: ['']
 };
 const Pt = {
-	n:'Platinum', u:false, t:1, c:[],
+	n:'Platinum', u:false, c:[],
 	info: ['']
 };
 const Au = {
-	n:'Gold', u:false, t:1, c:[],
+	n:'Gold', u:false, c:[],
 	info: ['']
 };
 const Hg = {
-	n:'Mercury', u:false, t:1, c:[],
+	n:'Mercury', u:false, c:[],
 	info: ['']
 };
 const Tl = {
-	n:'Thallium', u:false, t:1, c:[],
+	n:'Thallium', u:false, c:[],
 	info: ['']
 };
 const Pb = {
-	n:'Lead', u:false, t:1, c:[],
+	n:'Lead', u:false, c:[],
 	info: ['']
 };
 const Bi = {
-	n:'Bismuth', u:false, t:1, c:[],
+	n:'Bismuth', u:false, c:[],
 	info: ['']
 };
 const Po = {
-	n:'Polonium', u:false, t:1, c:[],
+	n:'Polonium', u:false, c:[],
 	info: ['']
 };
 const At = {
-	n:'Astatine', u:false, t:1, c:[],
+	n:'Astatine', u:false, c:[],
 	info: ['Astatine has no known stable isotopes; I have included the isotope with the longest decay rate of 8 hours.']
 };
 const Rn = {
-	n:'Radon', u:false, t:1, c:[],
+	n:'Radon', u:false, c:[],
 	info: ['Radon has no known stable isotopes; I have included the isotope with the longest decay rate of 3.8 days.']
 };
 const Fr = {
-	n:'Francium', u:false, t:1, c:[],
+	n:'Francium', u:false, c:[],
 	info: ['Francium has no known stable isotopes; I have included the isotope with the longest decay rate of 21.6 minutes.']
 };
 const Ra = {
-	n:'Radium', u:false, t:1, c:[],
+	n:'Radium', u:false, c:[],
 	info: ['Radium has no known stable isotopes; I have included the isotope with a decay rate greater than 1 year at 1585.5 years.']
 };
 const Ac = {
-	n:'Actinium', u:false, t:1, c:[Ac227],
-	info: ['Actinium has no known stable isotopes; I have included the isotope with a decay rate greater than 1 year at 21.8 years.']
+	n:'Actinium', u:false, c:[Ac227],
+	info: ['Actinium has no known stable isotopes; I have included the isotope with the longest decay rate at 21.8 years.']
 };
 const Th = {
-	n:'Thorium', u:false, t:1, c:[],
+	n:'Thorium', u:false, c:[],
 	info: ['Thorium has no known stable isotopes; I have included the isotopes with the longest decay rate greater than 1 year.']
 };
 const Pa = {
-	n:'Protactinium', u:false, t:1, c:[],
+	n:'Protactinium', u:false, c:[],
 	info: [' ']
 };
 const U = {
-	n:'Uranium', u:false, t:1, c:[],
+	n:'Uranium', u:false, c:[],
 	info: [' ']
 };
 const Np = {
-	n:'Neptunium', u:false, t:1, c:[],
+	n:'Neptunium', u:false, c:[],
 	info: [' ']
 };
 const Pu = {
-	n:'Plutonium', u:false, t:1, c:[],
+	n:'Plutonium', u:false, c:[],
 	info: [' ']
 };
 const Am = {
-	n:'Americium', u:false, t:1, c:[],
+	n:'Americium', u:false, c:[],
 	info: [' ']
 };
 const Cm = {
-	n:'Curium', u:false, t:1, c:[],
+	n:'Curium', u:false, c:[],
 	info: [' ']
 };
 const Bk = {
-	n:'Berkelium', u:false, t:1, c:[],
+	n:'Berkelium', u:false, c:[],
 	info: [' ']
 };
 const Cf = {
-	n:'Californium', u:false, t:1, c:[],
+	n:'Californium', u:false, c:[],
 	info: [' ']
 };
 const Es = {
-	n:'Einsteinium', u:false, t:1, c:[],
+	n:'Einsteinium', u:false, c:[],
 	info: [' ']
 };
 const Fm = {
-	n:'Fermium', u:false, t:1, c:[],
+	n:'Fermium', u:false, c:[],
 	info: [' ']
 };
 const Md = {
-	n:'Mendelevium', u:false, t:1, c:[],
+	n:'Mendelevium', u:false, c:[],
 	info: [' ']
 };
 const No = {
-	n:'Nobelium', u:false, t:1, c:[],
+	n:'Nobelium', u:false, c:[],
 	info: [' ']
 };
 const Lr = {
-	n:'Lawrencium', u:false, t:1, c:[],
+	n:'Lawrencium', u:false, c:[],
 	info: [' ']
 };
 const Rf = {
-	n:'Rutherfordium', u:false, t:1, c:[],
+	n:'Rutherfordium', u:false, c:[],
 	info: [' ']
 };
 const Db = {
-	n:'Dubnium', u:false, t:1, c:[],
+	n:'Dubnium', u:false, c:[],
 	info: [' ']
 };
 const Sg = {
-	n:'Seaborgium', u:false, t:1, c:[],
+	n:'Seaborgium', u:false, c:[],
 	info: [' ']
 };
 const Bh = {
-	n:'Bohrium', u:false, t:1, c:[],
+	n:'Bohrium', u:false, c:[],
 	info: [' ']
 };
 const Hs = {
-	n:'Hassium', u:false, t:1, c:[],
+	n:'Hassium', u:false, c:[],
 	info: [' ']
 };
 const Mt = {
-	n:'Meitnerium', u:false, t:1, c:[],
+	n:'Meitnerium', u:false, c:[],
 	info: [' ']
 };
 const Ds = {
-	n:'Darmstadtium', u:false, t:1, c:[],
+	n:'Darmstadtium', u:false, c:[],
 	info: [' ']
 };
 const Rg = {
-	n:'Roentgenium', u:false, t:1, c:[],
+	n:'Roentgenium', u:false, c:[],
 	info: [' ']
 };
 const Cn = {
-	n:'Copernicium', u:false, t:1, c:[],
+	n:'Copernicium', u:false, c:[],
 	info: [' ']
 };
 const Nh = {
-	n:'Nihonium', u:false, t:1, c:[],
+	n:'Nihonium', u:false, c:[],
 	info: [' ']
 };
 const Fl = {
-	n:'Flerovium', u:false, t:1, c:[],
+	n:'Flerovium', u:false, c:[],
 	info: [' ']
 };
 const Mc = {
-	n:'Moscovium', u:false, t:1, c:[],
+	n:'Moscovium', u:false, c:[],
 	info: [' ']
 };
 const Lv = {
-	n:'Livermorium', u:false, t:1, c:[],
+	n:'Livermorium', u:false, c:[],
 	info: [' ']
 };
 const Ts = {
-	n:'Tennessine', u:false, t:1, c:[],
+	n:'Tennessine', u:false, c:[],
 	info: [' ']
 };
 const Og = {
-	n:'Oganesson', u:false, t:1, c:[],
+	n:'Oganesson', u:false, c:[],
 	info: [' ']
 };
 
@@ -593,7 +599,6 @@ const TMP7 = {
 	info:['There are so many Transition Metals I split them up by period'],
 	c:[Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn]
 }
-
 
 //element families
 const AlkaliMetal = {
@@ -645,74 +650,74 @@ const Dihydrogen = { n: 'Dihydrogen', u: false, m: 2, s: MassUnits.Da, c: [{ f: 
 const DeuteratedDihydrogen = { n: 'Deuterated Dihydrogen', u: false, m: 4, s: MassUnits.Da, c: [{ f: H2, a: 2, b:null }] };
 
 const allH = {
-	n:'Hydrogen Allotropes', u:false, t:1.1, c:[Dihydrogen, DeuteratedDihydrogen],
+	n:'Hydrogen Allotropes', u:false, c:[Dihydrogen, DeuteratedDihydrogen],
 	info: ['These are different molecules made with different forms of hydrogen.']
 };
 const allB = {
-	n:'Boron', u:false, t:1.1, c:[],
+	n:'Boron', u:false, c:[],
 	info: ['']
 };
 const allC = {
-	n:'Carbon', u:false, t:1.1, c:[],
+	n:'Carbon', u:false, c:[],
 	info: ['']
 };
 const allN = {
-	n:'Nitrogen', u:false, t:1.1, c:[],
+	n:'Nitrogen', u:false, c:[],
 	info: ['']
 };
 const allO = {
-	n:'Oxygen', u:false, t:1.1, c:[],
+	n:'Oxygen', u:false, c:[],
 	info: ['']
 };
 const allF = {
-	n:'Fluorine', u:false, t:1.1, c:[],
+	n:'Fluorine', u:false, c:[],
 	info: ['']
 };
 const allP = {
-	n:'Phosphorus', u:false, t:1.1, c:[],
+	n:'Phosphorus', u:false, c:[],
 	info: ['']
 };
 const allS = {
-	n:'Sulfur', u:false, t:1.1, c:[],
+	n:'Sulfur', u:false, c:[],
 	info: ['']
 };
 const allCl = {
-	n:'Chlorine', u:false, t:1.1, c:[],
+	n:'Chlorine', u:false, c:[],
 	info: ['']
 };
 const allAs = {
-n:'Arsenic', u:false, t:1.1, c:[],
-info: ['']
+	n:'Arsenic', u:false, c:[],
+	info: ['']
 };
 const allSe = {
-	n:'Selinium', u:false, t:1.1, c:[],
+	n:'Selinium', u:false, c:[],
 	info: ['']
 };
 const allBr = {
-	n:'Bromine', u:false, t:1.1, c:[],
+	n:'Bromine', u:false, c:[],
 	info: ['']
 };
 const allSn = {
-	n:'Tin', u:false, t:1.1, c:[],
+	n:'Tin', u:false, c:[],
 	info: ['']
 };
 const allSb = {
-	n:'Antimony', u:false, t:1.1, c:[],
+	n:'Antimony', u:false, c:[],
 	info: ['']
 };
 const allI = {
-	n:'Iodine', u:false, t:1.1, c:[],
+	n:'Iodine', u:false, c:[],
 	info: ['']
 };
 const allPo = {
-	n:'Polonium', u:false, t:1.1, c:[],
+	n:'Polonium', u:false, c:[],
 	info: ['']
 };
 
 
 //allotropes
 const Allotrope = {
-	n:'Allotrope', u:false, t:1, c:[allH/*, allC, allN, allO, allF, allP, allS, allCl, allAs, allSe, allBr, allSn, allSb, allI, allPo*/],
+	n:'Allotrope', u:false, c:[allH, allC, allN, allO, allF, allP, allS, allCl, allAs, allSe, allBr, allSn, allSb, allI, allPo],
 	info: ['Allotropes are different materials all contiaining a single type of element. Many altropes can be made with a variety of isotopes. For simplicity I generally just used the isotope with the smallest mass for this game.']
 }
 
@@ -761,6 +766,15 @@ const data = [
 	planetary,
 	stellar,
 	blackHole
+];
+
+//base tabs
+const tabs = [
+	{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. These "helpful tips" can be hidden from the Settings tab.'}, 
+	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Generate Discoverable Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator.'}, 
+	{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
+	{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these messages about how to use a website.'}, 
+	{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
 
 const help = [
