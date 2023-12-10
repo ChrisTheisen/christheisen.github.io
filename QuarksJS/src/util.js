@@ -134,13 +134,15 @@ function resetSettings(){
 	game.settings.f = true;
 	game.settings.i = true;
 	game.settings.u = true;
-	game.settings.d.o = false;
+	game.settings.d.c = false;
 	game.settings.d.s = null;
-	game.settings.m.d = 'a';
-	game.settings.m.s = null;
+	game.settings.m.c = false;
+	game.settings.m.d = false;
+	game.settings.m.m = false;
+	game.settings.m.s = false;
+	game.settings.m.u = false;
 
 	getUIElement('numSettingsC').value = game.settings.c;
-	getUIElement('chkSettingsF').checked = game.settings.f;
 	getUIElement('chkSettingsI').checked = game.settings.i;
 	getUIElement('chkSettingsU').checked = game.settings.u;
 	
@@ -164,8 +166,11 @@ function load() {
 	game.settings.u = data.s.u;
 	game.settings.d.o = data.s.d.o;
 	game.settings.d.s = data.s.d.s;
+	game.settings.m.c = data.s.m.c;
 	game.settings.m.d = data.s.m.d;
+	game.settings.m.m = data.s.m.m;
 	game.settings.m.s = data.s.m.s;
+	game.settings.m.u = data.s.m.u;
 
 	getUIElement('numSettingsC').value = game.settings.c;
 	getUIElement('chkSettingsI').checked = game.settings.i;

@@ -179,6 +179,10 @@ a, a:visited{
 	margin-left:13%;
 	margin-right:13%;
 }
+.helpDiv{
+	margin-bottom:5px;
+	border-left: solid 1px #111;
+}
 
 .settingsRow{
 	text-align:left;
@@ -217,10 +221,17 @@ a, a:visited{
 	border-bottom:solid 1px var(--c1);
 	margin-bottom: 25px;
 	padding-bottom: 10px;
+	font-size:14px;
+}
+
+.filterChk{
+	display: table-cell;
+	padding-left:15px;
+	text-align:right;
 }
 
 .manage{
-	max-height: calc(100vh - 275px);
+	max-height: calc(100vh - 290px);
 	overflow-y:auto;
 	overflow-x:clip;
 }

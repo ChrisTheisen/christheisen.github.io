@@ -83,6 +83,21 @@ Menu.prototype.update = function(){
 	this.children[this.current]?.update();//needed for gotoLeaf to work.
 
 	game.inventory.update();//updates the content quick when tab changes.
+	switch(game.menu.current){
+		case 'Discover': {
+			getUIElement('filterChkD').checked = game.settings.d.o;
+			break;
+		}
+		case 'Manage': {
+			getUIElement('filterChkMC').checked = game.settings.m.c;
+			getUIElement('filterChkMD').checked = game.settings.m.d;
+			getUIElement('filterChkMM').checked = game.settings.m.m;
+			getUIElement('filterChkMN').checked = game.settings.m.n;
+			getUIElement('filterChkMS').checked = game.settings.m.s;
+			getUIElement('filterChkMT').checked = game.settings.m.t;
+			break;
+		}
+	}
 }
 Menu.prototype.updateTable = function(){
 	const table = getUIElement('table');
@@ -92,7 +107,6 @@ Menu.prototype.updateTable = function(){
 	names.forEach(x => {
 		const item = createUIElement({cssClasses:['tableItem', 'nowrap', 'row']});
 		
-		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell']});
 		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Table',
 			onclick:() => {
 				for(let i=0;i<game.table.length;i++){
@@ -104,6 +118,7 @@ Menu.prototype.updateTable = function(){
 				}
 			}
 		});
+		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell'], style:{textAlign:'left', fontSize:'14px'}});
 		
 		newTable.push(item);
 	});
@@ -130,26 +145,9 @@ Menu.prototype.renderDiscover = function(parent){
 		onclick:()=> setElementText(hout, generateDiscoverHint())});
 	const hout = createUIElement({type:'span',parent:hint});
 	
-	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper']});
-	
-	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
-	const search = createUIElement({type:'input', parent:filter, id:'discoverFilter', attr:{type:'search', list:'filterSuggestions'}});
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
 
-	addUIEventListener(search, (e) => {
-		game.settings.d.s = search.value.toLowerCase(); 
-		game.inventory.update();
-		}, 'keyup');
-	
-	createUIElement({type:'label', parent:filter, textContent:'Only in stock: ', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChk'}});
-	createUIElement({type:'input', parent:filter, title:'Filter out of stock',
-		attr:{type:'checkbox'}, id:'filterChk',
-		onclick:(e) => {
-			game.settings.d.o = !game.settings.d.o;
-			game.inventory.update();
-		}});
-
-
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginLeft:'75px'},
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginRight:'75px', float:'right'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -164,39 +162,75 @@ Menu.prototype.renderDiscover = function(parent){
 				this.updateResults(['No new items discovered']);
 			}
 		}});
+
+	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
+	const f1 = createUIElement({parent:filter, cssClasses:['row'], style:{textAlign:'left'}});
 	
+	createUIElement({type:'label', parent:f0, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
+	const search = createUIElement({type:'input', parent:f0, id:'discoverFilter', attr:{type:'search', list:'filterSuggestions'}});
+
+	addUIEventListener(search, (e) => {
+		game.settings.d.s = search.value.toLowerCase(); 
+		game.inventory.update();
+		}, 'keyup');
+	
+	createUIElement({type:'label', parent:f1, textContent:'Only in stock: ', attr:{htmlFor:'filterChkD'}});
+	createUIElement({type:'input', parent:f1, title:'Filter out of stock',
+		attr:{type:'checkbox'}, id:'filterChkD',
+		onclick:(e) => {
+			game.settings.d.o = !game.settings.d.o;
+			game.inventory.update();
+		}});
 
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px'}});
+	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px', width:'60%'}});
 	game.inventory.renderDiscover(bags);
 	
-	const table = createUIElement({id:'table', cssClasses:['table', 'cell'], parent:w});
+	const table = createUIElement({id:'table', cssClasses:['table', 'cell'], parent:w, style:{minWidth:'200px', width:'40%'}});
 	createUIElement({type:'h3', parent:table, textContent:'Matter Mutator'});
 }
 
 Menu.prototype.renderManage = function(parent){
-	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper']});
-	
-	createUIElement({type:'label', parent:filter, textContent:'Filter: ', attr:{htmlFor:'manageFilter'}});
-	const search = createUIElement({type:'input', parent:filter, id:'manageFilter', attr:{type:'search', list:'filterSuggestions'}});
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
 
-	addUIEventListener(search, (e) => {
-		game.settings.m.s = search.value.toLowerCase(); 
-		game.inventory.update();
-		}, 'keyup');
+	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
+	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 
-	const select = createUIElement({type:'select', parent:filter});
-	createUIElement({type:'option', parent:select, textContent:'Show All', attr:{value:'a'}});
-	createUIElement({type:'option', parent:select, textContent:'Show Deficit', attr:{value:'d'}});
-	createUIElement({type:'option', parent:select, textContent:'Show Balanced', attr:{value:'b'}});
-	createUIElement({type:'option', parent:select, textContent:'Show Surplus', attr:{value:'s'}});
+	const w00 = createUIElement({parent:f0, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w00, textContent:'Hide Created === 0', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMC'}});
+	createUIElement({type:'input', parent:w00, title:'Hide Created === 0', attr:{type:'checkbox'}, id:'filterChkMC',
+		onclick:(e) => { game.settings.m.c = !game.settings.m.c; game.inventory.update(); }
+	});
+	const w01 = createUIElement({parent:f0, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w01, textContent:'Hide Created === Setpoint', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMD'}});
+	createUIElement({type:'input', parent:w01, title:'Hide Created === Setpoint', attr:{type:'checkbox'}, id:'filterChkMD',
+		onclick:(e) => { game.settings.m.d = !game.settings.m.d; game.inventory.update(); }
+	});
+	const w02 = createUIElement({parent:f0, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w02, textContent:'Hide Created < Setpoint', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMM'}});
+	createUIElement({type:'input', parent:w02, title:'Hide not created', attr:{type:'checkbox'}, id:'filterChkMM',
+		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
+	});
+
+	const w10 = createUIElement({parent:f1, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w10, textContent:'Hide Used === 0', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMN'}});
+	createUIElement({type:'input', parent:w10, title:'Hide Used === 0', attr:{type:'checkbox'}, id:'filterChkMN',
+		onclick:(e) => { game.settings.m.n = !game.settings.m.n; game.inventory.update(); }
+	});
+	const w11 = createUIElement({parent:f1, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w11, textContent:'Hide Used === Demand', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMS'}});
+	createUIElement({type:'input', parent:w11, title:'Hide Used === Demand', attr:{type:'checkbox'}, id:'filterChkMS',
+		onclick:(e) => { game.settings.m.s = !game.settings.m.s; game.inventory.update(); }
+	});
+	const w12 = createUIElement({parent:f1, cssClasses:['filterChk']});
+	createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMT'}});
+	createUIElement({type:'input', parent:w12, title:'Hide not Used', attr:{type:'checkbox'}, id:'filterChkMT',
+		onclick:(e) => { game.settings.m.t = !game.settings.m.t; game.inventory.update(); }
+	});
+
 	
-	addUIEventListener(select, (e) => {
-			game.settings.m.d = select.value;
-			game.inventory.update();
-		}, 'change');
-	
+
 	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }
 

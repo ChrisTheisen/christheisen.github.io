@@ -34,6 +34,7 @@ GameClock.prototype.tick = function(){
 }
 GameClock.prototype.stop = function(){
 	clearInterval(this.intervalID);
+	this.intervalID = null;
 }
 GameClock.prototype.start = function(){
 	this.lastUpdate = performance.now();
@@ -89,8 +90,12 @@ function Game(){
 			s: null//filter search
 		},
 		m: {//manage filters
-			d: 'a',//ddl value
-			s: null//filter search
+			c: false,//hide created === 0
+			d: false,//hide created === setpoint
+			m: false,//hide created < setpoint
+			n: false,//hide used === 0
+			s: false,//hide used === demand
+			t: false,//hide used < demand
 		}
 	};
 	this.table = [];
@@ -170,68 +175,17 @@ Game.prototype.hint = function(){
 	
 }
 
-// window.onkeydown = function(e){
-	// const ids = ['discoverFilter', 'manageFilter']
-	// if(ids.includes(document.activeElement.id)){
-		// return;
-	// }
-	
-	// switch(e.key){
-		// case 'q':{
-			// game.menu.gotoNode('Create');
-			// break;
-		// }
-		// case 'w':{
-			// game.menu.gotoNode('Discover');
-			// break;
-		// }
-		// case 'e':{
-			// game.menu.gotoNode('Manage');
-			// break;
-		// }
-		// case 'r':{
-			// game.menu.gotoNode('Settings');
-			// break;
-		// }
-		// case 't':{
-			// game.menu.gotoNode('Help');
-			// break;
-		// }
-		
-		// case 'a':{
-			// game.menu.gotoNode('Subatomic');
-			// break;
-		// }
-		// case 's':{
-			// game.menu.gotoNode('Atomic');
-			// break;
-		// }
-		// case 'd':{
-			// game.menu.gotoNode('Molecular');
-			// break;
-		// }
-		// case 'f':{
-			// game.menu.gotoNode('Human');
-			// break;
-		// }
-		// case 'g':{
-			// game.menu.gotoNode('Planetary');
-			// break;
-		// }
-		// case 'h':{
-			// game.menu.gotoNode('Stellar');
-			// break;
-		// }
-		// case 'j':{
-			// game.menu.gotoNode('Black Hole');
-			// break;
-		// }
-
-		// default:
-			// //console.log(e.key);
-			// break;
-	// }
-// }
+window.onkeydown = function(e){
+	if(e.code === 'Space'){
+		if(!game.clock.intervalID){
+			game.clock.start();
+		}
+		else{
+			game.clock.stop();
+		}
+	}
+   //console.log(e);
+}
 
 function buildUI(){
 	const root = getUIElement('divRoot');
@@ -242,7 +196,7 @@ function buildUI(){
 		{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Generate Discoverable Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator.'}, 
 		{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
 		{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these messages about how to use a website.'}, 
-		{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery.'], intro:'Click on a subject category below for more information.'}
+		{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 	];
 	game.menu = new Menu(root, tabs);
 }

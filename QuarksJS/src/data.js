@@ -69,6 +69,17 @@ const Ca44 = { n: 'Calcium4', u: false, m: 44, s: MassUnits.Da, c: [{ f: Proton,
 const Ca46 = { n: 'Calcium4', u: false, m: 46, s: MassUnits.Da, c: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
 const Ca48 = { n: 'Calcium4', u: false, m: 48, s: MassUnits.Da, c: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
 const Sc45 = { n: 'Scandium45', u: false, m: 45, s: MassUnits.Da, c: [{ f: Proton, a: 21, b:null }, { f: Neutron, a: 24, b:null }, { f: Electron, a: 21, b:null }] };
+const Ti46 = { n: 'Titanium46', u: false, m: 46, s: MassUnits.Da, c: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 26, b:null }, { f: Electron, a: 22, b:null }] };
+const Ti47 = { n: 'Titanium47', u: false, m: 47, s: MassUnits.Da, c: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 27, b:null }, { f: Electron, a: 22, b:null }] };
+const Ti48 = { n: 'Titanium48', u: false, m: 48, s: MassUnits.Da, c: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 22, b:null }] };
+const Ti49 = { n: 'Titanium49', u: false, m: 49, s: MassUnits.Da, c: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 29, b:null }, { f: Electron, a: 22, b:null }] };
+const Ti50 = { n: 'Titanium50', u: false, m: 50, s: MassUnits.Da, c: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 22, b:null }] };
+const V50 = { n: 'Vandium50', u: false, m: 50, s: MassUnits.Da, c: [{ f: Proton, a: 23, b:null }, { f: Neutron, a: 27, b:null }, { f: Electron, a: 23, b:null }] };
+const V51 = { n: 'Vandium51', u: false, m: 51, s: MassUnits.Da, c: [{ f: Proton, a: 23, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 23, b:null }] };
+const Cr50 = { n: 'Chromium50', u: false, m: 50, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 26, b:null }, { f: Electron, a: 24, b:null }] };
+const Cr52 = { n: 'Chromium52', u: false, m: 52, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 24, b:null }] };
+const Cr53 = { n: 'Chromium53', u: false, m: 53, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 29, b:null }, { f: Electron, a: 24, b:null }] };
+const Cr54 = { n: 'Chromium54', u: false, m: 54, s: MassUnits.Da, c: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 24, b:null }] };
 
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
@@ -170,19 +181,19 @@ const Ca = {
 };
 const Sc = {
 	n:'Scandium', u:false, t:1, c:[Sc45],
-	info: ['']
+	info: ['Scandium has few uses outside of research.']
 };
 const Ti = {
-	n:'Titanium', u:false, t:1, c:[],
-	info: ['']
+	n:'Titanium', u:false, t:1, c:[Ti46,Ti47,Ti48,Ti49,Ti50],
+	info: ['Titanium is a very strong but light and is used in alloys for aerospace industries. It is also used in several other industries.']
 };
 const V = {
-	n:'Vanadium', u:false, t:1, c:[],
-	info: ['']
+	n:'Vanadium', u:false, t:1, c:[V50,V51],
+	info: ['Vandium is mostly used in vandium-steel alloys.']
 };
 const Cr = {
-	n:'Chromium', u:false, t:1, c:[],
-	info: ['']
+	n:'Chromium', u:false, t:1, c:[Cr50,Cr52,Cr53,Cr54],
+	info: ['Chromium is often used to harden steel and increase rust resistance.']
 };
 const Mn = {
 	n:'Manganese', u:false, t:1, c:[],
@@ -637,66 +648,66 @@ const allH = {
 	n:'Hydrogen Allotropes', u:false, t:1.1, c:[Dihydrogen, DeuteratedDihydrogen],
 	info: ['These are different molecules made with different forms of hydrogen.']
 };
-// const allB = {
-	// n:'Boron', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allC = {
-	// n:'Carbon', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allN = {
-	// n:'Nitrogen', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allO = {
-	// n:'Oxygen', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allF = {
-	// n:'Fluorine', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allP = {
-	// n:'Phosphorus', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allS = {
-	// n:'Sulfur', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allCl = {
-	// n:'Chlorine', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allAs = {
-	// n:'Arsenic', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allSe = {
-	// n:'Selinium', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allBr = {
-	// n:'Bromine', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allSn = {
-	// n:'Tin', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allSb = {
-	// n:'Antimony', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allI = {
-	// n:'Iodine', u:false, t:1.1, c:[],
-	// info: ['']
-// };
-// const allPo = {
-	// n:'Polonium', u:false, t:1.1, c:[],
-	// info: ['']
-// };
+const allB = {
+	n:'Boron', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allC = {
+	n:'Carbon', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allN = {
+	n:'Nitrogen', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allO = {
+	n:'Oxygen', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allF = {
+	n:'Fluorine', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allP = {
+	n:'Phosphorus', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allS = {
+	n:'Sulfur', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allCl = {
+	n:'Chlorine', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allAs = {
+n:'Arsenic', u:false, t:1.1, c:[],
+info: ['']
+};
+const allSe = {
+	n:'Selinium', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allBr = {
+	n:'Bromine', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allSn = {
+	n:'Tin', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allSb = {
+	n:'Antimony', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allI = {
+	n:'Iodine', u:false, t:1.1, c:[],
+	info: ['']
+};
+const allPo = {
+	n:'Polonium', u:false, t:1.1, c:[],
+	info: ['']
+};
 
 
 //allotropes
@@ -708,17 +719,17 @@ const Allotrope = {
 //magnitude
 const subatomic = {
     n: 'Subatomic', u: true,
-	info: ['Subatomic components are the smallest items in this game.'], 
+	info: ['Subatomic components are the smallest items in this game.', 'In this game most subatomic items are free to generate'], 
     c: [Quark, Lepton, Baryon]
 };
 const atomic = {
     n: 'Atomic', u: false,
-    info: ['Atoms are basic elements that are the building blocks for molecules. They have a nucleus, which is made of Protons and Neutrons, and are `orbited` by Electrons.'],
+    info: ['Atoms are basic elements that are the building blocks for molecules. They have a nucleus, which is made of Protons and Neutrons, and are `orbited` by Electrons.', 'Many elements have multiple isotopes; for simplicity in this game most molecule recipes uses the most abundant isotope.'],
     c: [AlkaliMetal, AlkalineEarthMetal, Actinide, Chalcogen, Halogen, Lanthanide, Metalloid, NobelGas, Nonmetal, PoorMetal, TransitionMetal]
 };
 const molecular = {
     n: 'Molecular', u: false,
-    info: ['Molecules are groups of atoms. There are countless types of molecules, this game has some.'],
+    info: ['A molecule is the smallest mass of a substance while keeping its chemical properties.', 'There are countless types of molecules, this game has some.'],
     c: [Allotrope]
 };
 const human = {
@@ -753,22 +764,48 @@ const data = [
 ];
 
 const help = [
+	{t:'General', c:[
+		'This is a crafting/discovery game with some supply chain management.',
+		'|',
+		'You initially start by crafting subatomic materials but can eventually create successively larger items. Unfortunately the data file is missing several items that exist in the universe.',
+		'Items are organized into groups and have flavors or isotopes. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
+		'|',
+		'Sometimes it can be difficult to remember what group an item is in; (») buttons are found most places an item is referenced and will go to the item.',
+		'|',
+		'A game cycle is about 1 second.',
+		'Space bar pauses the game'
+	]},
 	{t:'Create', c:[
 		'The Create tab lets you create items. This can be done either by manually clicking the Inventory (++) button or by upgrading the Generator.',
 		'The Inventory (++) button will create one item from the components.',
-		'The Generator will automatically create items based on the generator set-point. The maximum set-point is the generator level. It will only create items if you have the required components. Upgrading the generator uses the item it will generate.',
-		'Generator rank will sacrifice generators to figure out how to build them cheaper and increase their effectiveness.', 
-		'Most items have components that are needed to create the item. The requires components are listed in the Components section.',
-		'The Used In section will show all items the selected item is a component of. By default this is hidden to avoid spoilers.',
+		'Generator rank will sacrifice generators to improve increase their effectiveness and reduce their cost.', 
+		'The Generator will automatically create items based on the generator set-point. It will only create items if you have the required components. Upgrading the generator uses the item it will generate.',
 	]},
 	{t:'Discover', c:[
 		'The Discover tab is the main way to gain access to new item types.',
-		'You can add items to the matter mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
+		'Add items to the matter mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
 		'Unfortunately, the game data is not complete but will be expanded in the future.',
-		'There is no penalty for scanning items that do not match a recipe.'
+		'There is no penalty for scanning items that do not match a recipe.',
+		'If you are stuck or want a recipe hint you can click the "Generate Discoverable Recipe" button'
 	]},
 	{t:'Manage', c:[
-		'The Manage tab is where you can manage your generators. It displays the input and output of each generator.'
+		'The Manage tab is where you can manage your generators. It displays the input and output of each generator and the amount created and used during the last update.',
+		'|',
+		'The Manage table has several filters to help manage the resources.',
+		'Hide Created === 0 : will hide all rows that where no items were created.',
+		'Hide Created === Setpoint : will hide all rows where the generator setpoint was achieved.',
+		'Hide Created < Setpoint : will hide all the rows where the generator setpoint was not achieved',
+		'Hide Used === 0 : will hide all the rows where no items were used.',
+		'Hide Used === Demand : will hide all rows where the expected demand was achieved',
+		'Hide Used < Demand : will hide all rows where the expected demand was not achieved',
+		'|',
+		'The table columns describe the supply and demand of each item.',
+		'Name : is the name of the item. Hover to see the full name.',
+		'Owned : is the amount of the itme you current own.',
+		'Setpoint : is the generator setpoint, or the maximum amount that should be created.',
+		'Demand : is the expected demand if all setpoints are achieved',
+		'Created : is the actual amount created in the last cycle',
+		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators'
 	]},
 	{t:'Settings', c:[
 		'Settings can effect the difficulty and functionality of the game.',
@@ -779,14 +816,14 @@ const help = [
 		'Cheater Level: -1 is no effect, higher number is bigger cheats. Allows you to create some items without using components.'
 	]},
 	{t:'About', c:[
-		'This is a crafting/discovery game.',
-		'You initially start by crafting subatomic materials but can eventually create larger and larger items. Unfortunately the data file is missing several items that exist in the universe.',
-		'Items are organized into Groups and have Flavors. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
 		'The isotopes I included are the bolded ones listed on https://periodictable.com/. If there are none for a given element I used the one with the largest halflife.',
-		'The molocules are from ???',
-		'',
-		'',
+		'I looked up additional information, such as uses, here: https://www.rsc.org/periodic-table/',
+		'The other items are included as I get to it.',
+		'|',
 		'If you have a suggestion of items you want added you can email: grumdrig333@gmail.com',
-		'',
-		]},
+		'|',
+		'This game was initially started as a way to learn mutraction, but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
+		'I decided to try making a game that has a simple UI but is very data heavy. As a result the html file is pretty small and most content is generated based on the data.js file.',
+		'It ended up less general that I initially hoped and more specialized to this specific game, but in the end  I like this result'
+	]},
 ]

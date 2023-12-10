@@ -5,18 +5,6 @@ Scan button location is inconsistent on different screen sizes
 Manage/Discover filter not always correct when switch to tab
 
 TODO:
-Add bullet points or styling to help item contents?
-Pause button
-
-enabled checkbox on Manage tab
-
-Help markdown:
-	-link [href|text]
-	-
-
-include link  to isotopes page and my uses
-	-I included bolded isotopes or the isotope with the longest halflife.
-
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item
 	-Max inventory is MAX_SAFE_INTEGER of each unit

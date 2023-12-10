@@ -456,9 +456,10 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{width:'50%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, 
+		style:{width:'50%', textAlign:'left', maxWidth:'150px', overflowX:'clip', fontSize:'14px'}});
 	
-	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left'}})
+	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
 	createUIElement({type:'span', parent:ow, textContent:'Owned:'});
 	const own = createUIElement({type:'span', parent:ow, textContent:this.a});
 	
@@ -486,20 +487,18 @@ InventoryItem.prototype.renderManage = function(parent){
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 		onclick:() => game.menu.gotoNode(this.f.n)});
 	
-	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{textAlign:'left', overflowY:'clip'}});
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}});
 	
-	this.content.a.push(createUIElement({parent:parent, textContent:this.a, style:{textAlign:'center'}}));
+	this.content.a.push(createUIElement({parent:parent, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
 	
 	this.content.s.push(createUIElement({type:'input', 
-		parent:createUIElement({parent:parent, cssClasses:['cell'], style:{textAlign:'right'}}), 
+		parent:createUIElement({parent:parent, cssClasses:['cell'], style:{textAlign:'right', fontSize:'14px'}}), 
 		attr:{type:'number', min:0, max:this.l, value:0},
 		oninput:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
 		
-	this.content.z = createUIElement({parent:parent, cssClasses:['cell'], textContent:this.calculateDemand(), style:{textAlign:'center'}});
-
-	this.content.n = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualCreated[this.f.n], style:{textAlign:'center'}});
-
-	this.content.q = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualUsed[this.f.n], style:{textAlign:'center'}});
+	this.content.z = createUIElement({parent:parent, cssClasses:['cell'], textContent:this.calculateDemand(), style:{textAlign:'center', fontSize:'14px'}});
+	this.content.n = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualCreated[this.f.n], style:{textAlign:'center', fontSize:'14px'}});
+	this.content.q = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualUsed[this.f.n], style:{textAlign:'center', fontSize:'14px'}});
 }
 
 InventoryItem.prototype.update = function(){
@@ -548,32 +547,23 @@ InventoryItem.prototype.update = function(){
 			break;
 		}
 		case 'Manage': {
-			let filterManage = true;
 			const demand = this.calculateDemand();
-			switch(game.settings.m.d){
-				case 'd':{
-					filterManage = this.s < demand;
-					break;
-				}
-				case 'b':{
-					filterManage = this.s === demand;
-					break;
-				}
-				case 's':{
-					filterManage = this.s > demand;
-					break;
-				}
-			}
-			
-			const filterManageSearch = game.settings.m.s && !this.fullName.toLowerCase().includes(game.settings.m.s);
-			
+			const created = ActualCreated[this.f.n] ?? 0;
+			const used = ActualUsed[this.f.n] ?? 0;
+			const f0 = game.settings.m.c && !created;
+			const f1 = game.settings.m.d && created === this.s;
+			const f2 = game.settings.m.m && created < this.s;
+			const f3 = game.settings.m.n && !used;
+			const f4 = game.settings.m.s && used === demand;
+			const f5 = game.settings.m.t && used < demand;
+
 			this.content.a.forEach(x => setElementText(x, this.a));
 			this.content.l.forEach(x => setElementText(x, this.l??0));
-			this.content.m?.classList.toggle('hide', !isUnlocked || !filterManage || filterManageSearch);
+			this.content.m?.classList.toggle('hide', !isUnlocked || f0 || f1 || f2 || f3 || f4 || f5);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0; });
 			setElementText(this.content.z, demand);
-			setElementText(this.content.n, ActualCreated[this.f.n]??'-');
-			setElementText(this.content.q, ActualUsed[this.f.n]??'-');
+			setElementText(this.content.n, created);
+			setElementText(this.content.q, used);
 
 			break;
 		}
