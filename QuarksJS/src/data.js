@@ -86,6 +86,11 @@ const Fe56 = { n: 'Iron56', u: false, m: 56, s: MassUnits.Da, c: [{ f: Proton, a
 const Fe57 = { n: 'Iron57', u: false, m: 57, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 31, b:null }, { f: Electron, a: 26, b:null }] };
 const Fe58 = { n: 'Iron58', u: false, m: 58, s: MassUnits.Da, c: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 26, b:null }] };
 const Co59 = { n: 'Cobalt59', u: false, m: 59, s: MassUnits.Da, c: [{ f: Proton, a: 27, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 27, b:null }] };
+const Ni58 = { n: 'Nickle58', u: false, m: 58, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 28, b:null }] };
+const Ni60 = { n: 'Nickle60', u: false, m: 60, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 28, b:null }] };
+const Ni61 = { n: 'Nickle61', u: false, m: 61, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 33, b:null }, { f: Electron, a: 28, b:null }] };
+const Ni62 = { n: 'Nickle62', u: false, m: 62, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 28, b:null }] };
+const Ni64 = { n: 'Nickle64', u: false, m: 64, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 28, b:null }] };
 
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
@@ -214,8 +219,8 @@ const Co = {
 	info: ['Cobalt can be magnetised and is used in industries where high-temperature strength is important.']
 };
 const Ni = {
-	n:'Nickel', u:false, c:[],
-	info: ['']
+	n:'Nickel', u:false, c:[Ni58,Ni60,Ni61,Ni62,Ni64],
+	info: ['Nickel is mainly used in making steel alloys like stainless steel.']
 };
 const Cu = {
 	n:'Copper', u:false, c:[],
@@ -717,7 +722,7 @@ const allPo = {
 
 //allotropes
 const Allotrope = {
-	n:'Allotrope', u:false, c:[allH, allC, allN, allO, allF, allP, allS, allCl, allAs, allSe, allBr, allSn, allSb, allI, allPo],
+	n:'Allotrope', u:false, c:[allH/*, allC, allN, allO, allF, allP, allS, allCl, allAs, allSe, allBr, allSn, allSb, allI, allPo*/],
 	info: ['Allotropes are different materials all contiaining a single type of element. Many altropes can be made with a variety of isotopes. For simplicity I generally just used the isotope with the smallest mass for this game.']
 }
 

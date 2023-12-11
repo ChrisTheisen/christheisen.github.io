@@ -130,9 +130,8 @@ a, a:visited{
 	margin:5px;
 	border: solid 1px var(--c1);
 	border-radius:50%;
-	background-color: var(--bg0);
-	line-height:23px;
-	
+	background-color: var(--bg1);
+	line-height:23px;	
 }
 
 .goto{

@@ -79,7 +79,6 @@ Menu.prototype.update = function(){
 	
 	this.children[this.current].b.classList.add('selected');
 	this.children[this.current].d.classList.remove('hide');
-	
 	this.children[this.current]?.update();//needed for gotoLeaf to work.
 
 	game.inventory.update();//updates the content quick when tab changes.
@@ -166,17 +165,15 @@ Menu.prototype.renderDiscover = function(parent){
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row'], style:{textAlign:'left'}});
 	
-	createUIElement({type:'label', parent:f0, textContent:'Filter: ', attr:{htmlFor:'discoverFilter'}});
-	const search = createUIElement({type:'input', parent:f0, id:'discoverFilter', attr:{type:'search', list:'filterSuggestions'}});
+	const search = createUIElement({type:'input', parent:createUIElement({type:'label', parent:f0, textContent:'Filter: '}), attr:{type:'search', list:'filterSuggestions'}});
 
 	addUIEventListener(search, (e) => {
 		game.settings.d.s = search.value.toLowerCase(); 
 		game.inventory.update();
 		}, 'keyup');
 	
-	createUIElement({type:'label', parent:f1, textContent:'Only in stock: ', attr:{htmlFor:'filterChkD'}});
-	createUIElement({type:'input', parent:f1, title:'Filter out of stock',
-		attr:{type:'checkbox'}, id:'filterChkD',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:f1, textContent:'Only in stock: '}), 
+		title:'Filter out of stock', attr:{type:'checkbox'},  id:'filterChkD',
 		onclick:(e) => {
 			game.settings.d.o = !game.settings.d.o;
 			game.inventory.update();
@@ -198,38 +195,36 @@ Menu.prototype.renderManage = function(parent){
 	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 
 	const w00 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMC'}});
-	createUIElement({type:'input', parent:w00, title:'Hide Created = 0', attr:{type:'checkbox'}, id:'filterChkMC',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0', style:{paddingLeft:'15px'}}), 
+		title:'Hide Created = 0', attr:{type:'checkbox'}, id:'filterChkMC',
 		onclick:(e) => { game.settings.m.c = !game.settings.m.c; game.inventory.update(); }
 	});
 	const w01 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w01, textContent:'Hide Created = Setpoint', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMD'}});
-	createUIElement({type:'input', parent:w01, title:'Hide Created = Setpoint', attr:{type:'checkbox'}, id:'filterChkMD',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Created = Setpoint', style:{paddingLeft:'15px'}}), 
+		title:'Hide Created = Setpoint', attr:{type:'checkbox'}, id:'filterChkMD',
 		onclick:(e) => { game.settings.m.d = !game.settings.m.d; game.inventory.update(); }
 	});
 	const w02 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w02, textContent:'Hide Created < Setpoint', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMM'}});
-	createUIElement({type:'input', parent:w02, title:'Hide not created', attr:{type:'checkbox'}, id:'filterChkMM',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w02, textContent:'Hide Created < Setpoint', style:{paddingLeft:'15px'}}), 
+		title:'Hide not created', attr:{type:'checkbox'}, id:'filterChkMM',
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
 	});
 
 	const w10 = createUIElement({parent:f1, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w10, textContent:'Hide Used = 0', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMN'}});
-	createUIElement({type:'input', parent:w10, title:'Hide Used = 0', attr:{type:'checkbox'}, id:'filterChkMN',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w10, textContent:'Hide Used = 0', style:{paddingLeft:'15px'}}), 
+		title:'Hide Used = 0', attr:{type:'checkbox'}, id:'filterChkMN',
 		onclick:(e) => { game.settings.m.n = !game.settings.m.n; game.inventory.update(); }
 	});
 	const w11 = createUIElement({parent:f1, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w11, textContent:'Hide Used = Demand', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMS'}});
-	createUIElement({type:'input', parent:w11, title:'Hide Used = Demand', attr:{type:'checkbox'}, id:'filterChkMS',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w11, textContent:'Hide Used = Demand', style:{paddingLeft:'15px'}}), 
+		title:'Hide Used = Demand', attr:{type:'checkbox'}, id:'filterChkMS',
 		onclick:(e) => { game.settings.m.s = !game.settings.m.s; game.inventory.update(); }
 	});
 	const w12 = createUIElement({parent:f1, cssClasses:['filterChk']});
-	createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}, attr:{htmlFor:'filterChkMT'}});
-	createUIElement({type:'input', parent:w12, title:'Hide not Used', attr:{type:'checkbox'}, id:'filterChkMT',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}}), 
+		title:'Hide not Used', attr:{type:'checkbox'}, id:'filterChkMT',
 		onclick:(e) => { game.settings.m.t = !game.settings.m.t; game.inventory.update(); }
 	});
-
-	
 
 	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }
@@ -243,7 +238,6 @@ Menu.prototype.renderHelp = function(parent){
 		x.c.forEach(y => {
 			createUIElement({parent:content, cssClasses:['helpDiv'], textContent:y});
 		});
-	
 	});
 }
 
@@ -254,9 +248,8 @@ Menu.prototype.renderSettings = function(parent){
 	});
 
 	const i = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	createUIElement({type:'label', parent:i, textContent:'Show Info', attr:{htmlFor:'chkSettingsI'}});
-	createUIElement({type:'input', parent:i, title:'Toggle Info Snippets',
-		attr:{type:'checkbox', checked:game.settings.i}, id:'chkSettingsI',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:i, textContent:'Show Info'}), 
+		title:'Toggle Info Snippets', attr:{type:'checkbox', checked:game.settings.i}, id:'chkSettingsI',
 		onclick:() => {
 			game.settings.i = !game.settings.i
 			Array.from(document.getElementsByClassName('info'))
@@ -264,14 +257,12 @@ Menu.prototype.renderSettings = function(parent){
 		}});
 
 	const u = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning', attr:{htmlFor:'chkSettingsU'}});
-	createUIElement({type:'input', parent:u, title:'Show Used-In Warning',
-		attr:{type:'checkbox', checked:game.settings.u}, id:'chkSettingsU',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning'}), 
+		title:'Show Used-In Warning',attr:{type:'checkbox', checked:game.settings.u}, id:'chkSettingsU',
 		onclick:() => game.settings.u = !game.settings.u});
 
 	const c = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	createUIElement({type:'label', parent:c, textContent:'Cheater Level:', attr:{htmlFor:'numSettingsc'}});
-	const num = createUIElement({type:'input', parent:c, title:'Cheater Level (-1 to disable)',
+	const num = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Level:'}), title:'Cheater Level (-1 to disable)',
 		attr:{type:'number', min:-1, max:7, value:game.settings.c}, id:'numSettingsC'});
 	addUIEventListener(num, (e) => {
 		game.settings.c = parseInt(e.target.value);
