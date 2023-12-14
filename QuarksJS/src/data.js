@@ -91,11 +91,98 @@ const Ni60 = { n: 'Nickle60', u: false, m: 60, s: MassUnits.Da, c: [{ f: Proton,
 const Ni61 = { n: 'Nickle61', u: false, m: 61, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 33, b:null }, { f: Electron, a: 28, b:null }] };
 const Ni62 = { n: 'Nickle62', u: false, m: 62, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 28, b:null }] };
 const Ni64 = { n: 'Nickle64', u: false, m: 64, s: MassUnits.Da, c: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 28, b:null }] };
+const Cu63 = { n: 'Copper63', u: false, m: 63, s: MassUnits.Da, c: [{ f: Proton, a: 29, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 29, b:null }] };
+const Cu65 = { n: 'Copper65', u: false, m: 65, s: MassUnits.Da, c: [{ f: Proton, a: 29, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 29, b:null }] };
+const Zn64 = { n: 'Zinc64', u: false, m: 64, s: MassUnits.Da, c: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 30, b:null }] };
+const Zn66 = { n: 'Zinc66', u: false, m: 66, s: MassUnits.Da, c: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 30, b:null }] };
+const Zn67 = { n: 'Zinc67', u: false, m: 67, s: MassUnits.Da, c: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 37, b:null }, { f: Electron, a: 30, b:null }] };
+const Zn68 = { n: 'Zinc68', u: false, m: 68, s: MassUnits.Da, c: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 30, b:null }] };
+const Zn70 = { n: 'Zinc70', u: false, m: 70, s: MassUnits.Da, c: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 30, b:null }] };
+const Ga69 = { n: 'Gallium69', u: false, m: 69, s: MassUnits.Da, c: [{ f: Proton, a: 31, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 31, b:null }] };
+const Ga71 = { n: 'Gallium71', u: false, m: 71, s: MassUnits.Da, c: [{ f: Proton, a: 31, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 31, b:null }] };
+const Ge70 = { n: 'Germanium70', u: false, m: 70, s: MassUnits.Da, c: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 32, b:null }] };
+const Ge72 = { n: 'Germanium72', u: false, m: 72, s: MassUnits.Da, c: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 32, b:null }] };
+const Ge73 = { n: 'Germanium73', u: false, m: 73, s: MassUnits.Da, c: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 41, b:null }, { f: Electron, a: 32, b:null }] };
+const Ge74 = { n: 'Germanium74', u: false, m: 74, s: MassUnits.Da, c: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 32, b:null }] };
+const Ge76 = { n: 'Germanium76', u: false, m: 76, s: MassUnits.Da, c: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 32, b:null }] };
+const As75 = { n: 'Arsenic75', u: false, m: 75, s: MassUnits.Da, c: [{ f: Proton, a: 33, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 33, b:null }] };
+const Se74 = { n: 'Selenium74', u: false, m: 74, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 34, b:null }] };
+const Se76 = { n: 'Selenium76', u: false, m: 76, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 34, b:null }] };
+const Se77 = { n: 'Selenium77', u: false, m: 77, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 43, b:null }, { f: Electron, a: 34, b:null }] };
+const Se78 = { n: 'Selenium78', u: false, m: 78, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 34, b:null }] };
+const Se80 = { n: 'Selenium80', u: false, m: 80, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 34, b:null }] };
+const Se82 = { n: 'Selenium82', u: false, m: 82, s: MassUnits.Da, c: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 34, b:null }] };
+const Br79 = { n: 'Bromine79', u: false, m: 79, s: MassUnits.Da, c: [{ f: Proton, a: 35, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 35, b:null }] };
+const Br81 = { n: 'Bromine81', u: false, m: 81, s: MassUnits.Da, c: [{ f: Proton, a: 35, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 35, b:null }] };
+const Kr78 = { n: 'Krypton78', u: false, m: 78, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 36, b:null }] };
+const Kr80 = { n: 'Krypton80', u: false, m: 80, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 36, b:null }] };
+const Kr82 = { n: 'Krypton82', u: false, m: 82, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 36, b:null }] };
+const Kr83 = { n: 'Krypton83', u: false, m: 83, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 47, b:null }, { f: Electron, a: 36, b:null }] };
+const Kr84 = { n: 'Krypton84', u: false, m: 84, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 36, b:null }] };
+const Kr86 = { n: 'Krypton86', u: false, m: 86, s: MassUnits.Da, c: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 36, b:null }] };
+const Rb85 = { n: 'Rubidium85', u: false, m: 85, s: MassUnits.Da, c: [{ f: Proton, a: 37, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 37, b:null }] };
+const Rb87 = { n: 'Rubidium87', u: false, m: 87, s: MassUnits.Da, c: [{ f: Proton, a: 37, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 37, b:null }] };
+const Sr84 = { n: 'Strontium84', u: false, m: 84, s: MassUnits.Da, c: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 38, b:null }] };
+const Sr86 = { n: 'Strontium86', u: false, m: 86, s: MassUnits.Da, c: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 38, b:null }] };
+const Sr87 = { n: 'Strontium87', u: false, m: 87, s: MassUnits.Da, c: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 49, b:null }, { f: Electron, a: 38, b:null }] };
+const Sr88 = { n: 'Strontium88', u: false, m: 88, s: MassUnits.Da, c: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 38, b:null }] };
+const Y89 = { n: 'Ytrium89', u: false, m: 89, s: MassUnits.Da, c: [{ f: Proton, a: 39, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 39, b:null }] };
+const Zr90 = { n: 'Zirconium90', u: false, m: 90, s: MassUnits.Da, c: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 40, b:null }] };
+const Zr91 = { n: 'Zirconium91', u: false, m: 91, s: MassUnits.Da, c: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 51, b:null }, { f: Electron, a: 40, b:null }] };
+const Zr92 = { n: 'Zirconium92', u: false, m: 92, s: MassUnits.Da, c: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 40, b:null }] };
+const Zr94 = { n: 'Zirconium94', u: false, m: 94, s: MassUnits.Da, c: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 40, b:null }] };
+const Zr96 = { n: 'Zirconium96', u: false, m: 96, s: MassUnits.Da, c: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 40, b:null }] };
+const Nb93 = { n: 'Niobium93', u: false, m: 93, s: MassUnits.Da, c: [{ f: Proton, a: 41, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 41, b:null }] };
+const Mo92 = { n: 'Molybdenum92', u: false, m: 92, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo94 = { n: 'Molybdenum94', u: false, m: 94, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo95 = { n: 'Molybdenum95', u: false, m: 95, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 53, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo96 = { n: 'Molybdenum96', u: false, m: 96, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo97 = { n: 'Molybdenum97', u: false, m: 97, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 55, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo98 = { n: 'Molybdenum98', u: false, m: 98, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 42, b:null }] };
+const Mo100 = { n: 'Molybdenum100', u: false, m: 100, s: MassUnits.Da, c: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 42, b:null }] };
+const Tc97 = { n: 'Technitium97', u: false, m: 97, s: MassUnits.Da, c: [{ f: Proton, a: 43, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 43, b:null }] };
+const Ru96 = { n: 'Ruthenium96', u: false, m: 96, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru98 = { n: 'Ruthenium98', u: false, m: 98, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru99 = { n: 'Ruthenium99', u: false, m: 99, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 55, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru100 = { n: 'Ruthenium100', u: false, m: 100, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru101 = { n: 'Ruthenium101', u: false, m: 101, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 57, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru102 = { n: 'Ruthenium102', u: false, m: 102, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 44, b:null }] };
+const Ru104 = { n: 'Ruthenium104', u: false, m: 104, s: MassUnits.Da, c: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 44, b:null }] };
+const Rh103 = { n: 'Rhodium103', u: false, m: 103, s: MassUnits.Da, c: [{ f: Proton, a: 45, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 45, b:null }] };
+const Pd102 = { n: 'Paladium102', u: false, m: 102, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 46, b:null }] };
+const Pd104 = { n: 'Paladium104', u: false, m: 104, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 46, b:null }] };
+const Pd105 = { n: 'Paladium105', u: false, m: 105, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 59, b:null }, { f: Electron, a: 46, b:null }] };
+const Pd106 = { n: 'Paladium106', u: false, m: 106, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 46, b:null }] };
+const Pd108 = { n: 'Paladium108', u: false, m: 108, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 46, b:null }] };
+const Pd110 = { n: 'Paladium110', u: false, m: 110, s: MassUnits.Da, c: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 46, b:null }] };
+const Ag107 = { n: 'Silver107', u: false, m: 107, s: MassUnits.Da, c: [{ f: Proton, a: 47, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 47, b:null }] };
+const Ag109 = { n: 'Silver109', u: false, m: 109, s: MassUnits.Da, c: [{ f: Proton, a: 47, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 47, b:null }] };
+const Cd106 = { n: 'Cadmium106', u: false, m: 106, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd108 = { n: 'Cadmium108', u: false, m: 108, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd110 = { n: 'Cadmium110', u: false, m: 110, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd111 = { n: 'Cadmium111', u: false, m: 111, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 63, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd112 = { n: 'Cadmium112', u: false, m: 112, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd113 = { n: 'Cadmium113', u: false, m: 113, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 65, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd114 = { n: 'Cadmium114', u: false, m: 114, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 48, b:null }] };
+const Cd116 = { n: 'Cadmium116', u: false, m: 116, s: MassUnits.Da, c: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 48, b:null }] };
+const In113 = { n: 'Indium113', u: false, m: 113, s: MassUnits.Da, c: [{ f: Proton, a: 49, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 49, b:null }] };
+const In115 = { n: 'Indium115', u: false, m: 115, s: MassUnits.Da, c: [{ f: Proton, a: 49, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 49, b:null }] };
+const Sn112 = { n: 'Tin112', u: false, m: 112, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn114 = { n: 'Tin114', u: false, m: 114, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn115 = { n: 'Tin115', u: false, m: 115, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 65, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn116 = { n: 'Tin116', u: false, m: 116, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn117 = { n: 'Tin117', u: false, m: 117, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 67, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn118 = { n: 'Tin118', u: false, m: 118, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn119 = { n: 'Tin119', u: false, m: 119, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 69, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn120 = { n: 'Tin120', u: false, m: 120, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn122 = { n: 'Tin122', u: false, m: 122, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 50, b:null }] };
+const Sn124 = { n: 'Tin124', u: false, m: 124, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 50, b:null }] };
+const Sb121 = { n: 'Antimony121', u: false, m: 121, s: MassUnits.Da, c: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 51, b:null }] };
+const Sb123 = { n: 'Antimony123', u: false, m: 123, s: MassUnits.Da, c: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 51, b:null }] };
 
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
 const asd = { n: '', u: false, m: 0, s: MassUnits.Da, c: [{ f: Proton, a: 0, b:null }, { f: Neutron, a: 0, b:null }, { f: Electron, a: 0, b:null }] };
-
 
 //items
 const Quark = {
@@ -223,96 +310,96 @@ const Ni = {
 	info: ['Nickel is mainly used in making steel alloys like stainless steel.']
 };
 const Cu = {
-	n:'Copper', u:false, c:[],
-	info: ['']
+	n:'Copper', u:false, c:[Cu63,Cu65],
+	info: ['Copper was the first metal worked by humans and was eventually mixed with tin to make bronze.']
 };
 const Zn = {
-	n:'Zinc', u:false, c:[],
-	info: ['']
+	n:'Zinc', u:false, c:[Zn64,Zn66,Zn67,Zn68,Zn70],
+	info: ['Zinc is mostly used in a process called galvanising, this helps prevent rusting.']
 };
 const Ga = {
-	n:'Gallium', u:false, c:[],
-	info: ['']
+	n:'Gallium', u:false, c:[Ga69,Ga71],
+	info: ['Gallium is used as part of gallium arsenide in semiconductors, lasers, and other electronics.']
 };
 const Ge = {
-	n:'Germanium', u:false, c:[],
-	info: ['']
+	n:'Germanium', u:false, c:[Ge70,Ge72,Ge73,Ge74,Ge76],
+	info: ['Germanium is a semiconductor often mixed with arsenic or gallium and used in transistors.']
 };
 const As = {
-	n:'Arsenic', u:false, c:[],
-	info: ['']
+	n:'Arsenic', u:false, c:[As75],
+	info: ['Arsenic is most commonly known as a poison but is also used in semiconductors and has even been used in medicine.']
 };
 const Se = {
-	n:'Selenium', u:false, c:[],
-	info: ['']
+	n:'Selenium', u:false, c:[Se74,Se76,Se77,Se78,Se80,Se82],
+	info: ['Selenium is mostly used as an additive to glass. It is also used in solar cells and copier machines.']
 };
 const Br = {
-	n:'Bromine', u:false, c:[],
-	info: ['']
+	n:'Bromine', u:false, c:[Br79,Br81],
+	info: ['Bromine has many uses, some are being phased out for environmental reasons.']
 };
 const Kr = {
-	n:'Krypton', u:false, c:[],
-	info: ['']
+	n:'Krypton', u:false, c:[Kr78,Kr80,Kr82,Kr83,Kr84,Kr86],
+	info: ['Krypton is often used in sluorescent lights or flash lamps for high speed photography.']
 };
 const Rb = {
-	n:'Rubidium', u:false, c:[],
-	info: ['']
+	n:'Rubidium', u:false, c:[Rb85,Rb87],
+	info: ['Rubidium is mostly used in research and has few comercial uses.']
 };
 const Sr = {
-	n:'Strontium', u:false, c:[],
-	info: ['']
+	n:'Strontium', u:false, c:[Sr84,Sr86,Sr87,Sr88],
+	info: ['Strontium is used in red fireworks and glow-in-the-dark paints.']
 };
 const Y = {
-	n:'Yttrium', u:false, c:[],
-	info: ['']
+	n:'Yttrium', u:false, c:[Y89],
+	info: ['Yttrium is used in different alloys and in synthetic yttrium-aluminum garnets as part of metal cutting lasers.']
 };
 const Zr = {
-	n:'Zirconium', u:false, c:[],
-	info: ['']
+	n:'Zirconium', u:false, c:[Zr90,Zr91,Zr92,Zr94,Zr96],
+	info: ['Zirconium is mostly used in nuclear power stations.']
 };
 const Nb = {
-	n:'Niobium', u:false, c:[],
-	info: ['']
+	n:'Niobium', u:false, c:[Nb93],
+	info: ['Niobium is unsed in alloys including stainless steel.']
 };
 const Mo = {
-	n:'Molybdenum', u:false, c:[],
-	info: ['']
+	n:'Molybdenum', u:false, c:[Mo92,Mo94,Mo95,Mo96,Mo97,Mo98,Mo100],
+	info: ['Molybdenum is part of a hardened steel alloy used in engines.']
 };
 const Tc = {
-	n:'Technetium', u:false, c:[],
-	info: ['']
+	n:'Technetium', u:false, c:[Tc97],
+	info: ['Technetium is a radioactive element with no stable isotopes. I included the isotope with the longest halflife.']
 };
 const Ru = {
-	n:'Ruthenium', u:false, c:[],
-	info: ['']
+	n:'Ruthenium', u:false, c:[Ru96,Ru98,Ru99,Ru100,Ru101,Ru102,Ru104],
+	info: ['Ruthenium is primarily used in electronic resistors and electrical contacts or acetic acid production.']
 };
 const Rh = {
-	n:'Rhodium', u:false, c:[],
-	info: ['']
+	n:'Rhodium', u:false, c:[103],
+	info: ['Rhodium is mostly used in catalytic converters.']
 };
 const Pd = {
-	n:'Palladium', u:false, c:[],
-	info: ['']
+	n:'Palladium', u:false, c:[Pd102,Pd104,Pd105,Pd106,Pd108,Pd110],
+	info: ['Palladium is used in catalytic converts as well as jewellry. A gold-palladium alloy is also known as white gold.']
 };
 const Ag = {
-	n:'Silver', u:false, c:[],
-	info: ['']
+	n:'Silver', u:false, c:[Ag107,Ag109],
+	info: ['Silver is used in jewellery and mirrors. It is the best known reflector of visible light.']
 };
 const Cd = {
-	n:'Cadmium', u:false, c:[],
-	info: ['']
+	n:'Cadmium', u:false, c:[Cd106,Cd108,Cd110,Cd111,Cd112,Cd113,Cd114,Cd116],
+	info: ['Cadmium is a poison that causes birth defects and cancer. It is used in some rechargable batteries but they are being phased out.']
 };
 const In = {
-	n:'Indium', u:false, c:[],
-	info: ['']
+	n:'Indium', u:false, c:[In113,In115],
+	info: ['Indium is mostly used in electronics like touch screens and solar panels.']
 };
 const Sn = {
-	n:'Tin', u:false, c:[],
-	info: ['']
+	n:'Tin', u:false, c:[Sn112,Sn114,Sn115,Sn116,Sn117,Sn118,Sn119,Sn120,Sn122,Sn124],
+	info: ['Tin has many uses from food storage to pewter. Bronze was one of the first alloys, made with copper and tin.']
 };
 const Sb = {
-	n:'Antimony', u:false, c:[],
-	info: ['']
+	n:'Antimony', u:false, c:[Sb121,Sb123],
+	info: ['Antimonoy is used in some semiconductor devices like IR detectors and diodes. It is also used in a Pb-Sb alloy in batteries.']
 };
 const Te = {
 	n:'Tellurium', u:false, c:[],
@@ -616,7 +703,7 @@ const AlkalineEarthMetal = {
 }
 const Actinide = {
 	n:'Actinide', u:false, c: [Ac, Rh, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No],
-	info: ['Actinides are all radioactive and have no stable isotopes. In this game I included isotopes with a decay rate longer than a year.']
+	info: ['Actinides are all radioactive and have no stable isotopes. In this game I included isotopes with the longest decay rate.']
 }
 const Chalcogen = {
 	n:'Chalcogen', u:false, c:[O, S, Se, Te, Po],

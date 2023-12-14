@@ -3,14 +3,28 @@ https://periodictable.com/index.html
 Bugs: 
 
 TODO:
+offline gains
+
+molecule grouping:
+	-monomer
+		-natural
+			-monosaccharides
+			-amino acids
+			-nucleotides
+			-isoprene
+			-fatty acids & alcohols
+		-synthetic
+
+			
+	-polymer
+	-macromolecule
+	-other compounds
+
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item
 	-Max inventory is MAX_SAFE_INTEGER of each unit
 	-create items from bulk storage (EG: star is ~1MO of H)
 	
-Have recipe for any flavor from group?
-	-Or convert from one flavor to another in same group?
-
 Upgrades/achievements?
 	-generator multiplier (only output/not input!)
 

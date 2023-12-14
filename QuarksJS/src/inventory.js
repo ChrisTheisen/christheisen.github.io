@@ -308,6 +308,11 @@ InventoryItem.prototype.unlock = function(){
 	if(this.isUnlocked()){return;}
 	unlock(this.f);
 }
+InventoryItem.prototype.setS = function(input){
+	const max = this.generatorMax();
+	const value = Math.min(input, max);
+	this.s = Math.max(0,value);
+}
 
 InventoryItem.prototype.renderCreate = function(parent){
 	this.renderCreate0(createUIElement({parent: parent, cssClasses:['block', 'flex', 'center']}));
@@ -448,7 +453,7 @@ InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	createUIElement({type:'span', parent:row5, textContent:'Create up to '});
 	this.content.s.push(createUIElement({type:'input', parent:row5,
 		attr:{type:'number', min:0, max:this.l, value:0},
-		oninput:(x) => { this.s = parseInt(x.target.value); this.update(); } }));
+		oninput:(x) => { this.setS(parseInt(x.target.value)); this.update(); } }));
 	createUIElement({type:'span', parent:row5, textContent:' every tick'});
 }
 
@@ -494,7 +499,7 @@ InventoryItem.prototype.renderManage = function(parent){
 	this.content.s.push(createUIElement({type:'input', 
 		parent:createUIElement({parent:parent, cssClasses:['cell'], style:{textAlign:'right', fontSize:'14px'}}), 
 		attr:{type:'number', min:0, max:this.l, value:0},
-		oninput:(x) => { this.s = parseInt(x.target.value); game.inventory.update(); }}));
+		oninput:(x) => { this.setS(x.target.value); game.inventory.update(); }}));
 		
 	this.content.z = createUIElement({parent:parent, cssClasses:['cell'], textContent:this.calculateDemand(), style:{textAlign:'center', fontSize:'14px'}});
 	this.content.n = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualCreated[this.f.n], style:{textAlign:'center', fontSize:'14px'}});

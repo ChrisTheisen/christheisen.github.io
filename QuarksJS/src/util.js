@@ -161,6 +161,8 @@ function load() {
 	if(!temp){return;}
 	const data = JSON.parse(temp);
 	
+	console.log(data);
+	
 	game.settings.c = data.s.c;
 	game.settings.i = data.s.i;
 	game.settings.u = data.s.u;
@@ -183,7 +185,7 @@ function load() {
 		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'));
 	}
 	
-	game.clock.lastUpdate = data.c;
+	game.clock.duration = Date.now() - data.c;
 	Object.entries(data.i).forEach(([key, value], index) => {
 		game.inventory.children[key].a = value.a ?? 0;
 		game.inventory.children[key].b = value.b ?? new Amount();
@@ -201,7 +203,7 @@ function load() {
 }
 
 function save() {
-	const data = {i:{}, s:game.settings, c:game.clock.lastUpdate};
+	const data = {i:{}, s:game.settings, c:Date.now()};
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
 		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
