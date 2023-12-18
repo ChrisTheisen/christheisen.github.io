@@ -265,9 +265,11 @@ InventoryItem.prototype.upgrade = function(){
 	
 	this.a -= cost;
 	setElementText(this.content?.g, this.upgradeCost());
-	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
 	this.content.a.forEach(x => setElementText(x, this.a));
+	this.content.b.forEach(x => x.classList.toggle('disabled', !this.canCreate()));
 	this.content.l.forEach(x => setElementText(x, this.l??0));
+	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
+
 }
 InventoryItem.prototype.calculateDemand = function(){
 	let output = 0;
@@ -300,14 +302,15 @@ InventoryItem.prototype.uprank = function(){
 	//if it was max, keep it max. If it was set to a different value leave it there.
 	if(temp){ this.s = this.generatorMax();}
 
-	setElementText(this.content?.f, this.upgradeCost());
+	this.content.b.forEach(x => x.classList.toggle('disabled', !this.canCreate()));
+	setElementText(this.content?.f, this.uprankCost());
 	setElementText(this.content?.k, this.k??0);
 	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
 	this.content.l.forEach(x => setElementText(x, this.l??0));
 }
 
 InventoryItem.prototype.canCreate = function(){
-	return game.settings.c > this.tier || !this.c.some(x => x.inv.a < x.a );
+	return game.settings.c > this.tier || !this.c.some(x => x.inv.a < x.a);
 }
 InventoryItem.prototype.isUnlocked = function(){
 	return isUnlocked(this.f);

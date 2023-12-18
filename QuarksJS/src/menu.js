@@ -85,19 +85,28 @@ Menu.prototype.update = function(){
 	this.children[this.current].d.classList.remove('hide');
 	this.children[this.current]?.update();//needed for gotoLeaf to work.
 
-	game.inventory.update();//updates the content quick when tab changes.
 	switch(game.menu.current){
+		case 'Create':{
+			game.inventory.update();//updates the content quick when tab changes.
+			break;
+		}
 		case 'Discover': {
+			game.inventory.update();//updates the content quick when tab changes.
 			getUIElement('filterChkD').checked = game.settings.d.o;
 			break;
 		}
 		case 'Manage': {
+			game.inventory.update();//updates the content quick when tab changes.
 			getUIElement('filterChkMC').checked = game.settings.m.c;
 			getUIElement('filterChkMD').checked = game.settings.m.d;
 			getUIElement('filterChkMM').checked = game.settings.m.m;
 			getUIElement('filterChkMN').checked = game.settings.m.n;
 			getUIElement('filterChkMS').checked = game.settings.m.s;
 			getUIElement('filterChkMT').checked = game.settings.m.t;
+			break;
+		}
+		case 'Enhance': {
+			game.enhancements.update();
 			break;
 		}
 	}
