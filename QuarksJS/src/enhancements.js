@@ -42,7 +42,6 @@ Enhancements.prototype.buyE = function(){
 	cost.inv.a -= cost.a;
 	this.e++;
 	
-	inv.content.a.forEach(x => setElementText(x, this.a));
 	this.update();
 }
 Enhancements.prototype.powerE = function(){
@@ -68,7 +67,6 @@ Enhancements.prototype.buyG = function(){
 	cost.inv.a -= cost.a;
 	this.g++;
 	
-	inv.content.a.forEach(x => setElementText(x, this.a));
 	this.update();
 }
 Enhancements.prototype.powerG = function(){
@@ -94,7 +92,6 @@ Enhancements.prototype.buyK = function(){
 	cost.inv.a -= cost.a;
 	this.k++;
 	
-	inv.content.a.forEach(x => setElementText(x, this.a));
 	this.update();
 }
 Enhancements.prototype.powerK = function(){
@@ -126,6 +123,10 @@ Enhancements.prototype.render = function(parent){
 	this.content.g.h = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[have]' });
 	this.content.k.h = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[have]' });
 	this.content.e.h = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[have]' });
+
+	createUIElement({parent:rowG, cssClasses:['cell'], textContent:'/' });
+	createUIElement({parent:rowK, cssClasses:['cell'], textContent:'/' });
+	createUIElement({parent:rowE, cssClasses:['cell'], textContent:'/' });
 
 	this.content.g.a = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[amount]' });
 	this.content.k.a = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[amount]' });

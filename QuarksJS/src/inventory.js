@@ -408,7 +408,7 @@ InventoryItem.prototype.renderComponent = function(parent, input){
 	
 	const gen = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'gains'], textContent:'++', title:'Generate',
-	onclick:() => { inv.generatorClick(); this.update(); } });
+	onclick:() => { inv.generatorClick(); this.update(); inv.update(); } });
 	
 	gen.classList.toggle('disabled', !inv.canCreate());
 	

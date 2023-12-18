@@ -173,7 +173,9 @@ function load() {
 	game.settings.m.s = data.s?.m?.s ?? false;
 	game.settings.m.t = data.s?.m?.t ?? false;
 	
+	game.enhancements.e = data.e?.e ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
+	game.enhancements.k = data.e?.k ?? 0;
 
 	getUIElement('numSettingsC').value = game.settings.c;
 	getUIElement('chkSettingsI').checked = game.settings.i;

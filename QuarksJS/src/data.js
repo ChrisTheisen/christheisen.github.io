@@ -898,7 +898,7 @@ const tabs = [
 	{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. These "helpful tips" can be hidden from the Settings tab.'}, 
 	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Generate Discoverable Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator.'}, 
 	{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
-	{n:'Enhance', u:false, info:['<Enhance tab info here>.'], intro:'These are global Enhancements that increase generator output. This breaks conservation of mass.'}, 
+	{n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Rank cost reduces the cost required to increase the generator rank.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator uprank cost. This breaks conservation of mass.'}, 
 	{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these messages about how to use a website.'}, 
 	{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -910,21 +910,28 @@ const help = [
 		'You initially start by crafting subatomic materials but can eventually create successively larger items. Unfortunately the data file is missing several items that exist in the universe.',
 		'Items are organized into groups and have flavors or isotopes. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
 		'|',
-		'Sometimes it can be difficult to remember what group an item is in; (») buttons are found most places an item is referenced and will go to the item.',
+		'(») circle buttons will go to the item referenced. It will goto the item even if it is still locked through the normal menu.',
 		'|',
 		'A game cycle is about 1 second.',
 		'Space bar pauses the game'
 	]},
 	{t:'Create', c:[
-		'The Create tab lets you create items. This can be done either by manually clicking the Inventory (++) button or by upgrading the Generator.',
+		'The Create tab lets you create items.',
+		'|',
 		'The Inventory (++) button will create one item from the components.',
-		'Generator rank will sacrifice generators to improve increase their effectiveness and reduce their cost.', 
-		'The Generator will automatically create items based on the generator set-point. It will only create items if you have the required components. Upgrading the generator uses the item it will generate.',
+		'|',
+		'Generator level (++) button will spend an item to make generators that will create items every cycle.', 
+		'Generator rank (++) button will spend generators to increase their effectiveness and reduce their cost.', 
+		'|',
+		'The Generator will automatically create items based on the generator set-point. It will only create items if you have the required components.',
+		'For example if you have 10 Up Quarks and have a Proton set-point of 7 (Protons each need 2 Up Quarks) the Proton generators will make 5 Protons.',
 	]},
 	{t:'Discover', c:[
 		'The Discover tab is the main way to gain access to new item types.',
+		'|',
 		'Add items to the matter mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
 		'Unfortunately, the game data is not complete but will be expanded in the future.',
+		'|',
 		'There is no penalty for scanning items that do not match a recipe.',
 		'If you are stuck or want a recipe hint you can click the "Generate Discoverable Recipe" button',
 		'|',
@@ -968,15 +975,18 @@ const help = [
 		'Cheater Level: -1 is no effect, higher number is bigger cheats. Allows you to create some items without using components.'
 	]},
 	{t:'About', c:[
-		'The isotopes I included are the bolded ones listed on https://periodictable.com/; I think they bold stable isotopes and isotopes with a half-life over ~10^10 years.',
+		'The isotopes I included are the bolded ones listed on https://periodictable.com; I think they bold stable isotopes and isotopes with a half-life over ~10^10 years.',
 		'If there are none for a given element I used the one with the largest halflife.',
-		'I looked up additional information, such as uses, here: https://www.rsc.org/periodic-table/',
+		'I looked up additional information, such as uses, here: https://www.rsc.org/periodic-table',
+		'|',
+		'Molecules will be grouped according to IUPAC and ChatGPT.',
+		'|',
 		'The other items are included as I get to it.',
 		'|',
 		'If you have a suggestion of items you want added you can email: grumdrig333@gmail.com',
 		'|',
 		'This game was initially started as a way to learn mutraction, but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
 		'I decided to try making a game that has a simple UI but is very data heavy. As a result the html file is pretty small and most content is generated based on the data.js file.',
-		'It ended up less general that I initially hoped and more specialized to this specific game, but in the end  I like this result'
+		'It ended up less general than I initially hoped and more specific to this game, but in the end I mostly like this result.'
 	]},
 ]
