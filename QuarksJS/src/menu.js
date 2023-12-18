@@ -33,6 +33,10 @@ function Menu(parent, input, b){
 				this.renderManage(div);
 				break;
 			}
+			case 'Enhance':{
+				this.renderEnhance(div);
+				break;
+			}
 			case 'Settings': {
 				this.renderSettings(div);
 				break;
@@ -206,7 +210,7 @@ Menu.prototype.renderManage = function(parent){
 	});
 	const w02 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w02, textContent:'Hide Created < Setpoint', style:{paddingLeft:'15px'}}), 
-		title:'Hide not created', attr:{type:'checkbox'}, id:'filterChkMM',
+		title:'Hide Created < Setpoint', attr:{type:'checkbox'}, id:'filterChkMM',
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
 	});
 
@@ -222,11 +226,15 @@ Menu.prototype.renderManage = function(parent){
 	});
 	const w12 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}}), 
-		title:'Hide not Used', attr:{type:'checkbox'}, id:'filterChkMT',
+		title:'Hide Used < Demand', attr:{type:'checkbox'}, id:'filterChkMT',
 		onclick:(e) => { game.settings.m.t = !game.settings.m.t; game.inventory.update(); }
 	});
 
 	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
+}
+
+Menu.prototype.renderEnhance = function(parent){
+	game.enhancements.render(parent);
 }
 
 Menu.prototype.renderHelp = function(parent){

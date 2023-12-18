@@ -142,9 +142,13 @@ Inventory.prototype.update = function(){
 	const canDiscover = Object.values(game.inventory.children).some(x => x.l > 3);
 	game.menu.children.Discover.b.classList.toggle('hide', !canDiscover);
 	
-	//can manage when a generator for an item with components is over level 1;
+	//can manage when a generator for an item with components is over level 1.
 	const canManage = Object.values(game.inventory.children).some(x => x.l > 1 && x.c.length > 0);
 	game.menu.children.Manage.b.classList.toggle('hide', !canManage);
+	
+	//can enhance when a generator for an item with components is over rank 3.
+	const canEnhance = Object.values(game.inventory.children).some(x => x.k > 3 && x.c.length > 0);
+	game.menu.children.Enhance.b.classList.toggle('hide', !canEnhance);
 }
 
 function InventoryItem(input){
@@ -172,7 +176,6 @@ function InventoryItem(input){
 	this.content = {
 		a:[], //amount label
 		b:[], //generate button (for Generate disabled)
-		c:[], //create flavor sub-components (for update need)
 		d:null, //discover add buttons (for disabled)
 		e:null, //enabled (for checkbox checked)
 		f:null, //generator uprank cost label
@@ -242,8 +245,7 @@ InventoryItem.prototype.generate = function(){
 		x.inv.a -= x.a * amount
 	});
 	ActualCreated[this.f.n] = amount;
-	this.a += amount;
-	game.inventory.update();
+	this.a += Math.floor(amount * game.enhancements.powerG());
 }
 InventoryItem.prototype.upgradeCost = function(){
 	const s = .2*this.rankDiscount();
@@ -262,7 +264,10 @@ InventoryItem.prototype.upgrade = function(){
 	if(temp){ this.s = this.generatorMax();}
 	
 	this.a -= cost;
-	this.update();
+	setElementText(this.content?.g, this.upgradeCost());
+	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
+	this.content.a.forEach(x => setElementText(x, this.a));
+	this.content.l.forEach(x => setElementText(x, this.l??0));
 }
 InventoryItem.prototype.calculateDemand = function(){
 	let output = 0;
@@ -273,7 +278,7 @@ InventoryItem.prototype.calculateDemand = function(){
 }
 InventoryItem.prototype.uprankCost = function(){
 	const s = 1.25;
-	const a = s**this.k;
+	const a = s**this.k * game.enhancements.powerK();
 	return Math.ceil(a);
 }
 InventoryItem.prototype.rankDiscount = function(){
@@ -295,7 +300,10 @@ InventoryItem.prototype.uprank = function(){
 	//if it was max, keep it max. If it was set to a different value leave it there.
 	if(temp){ this.s = this.generatorMax();}
 
-	this.update();
+	setElementText(this.content?.f, this.upgradeCost());
+	setElementText(this.content?.k, this.k??0);
+	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
+	this.content.l.forEach(x => setElementText(x, this.l??0));
 }
 
 InventoryItem.prototype.canCreate = function(){
@@ -312,6 +320,7 @@ InventoryItem.prototype.setS = function(input){
 	const max = this.generatorMax();
 	const value = Math.min(input, max);
 	this.s = Math.max(0,value);
+	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
 }
 
 InventoryItem.prototype.renderCreate = function(parent){
@@ -400,7 +409,6 @@ InventoryItem.prototype.renderComponent = function(parent, input){
 	
 	gen.classList.toggle('disabled', !inv.canCreate());
 	
-	this.content.c.push(inv);
 	inv.content.a.push(own);
 	inv.content.b.push(gen);
 }
@@ -506,6 +514,16 @@ InventoryItem.prototype.renderManage = function(parent){
 	this.content.q = createUIElement({parent:parent, cssClasses:['cell'], textContent:ActualUsed[this.f.n], style:{textAlign:'center', fontSize:'14px'}});
 }
 
+InventoryItem.prototype.isDisplayed = function(){
+	const a = this.fullName.split('|').map(x => x.trim());
+	let m = game.menu.children.Create;
+	for(let i in a){
+		if(m.current !== a[i]){ return false; }
+		m = m.children[a[i]];
+	}
+	return true;
+}
+
 InventoryItem.prototype.update = function(){
 	//update the UI elements that exist for this inventory item
 	const upgradeCost = this.upgradeCost();
@@ -522,7 +540,8 @@ InventoryItem.prototype.update = function(){
 		case 'Create': {
 			this.content.a.forEach(x => setElementText(x, this.a));
 			this.content.b.forEach(x => x.classList.toggle('disabled', !canCreate));
-			this.content.c.forEach(x => x.update());
+			if(!this.isDisplayed()){return;}
+
 			this.content.e.checked = this.e;
 			setElementText(this.content?.f, uprankCost);
 			setElementText(this.content?.g, upgradeCost);
@@ -533,7 +552,7 @@ InventoryItem.prototype.update = function(){
 			this.content.l.forEach(x => setElementText(x, this.l??0));
 			this.content.o?.classList.toggle('hide', this.k < 5);
 			this.content.r?.classList.toggle('hide', !this.q && game.settings.u);
-			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
+			this.content.s.forEach(x => { x.value = this.s; x.disabled = this.l === 0;});
 			this.content.t.checked = this.t;
 			this.content.u?.classList.toggle('disabled', !canUpgrade);
 			this.content.v?.classList.toggle('disabled', !canUprank);

@@ -64,6 +64,20 @@ GameClock.prototype.update = function(){
 	Object.values(game.inventory.children).forEach(x => {
 		x.generate();
 	});
+	switch(game.menu.current){
+		case 'Create':
+		case 'Discover':
+		case 'Manage':
+		{
+			game.inventory.update();
+			break;
+		}
+		case 'Enhance':
+		{
+			game.enhancements.update();
+			break;
+		}
+	}
 	
 	//sometimes save
 	if(--this.lastSave<=0){
@@ -75,6 +89,7 @@ GameClock.prototype.update = function(){
 
 function Game(){
 	this.clock = new GameClock();
+	this.enhancements = new Enhancements();
 	this.inventory = new Inventory();
 	this.menu = new Menu();
 	this.h = true;
@@ -208,6 +223,7 @@ function init(){
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
+	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.s.i - b.f.s.i || a.f.m - b.f.m || a.f.n.localeCompare(b.f.n));
 	game.clock.update();
 
 	game.clock.status = null;

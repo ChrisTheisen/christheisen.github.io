@@ -4,15 +4,16 @@
 const ComponentMap = {};//Component Flavor Name -> Flavor[]
 const ParentMap = {};
 const AllFlavors = {};
+let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
 
 const MassUnits = {
-	Da:{s:'Da',n:'Dalton',c:602217364335000},
-	ng:{s:'ng',n:'Nanogram',c:1000000000000},
-	Kg:{s:'Kg',n:'Kilogram',c:1000000000000000},
-	Eg:{s:'Eg',n:'Exagram',c:1378679941220000},
-	MO:{s:'M☉',n:'Solar Mass',c:Infinity}
+	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335000},
+	ng:{i: 1, s:'ng',n:'Nanogram',c:1000000000000},
+	Kg:{i: 2, s:'Kg',n:'Kilogram',c:1000000000000000},
+	Eg:{i: 3, s:'Eg',n:'Exagram',c:1378679941220000},
+	MO:{i: 4, s:'M☉',n:'Solar Mass',c:Infinity}
 }
 
 //flavors
@@ -179,6 +180,38 @@ const Sn122 = { n: 'Tin122', u: false, m: 122, s: MassUnits.Da, c: [{ f: Proton,
 const Sn124 = { n: 'Tin124', u: false, m: 124, s: MassUnits.Da, c: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 50, b:null }] };
 const Sb121 = { n: 'Antimony121', u: false, m: 121, s: MassUnits.Da, c: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 51, b:null }] };
 const Sb123 = { n: 'Antimony123', u: false, m: 123, s: MassUnits.Da, c: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 51, b:null }] };
+const Te120 = { n: 'Tellurium120', u: false, m: 120, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 52, b:null }] };
+const Te122 = { n: 'Tellurium122', u: false, m: 122, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 52, b:null }] };
+const Te123 = { n: 'Tellurium123', u: false, m: 123, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 71, b:null }, { f: Electron, a: 52, b:null }] };
+const Te124 = { n: 'Tellurium124', u: false, m: 124, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 52, b:null }] };
+const Te125 = { n: 'Tellurium125', u: false, m: 125, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 73, b:null }, { f: Electron, a: 52, b:null }] };
+const Te126 = { n: 'Tellurium126', u: false, m: 126, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 52, b:null }] };
+const Te128 = { n: 'Tellurium128', u: false, m: 128, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 52, b:null }] };
+const Te130 = { n: 'Tellurium130', u: false, m: 130, s: MassUnits.Da, c: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 52, b:null }] };
+const I127 = { n: 'Iodine127', u: false, m: 127, s: MassUnits.Da, c: [{ f: Proton, a: 53, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 53, b:null }] };
+const Xe124 = { n: 'Xenon124', u: false, m: 124, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe126 = { n: 'Xenon126', u: false, m: 126, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe128 = { n: 'Xenon128', u: false, m: 128, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe129 = { n: 'Xenon129', u: false, m: 129, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 75, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe130 = { n: 'Xenon130', u: false, m: 130, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe131 = { n: 'Xenon131', u: false, m: 131, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 77, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe132 = { n: 'Xenon132', u: false, m: 132, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe134 = { n: 'Xenon134', u: false, m: 134, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 54, b:null }] };
+const Xe136 = { n: 'Xenon136', u: false, m: 136, s: MassUnits.Da, c: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 54, b:null }] };
+const Cs133 = { n: 'Cesium133', u: false, m: 133, s: MassUnits.Da, c: [{ f: Proton, a: 55, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 55, b:null }] };
+const Ba130 = { n: 'Barium130', u: false, m: 130, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba132 = { n: 'Barium132', u: false, m: 132, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba134 = { n: 'Barium134', u: false, m: 134, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba135 = { n: 'Barium135', u: false, m: 135, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 79, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba136 = { n: 'Barium136', u: false, m: 136, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba137 = { n: 'Barium137', u: false, m: 137, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 81, b:null }, { f: Electron, a: 56, b:null }] };
+const Ba138 = { n: 'Barium138', u: false, m: 138, s: MassUnits.Da, c: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 56, b:null }] };
+const La138 = { n: 'Lanthanum138', u: false, m: 138, s: MassUnits.Da, c: [{ f: Proton, a: 57, b:null }, { f: Neutron, a: 81, b:null }, { f: Electron, a: 57, b:null }] };
+const La139 = { n: 'Lanthanum139', u: false, m: 139, s: MassUnits.Da, c: [{ f: Proton, a: 57, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 57, b:null }] };
+const Ce136 = { n: 'Cerium136', u: false, m: 136, s: MassUnits.Da, c: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 58, b:null }] };
+const Ce138 = { n: 'Cerium138', u: false, m: 138, s: MassUnits.Da, c: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 58, b:null }] };
+const Ce140 = { n: 'Cerium140', u: false, m: 140, s: MassUnits.Da, c: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 58, b:null }] };
+const Ce142 = { n: 'Cerium142', u: false, m: 142, s: MassUnits.Da, c: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 84, b:null }, { f: Electron, a: 58, b:null }] };
 
 const Ac227 = { n: 'Actinium227', u: false, m: 227, s: MassUnits.Da, c: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
 
@@ -402,32 +435,32 @@ const Sb = {
 	info: ['Antimonoy is used in some semiconductor devices like IR detectors and diodes. It is also used in a Pb-Sb alloy in batteries.']
 };
 const Te = {
-	n:'Tellurium', u:false, c:[],
-	info: ['']
+	n:'Tellurium', u:false, c:[Te120,Te122,Te123,Te124,Te125,Te126,Te128,Te130],
+	info: ['Tellurium is used in alloys with copper and stainless steel to improve strength and hardness.']
 };
 const I = {
-	n:'Iodine', u:false, c:[],
-	info: ['']
+	n:'Iodine', u:false, c:[I127],
+	info: ['Iodine was initially used in photography in the 1800s. It is now used in pharmacuticals and disinfectants.']
 };
 const Xe = {
-	n:'Xenon', u:false, c:[],
-	info: ['']
+	n:'Xenon', u:false, c:[Xe124,Xe126,Xe128,Xe129,Xe130,Xe131,Xe132,Xe134,Xe136],
+	info: ['Xenon is used in special light bulbs and in ion propulsion systems used by some satellites.']
 };
 const Cs = {
-	n:'Cesium', u:false, c:[],
-	info: ['']
+	n:'Cesium', u:false, c:[Cs133],
+	info: ['Cesium is mostly used in drilling fluids. It is also used in some optical glass and radiation monitoring equipment.']
 };
 const Ba = {
-	n:'Barium', u:false, c:[],
-	info: ['']
+	n:'Barium', u:false, c:[Ba130,Ba132,Ba134,Ba135,Ba136,Ba137,Ba138],
+	info: ['Barium is mostly used in drilling fluids for oil and gas wells.']
 };
 const La = {
-	n:'Lanthanum', u:false, c:[],
-	info: ['']
+	n:'Lanthanum', u:false, c:[La138,La139],
+	info: ['Lanthanum alloys have been used in hydrogen tanks for hydrogen powered vehicles.']
 };
 const Ce = {
-	n:'Cerium', u:false, c:[],
-	info: ['']
+	n:'Cerium', u:false, c:[Ce136,Ce138,Ce140,Ce142],
+	info: ['Cerium oxide is used in the walls of self-cleaning ovens as well as catalytic converters.']
 };
 const Pr = {
 	n:'Praseodymium', u:false, c:[],
@@ -865,6 +898,7 @@ const tabs = [
 	{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. These "helpful tips" can be hidden from the Settings tab.'}, 
 	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Generate Discoverable Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator.'}, 
 	{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
+	{n:'Enhance', u:false, info:['<Enhance tab info here>.'], intro:'These are global Enhancements that increase generator output. This breaks conservation of mass.'}, 
 	{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings. Click the giant button just under this text to hide these messages about how to use a website.'}, 
 	{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -892,7 +926,9 @@ const help = [
 		'Add items to the matter mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
 		'Unfortunately, the game data is not complete but will be expanded in the future.',
 		'There is no penalty for scanning items that do not match a recipe.',
-		'If you are stuck or want a recipe hint you can click the "Generate Discoverable Recipe" button'
+		'If you are stuck or want a recipe hint you can click the "Generate Discoverable Recipe" button',
+		'|',
+		'Discover tab is unlocked when a generator is over level 3.'
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your generators. It displays the input and output of each generator and the amount created and used during the last update.',
@@ -911,7 +947,17 @@ const help = [
 		'Setpoint : is the generator setpoint, or the maximum amount that should be created.',
 		'Demand : is the expected demand if all setpoints are achieved',
 		'Created : is the actual amount created in the last cycle',
-		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators'
+		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators',
+		'|',
+		'Manage tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 1.'
+	]},
+	{t:'Enhance', c:[
+		'This tab allows you to break conservation of mass by multiplying generator outputs.',
+		'This does not change the setpoint limits, it multiplies the amount you are able to create.',
+		'|',
+		'Enhancement costs are generated programatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can effect the enhancement costs.',
+		'|',
+		'Enhance tab is unlocked when a generator for an item with components (not a quark or lepton) is over rank 3.'
 	]},
 	{t:'Settings', c:[
 		'Settings can effect the difficulty and functionality of the game.',
@@ -922,7 +968,8 @@ const help = [
 		'Cheater Level: -1 is no effect, higher number is bigger cheats. Allows you to create some items without using components.'
 	]},
 	{t:'About', c:[
-		'The isotopes I included are the bolded ones listed on https://periodictable.com/. If there are none for a given element I used the one with the largest halflife.',
+		'The isotopes I included are the bolded ones listed on https://periodictable.com/; I think they bold stable isotopes and isotopes with a half-life over ~10^10 years.',
+		'If there are none for a given element I used the one with the largest halflife.',
 		'I looked up additional information, such as uses, here: https://www.rsc.org/periodic-table/',
 		'The other items are included as I get to it.',
 		'|',

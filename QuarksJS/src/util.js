@@ -161,24 +161,24 @@ function load() {
 	if(!temp){return;}
 	const data = JSON.parse(temp);
 	
-	console.log(data);
+	game.settings.c = data.s?.c ?? -1;
+	game.settings.i = data.s?.i ?? true;
+	game.settings.u = data.s?.u ?? true;
+	game.settings.d.o = data.s?.d?.o ?? false;
+	game.settings.d.s = data.s?.d?.s ?? null;
+	game.settings.m.c = data.s?.m?.c ?? false;
+	game.settings.m.d = data.s?.m?.d ?? false;
+	game.settings.m.m = data.s?.m?.m ?? false;
+	game.settings.m.n = data.s?.m?.n ?? false;
+	game.settings.m.s = data.s?.m?.s ?? false;
+	game.settings.m.t = data.s?.m?.t ?? false;
 	
-	game.settings.c = data.s.c;
-	game.settings.i = data.s.i;
-	game.settings.u = data.s.u;
-	game.settings.d.o = data.s.d.o;
-	game.settings.d.s = data.s.d.s;
-	game.settings.m.c = data.s.m.c;
-	game.settings.m.d = data.s.m.d;
-	game.settings.m.m = data.s.m.m;
-	game.settings.m.s = data.s.m.s;
-	game.settings.m.u = data.s.m.u;
+	game.enhancements.g = data.e?.g ?? 0;
 
 	getUIElement('numSettingsC').value = game.settings.c;
 	getUIElement('chkSettingsI').checked = game.settings.i;
 	getUIElement('chkSettingsU').checked = game.settings.u;
 	
-
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	//hide green border tips
 	if(Object.keys(data.i).length > 5){
@@ -203,7 +203,16 @@ function load() {
 }
 
 function save() {
-	const data = {i:{}, s:game.settings, c:Date.now()};
+	const data = {
+		i:{}, 
+		e:{
+			e:game.enhancements.e,
+			g:game.enhancements.g,
+			k:game.enhancements.k
+		}, 
+		s:game.settings, 
+		c:Date.now()
+	};
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
 		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
