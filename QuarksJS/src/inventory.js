@@ -103,10 +103,10 @@ Inventory.prototype.renderCreate = function(parent, input){
 }
 Inventory.prototype.renderDiscover = function(parent){
 	createUIElement({type:'h3', parent:parent, textContent:'Inventory'});
-	const center = createUIElement({parent:parent});
 	
+	const bag = createUIElement({parent:parent, cssClasses:['discoverContainer']});
 	Object.values(this.children).forEach(x => {
-		const row = createUIElement({parent: parent, cssClasses:['row']});
+		const row = createUIElement({parent: bag, cssClasses:['row']});
 		row.classList.toggle('hide', !x.isUnlocked());
 		x.content.p = row;
 		x.renderDiscover(row);
@@ -120,8 +120,8 @@ Inventory.prototype.renderManage = function(parent){
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Owned', title:'The number of this item owned', style:{width:'15%', cursor:'help'}});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Setpoint', title:'The target amount to create', style:{width:'15%', cursor:'help'}});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Demand', title:'Demand based on generator setpoints' , style:{width:'15%', cursor:'help'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Created', title:'Actual amount created in last update' , style:{width:'15%', cursor:'help'}});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last update' , style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Created', title:'Actual amount created in last cycle' , style:{width:'15%', cursor:'help'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last cycle' , style:{width:'15%', cursor:'help'}});
 	
 	Object.values(this.children).forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['row']});
@@ -244,8 +244,10 @@ InventoryItem.prototype.generate = function(){
 		ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
 		x.inv.a -= x.a * amount
 	});
-	ActualCreated[this.f.n] = amount;
-	this.a += Math.floor(amount * game.enhancements.powerG());
+	
+	const enhanced = Math.floor(amount * game.enhancements.powerG());
+	ActualCreated[this.f.n] = enhanced;
+	this.a += enhanced;
 }
 InventoryItem.prototype.upgradeCost = function(){
 	const s = .2*this.rankDiscount();
@@ -345,7 +347,6 @@ InventoryItem.prototype.renderCreate0 = function(parent){
 	
 	const row = createUIElement({parent:inv, style:{paddingTop:'17px'}});
 	
-	createUIElement({type:'div', parent:row, textContent:'Owned:'});
 	const create_own = createUIElement({type:'div', parent:row, textContent:this.a});
 	
 	create_gen.classList.toggle('disabled', !this.canCreate());
@@ -402,9 +403,8 @@ InventoryItem.prototype.renderComponent = function(parent, input){
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], 
 		style:{width:'40%', textAlign:'left'}})
-	createUIElement({type:'span', parent:ow, textContent:'Owned:'});
 	const own = createUIElement({type:'span', parent:ow, textContent:inv.a});
-	createUIElement({type:'span', parent:ow, textContent:` / Need:${input.a}`});
+	createUIElement({type:'span', parent:ow, textContent:` / ${input.a}`});
 	
 	const gen = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'gains'], textContent:'++', title:'Generate',
@@ -473,10 +473,9 @@ InventoryItem.prototype.renderDiscover = function(parent){
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
 	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, 
-		style:{width:'50%', textAlign:'left', maxWidth:'150px', overflowX:'clip', fontSize:'14px'}});
+		style:{width:'50%', textAlign:'left', overflowX:'clip', fontSize:'14px'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
-	createUIElement({type:'span', parent:ow, textContent:'Owned:'});
 	const own = createUIElement({type:'span', parent:ow, textContent:this.a});
 	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
@@ -495,7 +494,6 @@ InventoryItem.prototype.renderUsedIn = function(parent, input){
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName,style:{width:'40%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'40%', textAlign:'left'}})
-	createUIElement({type:'span', parent:ow, textContent:'Need:'});
 	createUIElement({type:'span', parent:ow, textContent:input.a});
 }
 InventoryItem.prototype.renderManage = function(parent){
@@ -580,13 +578,15 @@ InventoryItem.prototype.update = function(){
 			const f0 = game.settings.m.c && !created;
 			const f1 = game.settings.m.d && created === this.s;
 			const f2 = game.settings.m.m && created < this.s;
-			const f3 = game.settings.m.n && !used;
-			const f4 = game.settings.m.s && used === demand;
-			const f5 = game.settings.m.t && used < demand;
+			const f3 = game.settings.m.l && created < used;
+			const f4 = game.settings.m.n && !used;
+			const f5 = game.settings.m.s && used === demand;
+			const f6 = game.settings.m.t && used < demand;
+			const f7 = game.settings.m.u && used < created;
 
 			this.content.a.forEach(x => setElementText(x, this.a));
 			this.content.l.forEach(x => setElementText(x, this.l??0));
-			this.content.m?.classList.toggle('hide', !isUnlocked || f0 || f1 || f2 || f3 || f4 || f5);
+			this.content.m?.classList.toggle('hide', !isUnlocked || f0||f1||f2||f3||f4||f5||f6||f7);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0; });
 			setElementText(this.content.z, demand);
 			setElementText(this.content.n, created);

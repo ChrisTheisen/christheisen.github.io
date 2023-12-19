@@ -169,9 +169,11 @@ function load() {
 	game.settings.m.c = data.s?.m?.c ?? false;
 	game.settings.m.d = data.s?.m?.d ?? false;
 	game.settings.m.m = data.s?.m?.m ?? false;
+	game.settings.m.l = data.s?.m?.l ?? false;
 	game.settings.m.n = data.s?.m?.n ?? false;
 	game.settings.m.s = data.s?.m?.s ?? false;
 	game.settings.m.t = data.s?.m?.t ?? false;
+	game.settings.m.u = data.s?.m?.u ?? false;
 	
 	game.enhancements.e = data.e?.e ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
@@ -189,15 +191,17 @@ function load() {
 	
 	game.clock.duration = Date.now() - data.c;
 	Object.entries(data.i).forEach(([key, value], index) => {
-		game.inventory.children[key].a = value.a ?? 0;
-		game.inventory.children[key].b = value.b ?? new Amount();
-		game.inventory.children[key].e = value.e ?? true;
-		game.inventory.children[key].i = value.i ?? false;
-		game.inventory.children[key].k = value.k ?? 0;
-		game.inventory.children[key].l = value.l ?? 0;
-		game.inventory.children[key].q = value.q ?? false;
-		game.inventory.children[key].s = value.s ?? 0;
-		game.inventory.children[key].t = value.t ?? false;
+		if(!game.inventory.children[key]){return;}
+	
+		game.inventory.children[key].a = value?.a ?? 0;
+		game.inventory.children[key].b = value?.b ?? new Amount();
+		game.inventory.children[key].e = value?.e ?? true;
+		game.inventory.children[key].i = value?.i ?? false;
+		game.inventory.children[key].k = value?.k ?? 0;
+		game.inventory.children[key].l = value?.l ?? 0;
+		game.inventory.children[key].q = value?.q ?? false;
+		game.inventory.children[key].s = value?.s ?? 0;
+		game.inventory.children[key].t = value?.t ?? false;
 		if(value.u){
 			game.inventory.children[key].unlock();
 		}

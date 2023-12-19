@@ -108,9 +108,11 @@ function Game(){
 			c: false,//hide created === 0
 			d: false,//hide created === setpoint
 			m: false,//hide created < setpoint
+			l: false,//hide created < used
 			n: false,//hide used === 0
 			s: false,//hide used === demand
 			t: false,//hide used < demand
+			u: false //hide used < created
 		}
 	};
 	this.table = [];

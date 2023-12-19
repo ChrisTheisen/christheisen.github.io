@@ -100,9 +100,11 @@ Menu.prototype.update = function(){
 			getUIElement('filterChkMC').checked = game.settings.m.c;
 			getUIElement('filterChkMD').checked = game.settings.m.d;
 			getUIElement('filterChkMM').checked = game.settings.m.m;
+			getUIElement('filterChkML').checked = game.settings.m.l1;
 			getUIElement('filterChkMN').checked = game.settings.m.n;
 			getUIElement('filterChkMS').checked = game.settings.m.s;
 			getUIElement('filterChkMT').checked = game.settings.m.t;
+			getUIElement('filterChkMU').checked = game.settings.m.u;
 			break;
 		}
 		case 'Enhance': {
@@ -115,7 +117,7 @@ Menu.prototype.updateTable = function(){
 	const table = getUIElement('table');
 	const newTable = [];
 	const names = game.table.map(x => x.f.n).sort();
-	newTable.push(createUIElement({type:'h3', textContent:'Matter Mutator'}));
+	
 	names.forEach(x => {
 		const item = createUIElement({cssClasses:['tableItem', 'nowrap', 'row']});
 		
@@ -142,7 +144,6 @@ Menu.prototype.updateResults = function(input){
 	const table = getUIElement('table');
 	const newTable = [];
 
-	newTable.push(createUIElement({type:'h3', textContent:'Scan Results'}));
 	input.forEach(x => {
 		newTable.push(createUIElement({textContent:x.f?.n??x}));
 	});
@@ -151,15 +152,8 @@ Menu.prototype.updateResults = function(input){
 }
 
 Menu.prototype.renderDiscover = function(parent){
-	
-	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
-	createUIElement({type:'button', id:'btnHint', textContent:'Generate Discoverable Recipe', parent:hint, style:{marginLeft:'15px'},
-		onclick:()=> setElementText(hout, generateDiscoverHint())});
-	const hout = createUIElement({type:'span',parent:hint});
-	
-	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
 
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:filter, style:{marginRight:'75px', float:'right'},
+	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:parent, style:{marginRight:'75px', float:'right'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
 			
@@ -174,6 +168,20 @@ Menu.prototype.renderDiscover = function(parent){
 				this.updateResults(['No new items discovered']);
 			}
 		}});
+
+	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
+	createUIElement({type:'button', id:'btnHint', textContent:'Generate Discoverable Recipe', parent:hint, style:{marginLeft:'15px'},
+		onclick:()=> {
+			setElementText(hout, generateDiscoverHint()); 
+			getUIElement('btnHint').classList.add('hide');  
+			setTimeout(() => {
+				getUIElement('btnHint').classList.remove('hide');
+				setElementText(hout, null); 
+			}, 10000);
+		}});
+	const hout = createUIElement({type:'span',parent:hint});
+	
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
 
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row'], style:{textAlign:'left'}});
@@ -194,15 +202,18 @@ Menu.prototype.renderDiscover = function(parent){
 
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	const bags = createUIElement({parent:w, cssClasses:['cell'], style:{minWidth:'300px', width:'60%'}});
+	const bags = createUIElement({parent:w, cssClasses:['cell', 'discoverLeft']});
 	game.inventory.renderDiscover(bags);
 	
-	const table = createUIElement({id:'table', cssClasses:['table', 'cell'], parent:w, style:{minWidth:'200px', width:'40%'}});
-	createUIElement({type:'h3', parent:table, textContent:'Matter Mutator'});
+	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
+	createUIElement({type:'h3', parent:matterMutator, textContent:'Matter Mutator'});
+	const table = createUIElement({id:'table', parent: matterMutator, cssClasses:['matterMutator']});
+
+	
 }
 
 Menu.prototype.renderManage = function(parent){
-	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center'], style:{display:'table'}});
 
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
@@ -222,6 +233,12 @@ Menu.prototype.renderManage = function(parent){
 		title:'Hide Created < Setpoint', attr:{type:'checkbox'}, id:'filterChkMM',
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
 	});
+	const w03 = createUIElement({parent:f0, cssClasses:['filterChk']});
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w03, textContent:'Hide Created < Used', style:{paddingLeft:'15px'}}), 
+		title:'Hide Created < Used', attr:{type:'checkbox'}, id:'filterChkML',
+		onclick:(e) => { game.settings.m.l = !game.settings.m.l; game.inventory.update(); }
+	});
+
 
 	const w10 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w10, textContent:'Hide Used = 0', style:{paddingLeft:'15px'}}), 
@@ -237,6 +254,11 @@ Menu.prototype.renderManage = function(parent){
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}}), 
 		title:'Hide Used < Demand', attr:{type:'checkbox'}, id:'filterChkMT',
 		onclick:(e) => { game.settings.m.t = !game.settings.m.t; game.inventory.update(); }
+	});
+	const w13 = createUIElement({parent:f1, cssClasses:['filterChk']});
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w13, textContent:'Hide Used < Created', style:{paddingLeft:'15px'}}), 
+		title:'Hide Used < Created', attr:{type:'checkbox'}, id:'filterChkMU',
+		onclick:(e) => { game.settings.m.u = !game.settings.m.u; game.inventory.update(); }
 	});
 
 	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));

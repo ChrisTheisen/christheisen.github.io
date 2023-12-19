@@ -4,40 +4,20 @@ Bugs:
 
 TODO:
 Finish elements
-	51/118
-
-only update current inventory item on create tab
-	-and components
-
-Enhancements
-	Cost x/y of Flavor
-		-order flavors by mass
-		-Flavor = AllSortedFlavors[lvl]
-		-multiplier = 1.001**lvl?
-		-reduce cost = .999**lvl?
-		-generator multiplier (only output/not input!)
-
-
-molecule grouping:
-	-monomer
-		-natural
-			-monosaccharides
-			-amino acids
-			-nucleotides
-			-isoprene
-			-fatty acids & alcohols
-		-synthetic
-
-			
-	-polymer
-	-macromolecule
-	-other compounds
+	72+2/118
 
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item
 	-Max inventory is MAX_SAFE_INTEGER of each unit
 	-create items from bulk storage (EG: star is ~1MO of H)
 	
+molecule grouping:
+	Organic
+		-IUPAC groupings?
+	Inorganic
+		-idk
+	Allotropes
+		-
 
 Update datalist filterSuggestions?
 	-to only include unlocked groups/items/flavors

@@ -37,9 +37,10 @@ a, a:visited{
 }
 
 .center{
-	width:50%;
 	min-width: 600px;
 	margin:auto;
+	max-width: 1000px
+
 }
 
 .menuButtons{
@@ -162,6 +163,7 @@ a, a:visited{
 	margin-bottom: 10px;
 	min-width: 450px;
 	text-align: left;
+	float:right;
 }
 
 .helpTopic{
@@ -206,11 +208,6 @@ a, a:visited{
 	border: solid 1px var(--c1);
 }
 
-.table{
-	min-height:500px;
-	min-width:175px;
-	border-left: solid 1px var(--c1);
-}
 
 .tableItem{
 	margin:5px;
@@ -232,13 +229,34 @@ a, a:visited{
 .manage{
 	max-height: calc(100vh - 290px);
 	overflow-y:auto;
-	overflow-x:clip;
 }
 
 .discover{
-	max-height: calc(100vh - 350px);
+
+}
+
+.discoverLeft{
+	float:left;
+	margin-left:10px;
+}
+
+.discoverRight{
+	float:right;
+	margin-right:10px;
+}
+
+.matterMutator{
+	width:40%;
+	min-height:200px;
+	min-width:300px;
+	max-height: calc(100vh - 400px);
 	overflow-y:auto;
-	overflow-x:clip;
+}
+
+.discoverContainer{
+	max-height: calc(100vh - 400px);
+	overflow-y:auto;
+	min-width:300px;
 }
 
 .disabled{

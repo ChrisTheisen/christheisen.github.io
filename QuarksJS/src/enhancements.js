@@ -8,19 +8,25 @@ function Enhancements(){
 			a: null,//amount
 			b: null,//button
 			h: null,//have
+			l: null,//level
 			n: null,//name
+			p: null//power
 		},
 		g: {
 			a: null,//amount
 			b: null,//button
 			h: null,//have
+			l: null,//level
 			n: null,//name
+			p: null//power
 		},
 		k: {
 			a: null,//amount
 			b: null,//button
 			h: null,//have
+			l: null,//level
 			n: null,//name
+			p: null//power
 		},
 	};
 }
@@ -45,7 +51,7 @@ Enhancements.prototype.buyE = function(){
 	this.update();
 }
 Enhancements.prototype.powerE = function(){
-	return 1.01**this.e;
+	return 1.001**this.e;
 }
 Enhancements.prototype.gotoE = function(){
 	game.menu.gotoNode(this.costE().inv.f.n);
@@ -95,34 +101,38 @@ Enhancements.prototype.buyK = function(){
 	this.update();
 }
 Enhancements.prototype.powerK = function(){
-	return .99**(this.k * this.powerE());
+	return .995**(this.k * this.powerE());
 }
 Enhancements.prototype.gotoK = function(){
 	game.menu.gotoNode(this.costK().inv.f.n);
 }
 
 Enhancements.prototype.render = function(parent){
-	const wrapper = createUIElement({parent: parent, cssClasses:['center']})
+	const wrapper = createUIElement({parent: parent, cssClasses:['center'], style:{display:'table'}})
 	
 	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowK = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowE = createUIElement({parent: wrapper, cssClasses:['row']});
 	
-	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Generator Output'});
+	this.content.g.l = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Level]' });
+	this.content.k.l = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[Level]' });
+	this.content.e.l = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Level]' });
+
+	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output'});
 	createUIElement({parent:rowK, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Rank Cost'});
 	createUIElement({parent:rowE, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Enhancements'});
-	
+
 	createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoG(), title:'Increase generator output while keeping input the same.'});
 	createUIElement({type:'button', parent:rowK, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoK(), title:'Reduce rank cost.'});
 	createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoE(), title:'Improve the other enhancement effects.'});
 
-	this.content.g.n = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[name]'});
-	this.content.k.n = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[name]' });
-	this.content.e.n = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[name]' });
+	this.content.g.n = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[name]', style:{textAlign:'left', width:'125px'} });
+	this.content.k.n = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[name]', style:{textAlign:'left', width:'125px'} });
+	this.content.e.n = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[name]', style:{textAlign:'left', width:'125px'} });
 
-	this.content.g.h = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[have]' });
-	this.content.k.h = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[have]' });
-	this.content.e.h = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[have]' });
+	this.content.g.h = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[have]', style:{textAlign:'right', width:'75px'} });
+	this.content.k.h = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[have]', style:{textAlign:'right', width:'75px'} });
+	this.content.e.h = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[have]', style:{textAlign:'right', width:'75px'} });
 
 	createUIElement({parent:rowG, cssClasses:['cell'], textContent:'/' });
 	createUIElement({parent:rowK, cssClasses:['cell'], textContent:'/' });
@@ -131,28 +141,49 @@ Enhancements.prototype.render = function(parent){
 	this.content.g.a = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[amount]' });
 	this.content.k.a = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[amount]' });
 	this.content.e.a = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[amount]' });
-
+	
 	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Increase generator output while keeping input the same.', onclick:() => this.buyG() });
 	this.content.k.b = createUIElement({type:'button', parent:rowK, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Reduce rank cost.', onclick:() => this.buyK() });
 	this.content.e.b = createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Improve the other enhancement effects.', onclick:() => this.buyE() });
+	
+	this.content.g.p = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Power]' });
+	this.content.k.p = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[Power]' });
+	this.content.e.p = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Power]' });
+
+
+
+
 }
 Enhancements.prototype.update = function(){
 	const cg = this.costG();
 	const ck = this.costK();
 	const ce = this.costE();
-	
+
+	const pg = this.powerG().toFixed(5);
+	const pk = this.powerK().toFixed(5);
+	const pe = this.powerE().toFixed(5);
+
+
+
 	setElementText(this.content?.e?.a, ce.a);
 	this.content?.e?.b.classList.toggle('disabled', ce.inv.a < ce.a);
 	setElementText(this.content?.e?.h, ce.inv.a);
+	setElementText(this.content?.e?.l, this.e);
 	setElementText(this.content?.e?.n, ce.inv.f.n);
+	setElementText(this.content?.e?.p, pe);
+	
 	
 	setElementText(this.content?.g?.a, cg.a);
 	this.content?.g?.b.classList.toggle('disabled', cg.inv.a < cg.a);
 	setElementText(this.content?.g?.h, cg.inv.a);
+	setElementText(this.content?.g?.l, this.g);
 	setElementText(this.content?.g?.n, cg.inv.f.n);	
+	setElementText(this.content?.g?.p, pg);
 	
 	setElementText(this.content?.k?.a, ck.a);
 	this.content?.k?.b.classList.toggle('disabled', ck.inv.a < ck.a);
 	setElementText(this.content?.k?.h, ck.inv.a);
+	setElementText(this.content?.k?.l, this.k);
 	setElementText(this.content?.k?.n, ck.inv.f.n);	
+	setElementText(this.content?.k?.p, pk);
 }
