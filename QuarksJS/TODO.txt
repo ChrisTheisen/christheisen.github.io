@@ -3,6 +3,8 @@ https://periodictable.com/index.html
 Bugs: 
 
 TODO:
+GOTO is borked
+
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item? on a new Bank tab?
 	-Max inventory is MAX_SAFE_INTEGER of each unit

@@ -1202,7 +1202,7 @@ const help = [
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to break conservation of mass by multiplying generator outputs.',
-		'This does not change the setpoint limits, it multiplies the created amount.',
+		'This does not change the setpoint limits. It multiplies the created amount by the effect power, seen to the right of the (++) button.',
 		'|',
 		'Enhancement costs are generated programatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can effect the enhancement costs.',
 		'|',
