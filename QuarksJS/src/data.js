@@ -347,15 +347,15 @@ const Og293 = { n: 'Oganesson293', u: false, m: new Amount({Da:293}), i: [{ f: P
 //items
 const Quark = {
     n: 'Quark', u: true, c: [Q_Up, Q_Down],
-	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.', 'The mass of individual quarks is difficult to measure since they are always found inside of hadrons.']
+	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.', 'The mass of individual quarks is difficult to measure since they are always found inside of hadrons, for this game I asked ChatGPT and got some numbers.']
 };
 const Lepton = {
     n: 'Lepton', u: true, c: [Electron],
-    info: ['Leptons are some of the most basic building blocks. They come in 6 types: Electron, Muon, Tau, Electron Neutrino, Muon Neutrino, and Tau Neutrino. In this game we are only using Electrons.', 'Electrons are the lightest item in this game' ]
+    info: ['Leptons are some of the most basic building blocks. They come in 6 types: Electron, Muon, Tau, Electron Neutrino, Muon Neutrino, and Tau Neutrino. In this game we are only using Electrons.', 'Electrons are the item with the least mass in this game.' ]
 };
 const Baryon = {
     n: 'Baryon', u: false, c: [Proton, Neutron],
-    info: ['Baryons are a type of hadron made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.', 'Neutrons are actually slightly heavier than protons (1.007 vs 1.008) but for simplicity in this game I rounded both to 1.']
+    info: ['Baryons are a type of hadron made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.', 'Neutrons are actually slightly heavier than protons (1.007 Da vs 1.008 Da) but for simplicity in this game I rounded both to 1 Da.']
 };
 const H = {
     n: 'Hydrogen', u: false, c: [H1, H2],

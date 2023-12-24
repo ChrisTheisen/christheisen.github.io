@@ -118,19 +118,10 @@ Menu.prototype.update = function(){
 		}
 		case 'Discover': {
 			game.inventory.update();//updates the content quick when tab changes.
-			getUIElement('filterChkD').checked = game.settings.d.o;
 			break;
 		}
 		case 'Manage': {
 			game.inventory.update();//updates the content quick when tab changes.
-			getUIElement('filterChkMC').checked = game.settings.m.c;
-			getUIElement('filterChkMD').checked = game.settings.m.d;
-			getUIElement('filterChkMM').checked = game.settings.m.m;
-			getUIElement('filterChkML').checked = game.settings.m.l1;
-			getUIElement('filterChkMN').checked = game.settings.m.n;
-			getUIElement('filterChkMS').checked = game.settings.m.s;
-			getUIElement('filterChkMT').checked = game.settings.m.t;
-			getUIElement('filterChkMU').checked = game.settings.m.u;
 			break;
 		}
 		case 'Enhance': {
@@ -228,7 +219,7 @@ Menu.prototype.renderDiscover = function(parent){
 		onclick:(e) => {
 			game.settings.d.o = !game.settings.d.o;
 			game.inventory.update();
-		}});
+		}}).checked = game.settings.d.o;
 
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
@@ -270,44 +261,44 @@ Menu.prototype.renderManage = function(parent){
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0', style:{paddingLeft:'15px'}}), 
 		title:'Hide Created = 0', attr:{type:'checkbox'}, id:'filterChkMC',
 		onclick:(e) => { game.settings.m.c = !game.settings.m.c; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.c;
 	const w01 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Created = Setpoint', style:{paddingLeft:'15px'}}), 
 		title:'Hide Created = Setpoint', attr:{type:'checkbox'}, id:'filterChkMD',
 		onclick:(e) => { game.settings.m.d = !game.settings.m.d; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.d;
 	const w02 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w02, textContent:'Hide Created < Setpoint', style:{paddingLeft:'15px'}}), 
 		title:'Hide Created < Setpoint', attr:{type:'checkbox'}, id:'filterChkMM',
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.m;
 	const w03 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w03, textContent:'Hide Created < Used', style:{paddingLeft:'15px'}}), 
 		title:'Hide Created < Used', attr:{type:'checkbox'}, id:'filterChkML',
 		onclick:(e) => { game.settings.m.l = !game.settings.m.l; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.l;
 
 
 	const w10 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w10, textContent:'Hide Used = 0', style:{paddingLeft:'15px'}}), 
 		title:'Hide Used = 0', attr:{type:'checkbox'}, id:'filterChkMN',
 		onclick:(e) => { game.settings.m.n = !game.settings.m.n; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.n;
 	const w11 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w11, textContent:'Hide Used = Demand', style:{paddingLeft:'15px'}}), 
 		title:'Hide Used = Demand', attr:{type:'checkbox'}, id:'filterChkMS',
 		onclick:(e) => { game.settings.m.s = !game.settings.m.s; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.s;
 	const w12 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Demand', style:{paddingLeft:'15px'}}), 
 		title:'Hide Used < Demand', attr:{type:'checkbox'}, id:'filterChkMT',
 		onclick:(e) => { game.settings.m.t = !game.settings.m.t; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.t;
 	const w13 = createUIElement({parent:f1, cssClasses:['filterChk']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:w13, textContent:'Hide Used < Created', style:{paddingLeft:'15px'}}), 
 		title:'Hide Used < Created', attr:{type:'checkbox'}, id:'filterChkMU',
 		onclick:(e) => { game.settings.m.u = !game.settings.m.u; game.inventory.update(); }
-	});
+	}).checked = game.settings.m.u;
 
 	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }

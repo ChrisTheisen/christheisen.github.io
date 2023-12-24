@@ -4,6 +4,9 @@ Bugs:
 
 TODO:
 GOTO is borked
+	-Discover
+	-Manage
+	-Works on Enhance and Create
 
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 	-on inventory item? on a new Bank tab?

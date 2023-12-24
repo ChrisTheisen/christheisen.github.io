@@ -65,6 +65,12 @@ function isUnlocked(input){
 
 function unlock(input){
 	if(!input){return;}
+	
+	const dl = getUIElement('filterSuggestions');
+	if (!dl.querySelector(`option[value='${input.n}']`)) {
+		createUIElement({type:'option', parent:dl, attr:{value:input.n}});
+	}
+	
 	input.u = true;
 	input.menu.forEach(x => x.children[input.n].b.classList.remove('hide'));
 
