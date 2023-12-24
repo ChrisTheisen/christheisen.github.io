@@ -1,71 +1,97 @@
-function Menu(parent, input, b){
+function Menu(parent, parentDiv, input, name, b){
 	this.b = b;
-	this.d = parent;
+	this.d = parentDiv;
+	this.n = name;
+	this.p = parent;
 	if(!input){return;}
 	this.children = {};
 	this.current = null;
 	
-	const m = createUIElement({parent:parent, cssClasses:['menuButtons']});
-	const c = createUIElement({parent:parent, cssClasses:['menuContentWrapper']});
-
+	const m = createUIElement({parent:parentDiv, cssClasses:['menuButtons']});
+	const c = createUIElement({parent:parentDiv, cssClasses:['menuContentWrapper']});
+	
 	input?.forEach(x => {
 		this.children[x.n] = {};
 		const btnClass = x.u ? [] : ['hide']
-		const btn = createUIElement({type:'button', parent:m, textContent:x.n, cssClasses:btnClass, 
-			onclick:()=>{this.current=x.n; this.update(); game.hint();} });
-		x.mb = btn;
 		const div = createUIElement({parent:c, cssClasses:['hide', 'content']});
+		const btn = createUIElement({type:'button', parent:m, textContent:x.n, cssClasses:btnClass, 
+			onclick:()=>{
+				this.current=this.current!==x.n?x.n:null; 
+				this.route();
+				game.hint();//noob messages
+				} 
+			});
+		if(!x.menu){x.menu = [];}
+		x.menu.push(this);
 		
 		if(x.info?.length){
 			x.info.forEach(info => createUIElement({type:'p', parent:div, textContent:info, cssClasses:['info']}));
 		}
-		if(x.intro){
+		if(x.intro && !game.settings.h){
 			createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']})
 		}
-		
-		//special tabs
-		switch(x.n){
-			case 'Discover': {
-				this.renderDiscover(div);
-				break;
-			}
-			case 'Manage': {
-				this.renderManage(div);
-				break;
-			}
-			case 'Enhance':{
-				this.renderEnhance(div);
-				break;
-			}
-			case 'Settings': {
-				this.renderSettings(div);
-				break;
-			}
-			case 'Help': {
-				this.renderHelp(div);
-				break;
-			}
-			default:{
-				if(x?.m){
-					//if it has mass it is an individual flavor aka end of the sub-menus
-					game.inventory.getInvByFlavor(x).renderCreate(div);
-				}
-				break;
-			}
-		}
-		this.children[x.n] = new Menu(div, x.c, btn);
+		this.children[x.n] = new Menu(this, div, x.c, x.n, btn);
 	});
+}
+
+Menu.prototype.route = function(){
+	const root = getUIElement('divRoot');
+	const div = createUIElement({});
+	let replaceDiv = true;
+	//special tabs
+
+	switch(this.current){
+		case 'Discover': {
+			this.renderDiscover(div);
+			break;
+		}
+		case 'Manage': {
+			this.renderManage(div);
+			break;
+		}
+		case 'Enhance':{
+			this.renderEnhance(div);
+			break;
+		}
+		case 'Settings': {
+			this.renderSettings(div);
+			break;
+		}
+		case 'Help': {
+			this.renderHelp(div);
+			break;
+		}
+		default:{
+			if(AllFlavors[this.current]){
+				//if it has mass it is a creatable item
+				AllFlavors[this.current].renderCreate(div);
+			}
+			else if(this.current){
+				this.children[this.current].route();
+				replaceDiv = false;
+			}
+			break;
+		}
+	}
+	if(replaceDiv){
+		for([key, value] of Object.entries(UIElement)){
+			if(root.id !== key && root.contains(value)){removeUIElement(key);}
+		}
+
+		root.replaceChildren(div);
+	}
+	this.update(); 
 }
 Menu.prototype.gotoNode = function(input, parent = null){
 	if(Object.keys(this.children ?? {}).includes(input)){
 		this.current = input;
-		this.update();
+		this.route();
 		return true;
 	}
 	for(let [key, value] of Object.entries(this.children ?? {})){
 		if(value?.gotoNode(input, this)){
 			this.current = key;
-			this.update();
+			this.route();
 			return true;
 		}
 	}
@@ -139,6 +165,10 @@ Menu.prototype.updateTable = function(){
 	
 	table.replaceChildren(...newTable);
 }
+Menu.prototype.isDisplayed = function(input){
+	if(!this.p){return true;}//top level, just do a true
+	return this.current === input &&  this.p.isDisplayed(this.n);
+}
 
 Menu.prototype.updateResults = function(input){
 	const table = getUIElement('table');
@@ -156,17 +186,17 @@ Menu.prototype.renderDiscover = function(parent){
 	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:parent, style:{marginRight:'75px', float:'right'},
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
-			
 			game.table.length = 0;
-			if(results.length){
-				results.forEach(x => {
-					game.inventory.getInvByFlavor(x.f).unlock();
-				});
-				this.updateResults(results);
-			}
-			else{
+			if(!results.length){
 				this.updateResults(['No new items discovered']);
+				return;
 			}
+
+			results.forEach(x => {
+				x.unlock();
+				game.inventory.getInvByFlavor(x.f).unlock();
+			});
+			this.updateResults(results);
 		}});
 
 	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
@@ -208,6 +238,24 @@ Menu.prototype.renderDiscover = function(parent){
 	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
 	createUIElement({type:'h3', parent:matterMutator, textContent:'Matter Mutator'});
 	const table = createUIElement({id:'table', parent: matterMutator, cssClasses:['matterMutator']});
+		const names = game.table.map(x => x.f.n).sort();
+	
+	names.forEach(x => {
+		const item = createUIElement({parent: table, cssClasses:['tableItem', 'nowrap', 'row']});
+		
+		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Table',
+			onclick:() => {
+				for(let i=0;i<game.table.length;i++){
+					if(game.table[i].f.n === x){
+						game.table.splice(i,1);
+						game.menu.updateTable();
+						return;
+					}
+				}
+			}
+		});
+		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell'], style:{textAlign:'left', fontSize:'14px'}});
+	});
 
 	
 }
@@ -281,32 +329,31 @@ Menu.prototype.renderHelp = function(parent){
 }
 
 Menu.prototype.renderSettings = function(parent){
-	createUIElement({type:'button', parent:parent, textContent:'Hide "Helpful Tips" with a green border.', 
-		cssClasses:['tutorial'], style:{marginLeft:'15px'},
-		onclick:() => Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'))
-	});
+	const h = createUIElement({parent:parent, cssClasses:['settingsRow']});
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:h, textContent:'Show Introduction Hints with a green border'}), 
+		title:'Toggle Introduction Hints', attr:{type:'checkbox'}, id:'chkSettingsH',
+		onclick:() => {
+			game.settings.h = !game.settings.h
+			Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
+		}}).checked = game.settings.h;
 
 	const i = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	createUIElement({type:'input', parent:createUIElement({type:'label', parent:i, textContent:'Show Info'}), 
-		title:'Toggle Info Snippets', attr:{type:'checkbox', checked:game.settings.i}, id:'chkSettingsI',
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:i, textContent:'Show Flavor text and bonus info'}), 
+		title:'Toggle Info Snippets', attr:{type:'checkbox'}, id:'chkSettingsI',
 		onclick:() => {
 			game.settings.i = !game.settings.i
-			Array.from(document.getElementsByClassName('info'))
-				.forEach(x => x.classList.toggle('hide', !game.settings.i) );
-		}});
+			Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
+		}}).checked = game.settings.i;
 
 	const u = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning'}), 
-		title:'Show Used-In Warning',attr:{type:'checkbox', checked:game.settings.u}, id:'chkSettingsU',
-		onclick:() => game.settings.u = !game.settings.u});
+		title:'Show Used-In Warning',attr:{type:'checkbox'}, id:'chkSettingsU',
+		onclick:() => game.settings.u = !game.settings.u}).checked = game.settings.u;
 
 	const c = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	const num = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Level:'}), title:'Cheater Level (-1 to disable)',
-		attr:{type:'number', min:-1, max:7, value:game.settings.c}, id:'numSettingsC'});
-	addUIEventListener(num, (e) => {
-		game.settings.c = parseInt(e.target.value);
-		game.inventory.update();
-	}, 'change');
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Mode (creating items has no cost)'}), 
+		title:'Cheater Mode', attr:{type:'checkbox'}, id:'chkSettingsC',
+		onclick:() => game.settings.c = !game.settings.c}).checked = game.settings.c;
 
 	createUIElement({type: 'hr', parent: parent});
 
@@ -315,9 +362,9 @@ Menu.prototype.renderSettings = function(parent){
 	createUIElement({type: 'span', parent:l, id:'lastSave'});
 
 	const m = createUIElement({parent: parent, cssClasses:['settingsRow']})
-	const n = createUIElement({type: 'textarea', parent: m, id:'txtSave', attr:{rows:'10', cols:'80', disabled:'true'}})
+	createUIElement({type: 'textarea', parent: m, id:'txtSave', attr:{rows:'10', cols:'80', disabled:'true'}})
 	createUIElement({parent:m, textContent:'Input Load Data:'});
-	const o = createUIElement({type: 'textarea', parent: m, id:'txtLoad', attr:{rows:'10', cols:'80'}})
+	createUIElement({type: 'textarea', parent: m, id:'txtLoad', attr:{rows:'10', cols:'80'}})
 	createUIElement({type:'button', parent:createUIElement({parent: parent, cssClasses:['settingsRow']}), textContent:'Load Data',
 		style:{marginLeft:'15px'}, onclick:() => loadSaveData()
 	});

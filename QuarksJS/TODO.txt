@@ -3,11 +3,8 @@ https://periodictable.com/index.html
 Bugs: 
 
 TODO:
-Finish elements
-	72+2/118
-
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
-	-on inventory item
+	-on inventory item? on a new Bank tab?
 	-Max inventory is MAX_SAFE_INTEGER of each unit
 	-create items from bulk storage (EG: star is ~1MO of H)
 	
@@ -22,3 +19,5 @@ molecule grouping:
 Update datalist filterSuggestions?
 	-to only include unlocked groups/items/flavors
 
+Note:
+	Make sure no loop in menu

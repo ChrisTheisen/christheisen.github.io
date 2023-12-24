@@ -33,7 +33,7 @@ function Enhancements(){
 
 //these are kept split up to give flexibility in balancing 
 Enhancements.prototype.costE = function(){
-	const a = 10**Math.floor(this.e/AllSortedFlavors.length);
+	const a = 10**(4+Math.floor(this.e/AllSortedFlavors.length));
 	const i = this.e%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -51,7 +51,7 @@ Enhancements.prototype.buyE = function(){
 	this.update();
 }
 Enhancements.prototype.powerE = function(){
-	return 1.001**this.e;
+	return 1.0025**this.e;
 }
 Enhancements.prototype.gotoE = function(){
 	game.menu.gotoNode(this.costE().inv.f.n);
@@ -76,14 +76,14 @@ Enhancements.prototype.buyG = function(){
 	this.update();
 }
 Enhancements.prototype.powerG = function(){
-	return 1.01**(this.e * this.powerE());
+	return 1.005**(this.e * this.powerE());
 }
 Enhancements.prototype.gotoG = function(){
 	game.menu.gotoNode(this.costG().inv.f.n);
 }
 
 Enhancements.prototype.costK = function(){
-	const a = 10**Math.floor(this.k/AllSortedFlavors.length);
+	const a = 10**(1+Math.floor(this.k/AllSortedFlavors.length));
 	const i = this.k%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }

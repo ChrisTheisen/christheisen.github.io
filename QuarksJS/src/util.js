@@ -17,7 +17,7 @@ function getUIElement(input){
 	return e;
 }
 function removeUIElement(input){
-	const e = UIElement(input);
+	const e = UIElement[input];
 	if(e===null){return;}
 	e.parentNode.removeChild(e);
 	delete UIElement[input];
@@ -56,23 +56,19 @@ function addUIEventListener(element, func, event='click'){
 }
 
 function isUnlocked(input){
-	if(!input){return true;}
 	if(!input.u){return false;}
-	return isUnlocked(ParentMap[input.n]);
+	const P = ParentMap[input.n];
+	if(!P){return true;}
+	if(P.every(x => !x.u)){return false;}
+	return P.some(x => isUnlocked(x));
 }
 
 function unlock(input){
 	if(!input){return;}
-	
 	input.u = true;
-	input.mb.classList.toggle('hide', false);
-	
-	unlock(ParentMap[input.n]);
-}
+	input.menu.forEach(x => x.children[input.n].b.classList.remove('hide'));
 
-function fullName(input, name){
-	if(!input){return name;}
-	return fullName(ParentMap[input.n], `${input?.n} | ${name}`);
+	ParentMap[input.n]?.forEach(x => unlock(x));
 }
 
 function arraysOverlap(a,b){
@@ -87,13 +83,13 @@ function unlockedFlavors(){
 
 function generateDiscoverHint(){
 	//locked items that have all components unlocked
-	const a = Object.values(AllFlavors).filter(x => !x.f.u).filter(y => y.c.every(z => z.inv.f.u));
+	const a = Object.values(AllFlavors).filter(x => !x.f.u).filter(y => y.i.every(z => z.inv.f.u));
 	if(!a.length){return ' None left, try again later.';}
 
 	const index = Math.floor(Math.random() * a.length);
 	const b = a[index];
 	
-	const c = b.c.map(x => x.inv.f.n);
+	const c = b.i.map(x => x.inv.f.n);
 	return ` ${c.join()} `;
 }
 
@@ -102,7 +98,7 @@ function findLockedFlavorsByComponents(input){
 	if(!input?.length){return output;}
 	
 	Object.values(AllFlavors).filter(x => !x.f.u).forEach(x => {
-		if(arraysOverlap(x.c.map(x => x.inv.f), input)){
+		if(arraysOverlap(x.i.map(x => x.inv.f), input)){
 			output.push(x);
 		}
     });
@@ -113,14 +109,15 @@ function buildMaps(input, parent) {
 	input.forEach(x => {
 		if(parent){
 			//add to parentMap
-			ParentMap[x.n] = parent;
+			if(!ParentMap[x.n]){ParentMap[x.n] = [];}
+			ParentMap[x.n].push(parent);
 		}
-		if(x.f){
-			if (!ComponentMap[x.f.n]) {
-				ComponentMap[x.f.n] = [];
-			}
-			const inv = game.inventory.getInvByFlavor(parent);
-			ComponentMap[x.f.n].push({inv: inv, a:x.a, b:x.b});
+		if(x.i){
+			const inv = game.inventory.getInvByFlavor(x);
+			x.i.forEach(y => {
+				if (!ComponentMap[y.f.n]) {ComponentMap[y.f.n] = [];}
+				ComponentMap[y.f.n].push({inv: inv, a:y.a, b:y.b});
+			});
 		}
 		if(x.c){
 			buildMaps(x.c, x);
@@ -130,25 +127,22 @@ function buildMaps(input, parent) {
 }
 
 function resetSettings(){
-	game.settings.c = -1;
-	game.settings.f = true;
+	game.settings.c = false;
+	game.settings.h = true;
 	game.settings.i = true;
 	game.settings.u = true;
-	game.settings.d.c = false;
+	game.settings.d.o = false;
 	game.settings.d.s = null;
 	game.settings.m.c = false;
 	game.settings.m.d = false;
 	game.settings.m.m = false;
 	game.settings.m.s = false;
+	game.settings.m.t = false;
 	game.settings.m.u = false;
 
-	getUIElement('numSettingsC').value = game.settings.c;
+	getUIElement('chkSettingsC').checked = game.settings.c;
 	getUIElement('chkSettingsI').checked = game.settings.i;
 	getUIElement('chkSettingsU').checked = game.settings.u;
-	
-	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
-
-	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.remove('hide'));
 }
 
 function loadSaveData(){
@@ -161,7 +155,8 @@ function load() {
 	if(!temp){return;}
 	const data = JSON.parse(temp);
 	
-	game.settings.c = data.s?.c ?? -1;
+	game.settings.c = data.s?.c ?? false;
+	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
 	game.settings.d.o = data.s?.d?.o ?? false;
@@ -179,13 +174,14 @@ function load() {
 	game.enhancements.g = data.e?.g ?? 0;
 	game.enhancements.k = data.e?.k ?? 0;
 
-	getUIElement('numSettingsC').value = game.settings.c;
-	getUIElement('chkSettingsI').checked = game.settings.i;
-	getUIElement('chkSettingsU').checked = game.settings.u;
+	//getUIElement('chkSettingsC').checked = game.settings.c;
+	//getUIElement('chkSettingsI').checked = game.settings.i;
+	//getUIElement('chkSettingsU').checked = game.settings.u;
 	
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	//hide green border tips
-	if(Object.keys(data.i).length > 5){
+	if(Object.keys(data.i).length > 5 || !game.settings.h){
+		game.settings.h = false;
 		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'));
 	}
 	
@@ -196,7 +192,7 @@ function load() {
 		game.inventory.children[key].a = value?.a ?? 0;
 		game.inventory.children[key].b = value?.b ?? new Amount();
 		game.inventory.children[key].e = value?.e ?? true;
-		game.inventory.children[key].i = value?.i ?? false;
+		game.inventory.children[key].d = value?.d ?? false;
 		game.inventory.children[key].k = value?.k ?? 0;
 		game.inventory.children[key].l = value?.l ?? 0;
 		game.inventory.children[key].q = value?.q ?? false;
@@ -221,7 +217,7 @@ function save() {
 	};
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
-		if(!value.a && value.e && !value.i && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
+		if(!value.a && !value.d && value.e && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
 			return;
 		}
 		
@@ -229,8 +225,8 @@ function save() {
 		//only save non-default values
 		if(!!value.a){ data.i[key].a = value.a; }
 		if(!value.b.isZero()){ data.i[key].b = value.b; }
+		if(value.d){ data.i[key].d = value.d; }
 		if(!value.e){ data.i[key].e = value.e; }
-		if(value.i){ data.i[key].i = value.i; }
 		if(!!value.k){ data.i[key].k = value.k; }
 		if(!!value.l){ data.i[key].l = value.l; }
 		if(value.q){ data.i[key].q = value.q; }
@@ -245,12 +241,6 @@ function save() {
 	
 	
 	setElementText(getUIElement('lastSave'), new Date().toLocaleString());
-}
-
-function deleteLocalStorage(){
-	localStorage.removeItem(gameKey);
-	localStorage.removeItem(invKey);
-	localStorage.removeItem(optKey);
 }
 
 function saveBeforeUnload(e) {

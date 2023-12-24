@@ -42,8 +42,7 @@ GameClock.prototype.start = function(){
 }
 
 GameClock.prototype.render = function(){
-	const root = getUIElement('divRoot');
-	const wrapper = createUIElement({parent:root, cssClasses:['clock-wrapper']});
+	const wrapper = getUIElement('clockWrapper');
 	this.content.p = createUIElement({parent:wrapper, cssClasses:['clockProgress']});
 	this.content.s = createUIElement({parent:wrapper, cssClasses:['clockStatus']});
 	this.content.t = createUIElement({parent:wrapper, cssClasses:['clockTime']});
@@ -97,7 +96,8 @@ function Game(){
 	this.bx = 1;
 	this.by = 1;
 	this.settings = {
-		c: -1,//difficulty/infinite mode level
+		c: false,//cheater mode
+		h: false,//hide helpful tips
 		i: true,//show info
 		u: true,//show used-in warning
 		d: { //discover filters
@@ -140,31 +140,31 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.b.classList.toggle('hint', shouldQuark && this.menu.children.Create.children.Subatomic.current !== 'Quark' && (gic.Up.l < 4 || gic.Down.l < 4));
 
 	const shouldUp = shouldQuark && this.menu.children.Create.children.Subatomic.current === 'Quark';
-	this.menu.children.Create.children.Subatomic.children.Quark.children.Up.b.classList.toggle('hint', shouldUp && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up');
+	this.menu.children.Create.children.Subatomic.children.Quark.children.Up.b?.classList.toggle('hint', shouldUp && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up');
 	
 	const shouldUpCreate = shouldUp && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Up';
-	this.inventory.children.Up.content.b.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12 && gic.Up.l < 1));
+	this.inventory.children.Up.content.b?.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12 && gic.Up.l < 1));
 
 	const shouldUpGenerate = shouldUpCreate && gic.Up.a > 0 && gic.Up.l < 4 && gic.Up.upgradeCost() <= gic.Up.a;
-	this.inventory.children.Up.content.u.classList.toggle('hint', shouldUpGenerate);
+	this.inventory.children.Up.content.u?.classList.toggle('hint', shouldUpGenerate);
 
 	const shouldDown = shouldUp && gic.Up.l > 3;
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Down.b.classList.toggle('hint', shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Down');
 	
 	const shouldDownCreate = shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Down';
-	this.inventory.children.Down.content.b.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12 && gic.Down.l < 1));
+	this.inventory.children.Down.content.b?.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12 && gic.Down.l < 1));
 	
 	const shouldDownGenerate = shouldDownCreate && gic.Down.a > 0 && gic.Down.l < 4 && gic.Down.upgradeCost() <= gic.Down.a;
-	this.inventory.children.Down.content.u.classList.toggle('hint', shouldDownGenerate);
+	this.inventory.children.Down.content.u?.classList.toggle('hint', shouldDownGenerate);
 	
 	const shouldDiscover = gic.Up.l > 3 && gic.Down.l > 3 && !gic.Proton.isUnlocked() && !gic.Neutron.isUnlocked();
 	this.menu.children.Discover.b.classList.toggle('hint', shouldDiscover && this.menu.current !== 'Discover');
 	
 	const shouldAddUp = shouldDiscover && this.menu.current === 'Discover' && !this.table.some(x => x.f.n === 'Up');
-	this.inventory.children.Up.content.d.classList.toggle('hint', shouldAddUp);
+	this.inventory.children.Up.content.d?.classList?.toggle('hint', shouldAddUp);
 
 	const shouldAddDown = shouldDiscover && this.menu.current === 'Discover' && this.table.some(x => x.f.n === 'Up') && !this.table.some(x => x.f.n === 'Down');
-	this.inventory.children.Down.content.d.classList.toggle('hint', shouldAddDown);
+	this.inventory.children.Down.content.d?.classList.toggle('hint', shouldAddDown);
 	
 	const shouldScan = shouldDiscover && this.menu.current === 'Discover' && this.table.some(x => x.f.n === 'Up') && this.table.some(x => x.f.n === 'Down');
 	getUIElement('btnScan')?.classList.toggle('hint', shouldScan);
@@ -201,13 +201,12 @@ window.onkeydown = function(e){
 			game.clock.stop();
 		}
 	}
-   //console.log(e);
 }
 
 function buildUI(){
-	const root = getUIElement('divRoot');
+	const root = getUIElement('nav');
 	createUIElement({type:'h1', parent:root, textContent:'Quarks'});
-	game.menu = new Menu(root, tabs);
+	game.menu = new Menu(null, root, tabs);
 }
 
 function init(){
@@ -225,7 +224,7 @@ function init(){
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
-	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.s.i - b.f.s.i || a.f.m - b.f.m || a.f.n.localeCompare(b.f.n));
+	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || a.f.n.localeCompare(b.f.n));
 	game.clock.update();
 
 	game.clock.status = null;

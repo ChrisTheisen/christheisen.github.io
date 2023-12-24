@@ -31,6 +31,12 @@ button{
 a, a:visited{
 	color: var(--c1);
 }
+
+.settingsRow input[type=checkbox] {
+    float: left;
+    margin-right: 0.4em;
+}
+
 .root{
 	display:flex;
 	flex-flow:column;
