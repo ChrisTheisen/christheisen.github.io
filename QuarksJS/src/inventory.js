@@ -187,7 +187,7 @@ InventoryItem.prototype.upgrade = function(){
 	
 	const newCost = this.upgradeCost();
 	setElementText(this.content?.g, newCost);
-	this.content.a.forEach(x => setElementText(x, this.a));
+	this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 	this.content.b.forEach(x => x.classList.toggle('disabled', !this.canCreate()));
 	this.content.l.forEach(x => setElementText(x, this.l??0));
 	this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0;});
@@ -267,7 +267,7 @@ InventoryItem.prototype.renderCreate0 = function(parent){
 	
 	const row = createUIElement({parent:inv, style:{paddingTop:'17px'}});
 	
-	const create_own = createUIElement({parent:row, textContent:this.a});
+	const create_own = createUIElement({parent:row, textContent:Math.floor(this.a)});
 	
 	create_gen.classList.toggle('disabled', !this.canCreate());
 	
@@ -320,7 +320,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 	this.b.render(createUIElement({parent:c0}));
 
 	const c1 = createUIElement({parent:r0, style:{width:'30%'}});
-	this.content.au = createUIElement({type:'input', attr:{type:'range', min:0, max:this.a, step:1, value:0}, 
+	this.content.au = createUIElement({type:'input', attr:{type:'range', min:0, max:Math.floor(this.a), step:1, value:0}, 
 		parent:c1, textContent:'Deposit', style:{width:'90%'},
 		onchange:(event)=>{ 
 			this.v.a = event.target.value;

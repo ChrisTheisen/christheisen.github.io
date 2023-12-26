@@ -33,7 +33,7 @@ function Enhancements(){
 
 //these are kept split up to give flexibility in balancing 
 Enhancements.prototype.costE = function(){
-	const a = 10**(4+Math.floor(this.e/AllSortedFlavors.length));
+	const a = 25*10**(2+Math.floor(this.e/AllSortedFlavors.length));
 	const i = this.e%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -76,14 +76,14 @@ Enhancements.prototype.buyG = function(){
 	this.update();
 }
 Enhancements.prototype.powerG = function(){
-	return 1.005**(this.e * this.powerE());
+	return 1.005**(this.g * this.powerE());
 }
 Enhancements.prototype.gotoG = function(){
 	game.menu.gotoNode(this.costG().inv.f.n);
 }
 
 Enhancements.prototype.costK = function(){
-	const a = 10**(1+Math.floor(this.k/AllSortedFlavors.length));
+	const a = 5*10**(1+Math.floor(this.k/AllSortedFlavors.length));
 	const i = this.k%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -118,13 +118,13 @@ Enhancements.prototype.render = function(parent){
 	this.content.k.l = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.e.l = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Level]' });
 
-	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output'});
-	createUIElement({parent:rowK, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Rank Cost'});
-	createUIElement({parent:rowE, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Enhancements'});
+	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Increase generator output while keeping input the same.'});
+	createUIElement({parent:rowK, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Rank Cost', title:'Reduce rank cost.'});
+	createUIElement({parent:rowE, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Enhancements', title:'Improve the other enhancement effects.'});
 
-	createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoG(), title:'Increase generator output while keeping input the same.'});
-	createUIElement({type:'button', parent:rowK, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoK(), title:'Reduce rank cost.'});
-	createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoE(), title:'Improve the other enhancement effects.'});
+	createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoG()});
+	createUIElement({type:'button', parent:rowK, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoK()});
+	createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell'], textContent:'»', onclick:() => this.gotoE()});
 
 	this.content.g.n = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[name]', style:{textAlign:'left', width:'125px'} });
 	this.content.k.n = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[name]', style:{textAlign:'left', width:'125px'} });

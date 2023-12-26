@@ -33,7 +33,9 @@ const MassUnits = {
 	g:{i: 2, s:'g',n:'Gram',c:1000000000000},
 	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
 	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
-	MO:{i: 5, s:'M☉',n:'Solar Mass',c:Infinity}
+	MO:{i: 5, s:'M☉',n:'Solar Mass',c:1000000000000},
+	GM:{i: 6, s:'Mgal',n:'Galactic Mass',c:1000000000000},
+	CM:{i: 7, s:'Mtotal',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
 }
 
 //flavors
