@@ -8,12 +8,32 @@ let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
 
+//yocto
+//zepto
+//atto
+//femto
+//pico
+//nano
+//micro
+//milli
+//g
+//kilo
+//mega
+//giga
+//tera
+//peta
+//exa
+//zetta
+//yotta
+
+
 const MassUnits = {
-	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335000},
-	ng:{i: 1, s:'ng',n:'Nanogram',c:1000000000000},
-	Kg:{i: 2, s:'Kg',n:'Kilogram',c:1000000000000000},
-	Eg:{i: 3, s:'Eg',n:'Exagram',c:1378679941220000},
-	MO:{i: 4, s:'M☉',n:'Solar Mass',c:Infinity}
+	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335},
+	pg:{i: 1, s:'pg',n:'Picogram',c:1000000000000},
+	g:{i: 2, s:'g',n:'Gram',c:1000000000000},
+	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
+	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
+	MO:{i: 5, s:'M☉',n:'Solar Mass',c:Infinity}
 }
 
 //flavors

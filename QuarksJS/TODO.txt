@@ -2,27 +2,39 @@ https://periodictable.com/index.html
 
 Bugs: 
 
-TODO:
-GOTO is borked
-	-Discover
-	-Manage
-	-Works on Enhance and Create
+Discover filter borked
 
+
+
+TODO:
 make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
-	-on inventory item? on a new Bank tab?
-	-Max inventory is MAX_SAFE_INTEGER of each unit
-	-create items from bulk storage (EG: star is ~1MO of H)
-	
+	-withdraw?
+
+-Auto deposit/withdraw limits?
+	-global setting?
+		< Used *2?
+		>= MAX_INVENTORY
+
+
 molecule grouping:
 	Organic
 		-IUPAC groupings?
 	Inorganic
 		-idk
 	Allotropes
-		-
+		-?
 
-Update datalist filterSuggestions?
-	-to only include unlocked groups/items/flavors
-
-Note:
-	Make sure no loop in menu
+inorganic groupings?
+	salts
+	oxides
+	hydroxides
+	coodination compounds
+	metal complexes
+		-iron alloys
+		-?
+	silicates
+	nitrides
+	phosphides
+	sulfides
+	
+	

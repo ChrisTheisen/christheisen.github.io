@@ -251,6 +251,15 @@ a, a:visited{
 	margin-right:10px;
 }
 
+.amountWrapper{
+	text-align: left;
+}
+
+.amountUnit{
+	margin: 0 5px;
+	line-height:20px;
+}
+
 .matterMutator{
 	width:40%;
 	min-height:200px;

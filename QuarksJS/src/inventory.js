@@ -20,7 +20,7 @@ Inventory.prototype.renderDiscover = function(parent){
 	createUIElement({type:'h3', parent:parent, textContent:'Inventory'});
 	
 	const bag = createUIElement({parent:parent, cssClasses:['discoverContainer']});
-	Object.values(this.children).forEach(x => {
+	Object.values(this.children).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
 		const row = createUIElement({parent: bag, cssClasses:['row']});
 		row.classList.toggle('hide', !x.isUnlocked());
 		x.content.p = row;
@@ -38,7 +38,7 @@ Inventory.prototype.renderManage = function(parent){
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Created', title:'Actual amount created in last cycle' , style:{width:'15%', cursor:'help'}});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:'Used', title:'Actual amount used in last cycle' , style:{width:'15%', cursor:'help'}});
 	
-	Object.values(this.children).forEach(x => {
+	Object.values(this.children).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['row']});
 		row.classList.toggle('hide', !x.isUnlocked());
 		x.content.m = row;
@@ -73,13 +73,16 @@ function InventoryItem(input){
 	this.e = true;//generator enabled
 	this.f = input;//flavor
 	//ingredients needed to create/generate
-	this.i = input.i.map(x => ({a:x.a, inv:game.inventory.getInvByFlavor(x.f)}));
+	this.i = input.i.sort((a,b) => a.f.m.compare(b.f.m)).map(x => ({a:x.a, inv:game.inventory.getInvByFlavor(x.f)}));
 	this.k = 0;//generator rank
 	this.l = 0;//generator level
 
 	this.q = false;//show used in
 	this.s = 0;//generator set-point
 	this.t = false;//auto-upgrade rank
+	
+	this.v = {a: 0, b: new Amount()};//deposit value
+	this.w = {a: 0, b: new Amount()};//withdraw amount
 	
 	this.f.u = this.i.length === 0;
 	
@@ -109,7 +112,10 @@ function InventoryItem(input){
 		w:null, //spoiler warning
 		x:null, //results/spoiler wrapper
 		y:null, //supply label
-		z:null //demand label
+		z:null, //demand label
+		au:null, //deposit range
+		av:null, //deposit label
+		aw:null, //withdraw label
 	};
 }
 InventoryItem.prototype.generatorMax = function(){
@@ -138,12 +144,6 @@ InventoryItem.prototype.generatorClick = function(){
 InventoryItem.prototype.generate = function(){
 	if(!this.e || !this.s){return;}
 	
-	if(this.a >= Number.MAX_SAFE_INTEGER){
-		this.a = Number.MAX_SAFE_INTEGER;
-		console.log('TRUNCATED!');
-		return;
-	}
-
 	if(game.settings.c){//if cheater then just create
 		const temp = Math.floor(this.s * game.enhancements.powerG());
 		this.a += temp;
@@ -157,9 +157,15 @@ InventoryItem.prototype.generate = function(){
 		x.inv.a -= x.a * amount
 	});
 	
-	const enhanced = Math.floor(amount * game.enhancements.powerG());
+	const enhanced = amount * game.enhancements.powerG();
 	ActualCreated[this.f.n] = enhanced;
-	this.a += enhanced;
+	if(this.a < MAX_INVENTORY){
+		this.a += enhanced;
+	}
+	else {
+		this.a = MAX_INVENTORY;
+		this.b.add(new Amount().add(this.f.m).scale(enhanced));
+	}
 }
 InventoryItem.prototype.upgradeCost = function(){
 	const s = .2*this.rankDiscount();
@@ -253,7 +259,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 InventoryItem.prototype.renderCreate0 = function(parent){
 	
 	const inv = createUIElement({parent: parent, style:{width:'30%', paddingRight:'10px'}})
-	createUIElement({parent:inv, cssClasses:['title'], textContent:'Inventory'});
+	createUIElement({parent:inv, cssClasses:['title'], textContent:'Inventory', title:`Maximum capacity is ${MAX_INVENTORY}`});
 	
 	const create_gen = createUIElement({type:'button', parent: inv, cssClasses:['circleButton', 'gains'], textContent:'++', 
 		style:{float:'right', marginTop:'14px'}, title:'Generate',
@@ -272,15 +278,10 @@ InventoryItem.prototype.renderCreate0 = function(parent){
 	this.content.b.push(create_gen);
 }
 InventoryItem.prototype.renderCreate1 = function(parent){
-	const bs = createUIElement({parent:parent, style:{width:'30%', paddingRight:'10px'}});
-	createUIElement({parent:bs, cssClasses:['title'], textContent:'Bulk Storage'});
-	createUIElement({parent:bs, textContent:'In Progress.'});
-	createUIElement({parent:bs, textContent:'After I\'m done fixing some things I broke while fixing some other stuff.'});
-	//show conversion x to f.s
-	//display amount in storage
-	//deposit / withdraw
+	const bs = createUIElement({parent:parent, style:{width:'50%', paddingRight:'10px'}});
+	this.renderBulkStorage(bs);
 	
-	const comp = createUIElement({parent: parent, cssClasses:['bLeft'], style:{width:'70%'}});
+	const comp = createUIElement({parent: parent, cssClasses:['bLeft'], style:{width:'50%'}});
 	createUIElement({parent:comp, cssClasses:['title'], textContent:'Components'});
 	if(this.f.i.length === 0){
 		createUIElement({parent:comp, textContent:'This is an elementary particle, it does not have components.'});
@@ -301,7 +302,7 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	
 	const results = createUIElement({parent: parent, cssClasses:['hide']});
 	
-	ComponentMap[this.f.n]?.forEach(x => {
+	ComponentMap[this.f.n]?.sort((a,b) => a.inv.f.m.compare(b.inv.f.m))?.forEach(x => {
 		const root = createUIElement({parent: results});
 		const row = createUIElement({parent: root, cssClasses:['flex']});
 		x.inv.renderUsedIn(row, x);
@@ -310,6 +311,45 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	this.content.r = results;
 }
 InventoryItem.prototype.renderBulkStorage = function(parent){
+	createUIElement({parent:parent, textContent:'Section under development | currently unable to withdraw.', title:'Currently no Withdrawing'});
+	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage', title:'Store items in bulk to avoid overflowing Inventory.'});
+
+	const r0 = createUIElement({parent:parent, style:{width:'100%', display:'inline-flex'}});
+	const c0 = createUIElement({parent:r0, style:{width:'40%'}});
+	createUIElement({parent:c0, textContent:'Contents:'});
+	this.b.render(createUIElement({parent:c0}));
+
+	const c1 = createUIElement({parent:r0, style:{width:'30%'}});
+	this.content.au = createUIElement({type:'input', attr:{type:'range', min:0, max:this.a, step:1, value:0}, 
+		parent:c1, textContent:'Deposit', style:{width:'90%'},
+		onchange:(event)=>{ 
+			this.v.a = event.target.value;
+			setElementText(this.content.av, this.v.a);
+			this.v.b.scale(0).add(this.f.m).scale(this.v.a);
+		}
+	});
+	this.content.av = createUIElement({parent:c1});
+	createUIElement({type:'button', parent:c1, textContent:'Deposit',
+		onclick:() => {
+			this.b.add(this.v.b);
+			this.a -= this.v.a;
+			
+			this.v.a = 0;
+			this.v.b.scale(0);
+			setElementText(this.content.av, 0);
+			this.b.update();
+			this.v.b.update();
+			this.content.au.value = 0;
+		}
+	});
+	
+	
+	
+	const c2 = createUIElement({parent:r0, style:{width:'30%'}});
+	createUIElement({parent:c2, textContent:'Change:'});
+	this.v.b.render(createUIElement({parent:c2}));
+	this.v.b.content.w.style.textAlign= 'right';//stinky, but it works well enough that I'll probably never change it.
+	
 	
 }
 InventoryItem.prototype.renderComponents = function(parent){
@@ -462,7 +502,7 @@ InventoryItem.prototype.update = function(){
 	switch(game.menu.current){
 		case 'Create': {
 			//These can be used in component sections of other elements
-			this.content.a.forEach(x => setElementText(x, this.a));
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 			this.content.b.forEach(x => x.classList.toggle('disabled', !canCreate));
 			if(!this.isDisplayed()){return;}
 
@@ -482,6 +522,14 @@ InventoryItem.prototype.update = function(){
 			this.content.v?.classList.toggle('disabled', !canUprank);
 			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);
 			this.content.x?.classList.toggle('hide', this.l < 5 && this.k < 1);
+			
+			this.content.au.max = this.a;
+			this.content.au.value = Math.min(this.content.au.value, this.content.au.max);
+			this.v.a = this.content.au.value;
+			
+			setElementText(this.content.av, this.v.a);
+			this.b.update();
+			this.v.b.update();
 			break;
 		}
 		case 'Discover': {
@@ -489,7 +537,7 @@ InventoryItem.prototype.update = function(){
 			const filterDiscoverStock = game.settings.d.o && !this.a;
 			const filterDiscoverSearch = game.settings.d.s && !this.fullName.toLowerCase().includes(game.settings.d.s);
 	
-			this.content.a.forEach(x => setElementText(x, this.a));
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 			this.content.d?.classList.toggle('disabled', !this.a || tableContains);
 			this.content.p?.classList.toggle('hide', !isUnlocked || filterDiscoverStock || filterDiscoverSearch);
 			break;
@@ -507,12 +555,12 @@ InventoryItem.prototype.update = function(){
 			const f6 = game.settings.m.t && used < demand;
 			const f7 = game.settings.m.u && used < created;
 
-			this.content.a.forEach(x => setElementText(x, this.a));
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 			this.content.l.forEach(x => setElementText(x, this.l??0));
 			this.content.m?.classList.toggle('hide', !isUnlocked || f0||f1||f2||f3||f4||f5||f6||f7);
 			this.content.s.forEach(x => { x.max = this.generatorMax(); x.value = this.s; x.disabled = this.l === 0; });
 			setElementText(this.content.z, demand);
-			setElementText(this.content.n, created);
+			setElementText(this.content.n, Math.floor(created));
 			setElementText(this.content.q, used);
 
 			break;

@@ -167,7 +167,7 @@ Enhancements.prototype.update = function(){
 
 	setElementText(this.content?.e?.a, ce.a);
 	this.content?.e?.b.classList.toggle('disabled', ce.inv.a < ce.a);
-	setElementText(this.content?.e?.h, ce.inv.a);
+	setElementText(this.content?.e?.h, Math.floor(ce.inv.a));
 	setElementText(this.content?.e?.l, this.e);
 	setElementText(this.content?.e?.n, ce.inv.f.n);
 	setElementText(this.content?.e?.p, pe);
@@ -175,14 +175,14 @@ Enhancements.prototype.update = function(){
 	
 	setElementText(this.content?.g?.a, cg.a);
 	this.content?.g?.b.classList.toggle('disabled', cg.inv.a < cg.a);
-	setElementText(this.content?.g?.h, cg.inv.a);
+	setElementText(this.content?.g?.h, Math.floor(cg.inv.a));
 	setElementText(this.content?.g?.l, this.g);
 	setElementText(this.content?.g?.n, cg.inv.f.n);	
 	setElementText(this.content?.g?.p, pg);
 	
 	setElementText(this.content?.k?.a, ck.a);
 	this.content?.k?.b.classList.toggle('disabled', ck.inv.a < ck.a);
-	setElementText(this.content?.k?.h, ck.inv.a);
+	setElementText(this.content?.k?.h, Math.floor(ck.inv.a));
 	setElementText(this.content?.k?.l, this.k);
 	setElementText(this.content?.k?.n, ck.inv.f.n);	
 	setElementText(this.content?.k?.p, pk);

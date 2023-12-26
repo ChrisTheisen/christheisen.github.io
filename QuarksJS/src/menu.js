@@ -191,7 +191,7 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 
 	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
-	createUIElement({type:'button', id:'btnHint', textContent:'Generate Discoverable Recipe', parent:hint, style:{marginLeft:'15px'},
+	createUIElement({type:'button', id:'btnHint', textContent:'Scan for recipe', parent:hint, style:{marginLeft:'15px'},
 		onclick:()=> {
 			setElementText(hout, generateDiscoverHint()); 
 			getUIElement('btnHint').classList.add('hide');  

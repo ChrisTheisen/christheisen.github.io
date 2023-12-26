@@ -196,7 +196,12 @@ function load() {
 		if(!game.inventory.children[key]){return;}
 	
 		game.inventory.children[key].a = value?.a ?? 0;
-		game.inventory.children[key].b = value?.b ?? new Amount();
+		game.inventory.children[key].b = new Amount();
+		for([k,v] of Object.entries(value?.b ?? {})){
+			if(typeof v !== 'number'){continue;}
+			game.inventory.children[key].b[k] = v;
+		}
+		
 		game.inventory.children[key].e = value?.e ?? true;
 		game.inventory.children[key].d = value?.d ?? false;
 		game.inventory.children[key].k = value?.k ?? 0;
@@ -230,7 +235,11 @@ function save() {
 		data.i[key] = {}
 		//only save non-default values
 		if(!!value.a){ data.i[key].a = value.a; }
-		if(!value.b.isZero()){ data.i[key].b = value.b; }
+		data.i[key].b = new Amount();
+		for([k, v] of Object.entries(value.b)){
+			if(typeof v !== 'number'){continue;}
+			data.i[key].b[k] = v;
+		}
 		if(value.d){ data.i[key].d = value.d; }
 		if(!value.e){ data.i[key].e = value.e; }
 		if(!!value.k){ data.i[key].k = value.k; }
