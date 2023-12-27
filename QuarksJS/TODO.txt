@@ -4,6 +4,8 @@ Bugs:
 
 Discover filter borked
 
+HARD reset ddo something with green border text showing up
+	-or not checking the setting checkbox?
 
 
 TODO:
@@ -17,6 +19,7 @@ make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
 
 
 molecule grouping:
+https://www.masterorganicchemistry.com/2011/02/14/table-of-functional-group-priorities-for-nomenclature/
 	Organic
 		-IUPAC groupings?
 	Inorganic

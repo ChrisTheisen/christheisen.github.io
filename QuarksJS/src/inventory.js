@@ -115,7 +115,8 @@ function InventoryItem(input){
 		z:null, //demand label
 		au:null, //deposit range
 		av:null, //deposit label
-		aw:null, //withdraw label
+		aw:null, //withdraw range
+		ax:null, //withdraw label
 	};
 }
 InventoryItem.prototype.generatorMax = function(){
@@ -311,9 +312,13 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	this.content.r = results;
 }
 InventoryItem.prototype.renderBulkStorage = function(parent){
-	createUIElement({parent:parent, textContent:'Section under development | currently unable to withdraw.', title:'Currently no Withdrawing'});
 	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage', title:'Store items in bulk to avoid overflowing Inventory.'});
 
+	this.v.a = 0;
+	this.v.b.scale(0);
+	this.w.a = 0;
+	this.w.b.scale(0);
+	
 	const r0 = createUIElement({parent:parent, style:{width:'100%', display:'inline-flex'}});
 	const c0 = createUIElement({parent:r0, style:{width:'40%'}});
 	createUIElement({parent:c0, textContent:'Contents:'});
@@ -321,14 +326,17 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 
 	const c1 = createUIElement({parent:r0, style:{width:'30%'}});
 	this.content.au = createUIElement({type:'input', attr:{type:'range', min:0, max:Math.floor(this.a), step:1, value:0}, 
-		parent:c1, textContent:'Deposit', style:{width:'90%'},
+		parent:c1, style:{width:'90%'},
 		onchange:(event)=>{ 
-			this.v.a = event.target.value;
+			this.v.a = parseInt(event.target.value);
 			setElementText(this.content.av, this.v.a);
 			this.v.b.scale(0).add(this.f.m).scale(this.v.a);
 		}
 	});
-	this.content.av = createUIElement({parent:c1});
+	
+	const avw = createUIElement({parent:c1})
+	this.content.av = createUIElement({type:'span', parent:avw});
+	createUIElement({type:'span', parent:avw, textContent:` ${this.f.n}`})
 	createUIElement({type:'button', parent:c1, textContent:'Deposit',
 		onclick:() => {
 			this.b.add(this.v.b);
@@ -340,17 +348,50 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 			this.b.update();
 			this.v.b.update();
 			this.content.au.value = 0;
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 		}
 	});
 	
+	createUIElement({type:'hr', parent:c1});
 	
+	const maxW = Math.min(MAX_INVENTORY-this.a, this.b.estDivide(this.f.m));
+	this.content.aw = createUIElement({type:'input', attr:{type:'range', min:0, max:maxW, step:1, value:0}, 
+		parent:c1, style:{width:'90%'},
+		onchange:(event)=>{ 
+			this.w.a = parseInt(event.target.value);
+			setElementText(this.content.ax, this.w.a);
+			this.w.b.scale(0).add(this.f.m).scale(this.w.a);
+		}
+	});
+	
+	const aww = createUIElement({parent:c1})
+	this.content.ax = createUIElement({type:'span', parent:aww});
+	createUIElement({type:'span', parent:aww, textContent:` ${this.f.n}`})
+	createUIElement({type:'button', parent:c1, textContent:'Withdraw',
+		onclick:() => {
+			this.b.subtract(this.w.b);
+			this.a += this.w.a;
+			
+			this.w.a = 0;
+			this.w.b.scale(0);
+			setElementText(this.content.ax, 0);
+			this.b.update();
+			this.w.b.update();
+			this.content.aw.value = 0;
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
+		}
+	});
 	
 	const c2 = createUIElement({parent:r0, style:{width:'30%'}});
-	createUIElement({parent:c2, textContent:'Change:'});
+	createUIElement({parent:c2, textContent:'Deposit Mass:'});
 	this.v.b.render(createUIElement({parent:c2}));
 	this.v.b.content.w.style.textAlign= 'right';//stinky, but it works well enough that I'll probably never change it.
 	
-	
+	createUIElement({type:'hr', parent:c2});
+
+	createUIElement({parent:c2, textContent:'Withdraw Mass:'});
+	this.w.b.render(createUIElement({parent:c2}));
+	this.w.b.content.w.style.textAlign= 'right';//stinky, but it works well enough that I'll probably never change it.
 }
 InventoryItem.prototype.renderComponents = function(parent){
 	this.f.i.forEach(x => {
@@ -525,17 +566,24 @@ InventoryItem.prototype.update = function(){
 			
 			this.content.au.max = this.a;
 			this.content.au.value = Math.min(this.content.au.value, this.content.au.max);
-			this.v.a = this.content.au.value;
+			const maxW = Math.min(MAX_INVENTORY-this.a, this.b.estDivide(this.f.m));
+			this.content.aw.max = maxW;
+			this.content.aw.value = Math.min(this.content.aw.value, maxW);
+			
+			this.v.a = parseInt(this.content.au.value);
+			this.w.a = parseInt(this.content.aw.value);
 			
 			setElementText(this.content.av, this.v.a);
+			setElementText(this.content.ax, this.w.a);
 			this.b.update();
 			this.v.b.update();
+			this.w.b.update();
 			break;
 		}
 		case 'Discover': {
 			const tableContains = game.table.includes(this);
 			const filterDiscoverStock = game.settings.d.o && !this.a;
-			const filterDiscoverSearch = game.settings.d.s && !this.fullName.toLowerCase().includes(game.settings.d.s);
+			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s);
 	
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 			this.content.d?.classList.toggle('disabled', !this.a || tableContains);

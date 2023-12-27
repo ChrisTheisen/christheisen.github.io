@@ -143,7 +143,7 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Up.b?.classList.toggle('hint', shouldUp && gic.Up.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up');
 	
 	const shouldUpCreate = shouldUp && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Up';
-	this.inventory.children.Up.content.b?.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 12 && gic.Up.l < 1));
+	this.inventory.children.Up.content.b?.forEach(x => x.classList.toggle('hint', shouldUpCreate && gic.Up.a < 16 && gic.Up.l < 1));
 
 	const shouldUpGenerate = shouldUpCreate && gic.Up.a > 0 && gic.Up.l < 4 && gic.Up.upgradeCost() <= gic.Up.a;
 	this.inventory.children.Up.content.u?.classList.toggle('hint', shouldUpGenerate);
@@ -152,7 +152,7 @@ Game.prototype.hint = function(){
 	this.menu.children.Create.children.Subatomic.children.Quark.children.Down.b.classList.toggle('hint', shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Down');
 	
 	const shouldDownCreate = shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Down';
-	this.inventory.children.Down.content.b?.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 12 && gic.Down.l < 1));
+	this.inventory.children.Down.content.b?.forEach(x => x.classList.toggle('hint', shouldDownCreate &&  gic.Down.a < 16 && gic.Down.l < 1));
 	
 	const shouldDownGenerate = shouldDownCreate && gic.Down.a > 0 && gic.Down.l < 4 && gic.Down.upgradeCost() <= gic.Down.a;
 	this.inventory.children.Down.content.u?.classList.toggle('hint', shouldDownGenerate);

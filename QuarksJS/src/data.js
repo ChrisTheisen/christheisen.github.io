@@ -8,7 +8,7 @@ let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
 
-//yocto
+//yocto - fairly close to Dalton
 //zepto
 //atto
 //femto
@@ -34,8 +34,8 @@ const MassUnits = {
 	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
 	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
 	MO:{i: 5, s:'M☉',n:'Solar Mass',c:1000000000000},
-	GM:{i: 6, s:'Mgal',n:'Galactic Mass',c:1000000000000},
-	CM:{i: 7, s:'Mtotal',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
+	GM:{i: 6, s:'M_gal',n:'Galactic Mass',c:1000000000000},
+	CM:{i: 7, s:'M_uni',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
 }
 
 //flavors
@@ -44,8 +44,8 @@ const Q_Down = { n: 'Down', u: true, m: new Amount({Da:.0047}), i: [] };
 const Electron = { n: 'Electron', u: true, m: new Amount({Da:.0005}), i: [] };
 const Proton = { n: 'Proton', u: false, m: new Amount({Da:1}), i: [{ f: Q_Up, a: 2, b:null }, { f: Q_Down, a: 1, b:null }] };
 const Neutron = { n: 'Neutron', u: false, m: new Amount({Da:1}), i: [{ f: Q_Up, a: 1, b:null }, { f: Q_Down, a: 2, b:null }] };
-const H1 = { n: 'Protium', u: false, m: new Amount({Da:1}), i: [{ f: Proton, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
-const H2 = { n: 'Deuterium', u: false, m: new Amount({Da:2}), i: [{ f: Proton, a: 1, b:null }, { f: Neutron, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
+const H1 = { n: 'Hydrogen1', u: false, m: new Amount({Da:1}), i: [{ f: Proton, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
+const H2 = { n: 'Hydrogen2', u: false, m: new Amount({Da:2}), i: [{ f: Proton, a: 1, b:null }, { f: Neutron, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
 const He3 = { n: 'Helium3', u: false, m: new Amount({Da:3}), i: [{ f: Proton, a: 2, b:null }, { f: Neutron, a: 1, b:null }, { f: Electron, a: 2, b:null }] };
 const He4 = { n: 'Helium4', u: false, m: new Amount({Da:4}), i: [{ f: Proton, a: 2, b:null }, { f: Neutron, a: 3, b:null }, { f: Electron, a: 2, b:null }] };
 const Li6 = { n: 'Lithium6', u: false, m: new Amount({Da:6}), i: [{ f: Proton, a: 3, b:null }, { f: Neutron, a: 3, b:null }, { f: Electron, a: 3, b:null }] };
