@@ -191,14 +191,14 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 
 	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
-	createUIElement({type:'button', id:'btnHint', textContent:'Scan for recipe', parent:hint, style:{marginLeft:'15px'},
+	createUIElement({type:'button', id:'btnHint', textContent:'Get Recipe', parent:hint, style:{marginLeft:'15px'},
 		onclick:()=> {
 			setElementText(hout, generateDiscoverHint()); 
 			getUIElement('btnHint').classList.add('hide');  
 			setTimeout(() => {
 				getUIElement('btnHint').classList.remove('hide');
 				setElementText(hout, null); 
-			}, 10000);
+			}, 60000);
 		}});
 	const hout = createUIElement({type:'span',parent:hint});
 	
@@ -207,7 +207,7 @@ Menu.prototype.renderDiscover = function(parent){
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row'], style:{textAlign:'left'}});
 	
-	const search = createUIElement({type:'input', parent:createUIElement({type:'label', parent:f0, textContent:'Filter: '}), attr:{type:'search', list:'filterSuggestions'}});
+	const search = createUIElement({type:'input', parent:createUIElement({type:'label', parent:f0, textContent:'Filter: '}), attr:{type:'search'}});
 
 	addUIEventListener(search, (e) => {
 		game.settings.d.s = search.value.toLowerCase(); 

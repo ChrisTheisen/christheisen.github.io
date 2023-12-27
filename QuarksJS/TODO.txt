@@ -2,22 +2,10 @@ https://periodictable.com/index.html
 
 Bugs: 
 
-Discover filter borked
-
-HARD reset ddo something with green border text showing up
+HARD RESET does something with green border text showing up
 	-or not checking the setting checkbox?
 
-
 TODO:
-make 'Bulk Storage' of items? (eg: Kg of H || Eg of Li)
-	-withdraw?
-
--Auto deposit/withdraw limits?
-	-global setting?
-		< Used *2?
-		>= MAX_INVENTORY
-
-
 molecule grouping:
 https://www.masterorganicchemistry.com/2011/02/14/table-of-functional-group-priorities-for-nomenclature/
 	Organic
