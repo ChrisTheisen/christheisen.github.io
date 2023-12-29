@@ -1,0 +1,37 @@
+Chrono-bots
+
+like idle loops
+Science broke time; you control a robot that can gather items and upgrades to keep through the loops.
+
+-limited battery/time
+-collect resources? (
+-upgrades
+	-battery
+	-efficiency (battery drained per action)
+	-speed
+	-ladder/stair climbing
+	-command list length
+	-bridge/jump
+	-unlock functions (nested functions)
+	-if/else || loops? 
+-navigate building
+	-key cards
+	-unlock doors
+	-fog of war
+
+-list of commands
+	-functions are saved chunks of commands
+	
+-view last run outcome
+-map?
+-enemies?
+-pause at end
+-complete when science is turned off
+
+-newgame++ 
+	-after complete
+	-generated map
+		-check for winnable?
+
+-a grid of divs && change div img
+-
