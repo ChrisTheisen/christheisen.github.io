@@ -191,16 +191,20 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 
 	const hint = createUIElement({parent:parent, cssClasses:['hintZone', 'center']});
-	createUIElement({type:'button', id:'btnHint', textContent:'Get Recipe', parent:hint, style:{marginLeft:'15px'},
+	createUIElement({type:'button', id:'btnHint', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
 		onclick:()=> {
 			setElementText(hout, generateDiscoverHint()); 
 			getUIElement('btnHint').classList.add('hide');  
-			setTimeout(() => {
-				getUIElement('btnHint').classList.remove('hide');
-				setElementText(hout, null); 
+			game.dinterval = setTimeout(() => {
+				getUIElement('btnHint')?.classList.remove('hide');
+				game.dhint = null;
+				setElementText(getUIElement('hout'), null);
+				
+				clearInterval(game.dinterval);
+				game.dinterval = null;
 			}, 60000);
 		}});
-	const hout = createUIElement({type:'span',parent:hint});
+	const hout = createUIElement({id:'hout', type:'span',parent:hint,textContent:game.dhint});
 	
 	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
 

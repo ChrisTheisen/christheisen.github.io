@@ -73,7 +73,7 @@ function InventoryItem(input){
 	this.e = true;//generator enabled
 	this.f = input;//flavor
 	//ingredients needed to create/generate
-	this.i = input.i.sort((a,b) => a.f.m.compare(b.f.m)).map(x => ({a:x.a, inv:game.inventory.getInvByFlavor(x.f)}));
+	this.i = input.i.sort((a,b) => a.f.m.compare(b.f.m)).map(x => ({a:x.a, b:x.b??new Amount(), inv:game.inventory.getInvByFlavor(x.f)}));
 	this.k = 0;//generator rank
 	this.l = 0;//generator level
 
@@ -134,7 +134,10 @@ InventoryItem.prototype.generatorClick = function(){
 	
 	if(!this.canCreate()){return;}
 	
-	this.i.forEach(x => x.inv.a -= x.a);
+	this.i.forEach(x => {
+		x.inv.a -= x.a
+		x.inv.b.subtract(x.b);
+	});
 	this.a++;
 	
 	//If this is a new item that was navigated to through Used In it needs to be unlocked. 
@@ -152,7 +155,12 @@ InventoryItem.prototype.generate = function(){
 		return;
 	}
 	
-	const amount = Math.floor(Math.min(...this.i.map(x => x.inv.a/x.a), this.s));
+	const amount = Math.floor(Math.min(
+		...this.i.map(x => x.a===0?Number.POSITIVE_INFINITY:x.inv.a/x.a),
+		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
+		this.s)
+	);
+	
 	this.i.forEach(x => {
 		ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
 		x.inv.a -= x.a * amount
@@ -160,12 +168,11 @@ InventoryItem.prototype.generate = function(){
 	
 	const enhanced = amount * game.enhancements.powerG();
 	ActualCreated[this.f.n] = enhanced;
-	if(this.a < MAX_INVENTORY){
-		this.a += enhanced;
-	}
-	else {
+	this.a += enhanced;
+	const surplus = this.a - MAX_INVENTORY;
+	if(surplus > 0){
 		this.a = MAX_INVENTORY;
-		this.b.add(new Amount().add(this.f.m).scale(enhanced));
+		this.b.add(new Amount().add(this.f.m).scale(surplus));
 	}
 }
 InventoryItem.prototype.upgradeCost = function(){
@@ -234,7 +241,8 @@ InventoryItem.prototype.uprank = function(){
 }
 
 InventoryItem.prototype.canCreate = function(){
-	return game.settings.c || !this.i.some(x => x.inv.a < x.a);
+	if(game.settings.c){return true;}
+	return !this.i.some(x => x.inv.a < x.a) && this.i.every(x => x.inv.b.compare(x.b) >= 0);
 }
 InventoryItem.prototype.isUnlocked = function(){
 	return isUnlocked(this.f);
@@ -550,19 +558,19 @@ InventoryItem.prototype.update = function(){
 			this.content.e.checked = this.e;
 			setElementText(this.content?.f, uprankCost);
 			setElementText(this.content?.g, upgradeCost);
-			this.content.h?.classList.toggle('hide', this.l < 9 && this.k < 1);
+			this.content.h?.classList.toggle('hide', this.l < 4 && this.k < 1);//auto-level wrapper
 			this.content.i.checked = this.i;
-			this.content.j?.classList.toggle('hide', this.l < 19 && this.k < 1);
+			this.content.j?.classList.toggle('hide', this.l < 8 && this.k < 1);//uprank wrapper
 			setElementText(this.content?.k, this.k??0);
 			this.content.l.forEach(x => setElementText(x, this.l??0));
-			this.content.o?.classList.toggle('hide', this.k < 5);
-			this.content.r?.classList.toggle('hide', !this.q && game.settings.u);
+			this.content.o?.classList.toggle('hide', this.k < 4);//auto-uprank wrapper
+			this.content.r?.classList.toggle('hide', !this.q && game.settings.u);//used in wrapper
 			this.content.s.forEach(x => { x.value = this.s; x.disabled = this.l === 0;});
 			this.content.t.checked = this.t;
 			this.content.u?.classList.toggle('disabled', !canUpgrade);
 			this.content.v?.classList.toggle('disabled', !canUprank);
-			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);
-			this.content.x?.classList.toggle('hide', this.l < 5 && this.k < 1);
+			this.content.w?.classList.toggle('hide', this.q || !game.settings.u);//spoiler warning
+			this.content.x?.classList.toggle('hide', this.l < 2 && this.k < 1);//used in/spoiler wrapper
 			
 			this.content.au.max = this.a;
 			this.content.au.value = Math.min(this.content.au.value, this.content.au.max);

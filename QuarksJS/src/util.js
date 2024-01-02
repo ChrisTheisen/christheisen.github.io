@@ -91,7 +91,8 @@ function generateDiscoverHint(){
 	const b = a[index];
 	
 	const c = b.i.map(x => x.inv.f.n);
-	return ` ${c.join()} `;
+	game.dhint = c.join();
+	return ` ${game.dhint} `;
 }
 
 function findLockedFlavorsByComponents(input){
@@ -142,8 +143,12 @@ function resetSettings(){
 	game.settings.m.u = false;
 
 	getUIElement('chkSettingsC').checked = game.settings.c;
+	getUIElement('chkSettingsH').checked = game.settings.h;
 	getUIElement('chkSettingsI').checked = game.settings.i;
 	getUIElement('chkSettingsU').checked = game.settings.u;
+	
+	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
+	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 }
 
 function loadSaveData(){
@@ -175,10 +180,6 @@ function load() {
 	game.enhancements.g = data.e?.g ?? 0;
 	game.enhancements.k = data.e?.k ?? 0;
 
-	//getUIElement('chkSettingsC').checked = game.settings.c;
-	//getUIElement('chkSettingsI').checked = game.settings.i;
-	//getUIElement('chkSettingsU').checked = game.settings.u;
-	
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	//hide green border tips
 	if(Object.keys(data.i).length > 5 || !game.settings.h){
@@ -261,4 +262,37 @@ function hardReset(){
 	localStorage.removeItem('Q');
 	window.removeEventListener("beforeunload", saveBeforeUnload);
 	window.location.reload(false);
+}
+
+function benchmark(){
+	const a = [];
+	const b = [];
+
+	for(let i=0;i<100000;i++){
+		a.push(new Amount({
+				Da: Math.floor(Math.random() * MassUnits.Da.c),
+				g:Math.floor(Math.random() * MassUnits.g.c),
+				Tg: Math.floor(Math.random() * MassUnits.Tg.c),
+				MO: Math.floor(Math.random() * MassUnits.MO.c),
+				
+			})
+		);		
+		b.push(new Amount({
+				Da: Math.floor(Math.random() * MassUnits.Da.c),
+				pg: Math.floor(Math.random() * MassUnits.pg.c),
+				Tg: Math.floor(Math.random() * MassUnits.Tg.c),
+				GM: Math.floor(Math.random() * MassUnits.GM.c),
+			})
+		);
+	}
+	
+	const start = performance.now();
+	
+	for(let i=0;i<100000;i++){
+		a[i].divide(b[i]);
+	}
+	
+	const stop = performance.now();
+	
+	console.log(start, stop, stop-start);
 }

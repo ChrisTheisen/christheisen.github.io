@@ -129,6 +129,21 @@ Amount.prototype.magnitude = function(){
 }
 
 Amount.prototype.convert = function(){
+	this.GM += (this.CM % 1) * MassUnits.GM.c
+	this.CM = Math.floor(this.CM);
+	this.MO += (this.GM % 1) * MassUnits.MO.c
+	this.GM = Math.floor(this.GM);
+	this.Yg += (this.MO % 1) * MassUnits.Yg.c
+	this.MO = Math.floor(this.MO);
+	this.Tg += (this.Yg % 1) * MassUnits.Tg.c
+	this.Yg = Math.floor(this.Yg);
+	this.g += (this.Tg % 1) * MassUnits.g.c
+	this.Tg = Math.floor(this.Tg);
+	this.pg += (this.g % 1) * MassUnits.pg.c
+	this.g = Math.floor(this.g);
+	this.Da += (this.pg % 1) * MassUnits.Da.c
+	this.pg = Math.floor(this.pg);
+	
 	while(this.Da > MassUnits.Da.c){ this.Da -= MassUnits.Da.c; this.pg++; }
 	while(this.pg > MassUnits.pg.c){ this.pg -= MassUnits.pg.c; this.g++; }
 	while(this.g > MassUnits.g.c){ this.g -= MassUnits.g.c; this.Tg++; }
@@ -214,4 +229,55 @@ Amount.prototype.estDivide = function(input){
 		case 6:{ return  input.GM ? (this.GM / input.GM) : this.GM; }
 		case 7:{ return  input.CM ? (this.CM / input.CM) : this.CM; }
 	}
+}
+
+Amount.prototype.toBigInt = function(input){
+	let output = BigInt(Math.floor(this.CM));
+
+	output *= BigInt(MassUnits.GM.c);
+	output += BigInt(Math.floor(this.GM));
+
+	output *= BigInt(MassUnits.MO.c);
+	output += BigInt(Math.floor(this.MO));
+
+	output *= BigInt(MassUnits.Yg.c);
+	output += BigInt(Math.floor(this.Yg));
+	
+	output *= BigInt(MassUnits.Tg.c);
+	output += BigInt(Math.floor(this.Tg));
+	
+	output *= BigInt(MassUnits.g.c);
+	output += BigInt(Math.floor(this.g));
+	
+	output *= BigInt(MassUnits.pg.c);
+	output += BigInt(Math.floor(this.pg));
+	
+	output *= BigInt(MassUnits.Da.c);
+	output += BigInt(Math.floor(this.Da));
+	
+	return output;
+}
+Amount.prototype.fromBigInt = function(input){
+	this.Da = Number(input % BigInt(MassUnits.Da.c));
+	input /= BigInt(MassUnits.Da.c);
+	this.pg = Number(input % BigInt(MassUnits.pg.c));
+	input /= BigInt(MassUnits.pg.c);
+	this.g = Number(input % BigInt(MassUnits.g.c));
+	input /= BigInt(MassUnits.g.c);
+	this.Tg = Number(input % BigInt(MassUnits.Tg.c));
+	input /= BigInt(MassUnits.Tg.c);
+	this.Yg = Number(input % BigInt(MassUnits.Yg.c));
+	input /= BigInt(MassUnits.Yg.c);
+	this.MO = Number(input % BigInt(MassUnits.MO.c));
+	input /= BigInt(MassUnits.MO.c);
+	this.GM = Number(input % BigInt(MassUnits.GM.c));
+	input /= BigInt(MassUnits.GM.c);
+	this.CM = Number(input);
+}
+Amount.prototype.divide = function(input){
+	const a = this.toBigInt();
+	const b = input.toBigInt();
+	const result = a/b;
+	this.fromBigInt(result);
+	return this;
 }

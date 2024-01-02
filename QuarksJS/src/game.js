@@ -93,11 +93,12 @@ function Game(){
 	this.menu = new Menu();
 	this.h = true;
 	this.hinterval = null;
+	this.dinterval = null;
 	this.bx = 1;
 	this.by = 1;
 	this.settings = {
 		c: false,//cheater mode
-		h: false,//hide helpful tips
+		h: true,//show helpful tips
 		i: true,//show info
 		u: true,//show used-in warning
 		d: { //discover filters

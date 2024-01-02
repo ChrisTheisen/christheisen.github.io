@@ -2,18 +2,18 @@ https://periodictable.com/index.html
 
 Bugs: 
 
-HARD RESET does something with green border text showing up
-	-or not checking the setting checkbox?
-
 TODO:
+do the TODO comment in Amount.convert
+
+
+Test building items with bulk storage
+	-generate
+
 molecule grouping:
-https://www.masterorganicchemistry.com/2011/02/14/table-of-functional-group-priorities-for-nomenclature/
 	Organic
 		-IUPAC groupings?
 	Inorganic
 		-idk
-	Allotropes
-		-?
 
 inorganic groupings?
 	salts
@@ -28,4 +28,7 @@ inorganic groupings?
 	phosphides
 	sulfides
 	
+	monomer
+		-natural
+		-synthetic
 	

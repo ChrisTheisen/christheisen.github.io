@@ -369,7 +369,7 @@ const Og293 = { n: 'Oganesson293', u: false, m: new Amount({Da:293}), i: [{ f: P
 //items
 const Quark = {
     n: 'Quark', u: true, c: [Q_Up, Q_Down],
-	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.', 'The mass of individual quarks is difficult to measure since they are always found inside of hadrons, for this game I asked ChatGPT and got some numbers.']
+	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.', 'The mass of individual quarks is difficult to measure since they are always found inside of hadrons.']
 };
 const Lepton = {
     n: 'Lepton', u: true, c: [Electron],
@@ -920,131 +920,102 @@ const TransitionMetal = {
 	info:['Transition metals are typically hard. There are many, spanning multiple periods and groups (rows and columns) through the middle of the periodic table.']
 }
 
-const Dihydrogen = { n: 'Dihydrogen', u: false, m: new Amount({Da:2}), i: [{ f: H1, a: 2, b:null }] };
-const DeuteratedDihydrogen = { n: 'Deuterated Dihydrogen', u: false, m: new Amount({Da:4}), i: [{ f: H2, a: 2, b:null }] };
+const hc = { n: '', u: false, m: new Amount({Da:0}), i: [{ f: C12, a: 0, b:null }, { f: H1, a: 0, b:null }, { f: O16, a: 0, b:null }] };
 
-const allH = {
-	n:'Hydrogen Allotropes', u:false, c:[Dihydrogen, DeuteratedDihydrogen],
-	info: ['These are different molecules made with different forms of hydrogen.']
-};
-const allB = {
-	n:'Boron', u:false, c:[],
-	info: ['']
-};
-const allC = {
-	n:'Carbon', u:false, c:[],
-	info: ['']
-};
-const allN = {
-	n:'Nitrogen', u:false, c:[],
-	info: ['']
-};
-const allO = {
-	n:'Oxygen', u:false, c:[],
-	info: ['']
-};
-const allF = {
-	n:'Fluorine', u:false, c:[],
-	info: ['']
-};
-const allP = {
-	n:'Phosphorus', u:false, c:[],
-	info: ['']
-};
-const allS = {
-	n:'Sulfur', u:false, c:[],
-	info: ['']
-};
-const allCl = {
-	n:'Chlorine', u:false, c:[],
-	info: ['']
-};
-const allAs = {
-	n:'Arsenic', u:false, c:[],
-	info: ['']
-};
-const allSe = {
-	n:'Selinium', u:false, c:[],
-	info: ['']
-};
-const allBr = {
-	n:'Bromine', u:false, c:[],
-	info: ['']
-};
-const allSn = {
-	n:'Tin', u:false, c:[],
-	info: ['']
-};
-const allSb = {
-	n:'Antimony', u:false, c:[],
-	info: ['']
-};
-const allI = {
-	n:'Iodine', u:false, c:[],
-	info: ['']
-};
-const allPo = {
-	n:'Polonium', u:false, c:[],
-	info: ['']
-};
+const methane = { n: 'Methane', u: false, m: new Amount({Da:16}), i: [{ f: C12, a: 1, b:null }, { f: H1, a: 4, b:null }] };
+const ethane = { n: 'Ethane', u: false, m: new Amount({Da:30}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 6, b:null }] };
+const propane = { n: 'Propane', u: false, m: new Amount({Da:44}), i: [{ f: C12, a: 3, b:null }, { f: H1, a: 8, b:null }] };
+const butane = { n: 'Butane', u: false, m: new Amount({Da:58}), i: [{ f: C12, a: 4, b:null }, { f: H1, a: 10, b:null }] };
 
-//allotropes
-const allotrope = {
-	n:'Allotrope', u:false, c:[allH/*, allC, allN, allO, allF, allP, allS, allCl, allAs, allSe, allBr, allSn, allSb, allI, allPo*/],
-	info: ['Allotropes are different materials all contiaining a single type of element. Many altropes can be made with a variety of isotopes. For simplicity I generally just used the isotope with the smallest mass for this game.']
+const ethene = { n: 'Ethene', u: false, m: new Amount({Da:28}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 4, b:null }] };
+const propene = { n: 'Propene', u: false, m: new Amount({Da:42}), i: [{ f: C12, a: 3, b:null }, { f: H1, a: 6, b:null }] };
+const butene = { n: 'Butene', u: false, m: new Amount({Da:56}), i: [{ f: C12, a: 4, b:null }, { f: H1, a: 8, b:null }] };
+
+const ethyne = { n: 'Ethyne', u: false, m: new Amount({Da:26}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 2, b:null }] };
+const propyne = { n: 'Propyne', u: false, m: new Amount({Da:40}), i: [{ f: C12, a: 3, b:null }, { f: H1, a: 4, b:null }] };
+const butyne = { n: 'Butyne', u: false, m: new Amount({Da:54}), i: [{ f: C12, a: 4, b:null }, { f: H1, a: 6, b:null }] };
+
+const benzene = { n: 'Benzene', u: false, m: new Amount({Da:42}), i: [{ f: C12, a: 6, b:null }, { f: H1, a: 6, b:null }] };
+const methylbenzene = { n: 'Methylbenzene', u: false, m: new Amount({Da:92}), i: [{ f: C12, a: 7, b:null }, { f: H1, a: 8, b:null }] };
+
+const ammonia = { n: 'Ammonia', u: false, m: new Amount({Da:17}), i: [{ f: N14, a: 1, b:null }, { f: H1, a: 3, b:null }] };
+
+const methylamine = { n: 'Methylamine', u: false, m: new Amount({Da:31}), i: [{ f: C12, a: 1, b:null }, { f: H1, a: 2, b:null }, { f: ammonia, a: 1, b:null }] };
+const dimethylamine = { n: 'Dimethylamine', u: false, m: new Amount({Da:45}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 4, b:null }, { f: ammonia, a: 1, b:null }] };
+const trimethylamine = { n: 'Trimethylamine', u: false, m: new Amount({Da:59}), i: [{ f: C12, a: 3, b:null }, { f: H1, a: 6, b:null }, { f: ammonia, a: 1, b:null }] };
+
+const primaryAmine = {
+	n:'Primary Amine', u:false, c:[methylamine],
+	info: ['Primary Amines are an ammonia molecule with one hydrogen replaced with a hydrocarbon.']
+}
+const secondaryAmine = {
+	n:'Secondary Amine', u:false, c:[dimethylamine],
+	info: ['Secondary Amines are an ammonia molecule with two hydrogen replaced with a hydrocarbon.']
+}
+const tertiaryAmine = {
+	n:'Tertiary Amine', u:false, c:[trimethylamine],
+	info: ['Tertiary Amines are an ammonia molecule with all three hydrogen replaced with a hydrocarbon.']
 }
 
-const hc = { n: '', u: false, m: new Amount({Da:0}), i: [{ f: C12, a: 0, b:null }, { f: H1, a: 0, b:null }, { f: O16, a: 0, b:null }] };
+
+
 const aceticAcid = { n: 'Acetic Acid', u: false, m: new Amount({Da:60}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 4, b:null }, { f: O16, a: 2, b:null }] };
 const formicAcid = { n: 'Formic Acid', u: false, m: new Amount({Da:46}), i: [{ f: C12, a: 1, b:null }, { f: H1, a: 2, b:null }, { f: O16, a: 2, b:null }] };
+const benzoicAcid = { n: 'Benzoic Acid', u: false, m: new Amount({Da:84}), i: [{ f: C12, a: 7, b:null }, { f: H1, a: 6, b:null }, { f: O16, a: 2, b:null }] };
+
 const methanol = { n: 'Methanol', u: false, m: new Amount({Da:32}), i: [{ f: C12, a: 1, b:null }, { f: H1, a: 4, b:null }, { f: O16, a: 1, b:null }] };
 const ethanol = { n: 'Ethanol', u: false, m: new Amount({Da:46}), i: [{ f: C12, a: 2, b:null }, { f: H1, a: 6, b:null }, { f: O16, a: 1, b:null }] };
 
-const aceticAnydride = { n: 'Acetic Anhydride', u: false, m: new Amount({Da:86}), i: [{ f: aceticAcid, a: 2, b:null }] };
-const aceticFormicAnydride = { n: 'Acetic Formic Anhydride', u: false, m: new Amount({Da:76}), i: [{ f: aceticAcid, a: 1, b:null }, { f: formicAcid, a: 1, b:null }] };
-const methylAcitate = { n: 'Methyl Acetate', u: false, m: new Amount({Da:74}), i: [{ f: aceticAcid, a: 1, b:null }, { f: methanol, a: 1, b:null }] };
-const ethylAcitate = { n: 'Ethyl Acetate', u: false, m: new Amount({Da:88}), i: [{ f: aceticAcid, a: 1, b:null }, { f: ethanol, a: 1, b:null }] };
+const acetamide = { n: 'Acetamide', u: false, m: new Amount({Da:60}), i: [{ f: aceticAcid, a: 1, b:null }, { f: ammonia, a: 1, b:null }] };
+const benzamide = { n: 'Benzamide', u: false, m: new Amount({Da:121}), i: [{ f: benzoicAcid, a: 1, b:null }, { f: ammonia, a: 1, b:null }] };
 
 
-
-const carboxylicAcidAnhydride = {
-	n:'Carboxylic Acid Anhydride', u:false, c:[aceticAnydride],
-	info: ['Carboxylic Acid Anhydrides are formed from two molecules of carboxylic acids and removing the water.']
-}
-const mixedAcidAnhydride = {
-	n:'Mixed Acid Anhydride', u:false, c:[aceticFormicAnydride],
-	info: ['Mixed Acid Anhydrides are formed from two different acids.']
-}
 
 const aliphaticAmide = {
-	n:'Aliphatic Amide', u:false, c:[],//acetamide
+	n:'Aliphatic Amide', u:false, c:[acetamide],//from acetic acid + ammonia = acetamide + water
 	info: ['Aliphatic amides bond the nitrogen to an alkyl group.']
 }
 const aromaticAmide = {
-	n:'Aromatic Amide', u:false, c:[],//benzamide
+	n:'Aromatic Amide', u:false, c:[benzamide],//from benzoic acid + ammonia = benzamide + water
 	info: ['Aromatic amides bond the nitrogen to an aryl group.']
 }
 
 
 //IUPAC functional groups
-const carboxylicAcid = {
-	n:'Carboxylic Acid', u:false, c:[aceticAcid,formicAcid],//benzoic acid
-	info: ['Carboxylic acids are generally weak acids that contain a carboxyl group of COOH.']
+const alkane = {
+	n:'Alkane', u:false, c:[methane,ethane,propane,butane],
+	info: ['Alkanes are saturaded hydrocarbons, meaning they consist of hydrogen and carbon with single covalent bonds between carbon atoms.']
 }
-const acidAnhydride = {
-	n:'Acid Anhydride', u:false, c:[carboxylicAcidAnhydride,mixedAcidAnhydride],
-	info: ['Acid Anhydrides are derived from acids with the elimination of water.', 'In this game the water is discarded and the acid anhydrides are kept.']
+const alkene = {
+	n:'Alkene', u:false, c:[ethene, propene, butene],
+	info: ['Alkenes are hydrocarbons with at least one carbon atom double bonded to another carbon atom.']
 }
-const carboxylicEster = {
-	n:'Carboxylic Ester', u:false, c:[methylAcitate,ethylAcitate],
-	info: ['Carboxylic Esters are a combination with a carboxyl group and an ester group']
+const alkyne = {
+	n:'Alkyne', u:false, c:[ethyne,propyne,butyne],
+	info: ['Alkenes are hydrocarbons with at least one carbon atom triple bonded to another carbon atom.']
 }
-const amide = {
-	n:'Amide', u:false, c:[aliphaticAmide,aromaticAmide],
-	info: ['Amides contain a carbonyl group C=0 bonded to a nitrogen atom.']
+const benzeneRing = {
+	n:'Benzene Ring', u:false, c:[benzene, methylbenzene],
+	info: ['A benzene ring contains a cyclic hydrocarbon.']
 }
-const nitrile = {
-	n:'Nitrile', u:false, c:[],
+const amine = {
+	n:'Amine', u:false, c:[primaryAmine,secondaryAmine,tertiaryAmine],
+	info: ['Amines contain a nitrogen and hydrogen bonded to a hydrocarbon.']
+}
+const alcohol = {
+	n:'Alcohol', u:false, c:[methanol, ethanol],//isopropanol, butanol, glycerol, propylene glycol
+	info: ['Alcohols are an oganic compound that contain a hydroxyl group OH bonded to a carbon atom.']
+}
+const ether = {
+	n:'Ether', u:false, c:[],
+	info: ['']
+}
+const alkylHalide = {
+	n:'Alkyl Halide', u:false, c:[],
+	info: ['']
+}
+const thiol = {
+	n:'Thiol', u:false, c:[],
 	info: ['']
 }
 const aldehyde = {
@@ -1055,39 +1026,40 @@ const ketone = {
 	n:'Ketone', u:false, c:[],
 	info: ['']
 }
-const alcohol = {
-	n:'Alcohol', u:false, c:[methanol, ethanol],//methanol, ethanol, isopropanol, butanol, glycerol, propylene glycol
-	info: ['Alcohols are an oganic compound that contain a hydroxyl group OH bonded to a carbon atom.']
-}
-const amine = {
-	n:'Amine', u:false, c:[],
+const ester = {
+	n:'Ester', u:false, c:[],
 	info: ['']
 }
-const alkene = {
-	n:'Alkene', u:false, c:[],//ethene, propene, butene
-	info: ['']
+const carboxylicAcid = {
+	n:'Carboxylic Acid', u:false, c:[aceticAcid,formicAcid,benzoicAcid],
+	info: ['Carboxylic acids are generally weak acids that contain a carboxyl group of COOH.']
 }
-const alkyne = {
-	n:'Alkyne', u:false, c:[],
-	info: ['']
+const amide = {
+	n:'Amide', u:false, c:[aliphaticAmide,aromaticAmide],
+	info: ['Amides contain a carbonyl group C=0 bonded to a nitrogen atom.']
 }
-const alkyl = {
-	n:'Alkyl', u:false, c:[],
-	info: ['']
+const nitrile = {
+	n:'Nitrile', u:false, c:[],
+	info: ['Nitriles have a carbon atom triple bonded to a nitrogen atom.']
 }
 
+//epoxide,imine,acidChloride,anhydride (carboxylic Anhydride?), nitro, sulfide(thioether), azide
 const organicFunctionalGroup = {
-	n:'Functional Groups', u:false, c:[carboxylicAcid,acidAnhydride,carboxylicEster,amide,nitrile,aldehyde,ketone,alcohol,amine,alkene,alkyne,alkyl],
-	info:['.']
+	n:'Functional Groups', u:false, c:[alkane,alkene,alkyne,benzeneRing,amine,alcohol,ether,alkylHalide,thiol,aldehyde,ketone,ester,carboxylicAcid,amide,nitrile],
+	info:['Functional groups organize organic compounds with similar characteristic chemical reactions.']
 }
-const hydrocarbon = {
-	n:'Hydrocarbon', u:false, c:[],//methane, ethane, propane
-	info:['.']
+const binaryHydride = {
+	n:'Binary Hydride', u:false, c:[ammonia],
+	info:['Binary hydrides contain hydrogen and one other element.']
 }
 
 const organic = {
-	n:'Organic', u:false, c:[hydrocarbon,organicFunctionalGroup],
+	n:'Organic Compounds', u:false, c:[organicFunctionalGroup],
 	info:['Organic compounds contain bonded carbon and hydrogen atoms along with other elements.']
+}
+const inorganic = {
+	n:'Inorganic Compounds', u:false, c:[binaryHydride],
+	info:['.']
 }
 
 //magnitude groups
@@ -1104,7 +1076,7 @@ const atomic = {
 const molecular = {
     n: 'Molecular', u: false,
     info: ['A molecule is the smallest mass of a substance while keeping its chemical properties.', 'There are countless types of molecules, this game has some.'],
-    c: [allotrope,organic]
+    c: [inorganic,organic]
 };
 const human = {
     n: 'Human', u: false,
@@ -1157,7 +1129,7 @@ const data = [
 //base tabs
 const tabs = [
 	{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'As the tab title suggests, this is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
-	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you get stuck. You can "Get Recipe" every minute (or when you switch tabs).'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
+	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
 	{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
 	{n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Rank cost reduces the cost required to increase the generator rank.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator uprank cost. They do not change the set-point limits or generator levels or ranks.'}, 
 	{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
@@ -1169,7 +1141,7 @@ const help = [
 		'This is a crafting/discovery game with some supply chain management.',
 		'|',
 		'You initially start by crafting subatomic materials but can eventually create successively larger items. Unfortunately the data file is missing several items that exist in the universe.',
-		'Items are organized into groups and have flavors or isotopes. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
+		'Items are organized into groups and have types, flavors, or isotopes. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
 		'|',
 		'(») circle buttons will go to the item referenced. It will goto the item even if it is still locked through the normal menu.',
 		'|',
@@ -1186,6 +1158,13 @@ const help = [
 		'|',
 		'The Generator will automatically create items based on the generator set-point. It will only create items if you have the required components.',
 		'For example if you have 10 Up Quarks and have a Proton set-point of 7 (Protons each need 2 Up Quarks) the Proton generators will make 5 Protons.',
+		'|',
+		'Bulk storage for each item can store excess by weight.',
+		'|',
+		'An items used in list is available for an item when an its generator is over level 2.',
+		'Auto-upgrade is unlocked for an item when an its generator is over level 4.',
+		'Generator rank is unlocked for an item when an its generator is over level 8.',
+		'Auto-uprank is unlocked for an item when an its rank is over level 4.',
 	]},
 	{t:'Discover', c:[
 		'The Discover tab is the main way to gain access to new item types.',
@@ -1194,7 +1173,7 @@ const help = [
 		'Unfortunately, the game data is not complete but will be expanded in the future.',
 		'|',
 		'There is no penalty for scanning items that do not match a recipe.',
-		'If you are stuck or want a recipe hint you can click the "Generate Discoverable Recipe" button',
+		'If you are stuck or want a recipe hint you can click the "Get Recipe" button',
 		'|',
 		'Discover tab is unlocked when a generator is over level 3.'
 	]},
@@ -1238,18 +1217,19 @@ const help = [
 		'Hard Reset: This resets all progress and starts over from the beginning.',
 		'Cheater Level: -1 is no effect, higher number is bigger cheats. Allows you to create some items without using components.'
 	]},
-	{t:'About', c:[
-		'The isotopes I included are the bolded ones listed on https://periodictable.com; I think they bold stable isotopes and isotopes with a half-life over ~10^9 years.',
-		'If there are no bolded isotopes for a given element I used the one with the largest half-life.',
-		'I looked up additional information, such as uses, here: https://www.rsc.org/periodic-table',
-		'|',
-		'Molecules will be grouped according to IUPAC and ChatGPT.',
-		'|',
-		'The other items are included as I get to it.',
+	{t:'Sources', c:[
+		'I got most of my information from:',
+		'https://periodictable.com',
+		'https://www.rsc.org/periodic-table',
+		'https://www.chemspider.com/',
+		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/',
+		'https://chat.openai.com/',
+		
 		'|',
 		'If you have a suggestion of items you want added you can email: grumdrig333@gmail.com',
-		'|',
-		'This game was initially started as a way to learn mutraction, but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
+		]},
+	{t:'About', c:[
+		'This game was initially started as a way to learn mutraction but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
 		'I decided to try making a game that has a simple UI but is very data heavy. As a result the html file is pretty small and most content is generated based on the data.js file.',
 		'It ended up less general than I initially hoped and more specific to this game, but in the end I mostly like this result.'
 	]},
