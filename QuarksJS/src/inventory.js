@@ -77,6 +77,8 @@ function InventoryItem(input){
 	this.k = 0;//generator rank
 	this.l = 0;//generator level
 
+	//other output items when generated
+	this.o = input.o.sort((a,b) => a.f.m.compare(b.f.m)).map(x => ({a:x.a, inv:game.inventory.getInvByFlavor(x.f)}));
 	this.q = false;//show used in
 	this.s = 0;//generator set-point
 	this.t = false;//auto-upgrade rank
