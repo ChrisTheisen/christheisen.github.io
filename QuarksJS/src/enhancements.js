@@ -51,7 +51,7 @@ Enhancements.prototype.buyE = function(){
 	this.update();
 }
 Enhancements.prototype.powerE = function(){
-	return 1.0025**this.e;
+	return 1.005**this.e;
 }
 Enhancements.prototype.gotoE = function(){
 	game.menu.gotoNode(this.costE().inv.f.n);
@@ -76,7 +76,7 @@ Enhancements.prototype.buyG = function(){
 	this.update();
 }
 Enhancements.prototype.powerG = function(){
-	return 1.005**(this.g * this.powerE());
+	return 1.01**(this.g * this.powerE());
 }
 Enhancements.prototype.gotoG = function(){
 	game.menu.gotoNode(this.costG().inv.f.n);
@@ -101,7 +101,7 @@ Enhancements.prototype.buyK = function(){
 	this.update();
 }
 Enhancements.prototype.powerK = function(){
-	return .995**(this.k * this.powerE());
+	return .99**(this.k * this.powerE());
 }
 Enhancements.prototype.gotoK = function(){
 	game.menu.gotoNode(this.costK().inv.f.n);
@@ -149,9 +149,6 @@ Enhancements.prototype.render = function(parent){
 	this.content.g.p = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Power]' });
 	this.content.k.p = createUIElement({parent:rowK, cssClasses:['cell'], textContent:'[Power]' });
 	this.content.e.p = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Power]' });
-
-
-
 
 }
 Enhancements.prototype.update = function(){

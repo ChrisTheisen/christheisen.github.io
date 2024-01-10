@@ -114,7 +114,7 @@ function buildMaps(input, parent) {
 			if(!ParentMap[x.n]){ParentMap[x.n] = [];}
 			ParentMap[x.n].push(parent);
 		}
-		if(x.i){
+		if(x.m){
 			const inv = game.inventory.getInvByFlavor(x);
 			x.i.forEach(y => {
 				if (!ComponentMap[y.f.n]) {ComponentMap[y.f.n] = [];}

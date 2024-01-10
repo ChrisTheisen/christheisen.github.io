@@ -31,41 +31,44 @@ function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})
 		CM:null
 	}
 }
-Amount.prototype.render = function(parent){
-	const w = createUIElement({parent:parent, cssClasses:['amountWrapper']});
+Amount.prototype.render = function(parent, isInline = false){
+	const cssW = isInline ? ['amountWrapper', 'cell', 'amountInlineWrapper'] : ['amountWrapper'];
+	const cssU = isInline ? ['amountUnit', 'amountInline'] : ['amountUnit'];
+	
+	const w = createUIElement({parent:parent, cssClasses:cssW});
 	this.content.w = w;
 	
-	this.content.e = createUIElement({parent:w, textContent:'Empty'});
+	this.content.e = createUIElement({parent:w, textContent:'None', cssClasses:cssU});
 	
-	const wDa = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wDa = createUIElement({parent:w, cssClasses:cssU});
 	this.content.Da= createUIElement({type:'span', parent:wDa, textContent:this.Da});
 	createUIElement({type:'span', parent:wDa, textContent:` ${MassUnits.Da.s}`, title:`${MassUnits.Da.n}`});
 	
-	const wpg = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wpg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.pg  = createUIElement({type:'span', parent:wpg, textContent:this.pg});
 	createUIElement({type:'span', parent:wpg, textContent:` ${MassUnits.pg.s}`, title:`${MassUnits.pg.n}`});
 	
-	const wg = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.g = createUIElement({type:'span', parent:wg, textContent:this.g});
 	createUIElement({type:'span', parent:wg, textContent:` ${MassUnits.g.s}`, title:`${MassUnits.g.n}`});
 
-	const wTg = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wTg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.Tg = createUIElement({type:'span', parent:wTg, textContent:this.Tg});
 	createUIElement({type:'span', parent:wTg, textContent:` ${MassUnits.Tg.s}`, title:`${MassUnits.Tg.n}`});
 
-	const wYg = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wYg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.Yg = createUIElement({type:'span', parent:wYg, textContent:this.Yg});
 	createUIElement({type:'span', parent:wYg, textContent:` ${MassUnits.Yg.s}`, title:`${MassUnits.Yg.n}`});
 	
-	const wMO = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wMO = createUIElement({parent:w, cssClasses:cssU});
 	this.content.MO = createUIElement({type:'span', parent:wMO, textContent:this.MO});
 	createUIElement({type:'span', parent:wMO, textContent:` ${MassUnits.MO.s}`, title:`${MassUnits.MO.n}`});
 	
-	const wGM = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wGM = createUIElement({parent:w, cssClasses:cssU});
 	this.content.GM = createUIElement({type:'span', parent:wGM, textContent:this.GM});
 	createUIElement({type:'span', parent:wGM, textContent:` ${MassUnits.GM.s}`, title:`${MassUnits.GM.n}`});
 	
-	const wCM = createUIElement({parent:w, cssClasses:['amountUnit']});
+	const wCM = createUIElement({parent:w, cssClasses:cssU});
 	this.content.CM = createUIElement({type:'span', parent:wCM, textContent:this.CM});
 	createUIElement({type:'span', parent:wCM, textContent:` ${MassUnits.CM.s}`, title:`${MassUnits.CM.n}`});
 	

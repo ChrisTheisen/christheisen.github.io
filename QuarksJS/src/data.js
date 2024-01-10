@@ -1,5 +1,16 @@
 "use strict";
 
+//Data Restrictions
+	// Only one recipe per item
+		//Could be solved if recipe was it's own thing instead of of property of item
+	// Recipe output only exactly 1 of main item per recipe
+		//Could be solved if recipe was it's own thing instead of of property of item
+	// Creatable item with children is unlocked if children are unlocked
+		//Is probably fine, creatable item with children is abnormal (so far) anyway.
+		//Also some other abnormal UX if this happens; should be avoided (for now).
+	// Only a or b per incredient
+		//I think is only a display issue, could be solved with some adjustments
+
 //reverse lookup maps
 const ComponentMap = {};//Component Flavor Name -> Flavor[]
 const ParentMap = {};
@@ -1123,24 +1134,27 @@ const blackHole = {
     c: []	
 }
 
-const test_0 = { n: 'test_0', u: true, m: new Amount({Da:.1}), o: [], i: [] };
-const test_1 = { n: 'test_1', u: true, m: new Amount({Da:.2}), o: [], i: [] };
-const test_2 = { n: 'test_2', u: true, m: new Amount({Da:.3}), o: [], i: [] };
-const test_3 = { n: 'test_3', u: true, m: new Amount({Da:.4}), o: [], i: [{f:test_1, a:1, b:null}], info:['Item with also children'], c:[test_0] };
+const test_0 = { n: 'test_0', m: new Amount({Da:1}), o: [], i: [] };
+const test_1 = { n: 'test_1', m: new Amount({Da:2}), o: [], i: [] };
+const test_2 = { n: 'test_2', m: new Amount({Da:3}), o: [{a:1, f:test_0}], i: [] };
+const test_3 = { n: 'test_3', m: new Amount({Da:4}), o: [], i: [{f:test_1, a:1, b:null}], info:['Creatable item with also children'], c:[test_0] };
+const test_4 = { n: 'test_4', m: new Amount({Da:5}), o: [], i: [{f:test_0, a:0, b:new Amount({Da:3})}] };
+const test_5 = { n: 'test_5', m: new Amount({Da:5}), o: [], i: [{f:test_1, a:0, b:new Amount({Da:1})}, {f:test_0, a:1, b:null}] };
+const test_6 = { n: 'test_6', m: new Amount({Da:5}), o: [], i: [{f:test_1, a:1, b:new Amount({Da:1})}, {f:test_2, a:1, b:null}] };
 
-
-const test_a = { n: 'test_a', u: true, c:[test_0,test_1], info:['Test Group A'] };
-const test_b = { n: 'test_b', u: true, c:[test_1,test_2], info:['Test Group B'] };
-const test_c = { n: 'test_c', u: true, c:[test_3], info:['Test Group C'] };
+const test_a = { n: 'test_a', c:[test_0,test_1], info:['Test Group A: test_1 in two groups'] };
+const test_b = { n: 'test_b', c:[test_1,test_2], info:['Test Group B: test_1 in two groups'] };
+const test_c = { n: 'test_c', c:[test_3], info:['Test Group C: test creatable item with child items'] };//This kind of works, but could be better.
+const test_d = { n: 'test_d', c:[test_4,test_5,test_6], info:['Test Group D: test bulk component ingredients'] };
 
 
 const test = {
-	n:'Test', u:true, c: [test_a,test_b,test_c],
+	n:'Test', u:true, c: [test_a,test_b,test_c,test_d],
 	info: ['Test group for testing some different menu behavior']
 }
 
 const data = [
-//	test,
+	test,
 	subatomic,
 	atomic,
 	molecular,

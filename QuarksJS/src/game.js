@@ -221,7 +221,12 @@ function init(){
 	
 	game.clock.status = 'Loading Save Data';
 	game.clock.update();
-	load();
+	if(localStorage.getItem('Q')){
+		load();
+	}
+	else{
+		Object.values(AllFlavors).filter(x => x.i.length === 0).forEach(x => x.unlock());
+	}
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();

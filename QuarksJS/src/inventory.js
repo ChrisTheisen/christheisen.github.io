@@ -86,12 +86,11 @@ function InventoryItem(input){
 	this.v = {a: 0, b: new Amount()};//deposit value
 	this.w = {a: 0, b: new Amount()};//withdraw amount
 	
-	this.f.u = this.i.length === 0;
-	
 	AllFlavors[this.f.n]=this;
 	this.content = {
 		a:[], //amount label
 		b:[], //generate button (for Generate disabled)
+		c:null, //component amount
 		d:null, //discover add buttons (for disabled)
 		e:null, //enabled (for checkbox checked)
 		f:null, //generator uprank cost label
@@ -146,6 +145,11 @@ InventoryItem.prototype.generatorClick = function(){
 	//This is different than the generator's generate.
 	this.unlock();
 	//this.a+=999;//TESTING line to gain a bunch of stuff.
+	
+	this.o.forEach(x => {
+		const amt = x.a;
+		x.inv.a += amt;
+	});
 }
 InventoryItem.prototype.generate = function(){
 	if(!this.e || !this.s){return;}
@@ -176,6 +180,11 @@ InventoryItem.prototype.generate = function(){
 		this.a = MAX_INVENTORY;
 		this.b.add(new Amount().add(this.f.m).scale(surplus));
 	}
+	
+	this.o.forEach(x => {
+		const amt = x.a * enhanced;
+		x.inv.a += amt;
+	});
 }
 InventoryItem.prototype.upgradeCost = function(){
 	const s = .2*this.rankDiscount();
@@ -404,32 +413,42 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 	this.w.b.content.w.style.textAlign= 'right';//stinky, but it works well enough that I'll probably never change it.
 }
 InventoryItem.prototype.renderComponents = function(parent){
-	this.f.i.forEach(x => {
+	this.i.forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['flex']});
 		this.renderComponent(row, x);
 	});
 }
 InventoryItem.prototype.renderComponent = function(parent, input){
-	const inv = game.inventory.getInvByFlavor(input.f);
-	
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}, cssClasses:['cell']}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
-		onclick:() => game.menu.gotoNode(inv.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:inv.f.n, title:inv.fullName,style:{width:'30%', textAlign:'left'}});
+		onclick:() => game.menu.gotoNode(input.inv.f.n)});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:input.inv.f.n,style:{width:'30%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], 
-		style:{width:'40%', textAlign:'left'}})
-	const own = createUIElement({type:'span', parent:ow, textContent:inv.a});
-	createUIElement({type:'span', parent:ow, textContent:` / ${input.a}`});
+		style:{width:'40%', textAlign:'left'}});
+	const cssCW = (input.a && !input.b.isZero()) ? ['componentWrapper'] : [];
+	const cw = createUIElement({parent:ow, cssClasses:cssCW});
+	if(input.a){
+		const own = createUIElement({parent:cw, textContent:input.inv.a, cssClasses:['componentAmount']});
+		createUIElement({parent:cw, textContent:` / ${input.a}`, cssClasses:['componentAmount']});
+		input.inv.content.a.push(own);
+	}
+	
+	if(!input.b.isZero()){
+		const aw = createUIElement({parent:cw, cssClasses:['row']});
+		input.inv.b.render(createUIElement({parent:aw}), true);
+		createUIElement({parent:aw, textContent:'/', cssClasses:['cell'] });
+		input.b.render(createUIElement({parent:aw}), true);
+		input.b.update();//initial toggle visibility
+	}
 	
 	const gen = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'gains'], textContent:'++', title:'Generate',
-	onclick:() => { inv.generatorClick(); this.update(); inv.update(); } });
+	onclick:() => { input.inv.generatorClick(); this.update(); input.inv.update(); } });
 	
-	gen.classList.toggle('disabled', !inv.canCreate());
+	gen.classList.toggle('disabled', !input.inv.canCreate());
 	
-	inv.content.a.push(own);
-	inv.content.b.push(gen);
+	input.inv.content.b.push(gen);
 }
 InventoryItem.prototype.renderGeneratorCreate = function(parent){
 	const r0 = createUIElement({parent:parent, style:{float:'right'}});
@@ -488,7 +507,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, 
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, 
 		style:{width:'50%', textAlign:'left', overflowX:'clip', fontSize:'14px'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
@@ -507,7 +526,7 @@ InventoryItem.prototype.renderUsedIn = function(parent, input){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 	onclick:() => game.menu.gotoNode(this.f.n)});
-	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n, title:this.fullName,style:{width:'40%', textAlign:'left'}});
+	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n,style:{width:'40%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'40%', textAlign:'left'}})
 	createUIElement({type:'span', parent:ow, textContent:input.a});
@@ -517,7 +536,7 @@ InventoryItem.prototype.renderManage = function(parent){
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Flavor',
 		onclick:() => game.menu.gotoNode(this.f.n)});
 	
-	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, title:this.fullName, style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}});
+	createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], textContent:this.f.n, style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}});
 	
 	this.content.a.push(createUIElement({parent:parent, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
 	
@@ -585,6 +604,7 @@ InventoryItem.prototype.update = function(){
 			
 			setElementText(this.content.av, this.v.a);
 			setElementText(this.content.ax, this.w.a);
+			this.i.forEach(x => x.inv.b.update());
 			this.b.update();
 			this.v.b.update();
 			this.w.b.update();
