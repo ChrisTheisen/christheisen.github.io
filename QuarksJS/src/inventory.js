@@ -551,7 +551,7 @@ InventoryItem.prototype.renderManage = function(parent){
 }
 
 InventoryItem.prototype.isDisplayed = function(){
-	const out = this.f.menu.some(x => {
+	const out = this.f.menu?.some(x => {
 		return x.isDisplayed(this.f.n);
 	});
 	return out;

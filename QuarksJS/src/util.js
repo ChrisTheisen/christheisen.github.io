@@ -67,7 +67,7 @@ function unlock(input){
 	if(!input){return;}
 	
 	input.u = true;
-	input.menu.forEach(x => x.children[input.n].b.classList.remove('hide'));
+	input.menu?.forEach(x => x.children[input.n].b.classList.remove('hide'));
 
 	ParentMap[input.n]?.forEach(x => unlock(x));
 }
@@ -125,7 +125,6 @@ function buildMaps(input, parent) {
 			buildMaps(x.c, x);
 		}
 	});
-	
 }
 
 function resetSettings(){

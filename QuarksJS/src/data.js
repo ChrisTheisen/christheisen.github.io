@@ -8,8 +8,6 @@
 	// Creatable item with children is unlocked if children are unlocked
 		//Is probably fine, creatable item with children is abnormal (so far) anyway.
 		//Also some other abnormal UX if this happens; should be avoided (for now).
-	// Only a or b per incredient
-		//I think is only a display issue, could be solved with some adjustments
 
 //reverse lookup maps
 const ComponentMap = {};//Component Flavor Name -> Flavor[]
@@ -491,7 +489,7 @@ const Mn = {
 	info: ['Manganese is used as a component in a steel alloy for railroad tracks and other industries.']
 };
 const Fe = {
-	n:'Iron', u:false, c:[],
+	n:'Iron', u:false, c:[Fe54,Fe56,Fe57,Fe58],
 	info: ['Iron rusts easily but is the most used metal. It is mostly used to manufacture steel.']
 };
 const Co = {
@@ -931,6 +929,7 @@ const TransitionMetal = {
 	info:['Transition metals are typically hard. There are many, spanning multiple periods and groups (rows and columns) through the middle of the periodic table.']
 }
 
+//organic groups
 const dihydrogen = { n: 'Dihydrogen', u: false, m: new Amount({Da:2}), o: [], i: [{ f: H1, a: 2, b:null }] };
 const deuteratedDihydrogen = { n: 'Deuterated Dihydrogen', u: false, m: new Amount({Da:4}), o: [], i: [{ f: H2, a: 2, b:null }] };
 const dioxygen = { n: 'Dioxygen', u: false, m: new Amount({Da:32}), o: [], i: [{ f: O16, a: 2, b:null }] };
@@ -986,11 +985,7 @@ const tertiaryAmine = {
 	info: ['Tertiary Amines are an ammonia molecule with all three hydrogen replaced with a hydrocarbon.']
 }
 
-
-
 //trinitrotouline: toluene + 3water + 3nitro = TNT + 3x hydronium (h3o)
-
-
 
 const aliphaticAmide = {
 	n:'Aliphatic Amide', u:false, c:[acetamide],//from acetic acid + ammonia = acetamide + water
@@ -1027,6 +1022,15 @@ const alcohol = {
 	n:'Alcohol', u:false, c:[methanol, ethanol],//isopropanol, butanol, glycerol, propylene glycol
 	info: ['Alcohols are an oganic compound that contain a hydroxyl group OH bonded to a carbon atom.']
 }
+const hydroxyl = {
+	n:'Hydroxyl', u:false, c:[],
+	info: ['']
+}
+const carbonyl = {
+	n:'Carbonyl', u:false, c:[],
+	info: ['']
+}
+
 const ether = {
 	n:'Ether', u:false, c:[],
 	info: ['']
@@ -1064,36 +1068,87 @@ const nitrile = {
 	info: ['Nitriles have a carbon atom triple bonded to a nitrogen atom.']
 }
 
+
+const carbohydrate = {
+	n:'Carbohydrate', u:false, c:[],
+	info: ['Carbohydrate is not an actual IUPAC functional group, but I thought it made sense to include it as a group.']
+}
+
 //epoxide,imine,acidChloride,anhydride (carboxylic Anhydride?), nitro, sulfide(thioether), azide
 const organicFunctionalGroup = {
-	n:'Functional Groups', u:false, c:[alkane,alkene,alkyne,benzeneRing,amine,alcohol,ether,alkylHalide,thiol,aldehyde,ketone,ester,carboxylicAcid,amide,nitrile],
+	n:'Functional Groups', u:false, c:[alkane,alkene,alkyne,benzeneRing,amine,alcohol,hydroxyl,carbonyl,ether,alkylHalide,thiol,aldehyde,ketone,ester,carboxylicAcid,amide,nitrile],
 	info:['Functional groups organize organic compounds with similar characteristic chemical reactions.']
 }
 
+const organic = {
+	n:'Organic Compounds', u:false, c:[organicFunctionalGroup],
+	info:['Organic compounds contain bonded carbon and hydrogen atoms along with other elements.']
+}
+
+//inorganic groups
+const HCl =  { n: 'Hydrochloric Acid', u: false, m: new Amount({Da:36}), o: [], i: [{ f: H1, a: 1, b:null }, { f: Cl35, a: 1, b:null }] };
+const H2SO4 =  { n: 'Sulfuric Acid', u: false, m: new Amount({Da:98}), o: [], i: [{ f: H1, a: 2, b:null }, { f: O16, a: 4, b:null }, { f: S32, a: 1, b:null }] };
+
+const NaOH = { n: 'Sodium Hydroxide', u: false, m: new Amount({Da:40}), o: [], i:[{ f: H1, a: 1, b:null }, { f: O16, a: 1, b:null }, { f: Na23, a: 1, b:null }] };
+const KOH = { n: 'Potassium Hydroxide', u: false, m: new Amount({Da:56}), o: [], i:[{ f: H1, a: 1, b:null }, { f: O16, a: 1, b:null }, { f: K39, a: 1, b:null }] };
+
+const NaCl = { n: 'Sodium Chloride', u: false, m: new Amount({Da:58}), o: [{a:1, f:water}], i:[{ f: HCl, a: 1, b:null }, { f: NaOH, a: 1, b:null }] };
+const KCl = { n: 'Potassium Chloride', u: false, m: new Amount({Da:74}), o: [{a:1, f:water}], i:[{ f: HCl, a: 1, b:null }, { f: KOH, a: 1, b:null }] };
+
+const mildSteel = { n: 'Mild Steel', u: false, m: new Amount({Da:1000}), o: [], i: [{ f: Fe56, a: 0, b:new Amount({Da:998})}, { f: C12, a: 0, b: new Amount({Da:2}) }] };
+const highSteel = { n: 'High Steel', u: false, m: new Amount({Da:1000}), o: [], i: [{ f: Fe56, a: 0, b:new Amount({Da:990})}, { f: C12, a: 0, b: new Amount({Da:10}) }] };
 
 const binaryHydride = {
 	n:'Binary Hydride', u:false, c:[ammonia,water],
 	info:['Binary hydrides contain hydrogen and one other element.']
 }
 const binaryOxide = {
-	n:'Binary Hydride', u:false, c:[water,carbonMonoxide,carbonDioxide],
-	info:['Binary hydrides contain hydrogen and one other element.']
+	n:'Binary Oxide', u:false, c:[water,carbonMonoxide,carbonDioxide],
+	info:['Binary oxides contain hydrogen and one other element.']
 }
-const organic = {
-	n:'Organic Compounds', u:false, c:[organicFunctionalGroup],
-	info:['Organic compounds contain bonded carbon and hydrogen atoms along with other elements.']
+
+const steel = {
+	n:'Steel', u:false, c:[mildSteel,highSteel],
+	info:['Steel is an iron alloy with a small amount of carbon.']
+}
+const metalAlloys = {
+	n:'Metal Alloys', u:false, c:[steel],
+	info:['Metal alloys are materials composed of a metal and one or more other elements.']
+}
+
+const acid = {
+	n:'Acid', u:false, c:[HCl,H2SO4],
+	info:['Acids generally contain hydrogen ions that can dissociate in water.']
+}
+
+const base = {
+	n:'Base', u:false, c:[NaOH],
+	info:['Bases react with the hydrogen ions and neutralize the acids.']
+}
+
+
+const salt = {
+	n:'Salts', u:false, c:[NaCl,KCl],
+	info:['Salts can be formed as a result of combining acids and bases.']
 }
 
 const allotrope = {
 	n:'Allotrope', u:false, c:[dihydrogen,deuteratedDihydrogen,dioxygen],
-	info:['Allotropes are homonuclear molecules that have two atoms of the same element.']
+	info:['Allotropes are homonuclear molecules that have atoms of the same element.']
 }
 const binaryCompound = {
 	n:'Binary Compounds', u:false, c:[binaryHydride,binaryOxide],
-	info:['Binary compounds have two unique elements.']
+	info:['Binary compounds have two unique elements.', 'In this game I put binary compounds that don\'t fit in other groups here']
 }
+
+const simpleCompounds = {
+	n:'Simple Compounds', u:false, c:[allotrope,binaryCompound],
+	info:['Simple Compounds are still made on a molecular level and have few elements.']
+}
+
+
 const inorganic = {
-	n:'Inorganic Compounds', u:false, c:[allotrope,binaryCompound],
+	n:'Inorganic Compounds', u:false, c:[simpleCompounds,metalAlloys,salt,acid,base],
 	info:['Inorganic compounds do not contain carbon-hydrogen bonds.']
 }
 
@@ -1144,17 +1199,17 @@ const test_6 = { n: 'test_6', m: new Amount({Da:5}), o: [], i: [{f:test_1, a:1, 
 
 const test_a = { n: 'test_a', c:[test_0,test_1], info:['Test Group A: test_1 in two groups'] };
 const test_b = { n: 'test_b', c:[test_1,test_2], info:['Test Group B: test_1 in two groups'] };
-const test_c = { n: 'test_c', c:[test_3], info:['Test Group C: test creatable item with child items'] };//This kind of works, but could be better.
+const test_c = { n: 'test_c', c:[test_3], info:['Test Group C: test creatable item with child item'] };//This kind of works, but could be better.
 const test_d = { n: 'test_d', c:[test_4,test_5,test_6], info:['Test Group D: test bulk component ingredients'] };
 
 
 const test = {
 	n:'Test', u:true, c: [test_a,test_b,test_c,test_d],
-	info: ['Test group for testing some different menu behavior']
+	info: ['Test group for testing']
 }
 
 const data = [
-	test,
+	//test,
 	subatomic,
 	atomic,
 	molecular,
