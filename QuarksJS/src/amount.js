@@ -1,4 +1,32 @@
+//yocto <- fairly close to Dalton (1yg ~.6Da)
+//zepto
+//atto
+//femto
+//pico <
+//nano
+//micro
+//milli
+//g <
+//kilo
+//mega
+//giga
+//tera <
+//peta
+//exa
+//zetta
+//yotta <
 const MAX_INVENTORY = 2**50;
+
+const MassUnits = {
+	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335},
+	pg:{i: 1, s:'pg',n:'Picogram',c:1000000000000},
+	g:{i: 2, s:'g',n:'Gram',c:1000000000000},
+	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
+	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
+	MO:{i: 5, s:'M☉',n:'Solar Mass',c:1000000000000},
+	GM:{i: 6, s:'M_gal',n:'Galactic Mass',c:1000000000000},
+	CM:{i: 7, s:'M_uni',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
+}
 
 function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})){
 	this.Da = Da;
@@ -36,16 +64,14 @@ Amount.prototype.render = function(parent, isInline = false){
 	const cssU = isInline ? ['amountUnit', 'amountInline'] : ['amountUnit'];
 	
 	const w = createUIElement({parent:parent, cssClasses:cssW});
-	this.content.w = w;
-	
 	this.content.e = createUIElement({parent:w, textContent:'None', cssClasses:cssU});
 	
 	const wDa = createUIElement({parent:w, cssClasses:cssU});
-	this.content.Da= createUIElement({type:'span', parent:wDa, textContent:this.Da});
+	this.content.Da = createUIElement({type:'span', parent:wDa, textContent:this.Da});
 	createUIElement({type:'span', parent:wDa, textContent:` ${MassUnits.Da.s}`, title:`${MassUnits.Da.n}`});
 	
 	const wpg = createUIElement({parent:w, cssClasses:cssU});
-	this.content.pg  = createUIElement({type:'span', parent:wpg, textContent:this.pg});
+	this.content.pg = createUIElement({type:'span', parent:wpg, textContent:this.pg});
 	createUIElement({type:'span', parent:wpg, textContent:` ${MassUnits.pg.s}`, title:`${MassUnits.pg.n}`});
 	
 	const wg = createUIElement({parent:w, cssClasses:cssU});
@@ -81,6 +107,7 @@ Amount.prototype.render = function(parent, isInline = false){
 	this.content.wMO = wMO;
 	this.content.wGM = wGM;
 	this.content.wCM = wCM;
+	this.update();
 }
 Amount.prototype.update = function(){
 	this.convert();
@@ -95,7 +122,8 @@ Amount.prototype.update = function(){
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
 	
-	setElementText(this.content.Da, Math.floor(this.Da));
+	const da = Math.floor(this.Da * 10000)/10000;
+	setElementText(this.content.Da, da);
 	setElementText(this.content.pg, Math.floor(this.pg));
 	setElementText(this.content.g, Math.floor(this.g));
 	setElementText(this.content.Tg, Math.floor(this.Tg));

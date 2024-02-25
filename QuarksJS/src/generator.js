@@ -1,0 +1,267 @@
+function Generator({id, i=[], o=[]}){
+	this.e = true;//enabled
+	this.id = id;
+	this.i = i.map(x => ({a:x.a ?? 0, b:x.b ?? new Amount(), inv:game.inventory.getInvByFlavor(x.f)}));
+	this.o = o.map(x => ({a:x.a ?? 0, b:x.b ?? new Amount(), inv:game.inventory.getInvByFlavor(x.f)}));
+
+	this.a = false;//auto upgrade
+	this.f = 0;//flow
+	this.l = 0;
+
+	this.content = {
+		a:null,//auto-upgrade
+		b:null,//manual generate button
+		c:null,//upgrade cost display
+		e:null,//enabled
+		f:[],//flow: create, manage
+		l:null,//level display
+		m:null,//max flow display
+		u:null//upgrade button
+	}
+}
+Generator.prototype.renderInputItem = function(parent, input){
+	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell']}), 
+		cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
+		onclick:() => game.menu.gotoNode(input.inv.f.n)});
+
+	formatItemSymbols(input.inv.f, createUIElement({parent:parent, cssClasses:['cell']}));
+
+	const ow = createUIElement({parent:parent, cssClasses:['cell']});
+	const cssCW = (input.a && !input.b.isZero()) ? ['componentWrapper'] : [];
+	const cw = createUIElement({parent:ow, cssClasses:cssCW});
+
+	if(input.a){
+		const own = createUIElement({parent:cw, textContent:input.inv.a, cssClasses:['componentAmount']});
+		createUIElement({parent:cw, textContent:` / ${input.a}`, cssClasses:['componentAmount']});
+		input.inv.content.a.push(own);
+	}
+	
+	if(!input.b.isZero()){
+		const aw = createUIElement({parent:cw, cssClasses:['row']});
+		input.inv.b.render(createUIElement({parent:aw}), true);
+		createUIElement({parent:aw, textContent:'/', cssClasses:[] });
+		input.b.render(createUIElement({parent:aw}), true);
+		input.b.update();//initial toggle visibility
+	}
+}
+Generator.prototype.renderInput = function(parent, input){
+	if(this.i.length === 0){
+		createUIElement({parent:parent, cssClasses:['cell'], textContent:'None (Free)'});
+		return;
+	}
+
+	const w = createUIElement({parent: parent, cssClasses:['cell'], style:{verticalAlign:'middle'}});
+	this.i.forEach(x => {
+		const row = createUIElement({parent: w, cssClasses:['row'], style:{width:'100%'}});
+		this.renderInputItem(row, x);
+	});
+}
+Generator.prototype.renderOutput = function(parent){
+	this.o.forEach(x => {
+		const row = createUIElement({parent: parent, cssClasses:['row']});
+		
+		createUIElement({type:'button', parent:createUIElement({parent:row, cssClasses:['cell']}), 
+			cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
+			onclick:() => game.menu.gotoNode(x.inv.f.n)});
+
+		formatItemSymbols(x.inv.f, createUIElement({parent:row,	cssClasses:['cell']}));
+	});
+}
+
+Generator.prototype.render = function(parent){
+	//enabled checkbox
+	const r0 = createUIElement({parent:parent, cssClasses:['row']});
+	const r1 = createUIElement({parent:parent, cssClasses:['row'], style:{backgroundColor:"var(--bg4)"}});
+	const r2 = createUIElement({parent:parent, cssClasses:['row']});
+	
+	for(let i=0;i<5;i++){
+		createUIElement({type:'hr', parent:r2, cssClasses:['cell']});
+	}
+	
+	this.render0(r0);
+	this.render1(r1);
+}
+Generator.prototype.render0 = function(parent){
+	this.content.e = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{verticalAlign:'middle'}}),
+		title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => this.e = !this.e});
+	
+	//components
+	this.renderInput(parent);
+
+	//manual button
+	this.content.b = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
+		cssClasses:['circleButton', 'cell'], textContent:'->', title:'Manual Generate',
+		onclick:() => this.generateClick()});
+
+	//output
+	this.renderOutput(createUIElement({parent: parent, cssClasses:['cell', 'nowrap']}));
+	
+	//flow
+	const f = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}),
+		cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
+	f.value = this.f;
+	this.content.f.push(f);
+}
+Generator.prototype.render1 = function(parent){
+	//upgrade
+	this.content.u = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
+		cssClasses:['circleButton', 'cell'], textContent:'++', title:'Upgrade Generator', onclick:() => this.upgrade()});
+
+	//const w0 = createUIElement({parent:parent, cssClasses:['cell', 'nowrap']});;
+	//upgrade cost
+	const cw = createUIElement({parent:parent, cssClasses:['nowrap', 'cell']});
+	createUIElement({type:'span', parent:cw, textContent:'Cost: '});
+	this.content.c = createUIElement({type:'span', parent:cw, textContent:'-'});
+	createUIElement({type:'span', parent:cw, textContent:` ${this.o.map(x => x.inv.f.n).join()}`});
+
+	//level
+	const lw = createUIElement({parent:parent, cssClasses:['nowrap', 'cell']});
+	createUIElement({type:'span', parent:lw, textContent:'LVL: '});
+	this.content.l = createUIElement({type:'span', parent:lw, textContent:'-'});
+ 	
+	//auto upgrade
+	const aw = createUIElement({type:'label', parent:parent, cssClasses:['cell', 'nowrap', 'help'], textContent:'Auto-Upgrade: ', title:'Upgrade Generator when inventory > 2x cost'});
+	this.content.a = createUIElement({type:'input', parent:aw, 
+		attr:{type:'checkbox'}, onclick:() => this.a = !this.a});
+
+	//Max Flow 
+	const mw = createUIElement({parent:parent, cssClasses:['cell', 'nowrap', 'pointer'], title:'Click to set flow to maximum', onclick:() => this.setFlow(this.maxFlow())});
+	createUIElement({type:'span', parent:mw, textContent:'Max Flow: '});
+	this.content.m = createUIElement({type:'span', parent:mw, textContent:'-'});
+}
+
+Generator.prototype.update = function(){
+	
+	const uc = this.upgradeCost();
+	const mf = this.maxFlow();
+	const canCreate = this.canCreate();
+	const canUpgrade = this.canUpgrade();
+	
+	if(this.content.a){this.content.a.checked = this.a;}
+	if(this.content.b){
+		this.content.b.disabled=!canCreate; 
+		this.content.b.classList.toggle('disabled', !canCreate);
+	}
+	setElementText(this.content.c, uc);
+	if(this.content.e){this.content.e.checked = this.e;}
+	if(this.content.f){this.content.f.value = this.f;}
+	setElementText(this.content.l, this.l);
+	setElementText(this.content.m, mf);
+	if(this.content.u){
+		this.content.u.disabled = !canUpgrade;
+		this.content.u.classList.toggle('disabled', !canUpgrade);
+	}
+}
+
+Generator.prototype.canCreate = function(){
+	if(game.settings.c){return true;}
+	return !this.i.some(x => x.inv.a < x.a) && this.i.every(x => x.inv.b.compare(x.b) >= 0);
+}
+Generator.prototype.canUpgrade = function(){
+	const cost = this.upgradeCost();
+	const temp = this.o.map(x => Math.floor(x.inv.a / cost));
+	return Math.min(...temp);
+}
+Generator.prototype.maxFlow = function(){
+	const a = this.l**2;
+	const b = this.l**1.5;
+	const c = this.l;
+	return Math.floor(a+b+c);
+}
+Generator.prototype.upgradeCost = function(){
+	const s = game.enhancements.powerD();
+	const a = s*this.l**3;
+	const b = s*this.l**2;
+	const c = s*this.l;
+	return Math.ceil((a+b+c+1)/this.o.length);
+}
+Generator.prototype.upgrade = function(){
+	const cost = this.upgradeCost();
+	if(this.i.some(x => x.inv.a < cost)){return;}
+
+	const isMax = this.f === this.maxFlow();
+	this.l++;
+	//if it was max, keep it max. If it was set to a different value leave it there.
+	if(isMax){ this.setFlow(this.maxFlow());}
+	
+	this.o.forEach(x => x.inv.a -= cost);
+	this.update();
+}
+Generator.prototype.autoUpgrade = function(){
+	if(this.a && this.canUpgrade() >= 2){ this.upgrade(); }
+}
+Generator.prototype.generateAmount = function() {
+	const values = [
+		...this.i.map(x => x.a===0?Number.POSITIVE_INFINITY:x.inv.a/x.a),
+		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
+		this.f
+	].filter(x => typeof x === 'number');
+	return Math.floor(Math.min(...values));
+}
+Generator.prototype.decreaseInput = function(amount){
+	this.i.forEach(x => {
+		if(x.a){
+			ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
+			x.inv.a -= x.a * amount
+		}
+		
+		if(!x.b.isZero()){
+			x.inv.b.subtract(x.b.scale(amount));
+		}
+		
+		x.inv.update();
+	});
+}
+Generator.prototype.increaseOutput = function(amount){
+	amount = amount * game.enhancements.powerG();
+	this.o.forEach(x => {
+		ActualCreated[x.inv.f.n] = amount;
+		
+		if(x.a){
+			const amt = x.a * amount;
+			x.inv.a += amt;
+		}
+		
+		if(!x.b.isZero()){
+			const amt = x.b.scale(amount);
+			x.inv.b.add(amt);
+		}
+		
+		const surplus = x.inv.a - MAX_INVENTORY;
+		if(surplus > 0){
+			x.inv.a = MAX_INVENTORY;
+			x.inv.b.add(new Amount().add(x.inv.f.m).scale(surplus));
+		}
+		x.inv.update();
+	});
+}
+Generator.prototype.generate = function(){
+	if(!this.e || !this.f){return;}
+	
+	if(game.settings.c){//if cheater then just create setpoint
+		this.increaseOutput(this.s);
+		return;
+	}
+	
+	const amount = this.generateAmount();
+	this.decreaseInput(amount);
+	this.increaseOutput(amount);
+}
+Generator.prototype.generateClick = function(){
+	//bonus for getting started on a new generator.
+	const amount = Math.ceil(game.enhancements.powerM()) * (this.l<4?(6-this.l)*2:1);
+	if(game.settings.c){//if cheater then just create setpoint
+		this.increaseOutput(amount);
+		return;
+	}
+	this.decreaseInput(1);
+	this.increaseOutput(amount);
+}
+
+Generator.prototype.setFlow = function(input){
+	const max = this.maxFlow();
+	const value = Math.min(input, max);
+	this.f = Math.max(0,value);
+	this.content.f.forEach(x => { x.max = this.maxFlow(); x.value = this.f; x.disabled = this.l === 0;});
+}

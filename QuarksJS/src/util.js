@@ -72,6 +72,13 @@ function unlock(input){
 	ParentMap[input.n]?.forEach(x => unlock(x));
 }
 
+function formatItemSymbols(input, parent){
+	let s = input.s.replaceAll('[', '<sup>').replaceAll(']', '</sup>')
+	s = s.replaceAll('(', '<sub>').replaceAll(')', '</sub>');
+	parent.title = input.n;
+	parent.innerHTML = s;
+}
+
 function arraysOverlap(a,b){
 	const m = a.every(x => b.some(y => x.n === y.n));
 	const n = b.every(x => a.some(y => x.n === y.n));
@@ -84,11 +91,12 @@ function unlockedFlavors(){
 
 function generateDiscoverHint(){
 	//locked items that have all components unlocked
-	const a = Object.values(AllFlavors).filter(x => !x.f.u).filter(y => y.i.every(z => z.inv.f.u));
-	if(!a.length){return ' None left, try again later.';}
+	const lockedGenerators = game.generators.filter(x => x.o.some(o => !o.inv.f.u));
+	const canUnlock = lockedGenerators.filter(x => x.i.every(z => z.inv.f.u));
+	if(!canUnlock.length){return ' None left, try again later.';}
 
-	const index = Math.floor(Math.random() * a.length);
-	const b = a[index];
+	const index = Math.floor(Math.random() * canUnlock.length);
+	const b = canUnlock[index];
 	
 	const c = b.i.map(x => x.inv.f.n);
 	game.dhint = c.join();
@@ -99,11 +107,13 @@ function findLockedFlavorsByComponents(input){
 	const output = [];
 	if(!input?.length){return output;}
 	
-	Object.values(AllFlavors).filter(x => !x.f.u).forEach(x => {
+	const lockedGenerators = game.generators.filter(x => x.o.some(o => !o.inv.f.u));
+	lockedGenerators.forEach(x => {
 		if(arraysOverlap(x.i.map(x => x.inv.f), input)){
 			output.push(x);
 		}
-    });
+	});
+		
 	return output;
 }
 
@@ -113,13 +123,6 @@ function buildMaps(input, parent) {
 			//add to parentMap
 			if(!ParentMap[x.n]){ParentMap[x.n] = [];}
 			ParentMap[x.n].push(parent);
-		}
-		if(x.m){
-			const inv = game.inventory.getInvByFlavor(x);
-			x.i.forEach(y => {
-				if (!ComponentMap[y.f.n]) {ComponentMap[y.f.n] = [];}
-				ComponentMap[y.f.n].push({inv: inv, a:y.a, b:y.b});
-			});
 		}
 		if(x.c){
 			buildMaps(x.c, x);
@@ -156,28 +159,35 @@ function loadSaveData(){
 }
 
 function load() {
-	const temp = localStorage.getItem('Q');
+	let temp = localStorage.getItem('Q');
 	if(!temp){return;}
+	
+	if(!temp.includes('"')){
+		temp = temp.replaceAll('{', '{"');
+		temp = temp.replaceAll(',', ',"');
+		temp = temp.replaceAll(':', '":');
+		temp = temp.replaceAll('{"}', '{}');
+	}
+	
 	const data = JSON.parse(temp);
 	
 	game.settings.c = data.s?.c ?? false;
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
-	game.settings.d.o = data.s?.d?.o ?? false;
-	game.settings.d.s = data.s?.d?.s ?? null;
-	game.settings.m.c = data.s?.m?.c ?? false;
-	game.settings.m.d = data.s?.m?.d ?? false;
-	game.settings.m.m = data.s?.m?.m ?? false;
-	game.settings.m.l = data.s?.m?.l ?? false;
-	game.settings.m.n = data.s?.m?.n ?? false;
-	game.settings.m.s = data.s?.m?.s ?? false;
-	game.settings.m.t = data.s?.m?.t ?? false;
-	game.settings.m.u = data.s?.m?.u ?? false;
+	game.settings.d.o = data.s?.do ?? false;
+	game.settings.d.s = data.s?.ds ?? null;
+	game.settings.m.c = data.s?.mc ?? false;
+	game.settings.m.m = data.s?.mm ?? false;
+	game.settings.m.l = data.s?.ml ?? false;
+	game.settings.m.n = data.s?.mn ?? false;
+	game.settings.m.t = data.s?.mt ?? false;
+	game.settings.m.u = data.s?.mu ?? false;
 	
+	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.e = data.e?.e ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
-	game.enhancements.k = data.e?.k ?? 0;
+	game.enhancements.m = data.e?.m ?? 0;
 
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	//hide green border tips
@@ -188,64 +198,90 @@ function load() {
 	
 	game.clock.duration = Date.now() - data.c;
 	Object.entries(data.i).forEach(([key, value], index) => {
-		if(!game.inventory.children[key]){return;}
+		const inv = Object.values(game.inventory.children).find(x => x.f.s === key);
+		if(!inv){return;}
 	
-		game.inventory.children[key].a = value?.a ?? 0;
-		game.inventory.children[key].b = new Amount();
+		inv.a = value?.a ?? 0;
+		inv.b = new Amount();
 		for([k,v] of Object.entries(value?.b ?? {})){
 			if(typeof v !== 'number'){continue;}
-			game.inventory.children[key].b[k] = v;
+			inv.b[k] = v;
 		}
 		
-		game.inventory.children[key].e = value?.e ?? true;
-		game.inventory.children[key].d = value?.d ?? false;
-		game.inventory.children[key].k = value?.k ?? 0;
-		game.inventory.children[key].l = value?.l ?? 0;
-		game.inventory.children[key].q = value?.q ?? false;
-		game.inventory.children[key].s = value?.s ?? 0;
-		game.inventory.children[key].t = value?.t ?? false;
+		inv.q = value?.q ?? false;
 		if(value.u){
-			game.inventory.children[key].unlock();
+			inv.unlock();
 		}
+	});
+	
+	Object.entries(data.g).forEach(([key, value], index) => {
+		const g = game.generators.find(x => x.id === key);
+		if(!g){return;}
+		
+		g.l = value.l ?? 0;
+		g.e = !!value.e;
+		g.a = !!value.a;
+		g.f = value.f ?? 0;
 	});
 }
 
 function save() {
 	const data = {
 		i:{}, 
+		g:{},
 		e:{
+			d:game.enhancements.d,
 			e:game.enhancements.e,
 			g:game.enhancements.g,
-			k:game.enhancements.k
+			m:game.enhancements.m
 		}, 
-		s:game.settings, 
+		s:{}, 
 		c:Date.now()
 	};
+	
+	data.s.c = game.settings.c?1:0;
+	data.s.h = game.settings.h?1:0;
+	data.s.i = game.settings.i?1:0;
+	data.s.u = game.settings.u?1:0;
+	data.s.do = game.settings.d.o?1:0;
+	if(game.settings.d.s){data.s.ds = game.settings.d.s;}
+	data.s.mc = game.settings.m.c?1:0;
+	data.s.mm = game.settings.m.m?1:0;
+	data.s.ml = game.settings.m.l?1:0;
+	data.s.mn = game.settings.m.n?1:0;
+	data.s.mt = game.settings.m.t?1:0;
+	data.s.mu = game.settings.m.u?1:0;
+	
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
-		if(!value.a && !value.d && value.e && !value.k && !value.l && !value.q && !value.s && !value.t && !value.f.u){
+		if(!value.a && !value.q && !value.f.u){
 			return;
 		}
-		
-		data.i[key] = {}
+		const n = value.f.s;
+		data.i[n] = {}
 		//only save non-default values
-		if(!!value.a){ data.i[key].a = value.a; }
-		data.i[key].b = new Amount();
-		for([k, v] of Object.entries(value.b)){
-			if(typeof v !== 'number'){continue;}
-			data.i[key].b[k] = v;
+		if(!!value.a){ data.i[n].a = value.a; }
+		if(!value.b.isZero()){
+			data.i[n].b = {};
+			for([k, v] of Object.entries(value.b)){
+				if(typeof v !== 'number' || v === 0){continue;}
+				data.i[n].b[k] = v;
+			}
 		}
-		if(value.d){ data.i[key].d = value.d; }
-		if(!value.e){ data.i[key].e = value.e; }
-		if(!!value.k){ data.i[key].k = value.k; }
-		if(!!value.l){ data.i[key].l = value.l; }
-		if(value.q){ data.i[key].q = value.q; }
-		if(!!value.s){ data.i[key].s = value.s; }
-		if(value.t){ data.i[key].t = value.t; }
-		if(value.f.u){ data.i[key].u = value.f.u; }
+		if(value.q){ data.i[n].q = value.q; }
+		if(value.f.u){ data.i[n].u = value.f.u?1:0; }
+	});
+	game.generators.forEach(x => {
+		if(x.e && !x.a && !x.f && !x.l){ return; }
+		
+		data.g[x.id] = {};
+		if(x.l){data.g[x.id].l = x.l;}
+		data.g[x.id].e = x.e?1:0;
+		data.g[x.id].a = x.a?1:0;
+		if(x.f){data.g[x.id].f = x.f;}
 	});
 	
-	const temp = JSON.stringify(data);
+	const temp = JSON.stringify(data).replaceAll('"','');
 	localStorage.setItem('Q', temp);
 	setElementText(getUIElement('txtSave'), temp);
 	

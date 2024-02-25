@@ -1,379 +1,20 @@
 "use strict";
+//Adding Items:
+//1) Add the item to items.js
+//2) Add recipes to recipes.js
+//3) Add the items to the menu in data.js
 
-//Data Restrictions
-	// Only one recipe per item
-		//Could be solved if recipe was it's own thing instead of of property of item
-	// Recipe output only exactly 1 of main item per recipe
-		//Could be solved if recipe was it's own thing instead of of property of item
-	// Creatable item with children is unlocked if children are unlocked
-		//Is probably fine, creatable item with children is abnormal (so far) anyway.
-		//Also some other abnormal UX if this happens; should be avoided (for now).
+//Data Restrictions:
+//Creatable item with children is unlocked if children are unlocked
+	//Is probably fine, creatable item with children is abnormal (so far) anyway.
+	//Also some other abnormal UX if this happens; should be avoided (for now).
 
 //reverse lookup maps
-const ComponentMap = {};//Component Flavor Name -> Flavor[]
 const ParentMap = {};
 const AllFlavors = {};
 let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
-
-//yocto - fairly close to Dalton
-//zepto
-//atto
-//femto
-//pico
-//nano
-//micro
-//milli
-//g
-//kilo
-//mega
-//giga
-//tera
-//peta
-//exa
-//zetta
-//yotta
-
-
-const MassUnits = {
-	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335},
-	pg:{i: 1, s:'pg',n:'Picogram',c:1000000000000},
-	g:{i: 2, s:'g',n:'Gram',c:1000000000000},
-	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
-	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
-	MO:{i: 5, s:'M☉',n:'Solar Mass',c:1000000000000},
-	GM:{i: 6, s:'M_gal',n:'Galactic Mass',c:1000000000000},
-	CM:{i: 7, s:'M_uni',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
-}
-
-//flavors
-const Q_Up = { n: 'Up', u: true, m: new Amount({Da:.0022}), o: [], i: [] };
-const Q_Down = { n: 'Down', u: true, m: new Amount({Da:.0047}), o: [], i: [] };
-const Electron = { n: 'Electron', u: true, m: new Amount({Da:.0005}), o: [], i: [] };
-const Proton = { n: 'Proton', u: false, m: new Amount({Da:1}), o: [], i: [{ f: Q_Up, a: 2, b:null }, { f: Q_Down, a: 1, b:null }] };
-const Neutron = { n: 'Neutron', u: false, m: new Amount({Da:1}), o: [], i: [{ f: Q_Up, a: 1, b:null }, { f: Q_Down, a: 2, b:null }] };
-const H1 = { n: 'Hydrogen1', u: false, m: new Amount({Da:1}), o: [], i: [{ f: Proton, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
-const H2 = { n: 'Hydrogen2', u: false, m: new Amount({Da:2}), o: [], i: [{ f: Proton, a: 1, b:null }, { f: Neutron, a: 1, b:null }, { f: Electron, a: 1, b:null }] };
-const He3 = { n: 'Helium3', u: false, m: new Amount({Da:3}), o: [], i: [{ f: Proton, a: 2, b:null }, { f: Neutron, a: 1, b:null }, { f: Electron, a: 2, b:null }] };
-const He4 = { n: 'Helium4', u: false, m: new Amount({Da:4}), o: [], i: [{ f: Proton, a: 2, b:null }, { f: Neutron, a: 3, b:null }, { f: Electron, a: 2, b:null }] };
-const Li6 = { n: 'Lithium6', u: false, m: new Amount({Da:6}), o: [], i: [{ f: Proton, a: 3, b:null }, { f: Neutron, a: 3, b:null }, { f: Electron, a: 3, b:null }] };
-const Li7 = { n: 'Lithium7', u: false, m: new Amount({Da:7}), o: [], i: [{ f: Proton, a: 3, b:null }, { f: Neutron, a: 4, b:null }, { f: Electron, a: 3, b:null }] };
-const Be9 = { n: 'Beryllium9', u: false, m: new Amount({Da:9}), o: [], i: [{ f: Proton, a: 4, b:null }, { f: Neutron, a: 5, b:null }, { f: Electron, a: 4, b:null }] };
-const B10 = { n: 'Boron10', u: false, m: new Amount({Da:10}), o: [], i: [{ f: Proton, a: 5, b:null }, { f: Neutron, a: 5, b:null }, { f: Electron, a: 5, b:null }] };
-const B11 = { n: 'Boron11', u: false, m: new Amount({Da:11}), o: [], i: [{ f: Proton, a: 5, b:null }, { f: Neutron, a: 6, b:null }, { f: Electron, a: 5, b:null }] };
-const C12 = { n: 'Carbon12', u: false, m: new Amount({Da:12}), o: [], i: [{ f: Proton, a: 6, b:null }, { f: Neutron, a: 6, b:null }, { f: Electron, a: 6, b:null }] };
-const C13 = { n: 'Carbon13', u: false, m: new Amount({Da:13}), o: [], i: [{ f: Proton, a: 6, b:null }, { f: Neutron, a: 7, b:null }, { f: Electron, a: 6, b:null }] };
-const N14 = { n: 'Nitrogen14', u: false, m: new Amount({Da:14}), o: [], i: [{ f: Proton, a: 7, b:null }, { f: Neutron, a: 7, b:null }, { f: Electron, a: 7, b:null }] };
-const N15 = { n: 'Nitrogen15', u: false, m: new Amount({Da:15}), o: [], i: [{ f: Proton, a: 7, b:null }, { f: Neutron, a: 8, b:null }, { f: Electron, a: 7, b:null }] };
-const O16 = { n: 'Oxygen16', u: false, m: new Amount({Da:16}), o: [], i: [{ f: Proton, a: 8, b:null }, { f: Neutron, a: 8, b:null }, { f: Electron, a: 8, b:null }] };
-const O17 = { n: 'Oxygen17', u: false, m: new Amount({Da:17}), o: [], i: [{ f: Proton, a: 8, b:null }, { f: Neutron, a: 9, b:null }, { f: Electron, a: 8, b:null }] };
-const O18 = { n: 'Oxygen18', u: false, m: new Amount({Da:18}), o: [], i: [{ f: Proton, a: 8, b:null }, { f: Neutron, a: 10, b:null }, { f: Electron, a: 8, b:null }] };
-const F19 = { n: 'Fluorine19', u: false, m: new Amount({Da:19}), o: [], i: [{ f: Proton, a: 9, b:null }, { f: Neutron, a: 10, b:null }, { f: Electron, a: 9, b:null }] };
-const Ne20 = { n: 'Neon20', u: false, m: new Amount({Da:20}), o: [], i: [{ f: Proton, a: 10, b:null }, { f: Neutron, a: 10, b:null }, { f: Electron, a: 10, b:null }] };
-const Ne21 = { n: 'Neon21', u: false, m: new Amount({Da:21}), o: [], i: [{ f: Proton, a: 10, b:null }, { f: Neutron, a: 11, b:null }, { f: Electron, a: 10, b:null }] };
-const Ne22 = { n: 'Neon22', u: false, m: new Amount({Da:22}), o: [], i: [{ f: Proton, a: 10, b:null }, { f: Neutron, a: 12, b:null }, { f: Electron, a: 10, b:null }] };
-const Na23 = { n: 'Sodium23', u: false, m: new Amount({Da:23}), o: [], i: [{ f: Proton, a: 11, b:null }, { f: Neutron, a: 12, b:null }, { f: Electron, a: 11, b:null }] };
-const Mg24 = { n: 'Magnesium24', u: false, m: new Amount({Da:24}), o: [], i: [{ f: Proton, a: 12, b:null }, { f: Neutron, a: 12, b:null }, { f: Electron, a: 12, b:null }] };
-const Mg25 = { n: 'Magnesium25', u: false, m: new Amount({Da:25}), o: [], i: [{ f: Proton, a: 12, b:null }, { f: Neutron, a: 13, b:null }, { f: Electron, a: 12, b:null }] };
-const Mg26 = { n: 'Magnesium26', u: false, m: new Amount({Da:26}), o: [], i: [{ f: Proton, a: 12, b:null }, { f: Neutron, a: 14, b:null }, { f: Electron, a: 12, b:null }] };
-const Al27 = { n: 'Aluminum27', u: false, m: new Amount({Da:27}), o: [], i: [{ f: Proton, a: 13, b:null }, { f: Neutron, a: 14, b:null }, { f: Electron, a: 13, b:null }] };
-const Si28 = { n: 'Silicon28', u: false, m: new Amount({Da:28}), o: [], i: [{ f: Proton, a: 14, b:null }, { f: Neutron, a: 14, b:null }, { f: Electron, a: 14, b:null }] };
-const Si29 = { n: 'Silicon29', u: false, m: new Amount({Da:29}), o: [], i: [{ f: Proton, a: 14, b:null }, { f: Neutron, a: 15, b:null }, { f: Electron, a: 14, b:null }] };
-const Si30 = { n: 'Silicon30', u: false, m: new Amount({Da:30}), o: [], i: [{ f: Proton, a: 14, b:null }, { f: Neutron, a: 16, b:null }, { f: Electron, a: 14, b:null }] };
-const P31 = { n: 'Phosphorus31', u: false, m: new Amount({Da:31}), o: [], i: [{ f: Proton, a: 15, b:null }, { f: Neutron, a: 16, b:null }, { f: Electron, a: 15, b:null }] };
-const S32 = { n: 'Sulfur32', u: false, m: new Amount({Da:32}), o: [], i: [{ f: Proton, a: 16, b:null }, { f: Neutron, a: 16, b:null }, { f: Electron, a: 16, b:null }] };
-const S33 = { n: 'Sulfur33', u: false, m: new Amount({Da:33}), o: [], i: [{ f: Proton, a: 16, b:null }, { f: Neutron, a: 17, b:null }, { f: Electron, a: 16, b:null }] };
-const S34 = { n: 'Sulfur34', u: false, m: new Amount({Da:34}), o: [], i: [{ f: Proton, a: 16, b:null }, { f: Neutron, a: 18, b:null }, { f: Electron, a: 16, b:null }] };
-const S36 = { n: 'Sulfur36', u: false, m: new Amount({Da:36}), o: [], i: [{ f: Proton, a: 16, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 16, b:null }] };
-const Cl35 = { n: 'Chlorine35', u: false, m: new Amount({Da:35}), o: [], i: [{ f: Proton, a: 17, b:null }, { f: Neutron, a: 18, b:null }, { f: Electron, a: 17, b:null }] };
-const Cl37 = { n: 'Chlorine37', u: false, m: new Amount({Da:37}), o: [], i: [{ f: Proton, a: 17, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 17, b:null }] };
-const Ar36 = { n: 'Argon36', u: false, m: new Amount({Da:36}), o: [], i: [{ f: Proton, a: 18, b:null }, { f: Neutron, a: 18, b:null }, { f: Electron, a: 18, b:null }] };
-const Ar38 = { n: 'Argon38', u: false, m: new Amount({Da:38}), o: [], i: [{ f: Proton, a: 18, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 18, b:null }] };
-const Ar40 = { n: 'Argon40', u: false, m: new Amount({Da:40}), o: [], i: [{ f: Proton, a: 18, b:null }, { f: Neutron, a: 22, b:null }, { f: Electron, a: 18, b:null }] };
-const K39 = { n: 'Potassium39', u: false, m: new Amount({Da:39}), o: [], i: [{ f: Proton, a: 19, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 19, b:null }] };
-const K40 = { n: 'Potassium40', u: false, m: new Amount({Da:40}), o: [], i: [{ f: Proton, a: 19, b:null }, { f: Neutron, a: 21, b:null }, { f: Electron, a: 19, b:null }] };
-const K41 = { n: 'Potassium41', u: false, m: new Amount({Da:41}), o: [], i: [{ f: Proton, a: 19, b:null }, { f: Neutron, a: 22, b:null }, { f: Electron, a: 19, b:null }] };
-const Ca40 = { n: 'Calcium40', u: false, m: new Amount({Da:40}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Ca42 = { n: 'Calcium42', u: false, m: new Amount({Da:42}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Ca43 = { n: 'Calcium43', u: false, m: new Amount({Da:43}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Ca44 = { n: 'Calcium44', u: false, m: new Amount({Da:44}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Ca46 = { n: 'Calcium46', u: false, m: new Amount({Da:46}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Ca48 = { n: 'Calcium48', u: false, m: new Amount({Da:48}), o: [], i: [{ f: Proton, a: 20, b:null }, { f: Neutron, a: 20, b:null }, { f: Electron, a: 20, b:null }] };
-const Sc45 = { n: 'Scandium45', u: false, m: new Amount({Da:45}), o: [], i: [{ f: Proton, a: 21, b:null }, { f: Neutron, a: 24, b:null }, { f: Electron, a: 21, b:null }] };
-const Ti46 = { n: 'Titanium46', u: false, m: new Amount({Da:46}), o: [], i: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 26, b:null }, { f: Electron, a: 22, b:null }] };
-const Ti47 = { n: 'Titanium47', u: false, m: new Amount({Da:47}), o: [], i: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 27, b:null }, { f: Electron, a: 22, b:null }] };
-const Ti48 = { n: 'Titanium48', u: false, m: new Amount({Da:48}), o: [], i: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 22, b:null }] };
-const Ti49 = { n: 'Titanium49', u: false, m: new Amount({Da:49}), o: [], i: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 29, b:null }, { f: Electron, a: 22, b:null }] };
-const Ti50 = { n: 'Titanium50', u: false, m: new Amount({Da:50}), o: [], i: [{ f: Proton, a: 22, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 22, b:null }] };
-const V50 = { n: 'Vandium50', u: false, m: new Amount({Da:50}), o: [], i: [{ f: Proton, a: 23, b:null }, { f: Neutron, a: 27, b:null }, { f: Electron, a: 23, b:null }] };
-const V51 = { n: 'Vandium51', u: false, m: new Amount({Da:51}), o: [], i: [{ f: Proton, a: 23, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 23, b:null }] };
-const Cr50 = { n: 'Chromium50', u: false, m: new Amount({Da:50}), o: [], i: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 26, b:null }, { f: Electron, a: 24, b:null }] };
-const Cr52 = { n: 'Chromium52', u: false, m: new Amount({Da:52}), o: [], i: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 24, b:null }] };
-const Cr53 = { n: 'Chromium53', u: false, m: new Amount({Da:53}), o: [], i: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 29, b:null }, { f: Electron, a: 24, b:null }] };
-const Cr54 = { n: 'Chromium54', u: false, m: new Amount({Da:54}), o: [], i: [{ f: Proton, a: 24, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 24, b:null }] };
-const Mn55 = { n: 'Manganese55', u: false, m: new Amount({Da:55}), o: [], i: [{ f: Proton, a: 25, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 25, b:null }] };
-const Fe54 = { n: 'Iron54', u: false, m: new Amount({Da:54}), o: [], i: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 28, b:null }, { f: Electron, a: 26, b:null }] };
-const Fe56 = { n: 'Iron56', u: false, m: new Amount({Da:56}), o: [], i: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 26, b:null }] };
-const Fe57 = { n: 'Iron57', u: false, m: new Amount({Da:57}), o: [], i: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 31, b:null }, { f: Electron, a: 26, b:null }] };
-const Fe58 = { n: 'Iron58', u: false, m: new Amount({Da:58}), o: [], i: [{ f: Proton, a: 26, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 26, b:null }] };
-const Co59 = { n: 'Cobalt59', u: false, m: new Amount({Da:59}), o: [], i: [{ f: Proton, a: 27, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 27, b:null }] };
-const Ni58 = { n: 'Nickle58', u: false, m: new Amount({Da:58}), o: [], i: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 30, b:null }, { f: Electron, a: 28, b:null }] };
-const Ni60 = { n: 'Nickle60', u: false, m: new Amount({Da:60}), o: [], i: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 32, b:null }, { f: Electron, a: 28, b:null }] };
-const Ni61 = { n: 'Nickle61', u: false, m: new Amount({Da:61}), o: [], i: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 33, b:null }, { f: Electron, a: 28, b:null }] };
-const Ni62 = { n: 'Nickle62', u: false, m: new Amount({Da:62}), o: [], i: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 28, b:null }] };
-const Ni64 = { n: 'Nickle64', u: false, m: new Amount({Da:64}), o: [], i: [{ f: Proton, a: 28, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 28, b:null }] };
-const Cu63 = { n: 'Copper63', u: false, m: new Amount({Da:63}), o: [], i: [{ f: Proton, a: 29, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 29, b:null }] };
-const Cu65 = { n: 'Copper65', u: false, m: new Amount({Da:65}), o: [], i: [{ f: Proton, a: 29, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 29, b:null }] };
-const Zn64 = { n: 'Zinc64', u: false, m: new Amount({Da:64}), o: [], i: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 34, b:null }, { f: Electron, a: 30, b:null }] };
-const Zn66 = { n: 'Zinc66', u: false, m: new Amount({Da:66}), o: [], i: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 36, b:null }, { f: Electron, a: 30, b:null }] };
-const Zn67 = { n: 'Zinc67', u: false, m: new Amount({Da:67}), o: [], i: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 37, b:null }, { f: Electron, a: 30, b:null }] };
-const Zn68 = { n: 'Zinc68', u: false, m: new Amount({Da:68}), o: [], i: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 30, b:null }] };
-const Zn70 = { n: 'Zinc70', u: false, m: new Amount({Da:70}), o: [], i: [{ f: Proton, a: 30, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 30, b:null }] };
-const Ga69 = { n: 'Gallium69', u: false, m: new Amount({Da:69}), o: [], i: [{ f: Proton, a: 31, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 31, b:null }] };
-const Ga71 = { n: 'Gallium71', u: false, m: new Amount({Da:71}), o: [], i: [{ f: Proton, a: 31, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 31, b:null }] };
-const Ge70 = { n: 'Germanium70', u: false, m: new Amount({Da:70}), o: [], i: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 38, b:null }, { f: Electron, a: 32, b:null }] };
-const Ge72 = { n: 'Germanium72', u: false, m: new Amount({Da:72}), o: [], i: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 32, b:null }] };
-const Ge73 = { n: 'Germanium73', u: false, m: new Amount({Da:73}), o: [], i: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 41, b:null }, { f: Electron, a: 32, b:null }] };
-const Ge74 = { n: 'Germanium74', u: false, m: new Amount({Da:74}), o: [], i: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 32, b:null }] };
-const Ge76 = { n: 'Germanium76', u: false, m: new Amount({Da:76}), o: [], i: [{ f: Proton, a: 32, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 32, b:null }] };
-const As75 = { n: 'Arsenic75', u: false, m: new Amount({Da:75}), o: [], i: [{ f: Proton, a: 33, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 33, b:null }] };
-const Se74 = { n: 'Selenium74', u: false, m: new Amount({Da:74}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 40, b:null }, { f: Electron, a: 34, b:null }] };
-const Se76 = { n: 'Selenium76', u: false, m: new Amount({Da:76}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 34, b:null }] };
-const Se77 = { n: 'Selenium77', u: false, m: new Amount({Da:77}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 43, b:null }, { f: Electron, a: 34, b:null }] };
-const Se78 = { n: 'Selenium78', u: false, m: new Amount({Da:78}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 34, b:null }] };
-const Se80 = { n: 'Selenium80', u: false, m: new Amount({Da:80}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 34, b:null }] };
-const Se82 = { n: 'Selenium82', u: false, m: new Amount({Da:82}), o: [], i: [{ f: Proton, a: 34, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 34, b:null }] };
-const Br79 = { n: 'Bromine79', u: false, m: new Amount({Da:79}), o: [], i: [{ f: Proton, a: 35, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 35, b:null }] };
-const Br81 = { n: 'Bromine81', u: false, m: new Amount({Da:81}), o: [], i: [{ f: Proton, a: 35, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 35, b:null }] };
-const Kr78 = { n: 'Krypton78', u: false, m: new Amount({Da:78}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 42, b:null }, { f: Electron, a: 36, b:null }] };
-const Kr80 = { n: 'Krypton80', u: false, m: new Amount({Da:80}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 44, b:null }, { f: Electron, a: 36, b:null }] };
-const Kr82 = { n: 'Krypton82', u: false, m: new Amount({Da:82}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 36, b:null }] };
-const Kr83 = { n: 'Krypton83', u: false, m: new Amount({Da:83}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 47, b:null }, { f: Electron, a: 36, b:null }] };
-const Kr84 = { n: 'Krypton84', u: false, m: new Amount({Da:84}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 36, b:null }] };
-const Kr86 = { n: 'Krypton86', u: false, m: new Amount({Da:86}), o: [], i: [{ f: Proton, a: 36, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 36, b:null }] };
-const Rb85 = { n: 'Rubidium85', u: false, m: new Amount({Da:85}), o: [], i: [{ f: Proton, a: 37, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 37, b:null }] };
-const Rb87 = { n: 'Rubidium87', u: false, m: new Amount({Da:87}), o: [], i: [{ f: Proton, a: 37, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 37, b:null }] };
-const Sr84 = { n: 'Strontium84', u: false, m: new Amount({Da:84}), o: [], i: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 46, b:null }, { f: Electron, a: 38, b:null }] };
-const Sr86 = { n: 'Strontium86', u: false, m: new Amount({Da:86}), o: [], i: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 48, b:null }, { f: Electron, a: 38, b:null }] };
-const Sr87 = { n: 'Strontium87', u: false, m: new Amount({Da:87}), o: [], i: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 49, b:null }, { f: Electron, a: 38, b:null }] };
-const Sr88 = { n: 'Strontium88', u: false, m: new Amount({Da:88}), o: [], i: [{ f: Proton, a: 38, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 38, b:null }] };
-const Y89 = { n: 'Ytrium89', u: false, m: new Amount({Da:89}), o: [], i: [{ f: Proton, a: 39, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 39, b:null }] };
-const Zr90 = { n: 'Zirconium90', u: false, m: new Amount({Da:90}), o: [], i: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 40, b:null }] };
-const Zr91 = { n: 'Zirconium91', u: false, m: new Amount({Da:91}), o: [], i: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 51, b:null }, { f: Electron, a: 40, b:null }] };
-const Zr92 = { n: 'Zirconium92', u: false, m: new Amount({Da:92}), o: [], i: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 40, b:null }] };
-const Zr94 = { n: 'Zirconium94', u: false, m: new Amount({Da:94}), o: [], i: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 40, b:null }] };
-const Zr96 = { n: 'Zirconium96', u: false, m: new Amount({Da:96}), o: [], i: [{ f: Proton, a: 40, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 40, b:null }] };
-const Nb93 = { n: 'Niobium93', u: false, m: new Amount({Da:93}), o: [], i: [{ f: Proton, a: 41, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 41, b:null }] };
-const Mo92 = { n: 'Molybdenum92', u: false, m: new Amount({Da:92}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 50, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo94 = { n: 'Molybdenum94', u: false, m: new Amount({Da:94}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo95 = { n: 'Molybdenum95', u: false, m: new Amount({Da:95}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 53, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo96 = { n: 'Molybdenum96', u: false, m: new Amount({Da:96}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo97 = { n: 'Molybdenum97', u: false, m: new Amount({Da:97}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 55, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo98 = { n: 'Molybdenum98', u: false, m: new Amount({Da:98}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 42, b:null }] };
-const Mo100 = { n: 'Molybdenum100', u: false, m: new Amount({Da:100}), o: [], i: [{ f: Proton, a: 42, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 42, b:null }] };
-const Tc97 = { n: 'Technitium97', u: false, m: new Amount({Da:97}), o: [], i: [{ f: Proton, a: 43, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 43, b:null }] };
-const Ru96 = { n: 'Ruthenium96', u: false, m: new Amount({Da:96}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 52, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru98 = { n: 'Ruthenium98', u: false, m: new Amount({Da:98}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 54, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru99 = { n: 'Ruthenium99', u: false, m: new Amount({Da:99}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 55, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru100 = { n: 'Ruthenium100', u: false, m: new Amount({Da:100}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru101 = { n: 'Ruthenium101', u: false, m: new Amount({Da:101}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 57, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru102 = { n: 'Ruthenium102', u: false, m: new Amount({Da:102}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 44, b:null }] };
-const Ru104 = { n: 'Ruthenium104', u: false, m: new Amount({Da:104}), o: [], i: [{ f: Proton, a: 44, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 44, b:null }] };
-const Rh103 = { n: 'Rhodium103', u: false, m: new Amount({Da:103}), o: [], i: [{ f: Proton, a: 45, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 45, b:null }] };
-const Pd102 = { n: 'Paladium102', u: false, m: new Amount({Da:102}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 56, b:null }, { f: Electron, a: 46, b:null }] };
-const Pd104 = { n: 'Paladium104', u: false, m: new Amount({Da:104}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 46, b:null }] };
-const Pd105 = { n: 'Paladium105', u: false, m: new Amount({Da:105}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 59, b:null }, { f: Electron, a: 46, b:null }] };
-const Pd106 = { n: 'Paladium106', u: false, m: new Amount({Da:106}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 46, b:null }] };
-const Pd108 = { n: 'Paladium108', u: false, m: new Amount({Da:108}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 46, b:null }] };
-const Pd110 = { n: 'Paladium110', u: false, m: new Amount({Da:110}), o: [], i: [{ f: Proton, a: 46, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 46, b:null }] };
-const Ag107 = { n: 'Silver107', u: false, m: new Amount({Da:107}), o: [], i: [{ f: Proton, a: 47, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 47, b:null }] };
-const Ag109 = { n: 'Silver109', u: false, m: new Amount({Da:109}), o: [], i: [{ f: Proton, a: 47, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 47, b:null }] };
-const Cd106 = { n: 'Cadmium106', u: false, m: new Amount({Da:106}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 58, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd108 = { n: 'Cadmium108', u: false, m: new Amount({Da:108}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 60, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd110 = { n: 'Cadmium110', u: false, m: new Amount({Da:110}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd111 = { n: 'Cadmium111', u: false, m: new Amount({Da:111}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 63, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd112 = { n: 'Cadmium112', u: false, m: new Amount({Da:112}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd113 = { n: 'Cadmium113', u: false, m: new Amount({Da:113}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 65, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd114 = { n: 'Cadmium114', u: false, m: new Amount({Da:114}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 48, b:null }] };
-const Cd116 = { n: 'Cadmium116', u: false, m: new Amount({Da:116}), o: [], i: [{ f: Proton, a: 48, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 48, b:null }] };
-const In113 = { n: 'Indium113', u: false, m: new Amount({Da:113}), o: [], i: [{ f: Proton, a: 49, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 49, b:null }] };
-const In115 = { n: 'Indium115', u: false, m: new Amount({Da:115}), o: [], i: [{ f: Proton, a: 49, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 49, b:null }] };
-const Sn112 = { n: 'Tin112', u: false, m: new Amount({Da:112}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 62, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn114 = { n: 'Tin114', u: false, m: new Amount({Da:114}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 64, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn115 = { n: 'Tin115', u: false, m: new Amount({Da:115}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 65, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn116 = { n: 'Tin116', u: false, m: new Amount({Da:116}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 66, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn117 = { n: 'Tin117', u: false, m: new Amount({Da:117}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 67, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn118 = { n: 'Tin118', u: false, m: new Amount({Da:118}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn119 = { n: 'Tin119', u: false, m: new Amount({Da:119}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 69, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn120 = { n: 'Tin120', u: false, m: new Amount({Da:120}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn122 = { n: 'Tin122', u: false, m: new Amount({Da:122}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 50, b:null }] };
-const Sn124 = { n: 'Tin124', u: false, m: new Amount({Da:124}), o: [], i: [{ f: Proton, a: 50, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 50, b:null }] };
-const Sb121 = { n: 'Antimony121', u: false, m: new Amount({Da:121}), o: [], i: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 51, b:null }] };
-const Sb123 = { n: 'Antimony123', u: false, m: new Amount({Da:123}), o: [], i: [{ f: Proton, a: 51, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 51, b:null }] };
-const Te120 = { n: 'Tellurium120', u: false, m: new Amount({Da:120}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 68, b:null }, { f: Electron, a: 52, b:null }] };
-const Te122 = { n: 'Tellurium122', u: false, m: new Amount({Da:122}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 52, b:null }] };
-const Te123 = { n: 'Tellurium123', u: false, m: new Amount({Da:123}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 71, b:null }, { f: Electron, a: 52, b:null }] };
-const Te124 = { n: 'Tellurium124', u: false, m: new Amount({Da:124}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 52, b:null }] };
-const Te125 = { n: 'Tellurium125', u: false, m: new Amount({Da:125}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 73, b:null }, { f: Electron, a: 52, b:null }] };
-const Te126 = { n: 'Tellurium126', u: false, m: new Amount({Da:126}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 52, b:null }] };
-const Te128 = { n: 'Tellurium128', u: false, m: new Amount({Da:128}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 52, b:null }] };
-const Te130 = { n: 'Tellurium130', u: false, m: new Amount({Da:130}), o: [], i: [{ f: Proton, a: 52, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 52, b:null }] };
-const I127 = { n: 'Iodine127', u: false, m: new Amount({Da:127}), o: [], i: [{ f: Proton, a: 53, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 53, b:null }] };
-const Xe124 = { n: 'Xenon124', u: false, m: new Amount({Da:124}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 70, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe126 = { n: 'Xenon126', u: false, m: new Amount({Da:126}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 72, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe128 = { n: 'Xenon128', u: false, m: new Amount({Da:128}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe129 = { n: 'Xenon129', u: false, m: new Amount({Da:129}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 75, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe130 = { n: 'Xenon130', u: false, m: new Amount({Da:130}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe131 = { n: 'Xenon131', u: false, m: new Amount({Da:131}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 77, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe132 = { n: 'Xenon132', u: false, m: new Amount({Da:132}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe134 = { n: 'Xenon134', u: false, m: new Amount({Da:134}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 54, b:null }] };
-const Xe136 = { n: 'Xenon136', u: false, m: new Amount({Da:136}), o: [], i: [{ f: Proton, a: 54, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 54, b:null }] };
-const Cs133 = { n: 'Cesium133', u: false, m: new Amount({Da:133}), o: [], i: [{ f: Proton, a: 55, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 55, b:null }] };
-const Ba130 = { n: 'Barium130', u: false, m: new Amount({Da:130}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 74, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba132 = { n: 'Barium132', u: false, m: new Amount({Da:132}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 76, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba134 = { n: 'Barium134', u: false, m: new Amount({Da:134}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba135 = { n: 'Barium135', u: false, m: new Amount({Da:135}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 79, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba136 = { n: 'Barium136', u: false, m: new Amount({Da:136}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba137 = { n: 'Barium137', u: false, m: new Amount({Da:137}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 81, b:null }, { f: Electron, a: 56, b:null }] };
-const Ba138 = { n: 'Barium138', u: false, m: new Amount({Da:138}), o: [], i: [{ f: Proton, a: 56, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 56, b:null }] };
-const La138 = { n: 'Lanthanum138', u: false, m: new Amount({Da:138}), o: [], i: [{ f: Proton, a: 57, b:null }, { f: Neutron, a: 81, b:null }, { f: Electron, a: 57, b:null }] };
-const La139 = { n: 'Lanthanum139', u: false, m: new Amount({Da:139}), o: [], i: [{ f: Proton, a: 57, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 57, b:null }] };
-const Ce136 = { n: 'Cerium136', u: false, m: new Amount({Da:136}), o: [], i: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 78, b:null }, { f: Electron, a: 58, b:null }] };
-const Ce138 = { n: 'Cerium138', u: false, m: new Amount({Da:138}), o: [], i: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 80, b:null }, { f: Electron, a: 58, b:null }] };
-const Ce140 = { n: 'Cerium140', u: false, m: new Amount({Da:140}), o: [], i: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 58, b:null }] };
-const Ce142 = { n: 'Cerium142', u: false, m: new Amount({Da:142}), o: [], i: [{ f: Proton, a: 58, b:null }, { f: Neutron, a: 84, b:null }, { f: Electron, a: 58, b:null }] };
-const Pr141 = { n: 'Praseodymium141', u: false, m: new Amount({Da:141}), o: [], i: [{ f: Proton, a: 59, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 59, b:null }] };
-const Nd142 = { n: 'Nedymium142', u: false, m: new Amount({Da:142}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd143 = { n: 'Nedymium143', u: false, m: new Amount({Da:143}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 83, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd144 = { n: 'Nedymium144', u: false, m: new Amount({Da:144}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 84, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd145 = { n: 'Nedymium145', u: false, m: new Amount({Da:145}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 85, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd146 = { n: 'Nedymium146', u: false, m: new Amount({Da:146}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 86, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd148 = { n: 'Nedymium148', u: false, m: new Amount({Da:148}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 88, b:null }, { f: Electron, a: 60, b:null }] };
-const Nd150 = { n: 'Nedymium150', u: false, m: new Amount({Da:150}), o: [], i: [{ f: Proton, a: 60, b:null }, { f: Neutron, a: 90, b:null }, { f: Electron, a: 60, b:null }] };
-const Pm145 = { n: 'Promethium145', u: false, m: new Amount({Da:145}), o: [], i: [{ f: Proton, a: 61, b:null }, { f: Neutron, a: 84, b:null }, { f: Electron, a: 61, b:null }] };
-const Sm144 = { n: 'Samarium144', u: false, m: new Amount({Da:144}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 82, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm147 = { n: 'Samarium147', u: false, m: new Amount({Da:147}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 85, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm148 = { n: 'Samarium148', u: false, m: new Amount({Da:148}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 86, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm149 = { n: 'Samarium149', u: false, m: new Amount({Da:149}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 87, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm150 = { n: 'Samarium150', u: false, m: new Amount({Da:150}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 88, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm152 = { n: 'Samarium152', u: false, m: new Amount({Da:152}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 90, b:null }, { f: Electron, a: 62, b:null }] };
-const Sm154 = { n: 'Samarium154', u: false, m: new Amount({Da:154}), o: [], i: [{ f: Proton, a: 62, b:null }, { f: Neutron, a: 92, b:null }, { f: Electron, a: 62, b:null }] };
-const Eu151 = { n: 'Europium151', u: false, m: new Amount({Da:151}), o: [], i: [{ f: Proton, a: 63, b:null }, { f: Neutron, a: 88, b:null }, { f: Electron, a: 63, b:null }] };
-const Eu153 = { n: 'Europium153', u: false, m: new Amount({Da:153}), o: [], i: [{ f: Proton, a: 63, b:null }, { f: Neutron, a: 90, b:null }, { f: Electron, a: 63, b:null }] };
-const Gd152 = { n: 'Gadolinium152', u: false, m: new Amount({Da:152}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 88, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd154 = { n: 'Gadolinium154', u: false, m: new Amount({Da:154}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 90, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd155 = { n: 'Gadolinium155', u: false, m: new Amount({Da:155}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 91, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd156 = { n: 'Gadolinium156', u: false, m: new Amount({Da:156}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 92, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd157 = { n: 'Gadolinium157', u: false, m: new Amount({Da:157}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 93, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd158 = { n: 'Gadolinium158', u: false, m: new Amount({Da:158}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 94, b:null }, { f: Electron, a: 64, b:null }] };
-const Gd160 = { n: 'Gadolinium160', u: false, m: new Amount({Da:160}), o: [], i: [{ f: Proton, a: 64, b:null }, { f: Neutron, a: 96, b:null }, { f: Electron, a: 64, b:null }] };
-const Tb159 = { n: 'Terbium159', u: false, m: new Amount({Da:159}), o: [], i: [{ f: Proton, a: 65, b:null }, { f: Neutron, a: 94, b:null }, { f: Electron, a: 65, b:null }] };
-const Dy156 = { n: 'Dysprosium156', u: false, m: new Amount({Da:156}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 90, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy158 = { n: 'Dysprosium158', u: false, m: new Amount({Da:158}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 92, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy160 = { n: 'Dysprosium160', u: false, m: new Amount({Da:160}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 94, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy161 = { n: 'Dysprosium161', u: false, m: new Amount({Da:161}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 95, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy162 = { n: 'Dysprosium162', u: false, m: new Amount({Da:162}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 96, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy163 = { n: 'Dysprosium163', u: false, m: new Amount({Da:163}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 97, b:null }, { f: Electron, a: 66, b:null }] };
-const Dy164 = { n: 'Dysprosium164', u: false, m: new Amount({Da:164}), o: [], i: [{ f: Proton, a: 66, b:null }, { f: Neutron, a: 98, b:null }, { f: Electron, a: 66, b:null }] };
-const Ho165 = { n: 'Holmium165', u: false, m: new Amount({Da:165}), o: [], i: [{ f: Proton, a: 67, b:null }, { f: Neutron, a: 98, b:null }, { f: Electron, a: 67, b:null }] };
-const Er162 = { n: 'Erbium162', u: false, m: new Amount({Da:162}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 94, b:null }, { f: Electron, a: 68, b:null }] };
-const Er164 = { n: 'Erbium164', u: false, m: new Amount({Da:164}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 96, b:null }, { f: Electron, a: 68, b:null }] };
-const Er166 = { n: 'Erbium166', u: false, m: new Amount({Da:166}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 98, b:null }, { f: Electron, a: 68, b:null }] };
-const Er167 = { n: 'Erbium167', u: false, m: new Amount({Da:167}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 99, b:null }, { f: Electron, a: 68, b:null }] };
-const Er168 = { n: 'Erbium168', u: false, m: new Amount({Da:168}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 100, b:null }, { f: Electron, a: 68, b:null }] };
-const Er170 = { n: 'Erbium170', u: false, m: new Amount({Da:170}), o: [], i: [{ f: Proton, a: 68, b:null }, { f: Neutron, a: 102, b:null }, { f: Electron, a: 68, b:null }] };
-const Tm169 = { n: 'Thulium160', u: false, m: new Amount({Da:169}), o: [], i: [{ f: Proton, a: 69, b:null }, { f: Neutron, a: 100, b:null }, { f: Electron, a: 69, b:null }] };
-const Yb168 = { n: 'Ytterbium168', u: false, m: new Amount({Da:168}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 98, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb170 = { n: 'Ytterbium170', u: false, m: new Amount({Da:170}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 100, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb171 = { n: 'Ytterbium171', u: false, m: new Amount({Da:171}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 101, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb172 = { n: 'Ytterbium172', u: false, m: new Amount({Da:172}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 102, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb173 = { n: 'Ytterbium173', u: false, m: new Amount({Da:173}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 103, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb174 = { n: 'Ytterbium174', u: false, m: new Amount({Da:174}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 104, b:null }, { f: Electron, a: 70, b:null }] };
-const Yb176 = { n: 'Ytterbium176', u: false, m: new Amount({Da:176}), o: [], i: [{ f: Proton, a: 70, b:null }, { f: Neutron, a: 106, b:null }, { f: Electron, a: 70, b:null }] };
-const Lu175 = { n: 'Lutetium175', u: false, m: new Amount({Da:175}), o: [], i: [{ f: Proton, a: 71, b:null }, { f: Neutron, a: 104, b:null }, { f: Electron, a: 71, b:null }] };
-const Lu176 = { n: 'Lutetium176', u: false, m: new Amount({Da:176}), o: [], i: [{ f: Proton, a: 71, b:null }, { f: Neutron, a: 105, b:null }, { f: Electron, a: 71, b:null }] };
-const Hf174 = { n: 'Hafnium174', u: false, m: new Amount({Da:174}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 102, b:null }, { f: Electron, a: 72, b:null }] };
-const Hf176 = { n: 'Hafnium176', u: false, m: new Amount({Da:176}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 104, b:null }, { f: Electron, a: 72, b:null }] };
-const Hf177 = { n: 'Hafnium177', u: false, m: new Amount({Da:177}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 105, b:null }, { f: Electron, a: 72, b:null }] };
-const Hf178 = { n: 'Hafnium178', u: false, m: new Amount({Da:178}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 106, b:null }, { f: Electron, a: 72, b:null }] };
-const Hf179 = { n: 'Hafnium179', u: false, m: new Amount({Da:179}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 107, b:null }, { f: Electron, a: 72, b:null }] };
-const Hf180 = { n: 'Hafnium180', u: false, m: new Amount({Da:180}), o: [], i: [{ f: Proton, a: 72, b:null }, { f: Neutron, a: 108, b:null }, { f: Electron, a: 72, b:null }] };
-const Ta181 = { n: 'Tantalum181', u: false, m: new Amount({Da:181}), o: [], i: [{ f: Proton, a: 73, b:null }, { f: Neutron, a: 108, b:null }, { f: Electron, a: 73, b:null }] };
-const W180 = { n: 'Tungsten180', u: false, m: new Amount({Da:180}), o: [], i: [{ f: Proton, a: 74, b:null }, { f: Neutron, a: 106, b:null }, { f: Electron, a: 74, b:null }] };
-const W182 = { n: 'Tungsten182', u: false, m: new Amount({Da:182}), o: [], i: [{ f: Proton, a: 74, b:null }, { f: Neutron, a: 108, b:null }, { f: Electron, a: 74, b:null }] };
-const W183 = { n: 'Tungsten183', u: false, m: new Amount({Da:183}), o: [], i: [{ f: Proton, a: 74, b:null }, { f: Neutron, a: 109, b:null }, { f: Electron, a: 74, b:null }] };
-const W184 = { n: 'Tungsten184', u: false, m: new Amount({Da:184}), o: [], i: [{ f: Proton, a: 74, b:null }, { f: Neutron, a: 110, b:null }, { f: Electron, a: 74, b:null }] };
-const W186 = { n: 'Tungsten186', u: false, m: new Amount({Da:186}), o: [], i: [{ f: Proton, a: 74, b:null }, { f: Neutron, a: 112, b:null }, { f: Electron, a: 74, b:null }] };
-const Re185 = { n: 'Rhenium185', u: false, m: new Amount({Da:185}), o: [], i: [{ f: Proton, a: 75, b:null }, { f: Neutron, a: 110, b:null }, { f: Electron, a: 75, b:null }] };
-const Re187 = { n: 'Rhenium187', u: false, m: new Amount({Da:187}), o: [], i: [{ f: Proton, a: 75, b:null }, { f: Neutron, a: 112, b:null }, { f: Electron, a: 75, b:null }] };
-const Os184 = { n: 'Osmium184', u: false, m: new Amount({Da:184}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 108, b:null }, { f: Electron, a: 76, b:null }] };
-const Os186 = { n: 'Osmium186', u: false, m: new Amount({Da:186}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 110, b:null }, { f: Electron, a: 76, b:null }] };
-const Os187 = { n: 'Osmium187', u: false, m: new Amount({Da:187}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 111, b:null }, { f: Electron, a: 76, b:null }] };
-const Os188 = { n: 'Osmium188', u: false, m: new Amount({Da:188}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 112, b:null }, { f: Electron, a: 76, b:null }] };
-const Os189 = { n: 'Osmium189', u: false, m: new Amount({Da:189}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 113, b:null }, { f: Electron, a: 76, b:null }] };
-const Os190 = { n: 'Osmium190', u: false, m: new Amount({Da:190}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 114, b:null }, { f: Electron, a: 76, b:null }] };
-const Os192 = { n: 'Osmium192', u: false, m: new Amount({Da:192}), o: [], i: [{ f: Proton, a: 76, b:null }, { f: Neutron, a: 116, b:null }, { f: Electron, a: 76, b:null }] };
-const Ir191 = { n: 'Iridium191', u: false, m: new Amount({Da:191}), o: [], i: [{ f: Proton, a: 77, b:null }, { f: Neutron, a: 114, b:null }, { f: Electron, a: 77, b:null }] };
-const Ir193 = { n: 'Iridium193', u: false, m: new Amount({Da:193}), o: [], i: [{ f: Proton, a: 77, b:null }, { f: Neutron, a: 116, b:null }, { f: Electron, a: 77, b:null }] };
-const Pt190 = { n: 'Platinum190', u: false, m: new Amount({Da:190}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 112, b:null }, { f: Electron, a: 78, b:null }] };
-const Pt192 = { n: 'Platinum192', u: false, m: new Amount({Da:192}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 114, b:null }, { f: Electron, a: 78, b:null }] };
-const Pt194 = { n: 'Platinum194', u: false, m: new Amount({Da:194}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 116, b:null }, { f: Electron, a: 78, b:null }] };
-const Pt195 = { n: 'Platinum195', u: false, m: new Amount({Da:195}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 117, b:null }, { f: Electron, a: 78, b:null }] };
-const Pt196 = { n: 'Platinum196', u: false, m: new Amount({Da:196}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 118, b:null }, { f: Electron, a: 78, b:null }] };
-const Pt198 = { n: 'Platinum198', u: false, m: new Amount({Da:198}), o: [], i: [{ f: Proton, a: 78, b:null }, { f: Neutron, a: 120, b:null }, { f: Electron, a: 78, b:null }] };
-const Au197 = { n: 'Gold197', u: false, m: new Amount({Da:197}), o: [], i: [{ f: Proton, a: 79, b:null }, { f: Neutron, a: 118, b:null }, { f: Electron, a: 79, b:null }] };
-const Hg196 = { n: 'Mercury196', u: false, m: new Amount({Da:196}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 116, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg198 = { n: 'Mercury198', u: false, m: new Amount({Da:198}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 118, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg199 = { n: 'Mercury199', u: false, m: new Amount({Da:199}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 119, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg200 = { n: 'Mercury200', u: false, m: new Amount({Da:200}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 120, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg201 = { n: 'Mercury201', u: false, m: new Amount({Da:201}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 121, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg202 = { n: 'Mercury202', u: false, m: new Amount({Da:202}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 122, b:null }, { f: Electron, a: 80, b:null }] };
-const Hg204 = { n: 'Mercury204', u: false, m: new Amount({Da:204}), o: [], i: [{ f: Proton, a: 80, b:null }, { f: Neutron, a: 124, b:null }, { f: Electron, a: 80, b:null }] };
-const Tl203 = { n: 'Thallium203', u: false, m: new Amount({Da:203}), o: [], i: [{ f: Proton, a: 81, b:null }, { f: Neutron, a: 122, b:null }, { f: Electron, a: 81, b:null }] };
-const Tl205 = { n: 'Thallium205', u: false, m: new Amount({Da:205}), o: [], i: [{ f: Proton, a: 81, b:null }, { f: Neutron, a: 124, b:null }, { f: Electron, a: 81, b:null }] };
-const Pb204 = { n: 'Lead204', u: false, m: new Amount({Da:204}), o: [], i: [{ f: Proton, a: 82, b:null }, { f: Neutron, a: 122, b:null }, { f: Electron, a: 82, b:null }] };
-const Pb206 = { n: 'Lead206', u: false, m: new Amount({Da:206}), o: [], i: [{ f: Proton, a: 82, b:null }, { f: Neutron, a: 124, b:null }, { f: Electron, a: 82, b:null }] };
-const Pb207 = { n: 'Lead207', u: false, m: new Amount({Da:207}), o: [], i: [{ f: Proton, a: 82, b:null }, { f: Neutron, a: 125, b:null }, { f: Electron, a: 82, b:null }] };
-const Pb208 = { n: 'Lead208', u: false, m: new Amount({Da:208}), o: [], i: [{ f: Proton, a: 82, b:null }, { f: Neutron, a: 126, b:null }, { f: Electron, a: 82, b:null }] };
-const Bi209 = { n: 'Bismuth209', u: false, m: new Amount({Da:209}), o: [], i: [{ f: Proton, a: 83, b:null }, { f: Neutron, a: 126, b:null }, { f: Electron, a: 83, b:null }] };
-const Po209 = { n: 'Polonium209', u: false, m: new Amount({Da:209}), o: [], i: [{ f: Proton, a: 84, b:null }, { f: Neutron, a: 125, b:null }, { f: Electron, a: 84, b:null }] };
-const At210 = { n: 'Astatine210', u: false, m: new Amount({Da:210}), o: [], i: [{ f: Proton, a: 85, b:null }, { f: Neutron, a: 125, b:null }, { f: Electron, a: 85, b:null }] };
-const Rn222 = { n: 'Radon222', u: false, m: new Amount({Da:222}), o: [], i: [{ f: Proton, a: 86, b:null }, { f: Neutron, a: 136, b:null }, { f: Electron, a: 86, b:null }] };
-const Fr223 = { n: 'Francium223', u: false, m: new Amount({Da:223}), o: [], i: [{ f: Proton, a: 87, b:null }, { f: Neutron, a: 136, b:null }, { f: Electron, a: 87, b:null }] };
-const Ra226 = { n: 'Radium226', u: false, m: new Amount({Da:226}), o: [], i: [{ f: Proton, a: 88, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 88, b:null }] };
-const Ac227 = { n: 'Actinium227', u: false, m: new Amount({Da:227}), o: [], i: [{ f: Proton, a: 89, b:null }, { f: Neutron, a: 138, b:null }, { f: Electron, a: 89, b:null }] };
-const Th232 = { n: 'Thorium232', u: false, m: new Amount({Da:232}), o: [], i: [{ f: Proton, a: 90, b:null }, { f: Neutron, a: 142, b:null }, { f: Electron, a: 90, b:null }] };
-const Pa231 = { n: 'Protactinium231', u: false, m: new Amount({Da:231}), o: [], i: [{ f: Proton, a: 91, b:null }, { f: Neutron, a: 140, b:null }, { f: Electron, a: 91, b:null }] };
-const U234 = { n: 'Uranium234', u: false, m: new Amount({Da:234}), o: [], i: [{ f: Proton, a: 92, b:null }, { f: Neutron, a: 142, b:null }, { f: Electron, a: 92, b:null }] };
-const U235 = { n: 'Uranium235', u: false, m: new Amount({Da:235}), o: [], i: [{ f: Proton, a: 92, b:null }, { f: Neutron, a: 143, b:null }, { f: Electron, a: 92, b:null }] };
-const U238 = { n: 'Uranium238', u: false, m: new Amount({Da:238}), o: [], i: [{ f: Proton, a: 92, b:null }, { f: Neutron, a: 146, b:null }, { f: Electron, a: 92, b:null }] };
-const Np237 = { n: 'Neptunium237', u: false, m: new Amount({Da:237}), o: [], i: [{ f: Proton, a: 93, b:null }, { f: Neutron, a: 144, b:null }, { f: Electron, a: 93, b:null }] };
-const Pu244 = { n: 'Plutonium244', u: false, m: new Amount({Da:244}), o: [], i: [{ f: Proton, a: 94, b:null }, { f: Neutron, a: 150, b:null }, { f: Electron, a: 94, b:null }] };
-const Am243 = { n: 'Americium243', u: false, m: new Amount({Da:243}), o: [], i: [{ f: Proton, a: 95, b:null }, { f: Neutron, a: 148, b:null }, { f: Electron, a: 95, b:null }] };
-const Cm247 = { n: 'Curium247', u: false, m: new Amount({Da:247}), o: [], i: [{ f: Proton, a: 96, b:null }, { f: Neutron, a: 151, b:null }, { f: Electron, a: 96, b:null }] };
-const Bk247 = { n: 'Berkelium247', u: false, m: new Amount({Da:247}), o: [], i: [{ f: Proton, a: 97, b:null }, { f: Neutron, a: 150, b:null }, { f: Electron, a: 97, b:null }] };
-const Cf251 = { n: 'Californium251', u: false, m: new Amount({Da:251}), o: [], i: [{ f: Proton, a: 98, b:null }, { f: Neutron, a: 153, b:null }, { f: Electron, a: 98, b:null }] };
-const Es252 = { n: 'Einsteinium252', u: false, m: new Amount({Da:252}), o: [], i: [{ f: Proton, a: 99, b:null }, { f: Neutron, a: 153, b:null }, { f: Electron, a: 99, b:null }] };
-const Fm257 = { n: 'Fermium257', u: false, m: new Amount({Da:257}), o: [], i: [{ f: Proton, a: 100, b:null }, { f: Neutron, a: 157, b:null }, { f: Electron, a: 100, b:null }] };
-const Md258 = { n: 'Mendelevium258', u: false, m: new Amount({Da:258}), o: [], i: [{ f: Proton, a: 101, b:null }, { f: Neutron, a: 157, b:null }, { f: Electron, a: 101, b:null }] };
-const No261 = { n: 'Nobelium261', u: false, m: new Amount({Da:261}), o: [], i: [{ f: Proton, a: 102, b:null }, { f: Neutron, a: 159, b:null }, { f: Electron, a: 102, b:null }] };
-const Lr264 = { n: 'Lawrencium264', u: false, m: new Amount({Da:264}), o: [], i: [{ f: Proton, a: 103, b:null }, { f: Neutron, a: 161, b:null }, { f: Electron, a: 103, b:null }] };
-const Rf265 = { n: 'Rutherfordium265', u: false, m: new Amount({Da:265}), o: [], i: [{ f: Proton, a: 104, b:null }, { f: Neutron, a: 161, b:null }, { f: Electron, a: 104, b:null }] };
-const Db268 = { n: 'Dubnium268', u: false, m: new Amount({Da:268}), o: [], i: [{ f: Proton, a: 105, b:null }, { f: Neutron, a: 163, b:null }, { f: Electron, a: 105, b:null }] };
-const Sg271 = { n: 'Seaborgium271', u: false, m: new Amount({Da:271}), o: [], i: [{ f: Proton, a: 106, b:null }, { f: Neutron, a: 165, b:null }, { f: Electron, a: 106, b:null }] };
-const Bh273 = { n: 'Bohrium273', u: false, m: new Amount({Da:273}), o: [], i: [{ f: Proton, a: 107, b:null }, { f: Neutron, a: 166, b:null }, { f: Electron, a: 107, b:null }] };
-const Hs276 = { n: 'Hassium276', u: false, m: new Amount({Da:276}), o: [], i: [{ f: Proton, a: 108, b:null }, { f: Neutron, a: 168, b:null }, { f: Electron, a: 108, b:null }] };
-const Mt278 = { n: 'Meitnerium278', u: false, m: new Amount({Da:278}), o: [], i: [{ f: Proton, a: 109, b:null }, { f: Neutron, a: 169, b:null }, { f: Electron, a: 109, b:null }] };
-const Ds281 = { n: 'Darmstadtium281', u: false, m: new Amount({Da:281}), o: [], i: [{ f: Proton, a: 110, b:null }, { f: Neutron, a: 171, b:null }, { f: Electron, a: 110, b:null }] };
-const Rg283 = { n: 'Roentgenium283', u: false, m: new Amount({Da:283}), o: [], i: [{ f: Proton, a: 111, b:null }, { f: Neutron, a: 172, b:null }, { f: Electron, a: 111, b:null }] };
-const Cn285 = { n: 'Copernicium285', u: false, m: new Amount({Da:285}), o: [], i: [{ f: Proton, a: 112, b:null }, { f: Neutron, a: 173, b:null }, { f: Electron, a: 112, b:null }] };
-const Nh287 = { n: 'Nihonium287', u: false, m: new Amount({Da:287}), o: [], i: [{ f: Proton, a: 113, b:null }, { f: Neutron, a: 174, b:null }, { f: Electron, a: 113, b:null }] };
-const Fl289 = { n: 'Flerovium289', u: false, m: new Amount({Da:289}), o: [], i: [{ f: Proton, a: 114, b:null }, { f: Neutron, a: 175, b:null }, { f: Electron, a: 114, b:null }] };
-const Mc291 = { n: 'Moscovium291', u: false, m: new Amount({Da:291}), o: [], i: [{ f: Proton, a: 115, b:null }, { f: Neutron, a: 176, b:null }, { f: Electron, a: 115, b:null }] };
-const Lv292 = { n: 'Livermorium292', u: false, m: new Amount({Da:292}), o: [], i: [{ f: Proton, a: 116, b:null }, { f: Neutron, a: 176, b:null }, { f: Electron, a: 116, b:null }] };
-const Ts292 = { n: 'Tennessine292', u: false, m: new Amount({Da:292}), o: [], i: [{ f: Proton, a: 117, b:null }, { f: Neutron, a: 175, b:null }, { f: Electron, a: 117, b:null }] };
-const Og293 = { n: 'Oganesson293', u: false, m: new Amount({Da:293}), o: [], i: [{ f: Proton, a: 118, b:null }, { f: Neutron, a: 175, b:null }, { f: Electron, a: 118, b:null }] };
 
 //items
 const Quark = {
@@ -386,7 +27,9 @@ const Lepton = {
 };
 const Baryon = {
     n: 'Baryon', u: false, c: [Proton, Neutron],
-    info: ['Baryons are a type of hadron made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.', 'Neutrons are actually slightly heavier than protons (1.007 Da vs 1.008 Da) but for simplicity in this game I rounded both to 1 Da.']
+    info: ['Baryons are a type of hadron made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.', 
+		'Neutrons actually have slightly more mass than protons but for simplicity in this game I rounded both to 1 Da.',
+		'The mass of 3 quarks does not equal the mass of one baryon. This is a result of some physics that I looked up but does not make sense to me.']
 };
 const H = {
     n: 'Hydrogen', u: false, c: [H1, H2],
@@ -929,49 +572,6 @@ const TransitionMetal = {
 	info:['Transition metals are typically hard. There are many, spanning multiple periods and groups (rows and columns) through the middle of the periodic table.']
 }
 
-//organic groups
-const dihydrogen = { n: 'Dihydrogen', u: false, m: new Amount({Da:2}), o: [], i: [{ f: H1, a: 2, b:null }] };
-const deuteratedDihydrogen = { n: 'Deuterated Dihydrogen', u: false, m: new Amount({Da:4}), o: [], i: [{ f: H2, a: 2, b:null }] };
-const dioxygen = { n: 'Dioxygen', u: false, m: new Amount({Da:32}), o: [], i: [{ f: O16, a: 2, b:null }] };
-
-const ammonia = { n: 'Ammonia', u: false, m: new Amount({Da:17}), o: [], i: [{ f: N14, a: 1, b:null }, { f: H1, a: 3, b:null }] };
-const water =  { n: 'Water', u: false, m: new Amount({Da:18}), o: [], i: [{ f: H1, a: 2, b:null }, { f: O16, a: 1, b:null }] };
-const hydronium =  { n: 'Hydronium', u: false, m: new Amount({Da:19}), o: [], i: [{ f: H1, a: 3, b:null }, { f: O16, a: 1, b:null }] };
-const carbonMonoxide = { n: 'Carbon Monoxide', u: false, m: new Amount({Da:28}), o: [], i: [{ f: C12, a: 1, b:null }, { f: O16, a: 1, b:null }] };
-const carbonDioxide = { n: 'Carbon Dioxide', u: false, m: new Amount({Da:44}), o: [], i: [{ f: C12, a: 1, b:null }, { f: O16, a: 2, b:null }] };
-
-const methane = { n: 'Methane', u: false, m: new Amount({Da:16}), o: [], i: [{ f: C12, a: 1, b:null }, { f: H1, a: 4, b:null }] };
-const ethane = { n: 'Ethane', u: false, m: new Amount({Da:30}), o: [], i: [{ f: C12, a: 2, b:null }, { f: H1, a: 6, b:null }] };
-const propane = { n: 'Propane', u: false, m: new Amount({Da:44}), o: [], i: [{ f: C12, a: 3, b:null }, { f: H1, a: 8, b:null }] };
-const butane = { n: 'Butane', u: false, m: new Amount({Da:58}), o: [], i: [{ f: C12, a: 4, b:null }, { f: H1, a: 10, b:null }] };
-
-const methene = { n: 'Methene', u: false, m: new Amount({Da:14}), o: [], i: [{ f: C12, a: 1, b:null }, { f: H1, a: 2, b:null }] };
-const ethene = { n: 'Ethene', u: false, m: new Amount({Da:28}), o: [], i: [{ f: C12, a: 2, b:null }, { f: H1, a: 4, b:null }] };
-const propene = { n: 'Propene', u: false, m: new Amount({Da:42}), o: [], i: [{ f: C12, a: 3, b:null }, { f: H1, a: 6, b:null }] };
-const butene = { n: 'Butene', u: false, m: new Amount({Da:56}), o: [], i: [{ f: C12, a: 4, b:null }, { f: H1, a: 8, b:null }] };
-
-const ethyne = { n: 'Ethyne', u: false, m: new Amount({Da:26}), o: [], i: [{ f: C12, a: 2, b:null }, { f: H1, a: 2, b:null }] };
-const propyne = { n: 'Propyne', u: false, m: new Amount({Da:40}), o: [], i: [{ f: C12, a: 3, b:null }, { f: H1, a: 4, b:null }] };
-const butyne = { n: 'Butyne', u: false, m: new Amount({Da:54}), o: [], i: [{ f: C12, a: 4, b:null }, { f: H1, a: 6, b:null }] };
-
-const benzene = { n: 'Benzene', u: false, m: new Amount({Da:42}), o: [], i: [{ f: C12, a: 6, b:null }, { f: H1, a: 6, b:null }] };
-
-const methanol = { n: 'Methanol', u: false, m: new Amount({Da:32}), o: [], i: [{ f: carbonMonoxide, a: 1, b:null }, { f: dihydrogen, a: 2, b:null }] };
-const ethanol = { n: 'Ethanol', u: false, m: new Amount({Da:46}), o: [], i: [{ f: ethene, a: 1, b:null }, { f: water, a: 1, b:null }] };
-
-const toluene = { n: 'Toluene', u: false, m: new Amount({Da:92}), o: [{a:1, f:water}], i: [{ f: benzene, a: 1, b:null }, { f: methanol, a: 1, b:null }] };
-
-const aceticAcid = { n: 'Acetic Acid', u: false, m: new Amount({Da:60}), o: [], i: [{ f: methanol, a: 1, b:null }, { f: carbonMonoxide, a: 1, b:null }] };
-const formicAcid = { n: 'Formic Acid', u: false, m: new Amount({Da:46}), o: [], i: [{ f: carbonDioxide, a: 1, b:null }, { f: dihydrogen, a: 2, b:null }] };
-const benzoicAcid = { n: 'Benzoic Acid', u: false, m: new Amount({Da:122}), o: [{a:1, f:water}], i: [{ f: toluene, a: 1, b:null }, { f: dioxygen, a: 1.5, b:null }] };
-
-const acetamide = { n: 'Acetamide', u: false, m: new Amount({Da:60}), o: [{a:1, f:water}], i: [{ f: aceticAcid, a: 1, b:null }, { f: ammonia, a: 1, b:null }] };
-const benzamide = { n: 'Benzamide', u: false, m: new Amount({Da:121}), o: [{a:1, f:water}], i: [{ f: benzoicAcid, a: 1, b:null }, { f: ammonia, a: 1, b:null }] };
-
-const methylamine = { n: 'Methylamine', u: false, m: new Amount({Da:31}), o: [{a:1, f:water}], i: [{ f: ammonia, a: 1, b:null }, { f: methanol, a: 1, b:null }] };
-const dimethylamine = { n: 'Dimethylamine', u: false, m: new Amount({Da:45}), o: [{a:2, f:water}], i: [{ f: ammonia, a: 1, b:null }, { f: methanol, a: 2, b:null }] };
-const trimethylamine = { n: 'Trimethylamine', u: false, m: new Amount({Da:59}), o: [{a:3, f:water}], i: [{ f: ammonia, a: 1, b:null }, { f: methanol, a: 3, b:null }] };
-
 const primaryAmine = {
 	n:'Primary Amine', u:false, c:[methylamine],
 	info: ['Primary Amines are an ammonia molecule with one hydrogen replaced with a hydrocarbon.']
@@ -1085,19 +685,6 @@ const organic = {
 	info:['Organic compounds contain bonded carbon and hydrogen atoms along with other elements.']
 }
 
-//inorganic groups
-const HCl =  { n: 'Hydrochloric Acid', u: false, m: new Amount({Da:36}), o: [], i: [{ f: H1, a: 1, b:null }, { f: Cl35, a: 1, b:null }] };
-const H2SO4 =  { n: 'Sulfuric Acid', u: false, m: new Amount({Da:98}), o: [], i: [{ f: H1, a: 2, b:null }, { f: O16, a: 4, b:null }, { f: S32, a: 1, b:null }] };
-
-const NaOH = { n: 'Sodium Hydroxide', u: false, m: new Amount({Da:40}), o: [], i:[{ f: H1, a: 1, b:null }, { f: O16, a: 1, b:null }, { f: Na23, a: 1, b:null }] };
-const KOH = { n: 'Potassium Hydroxide', u: false, m: new Amount({Da:56}), o: [], i:[{ f: H1, a: 1, b:null }, { f: O16, a: 1, b:null }, { f: K39, a: 1, b:null }] };
-
-const NaCl = { n: 'Sodium Chloride', u: false, m: new Amount({Da:58}), o: [{a:1, f:water}], i:[{ f: HCl, a: 1, b:null }, { f: NaOH, a: 1, b:null }] };
-const KCl = { n: 'Potassium Chloride', u: false, m: new Amount({Da:74}), o: [{a:1, f:water}], i:[{ f: HCl, a: 1, b:null }, { f: KOH, a: 1, b:null }] };
-
-const mildSteel = { n: 'Mild Steel', u: false, m: new Amount({Da:1000}), o: [], i: [{ f: Fe56, a: 0, b:new Amount({Da:998})}, { f: C12, a: 0, b: new Amount({Da:2}) }] };
-const highSteel = { n: 'High Steel', u: false, m: new Amount({Da:1000}), o: [], i: [{ f: Fe56, a: 0, b:new Amount({Da:990})}, { f: C12, a: 0, b: new Amount({Da:10}) }] };
-
 const binaryHydride = {
 	n:'Binary Hydride', u:false, c:[ammonia,water],
 	info:['Binary hydrides contain hydrogen and one other element.']
@@ -1109,7 +696,7 @@ const binaryOxide = {
 
 const steel = {
 	n:'Steel', u:false, c:[mildSteel,highSteel],
-	info:['Steel is an iron alloy with a small amount of carbon.']
+	info:['Steel is an iron alloy with a small amount of carbon.', 'There are many types of steel alloys, I have included a few recipes based on some average inputs.']
 }
 const metalAlloys = {
 	n:'Metal Alloys', u:false, c:[steel],
@@ -1208,7 +795,7 @@ const test = {
 	info: ['Test group for testing']
 }
 
-const data = [
+const items = [
 	//test,
 	subatomic,
 	atomic,
@@ -1221,10 +808,10 @@ const data = [
 
 //base tabs
 const tabs = [
-	{n:'Create', u:true, c:data, info:['Imagination is the beginning of creation.'], intro:'As the tab title suggests, this is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
+	{n:'Create', u:true, c:items, info:['Imagination is the beginning of creation.'], intro:'As the tab title suggests, this is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
 	{n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
 	{n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
-	{n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Rank cost reduces the cost required to increase the generator rank.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator uprank cost. They do not change the set-point limits or generator levels or ranks.'}, 
+	{n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator upgrade cost. They do not change the set-point limits or generator levels.'}, 
 	{n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
 	{n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -1233,34 +820,36 @@ const help = [
 	{t:'General', c:[
 		'This is a crafting/discovery game with some supply chain management.',
 		'|',
-		'You initially start by crafting subatomic materials but can eventually create successively larger items. Unfortunately the data file is missing several items that exist in the universe.',
-		'Items are organized into groups and have types, flavors, or isotopes. For example Quarks are in the Subatomic group and have two flavors in this game "Up" and "Down".',
+		'You initially start by crafting subatomic materials but can eventually create increasingly larger items.',
+		'Unfortunately the data file is missing several items that exist in the universe so there is some trial and error in discovering what items are craftable.',
 		'|',
-		'(») circle buttons will go to the item referenced. It will goto the item even if it is still locked through the normal menu.',
+		'(») Goto buttons will go to the item referenced. It will goto the item even if it is still locked through the normal menu.',
+		'(->) Generate buttons will manually run the item generator.',
+		'(++) Upgrade buttons will upgrade the generator or enhancement.',
+		'(+>) Add buttons will add an item to the Matter Mutator in the Discover tab.',
 		'|',
 		'A game cycle is about 1 second.',
-		'Space bar pauses the game'
+		'The Spacebar pauses the game'
 	]},
 	{t:'Create', c:[
 		'The Create tab lets you create items.',
 		'|',
-		'The Inventory (++) button will create one item from the components.',
+		'The Inventory shows how many of the given item  you have. You can have up to 1125899906842624 (2^50) of any given item.',
+		'Bulk storage storage is where surplus inventory is stored and is used in some generators.',		
+		'Bulk storage is available on items that have an inventory > 1048576 (2^20).',
 		'|',
-		'Generator level (++) button will spend an item to make generators that will create items every cycle.', 
-		'Generator rank (++) button will spend generators to increase their effectiveness and reduce their cost.', 
+		'Generator generate (->) button will manually run the generator. There is a bonus for manually running a low level generators to help get started with new items.', 
+		'Generator level (++) button will upgrade generators that will automatically create items every cycle.', 
+		'Note: generators with multiple outputs will use all outputs to upgrade the generator.',
 		'|',
-		'The Generator will automatically create items based on the generator set-point. It will only create items if you have the required components.',
-		'For example if you have 10 Up Quarks and have a Proton set-point of 7 (Protons each need 2 Up Quarks) the Proton generators will make 5 Protons.',
+		'The Generator will automatically create items based on the generator Flow. It will only create items if you have the required components.',
+		'For example if you have 10 Up Quarks, 10 Down Quarks, and have a Proton Flow set to 7 (Protons each need 2 Up Quarks and 1 Down Quark) the Proton generator is limited by Up Quarks and will make 5 Protons.',
 		'|',
-		'Bulk storage for each item can store excess by weight.',
-		'|',
-		'An items used in list is available for an item when an its generator is over level 2.',
-		'Auto-upgrade is unlocked for an item when an its generator is over level 4.',
-		'Generator rank is unlocked for an item when an its generator is over level 8.',
-		'Auto-uprank is unlocked for an item when an its rank is over level 4.',
+		'Auto-upgrade will automatically upgrade a generator when it has at least double the cost in inventory. This is to avoid limiting other generator\'s production.',
+		'An item\'s "Used In" list is available for items when it has a generator level over 2.',
 	]},
 	{t:'Discover', c:[
-		'The Discover tab is the main way to gain access to new item types.',
+		'The Discover tab is a fun way to gain access to new items.',
 		'|',
 		'Add items to the matter mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
 		'Unfortunately, the game data is not complete but will be expanded in the future.',
@@ -1268,47 +857,48 @@ const help = [
 		'There is no penalty for scanning items that do not match a recipe.',
 		'If you are stuck or want a recipe hint you can click the "Get Recipe" button',
 		'|',
-		'Discover tab is unlocked when a generator is over level 3.'
+		'You can [Get Recipe] approximately every minute. After about a minute the recipe will clear and the button will be available again.',
+		'It will randomly choose a recipe for an item that is currently locked and you have all of the inputs unlocked.',
+		'|',
+		'The Discover tab is unlocked when a generator is over level 3.'
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your generators. It displays the input and output of each generator and the amount created and used during the last update.',
 		'|',
 		'The Manage table has several filters to help manage the resources.',
-		'Hide Created === 0 : will hide all rows that where no items were created.',
-		'Hide Created === Setpoint : will hide all rows where the generator setpoint was achieved.',
+		'Hide Created === 0 : will hide all rows that have no items created.',
 		'Hide Created < Setpoint : will hide all the rows where the generator setpoint was not achieved',
 		'Hide Created < Used : will hide all the rows with a deficit',
 		'|',
 		'Hide Used === 0 : will hide all the rows where no items were used.',
-		'Hide Used === Demand : will hide all rows where the expected demand was achieved',
 		'Hide Used < Demand : will hide all rows where the expected demand was not achieved',
 		'Hide Used < Created : will hide all rows with a surplus',
 		'|',
 		'The table columns describe the supply and demand of each item.',
-		'Name : is the name of the item. Hover to see the full name.',
-		'Owned : is the amount of the itme you current own.',
-		'Setpoint : is the generator setpoint, or the maximum amount that should be created.',
-		'Demand : is the expected demand if all setpoints are achieved',
-		'Created : is the actual amount created in the last cycle',
-		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators',
+		'Item : is the symbol of the item. Hover to see the full name.',
+		'Owned : is the amount of the items you currently have in your inventory.',
+		'Flow : is the sum of generator flow setpoints that can output this item.',
+		'Demand : is the expected demand based on generator flow setpoints.',
+		'Created : is the actual amount created in the last cycle.',
+		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators.',
 		'|',
-		'Manage tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 1.'
+		'The Manage tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 1.'
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to break conservation of mass by multiplying generator outputs.',
 		'This does not change the setpoint limits. It multiplies the created amount by the effect power, seen to the right of the (++) button.',
 		'|',
-		'Enhancement costs are generated programatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can effect the enhancement costs.',
+		'Enhancement costs are generated programmatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can affect the enhancement costs.',
 		'|',
-		'Enhance tab is unlocked when a generator for an item with components (not a quark or lepton) is over rank 3.'
+		'The Enhance tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 7.'
 	]},
 	{t:'Settings', c:[
-		'Settings can effect the difficulty and functionality of the game.',
+		'Settings can affect the difficulty and functionality of the game.',
 		'Always Show Used-In: This will disable the spoiler warning message and show the Used In list by default.',
 		'Show/Hide Info: This toggles the short info snippets sprinkled around in an attempt to educate and give tips.',
 		'Save/Load: You can manually save and load your game here. This can allow you to switch devices or share saves. The game automatically saves every couple minutes.',
 		'Hard Reset: This resets all progress and starts over from the beginning.',
-		'Cheater Level: -1 is no effect, higher number is bigger cheats. Allows you to create some items without using components.'
+		'Cheater Mode: When this is active input items are not used in generators.',
 	]},
 	{t:'Sources', c:[
 		'I got most of my information from:',
@@ -1316,14 +906,14 @@ const help = [
 		'https://periodictable.com',
 		'https://www.rsc.org/periodic-table',
 		'https://www.chemspider.com/',
+		'https://webbook.nist.gov/chemistry/name-ser/',
 		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/',
 		'https://chat.openai.com/',
 		'|',
 		'If you have a suggestion of items you want added you can email: grumdrig333@gmail.com',
-		]},
+	]},
 	{t:'About', c:[
 		'This game was initially started as a way to learn mutraction but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
-		'I decided to try making a game that has a simple UI but is very data heavy. As a result the html file is pretty small and most content is generated based on the data.js file.',
-		'It ended up less general than I initially hoped and more specific to this game, but in the end I mostly like this result.'
+		'I decided to try making a game that has a simple UI but is very data heavy. As a result the html file is pretty small and most content is generated based on a few data files.',
 	]},
 ]

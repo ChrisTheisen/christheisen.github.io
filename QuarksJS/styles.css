@@ -3,6 +3,7 @@
 	--bg1: #003288;
 	--bg2: #550000;
 	--bg3: #6500FF;
+	--bg4: #0032883D;
 	--c1: #AAAAAA;
 	--c2: #555555;
 	--c3: #AA0000;
@@ -13,8 +14,9 @@
 body{
 	background-color: var(--bg0);
 	color: var(--c1);
-	font-family: sans-serif;
+	font-family: monospace;
 	text-align:center;
+	font-size:12pt;
 }
 
 button{
@@ -30,6 +32,14 @@ button{
 
 a, a:visited{
 	color: var(--c1);
+}
+
+th{
+	font-size:16pt;
+}
+
+td{
+	white-space:nowrap;
 }
 
 .version{
@@ -71,6 +81,7 @@ a, a:visited{
 	border-top: solid 1px var(--c2);
 	width:100%;
 	flex:1 1 auto;
+	min-width:800px;
 }
 
 .activeFlavor{
@@ -84,6 +95,13 @@ a, a:visited{
 	margin-bottom: 15px;
 }
 
+.subtitle{
+	font-size: 16px;
+	font-weight: bold;
+	font-family: sans-serif;
+	margin-bottom: 10px;
+}
+
 .componentName{
 	padding-bottom: 0;
 	margin-bottom:0;
@@ -93,6 +111,10 @@ a, a:visited{
 	display:flex;
 }
 
+.table{
+	display:table;
+}
+
 .row{
 	display: table-row;
 }
@@ -100,7 +122,7 @@ a, a:visited{
 .cell{
 	display: table-cell;
 	padding: 0 5px;
-	line-height:50px;
+	vertical-align:middle;
 }
 
 .info{
@@ -112,6 +134,7 @@ a, a:visited{
 	border: solid 1px var(--c2);
 	text-align: center;
 	padding: 10px;
+	min-width:800px;
 }
 
 .bLeft{
@@ -138,7 +161,6 @@ a, a:visited{
 }
 
 .circleButton{
-	font-size:19px;
 	height: 36px;
 	width:36px;
 	padding:0;
@@ -146,7 +168,6 @@ a, a:visited{
 	border: solid 1px var(--c1);
 	border-radius:50%;
 	background-color: var(--bg1);
-	line-height:23px;	
 }
 
 .goto{
@@ -174,10 +195,8 @@ a, a:visited{
 }
 
 .hintZone{
-	margin-bottom: 10px;
+	margin-left: 10px;
 	min-width: 450px;
-	text-align: left;
-	float:right;
 }
 
 .helpTopic{
@@ -229,14 +248,13 @@ a, a:visited{
 
 .filterWrapper{
 	border-bottom:solid 1px var(--c1);
-	margin-bottom: 25px;
-	padding-bottom: 10px;
 	font-size:14px;
 }
 
 .filterChk{
 	display: table-cell;
-	padding-left:15px;
+	padding-left:25px;
+	padding-right:25px;
 	text-align:right;
 }
 
@@ -263,18 +281,27 @@ a, a:visited{
 	text-align: left;
 }
 
+.itemInfo{
+	margin:0 25px;
+}
+
 .amountUnit{
 	margin: 0 5px;
 	line-height:20px;
 }
 
 .amountInlineWrapper{
-	display:inline;
+	display:flex;
 	padding:0;
 }
 
 .amountInline{
-	margin:0;
+	margin:0 2px;
+}
+
+.flow{
+	font-size:22px;
+	width:150px;
 }
 
 .componentWrapper{
@@ -306,6 +333,19 @@ a, a:visited{
 	border-color: var(--c2);
 }
 
+.expandHeader{
+	cursor:pointer;
+	padding:0px 5px;
+}
+
+.help{
+	cursor:help;
+}
+
+.pointer{
+	cursor:pointer;
+}
+
 .tutorial{
 	border:solid 1px var(--c5);
 	padding: 10px;
@@ -314,86 +354,94 @@ a, a:visited{
 }
 
 .hint{
+	font-size:26px;
 	border:solid 2px #F00;
+	position:fixed;
+	width:100%;
+	left:0;
+	bottom:20px;
+	background-color:#000;
+}
+.hintAnimate{
 	animation: hintColor 5s infinite linear;
 }
 @keyframes hintColor {
 	0% {
 		border-color: #F00;
 		color: #0F7;
-		background-color: #000;
+		background-color: var(--bg0);
 		transform: scale(1) translate(-2px, -2px);
 	}
 	8% {
 		border-color: #F70;
 		color: #0FF;
-		background-color: #000;
+		background-color: var(--bg3);
 		transform: scale(1.2) translate(2px, -2px);
 	}
 	16% {
 		border-color: #FF0;
 		color: #07F;
-		background-color: #000;
+		background-color: var(--bg0);
 		transform: scale(1) translate(2px, 2px);
 	}
 	25% {
 		border-color: #7F0;
 		color: #00F;
-		background-color: #777;
+		background-color: var(--bg4);
 		transform: scale(1.2) translate(-2px, 2px);
 	}
 	33% {
 		border-color: #0F0;
 		color: #70F;
-		background-color: #777;
+		background-color: var(--bg0);
 		transform: scale(1) translate(-2px, -2px);
 	}
 	41% {
 		border-color: #0F7;
 		color: #F0F;
-		background-color: #777;
+		background-color: var(--bg2);
 		transform: scale(1.2);
 	}
 	50% {
 		border-color: #0FF;
 		color: #F07;
-		background-color: #000;
+		background-color: var(--bg0);
 		transform: scale(1) translate(2px, 2px);
 	}
 	58% {
 		border-color: #07F;
 		color: #F00;
-		background-color: #000;
+		background-color: var(--bg0);
 		transform: scale(1.2) translate(2px, -2px);
 	}
 	66% {
 		border-color: #00F;
 		color: #F70;
-		background-color: #000;
+		background-color: var(--bg4);
 		transform: scale(1) translate(-2px, -2px);
 	}
 	75% {
 		border-color: #70F;
 		color: #FF0;
-		background-color: #777;
+		background-color: var(--bg0);
 		transform: scale(1.2) translate(-2px, 2px);
 	}
 	83% {
 		border-color: #F0F;
 		color: #7F0;
-		background-color: #777;
+		background-color: var(--bg2);
 		transform: scale(1) translate(2px, 2px);
 	}
 	91% {
 		border-color: #F07;
 		color: #0F0;
-		background-color: #777;
+		background-color: var(--bg0);
 		transform: scale(1.2);
 	}
 	100% {
 		border-color: #F00;
 		color: #0F7;
-		background-color: #000;
+		background-color: var(--bg0);
 		transform: scale(1) translate(-2px, -2px);
 	}	
 }
