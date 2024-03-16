@@ -75,6 +75,7 @@ function unlock(input){
 function formatItemSymbols(input, parent){
 	let s = input.s.replaceAll('[', '<sup>').replaceAll(']', '</sup>')
 	s = s.replaceAll('(', '<sub>').replaceAll(')', '</sub>');
+	s = s.replaceAll('{', '(').replaceAll('}', ')');
 	parent.title = input.n;
 	parent.innerHTML = s;
 }
@@ -87,6 +88,32 @@ function arraysOverlap(a,b){
 
 function unlockedFlavors(){
 	return Object.values(AllFlavors).filter(x => x.f.u);
+}
+
+function toggleSetting(input){
+	const a = [...input];
+	const z = a.pop();
+	let s = game.settings;
+	let c = game.settings.content;
+	a.forEach(x => {s = s[x]; c = c[x];});
+	s[z] = !s[z];
+	c[z].checked = s[z];
+	switch(input){
+		case'c':{ break; }
+		case'h':{ 
+			Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !s[z]));
+			break; 
+		}
+		case'i':{ 
+			Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !s[z]) );
+			break; 
+		}
+		case'u':{ break; }
+		case'mc':{
+			game.inventory.update();
+			break;
+		}
+	}
 }
 
 function generateDiscoverHint(){
@@ -144,11 +171,6 @@ function resetSettings(){
 	game.settings.m.t = false;
 	game.settings.m.u = false;
 
-	getUIElement('chkSettingsC').checked = game.settings.c;
-	getUIElement('chkSettingsH').checked = game.settings.h;
-	getUIElement('chkSettingsI').checked = game.settings.i;
-	getUIElement('chkSettingsU').checked = game.settings.u;
-	
 	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 }
@@ -168,13 +190,14 @@ function load() {
 		temp = temp.replaceAll(':', '":');
 		temp = temp.replaceAll('{"}', '{}');
 	}
-	
+
 	const data = JSON.parse(temp);
 	
 	game.settings.c = data.s?.c ?? false;
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
+	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
 	game.settings.m.c = data.s?.mc ?? false;
@@ -243,8 +266,9 @@ function save() {
 	data.s.h = game.settings.h?1:0;
 	data.s.i = game.settings.i?1:0;
 	data.s.u = game.settings.u?1:0;
+	data.s.dl = game.settings.d.l??0;
 	data.s.do = game.settings.d.o?1:0;
-	if(game.settings.d.s){data.s.ds = game.settings.d.s;}
+	//if(game.settings.d.s){data.s.ds = game.settings.d.s;}
 	data.s.mc = game.settings.m.c?1:0;
 	data.s.mm = game.settings.m.m?1:0;
 	data.s.ml = game.settings.m.l?1:0;
@@ -283,10 +307,6 @@ function save() {
 	
 	const temp = JSON.stringify(data).replaceAll('"','');
 	localStorage.setItem('Q', temp);
-	setElementText(getUIElement('txtSave'), temp);
-	
-	
-	setElementText(getUIElement('lastSave'), new Date().toLocaleString());
 }
 
 function saveBeforeUnload(e) {
@@ -329,5 +349,5 @@ function benchmark(){
 	
 	const stop = performance.now();
 	
-	console.log(start, stop, stop-start);
+	console.log('BENCHMARK', start, stop, stop-start);
 }

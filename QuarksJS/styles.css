@@ -150,6 +150,10 @@ td{
 	filter: brightness(150%);
 }
 
+.menuFocus{
+	transform: scale(1.1);
+}
+
 .mutraction{
 	width: 100%;
 	position:fixed;

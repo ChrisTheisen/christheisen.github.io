@@ -416,8 +416,8 @@ InventoryItem.prototype.update = function(){
 		}
 		case 'Discover': {
 			const tableContains = game.table.includes(this);
-			const filterDiscoverStock = game.settings.d.o && !this.a;
-			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s);
+			const filterDiscoverStock = game.settings.d.o && this.a < game.settings.d.l;
+			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s) && !this.f.s.replaceAll(/\W/g, '').toLowerCase().includes(game.settings.d.s);
 	
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
 			this.content.d?.classList.toggle('disabled', !this.a || tableContains);

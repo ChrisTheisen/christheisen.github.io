@@ -1,28 +1,55 @@
 https://periodictable.com/index.html
+https://webbook.nist.gov/chemistry/name-ser/
 
 Bugs: 
+manage tab doesn't account for output/input.b; only does output/input.a
 
 TODO:
+
+some type of waste disposal?
+	-Dump for: ??
+		-enhacement multiplier?
+	
 molecule grouping:
 	Organic
 		-IUPAC groupings?
 	Inorganic
 		-idk
 
-inorganic groupings?
+cotton 90% cellulose
+wood 50% cellulose
+
+Monosaccharide - not technically a functional group/might split out later
+	Polysaccharide
+		cellulose
+		hemicellulose
+
+
+inorganic groupings
 	salts
-	oxides
-	hydroxides
-	coodination compounds
+	acid
+	base
+	silicates
+		Quartz
+			Amethyst
+			Citrine
+			Agate
+		Feldspar
+		Mica
+		Clay
+		Garnet
 	metal complexes
 		-iron alloys
 		-?
-	silicates
+
+Inorganic groupings, but do later:
 	nitrides
 	phosphides
 	sulfides
+	oxides
+	hydroxides
 	
 	monomer
 		-natural
 		-synthetic
-	
+	  

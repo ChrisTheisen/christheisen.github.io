@@ -103,7 +103,6 @@ GameClock.prototype.toggleTabs = function(){
 	game.menu.children.Enhance.b.classList.toggle('hide', !canEnhance);
 }
 
-
 function Game(){
 	this.clock = new GameClock();
 	this.enhancements = new Enhancements();
@@ -115,11 +114,13 @@ function Game(){
 	this.bx = 1;
 	this.by = 1;
 	this.settings = {
+		content: {d:{},m:{}},
 		c: false,//cheater mode
 		h: true,//show helpful tips
 		i: true,//show info
 		u: true,//show used-in warning
 		d: { //discover filters
+			l:0,//stock limit
 			o: false,//filter unowned
 			s: null//filter search
 		},
@@ -262,3 +263,225 @@ function init(){
 }
 const game = new Game();
 init();
+const history = [];
+let historyIndex = 0;
+//hotkeys
+onkeydown = (e) => {
+	switch(e.code){
+		case 'ArrowUp':{
+			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
+			game.menu.Up();
+			break;
+		}
+		case 'ArrowDown':{
+			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
+			game.menu.Down();
+			break;
+		}
+		case 'ArrowLeft':{
+			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
+			game.menu.Left();
+			break;
+		}
+		case 'ArrowRight':{
+			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
+			game.menu.Right();
+			break;
+		}
+		case 'Enter':
+		case 'NumpadEnter': {
+			if(game.menu.current === 'Discover'){
+				game.settings.content.d.s.focus();
+			}
+			break;
+		}
+		case 'Numpad0':{
+			switch(game.menu.current){
+				case 'Create':{
+					const a = [...document.getElementsByClassName('genButton')];
+					const b = a?.filter(x => !x.disabled) ?? [];
+					if(b.length>0){ b[0].click(); }
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][0]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad1':{
+			switch(game.menu.current){
+				case 'Discover':{
+					toggleSetting('do');
+					break;
+				}
+				case 'Manage':{
+					toggleSetting('mc');
+					break;
+				}
+				case 'Enhance':{
+					console.log(e);
+					if(e.altKey){game.enhancements.gotoG();}
+					else{game.enhancements.buyG();}
+					break;
+				}
+				case 'Settings':{
+					toggleSetting('h');
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][1]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad2':{
+			switch(game.menu.current){
+				case 'Manage':{
+					toggleSetting('mm');
+					break;
+				}
+				case 'Enhance':{
+					if(e.altKey){game.enhancements.gotoM();}
+					else{game.enhancements.buyM();}
+					break;
+				}
+				case 'Settings':{
+					toggleSetting('i');
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][2]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad3':{
+			switch(game.menu.current){
+				case 'Manage':{
+					toggleSetting('ml');
+					break;
+				}
+				case 'Enhance':{
+					if(e.altKey){game.enhancements.gotoD();}
+					else{game.enhancements.buyD();}
+					break;
+				}
+				case 'Settings':{
+					toggleSetting('u');
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][3]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad4':{
+			switch(game.menu.current){
+				case 'Manage':{
+					toggleSetting('mn');
+					break;
+				}
+				case 'Enhance':{
+					if(e.altKey){game.enhancements.gotoE();}
+					else{game.enhancements.buyE();}
+					break;
+				}
+				case 'Settings':{
+					toggleSetting('c');
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][4]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad5':{
+			switch(game.menu.current){
+				case 'Manage':{
+					toggleSetting('mt');
+					break;
+				}
+				case 'Settings':{
+					save();
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][5]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad6':{
+			switch(game.menu.current){
+				case 'Manage':{
+					toggleSetting('mu');
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][6]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad7':{
+			switch(game.menu.current){
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][7]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad8':{
+			switch(game.menu.current){
+				case 'Settings':{
+					game.settings.content.s?.click();
+					break;
+				}
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][8]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'Numpad9':{
+			switch(game.menu.current){
+				case 'Help':{
+					[...document.getElementsByClassName('helpTopic')][9]?.click();
+					break;
+				}
+			}
+			break;
+		}
+		case 'NumpadAdd':{
+			const temp = Math.max(historyIndex-1,0);
+			if(temp === historyIndex){return;}
+			historyIndex = temp;
+			game.menu.gotoNode(history[historyIndex], null, false);
+			break;
+		}
+		case 'NumpadSubtract':{
+			const temp = Math.min(historyIndex+1,history.length-1);
+			if(temp === historyIndex){return;}
+			historyIndex = temp;
+			game.menu.gotoNode(history[historyIndex], null, false);
+			break;
+		}
+
+		default:{
+			//console.log(e);
+		}
+	}
+	
+};

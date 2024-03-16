@@ -60,7 +60,7 @@ Enhancements.prototype.buyD = function(){
 	this.update();
 }
 Enhancements.prototype.powerD = function(){
-	return .99**(this.d * this.powerE());
+	return .995**(this.d * this.powerE());
 }
 Enhancements.prototype.gotoD = function(){
 	game.menu.gotoNode(this.costD().inv.f.n);
@@ -135,7 +135,7 @@ Enhancements.prototype.buyM = function(){
 	this.update();
 }
 Enhancements.prototype.powerM = function(){
-	return 1.05**(this.m * this.powerE());
+	return 1.02**(this.m * this.powerE());
 }
 Enhancements.prototype.gotoM = function(){
 	game.menu.gotoNode(this.costM().inv.f.n);

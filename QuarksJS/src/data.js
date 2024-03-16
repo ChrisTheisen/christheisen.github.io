@@ -16,15 +16,29 @@ let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
 
-//items
+// const test_a = { n: 'test_a', c:[test_0,test_1], info:['Test Group A: test_1 in two groups'] };
+// const test_b = { n: 'test_b', c:[test_1,test_2, test_7], info:['Test Group B: test_1 in two groups'] };
+// const test_c = { n: 'test_c', c:[test_3], info:['Test Group C: test creatable item with child item'] };//This kind of works, but could be better.
+// const test_d = { n: 'test_d', c:[test_4,test_5,test_6], info:['Test Group D: test bulk component ingredients'] };
+
+// const test = {
+	// n:'Test', u:true, c: [test_a,test_b,test_c,test_d],
+	// info: ['Test group for testing']
+// }
+
 const Quark = {
     n: 'Quark', u: true, c: [Q_Up, Q_Down],
 	info: ['Quarks are some of the most basic building blocks. They come in 6 types: Up, Down, Charm, Strange, Top, and Bottom. In this game we are only using Up and Down.', 'The mass of individual quarks is difficult to measure since they are always found inside of hadrons.']
 };
 const Lepton = {
     n: 'Lepton', u: true, c: [Electron],
-    info: ['Leptons are some of the most basic building blocks. They come in 6 types: Electron, Muon, Tau, Electron Neutrino, Muon Neutrino, and Tau Neutrino. In this game we are only using Electrons.', 'Electrons are the item with the least mass in this game.' ]
+    info: ['Leptons are some of the most basic building blocks. They come in 6 types: Electron, Muon, Tau, Electron Neutrino, Muon Neutrino, and Tau Neutrino. In this game we are only using Electrons.', 'Electrons are the item with the least mass besides photons in this game.' ]
 };
+const GaugeBoson = {
+    n: 'Gauge Boson', u: true, c: [Photon],
+    info: ['Gauge Bosons are some of the most basic particles in particle physics. They come in 4 types: gluon, photon, z boson, and w boson. In this game we are only using Photons.', 'Photons don\'t have any mass in the traditional sense but do carry energy proportional to their frequency.', 'Photon inputs in this game are approximates and should not be relied on for real life situations.']
+};
+
 const Baryon = {
     n: 'Baryon', u: false, c: [Proton, Neutron],
     info: ['Baryons are a type of hadron made of 3 Quarks. There are a few dozen different types of Baryons. In this game we are only using Protons and Neutrons.', 
@@ -32,7 +46,7 @@ const Baryon = {
 		'The mass of 3 quarks does not equal the mass of one baryon. This is a result of some physics that I looked up but does not make sense to me.']
 };
 const H = {
-    n: 'Hydrogen', u: false, c: [H1, H2],
+    n: 'Hydrogen', u: false, c: [H1, H2, H3],
     info: ['Hydrogen is the most common element in the universe, made with only a single proton. Hydrogen is highly flamable and lighter than air.']
 };
 const He = {
@@ -138,7 +152,7 @@ const Fe = {
 const Co = {
 	n:'Cobalt', u:false, c:[Co59],
 	info: ['Cobalt can be magnetised and is used in industries where high-temperature strength is important.']
-};
+	};
 const Ni = {
 	n:'Nickel', u:false, c:[Ni58,Ni60,Ni61,Ni62,Ni64],
 	info: ['Nickel is mainly used in making steel alloys like stainless steel.']
@@ -603,7 +617,7 @@ const alkane = {
 	info: ['Alkanes are saturaded hydrocarbons, meaning they consist of hydrogen and carbon with single covalent bonds between carbon atoms.']
 }
 const alkene = {
-	n:'Alkene', u:false, c:[ethene, propene, butene],
+	n:'Alkene', u:false, c:[methene, ethene, propene, butene],
 	info: ['Alkenes are hydrocarbons with at least one carbon atom double bonded to another carbon atom.']
 }
 const alkyne = {
@@ -623,12 +637,12 @@ const alcohol = {
 	info: ['Alcohols are an oganic compound that contain a hydroxyl group OH bonded to a carbon atom.']
 }
 const hydroxyl = {
-	n:'Hydroxyl', u:false, c:[],
-	info: ['']
+	n:'Hydroxyl', u:false, c:[coniferylAlcohol],
+	info: ['Hydroxyls are organic compounds with an Oxygen atom bonded to a Hydrogen atom (-OH).']
 }
 const carbonyl = {
-	n:'Carbonyl', u:false, c:[],
-	info: ['']
+	n:'Carbonyl', u:false, c:[phenylalanine],
+	info: ['Carboxyls are organic compounds with a carbon atom double-bonded to an oxygen atom that is single bonded to a hydroxyl group (-OH).', 'This follows the pattern -COOH']
 }
 
 const ether = {
@@ -668,29 +682,48 @@ const nitrile = {
 	info: ['Nitriles have a carbon atom triple bonded to a nitrogen atom.']
 }
 
-
-const carbohydrate = {
-	n:'Carbohydrate', u:false, c:[],
-	info: ['Carbohydrate is not an actual IUPAC functional group, but I thought it made sense to include it as a group.']
+const monosaccharide = {
+	n:'Monosaccharide', u:false, c:[glucose, fructose, ribose, xylose, mannose, galactose, arabinose],
+	info:['Monosaccharides are a simple form of carbohydrates and are often called simple sugars.']
 }
-
+const polysaccharide = {
+	n:'Polysaccharide', u:false, c:[cellulose, glycogen, hemicellulose],
+	info:['Polysaccharides are chains of monosaccharide molecules.', 'In this game I standardized chain lengths to something I thought seemed good. In the universe there are more possible sizes and ingredient ratios.', 'As with many things in thig game, polysaccharide recipes have been simplified.']
+}
+const carbohydrate = {
+	n:'Carbohydrate', u:false, c:[monosaccharide, polysaccharide],
+	info: ['Carbohydrate serve as a primary source of energy for most known living organisms.']
+}
+const lignin = {
+	n:'Lignin', u:false, c:[hardLignin, softLignin],
+	info: ['Lignins are complex polymers derived from amino acids.', 'There are many types of lignins, this game has some.']
+}
+const woodMolecule = {
+	n:'Wood', u:false, c:[hardwoodParticle, softwoodParticle],
+	info: ['Wood is mostly composed of cellulose, hemicellulose, and lignin.', 'There are many types of wood, this game has some.']
+}
 //epoxide,imine,acidChloride,anhydride (carboxylic Anhydride?), nitro, sulfide(thioether), azide
 const organicFunctionalGroup = {
 	n:'Functional Groups', u:false, c:[alkane,alkene,alkyne,benzeneRing,amine,alcohol,hydroxyl,carbonyl,ether,alkylHalide,thiol,aldehyde,ketone,ester,carboxylicAcid,amide,nitrile],
 	info:['Functional groups organize organic compounds with similar characteristic chemical reactions.']
 }
+const complexOrganicMaterial = {
+	n:'Complex Material', u:false, c:[lignin, woodMolecule],
+	info: ['Complex Organic Materials is a group for items that are not in functional groups and are more complex building blocks of organic material.']
+}
+
 
 const organic = {
-	n:'Organic Compounds', u:false, c:[organicFunctionalGroup],
+	n:'Organic Compounds', u:false, c:[organicFunctionalGroup, carbohydrate, complexOrganicMaterial],
 	info:['Organic compounds contain bonded carbon and hydrogen atoms along with other elements.']
 }
 
 const binaryHydride = {
-	n:'Binary Hydride', u:false, c:[ammonia,water],
+	n:'Binary Hydride', u:false, c:[ammonia,water,heavyWater,tritiatedWater,hydronium],
 	info:['Binary hydrides contain hydrogen and one other element.']
 }
 const binaryOxide = {
-	n:'Binary Oxide', u:false, c:[water,carbonMonoxide,carbonDioxide],
+	n:'Binary Oxide', u:false, c:[water,carbonMonoxide,carbonDioxide,heavyWater,tritiatedWater,hydronium],
 	info:['Binary oxides contain hydrogen and one other element.']
 }
 
@@ -709,13 +742,13 @@ const acid = {
 }
 
 const base = {
-	n:'Base', u:false, c:[NaOH],
+	n:'Base', u:false, c:[NaOH, KOH],
 	info:['Bases react with the hydrogen ions and neutralize the acids.']
 }
 
 
 const salt = {
-	n:'Salts', u:false, c:[NaCl,KCl],
+	n:'Salts', u:false, c:[NaCl,KCl,Na2S,Na2SO4],
 	info:['Salts can be formed as a result of combining acids and bases.']
 }
 
@@ -739,11 +772,37 @@ const inorganic = {
 	info:['Inorganic compounds do not contain carbon-hydrogen bonds.']
 }
 
+const woodMotes = {
+	n:'Motes', u:false, c:[hardwoodFiber, softwoodFiber, hardwoodChip, softwoodChip, hardwoodPulp, softwoodPulp],
+	info:['Wood Motes are small pieces of wood.']
+}
+const lumber = {
+	n:'Lumber', u:false, c:[],
+	info:['Lumber is a common building material.', 'In this game I use lumber as a very broad term to include wooden construction material.']
+}
+
+const paper = {
+	n:'Paper', u:false, c:[paperA4],
+	info:['There are many types of paper made with different types of pulp.', ]
+}
+const woodHuman = {
+	n:'Wood', u:false, c:[woodMotes, lumber, paper],
+	info: ['Wood is mostly composed of cellulose, hemicellulose, and lignin.', 'There are many types of wood, this game has some.']
+}
+const paperMaking = {
+	n:'Paper Making', u:false, c:[whiteLiquorMote, whiteLiquor, blackLiquor, paper],
+	info: ['Chemicals used in paper making.']
+}
+const industrial = {
+	n:'Industrial', u:false, c:[paperMaking],
+	info: ['Industrial items are generally chemicals used in industrial production proceses.']
+}
+
 //magnitude groups
 const subatomic = {
     n: 'Subatomic', u: true,
 	info: ['Subatomic components are the smallest items in this game.', 'In this game most subatomic items are free to generate'], 
-    c: [Quark, Lepton, Baryon]
+    c: [Quark, Lepton, GaugeBoson, Baryon]
 };
 const atomic = {
     n: 'Atomic', u: false,
@@ -758,7 +817,7 @@ const molecular = {
 const human = {
     n: 'Human', u: false,
     info: ['Human scale is right in the middle, Malcome is human sized and also in the middle.'],
-    c: []
+    c: [woodHuman,industrial]
 };
 const planetary = {
     n: 'Planetary', u: false,
@@ -774,25 +833,6 @@ const blackHole = {
     n: 'Black Hole', u: false,
     info: ['Black Holes are so dense they trap light; the smallest type of black holes range from about five to fifty solar masses. Supermassive Black Holes can be tens of billions times the mass of our Sun.'],
     c: []	
-}
-
-const test_0 = { n: 'test_0', m: new Amount({Da:1}), o: [], i: [] };
-const test_1 = { n: 'test_1', m: new Amount({Da:2}), o: [], i: [] };
-const test_2 = { n: 'test_2', m: new Amount({Da:3}), o: [{a:1, f:test_0}], i: [] };
-const test_3 = { n: 'test_3', m: new Amount({Da:4}), o: [], i: [{f:test_1, a:1, b:null}], info:['Creatable item with also children'], c:[test_0] };
-const test_4 = { n: 'test_4', m: new Amount({Da:5}), o: [], i: [{f:test_0, a:0, b:new Amount({Da:3})}] };
-const test_5 = { n: 'test_5', m: new Amount({Da:5}), o: [], i: [{f:test_1, a:0, b:new Amount({Da:1})}, {f:test_0, a:1, b:null}] };
-const test_6 = { n: 'test_6', m: new Amount({Da:5}), o: [], i: [{f:test_1, a:1, b:new Amount({Da:1})}, {f:test_2, a:1, b:null}] };
-
-const test_a = { n: 'test_a', c:[test_0,test_1], info:['Test Group A: test_1 in two groups'] };
-const test_b = { n: 'test_b', c:[test_1,test_2], info:['Test Group B: test_1 in two groups'] };
-const test_c = { n: 'test_c', c:[test_3], info:['Test Group C: test creatable item with child item'] };//This kind of works, but could be better.
-const test_d = { n: 'test_d', c:[test_4,test_5,test_6], info:['Test Group D: test bulk component ingredients'] };
-
-
-const test = {
-	n:'Test', u:true, c: [test_a,test_b,test_c,test_d],
-	info: ['Test group for testing']
 }
 
 const items = [
@@ -828,8 +868,58 @@ const help = [
 		'(++) Upgrade buttons will upgrade the generator or enhancement.',
 		'(+>) Add buttons will add an item to the Matter Mutator in the Discover tab.',
 		'|',
+		'Misc:',
+		'Some items can be found in multiple places, it is the same item just included in multiple places for convenience.',
+		'Items can be accessed that have not been Discovered yet via (») Goto buttons. In order to access an item through the menu it will have to be Discovered from the Discovery tab.',
+		'Many items can be generated in multiple ways.',
 		'A game cycle is about 1 second.',
+		'Item symbols are not all unique, if you hover over an item\'s symbol it will show the name.',
 		'The Spacebar pauses the game'
+	]},
+	{t:'Hotkeys', c:[
+		'Menu navigation:',
+		'Left/Right: Select the adjacent menu items of the same level',
+		'Up/Down: Go up/down one level',
+		'Numpad +/-: Go back/forward in selected menu history',
+		'Numpad 0-9: Interact with common UI elements (Details Below)',
+		'Note: Arrow key navigation is disabled with an input element has focus.',
+		'|',
+		'Create',
+		'0: Manually generate first recipe with sufficient inputs.',
+		'|',
+		'Discover',
+		'Enter: focus search input',
+		'1: Toggle Hide below threshold.',
+		'|',
+		'Manage',
+		'1: Toggle Hide Created = 0',
+		'2: Toggle Hide Created < Flow',
+		'3: Toggle Hide Created < Used',
+		'4: Toggle Hide Used = 0',
+		'5: Toggle Hide Used < Demand',
+		'6: Toggle Hide Used < Created',
+		'|',
+		'Enhance',
+		'1: Buy upgrade for Generator Output',
+		'2: Buy upgrade for Manual Output',
+		'3: Buy upgrade for Generator Cost',
+		'4: Buy upgrade for Enahancment Enhancer',
+		'ALT+1: Goto item to upgrade Generator Output',
+		'ALT+2: Goto item to upgrade Manual Output',
+		'ALT+3: Goto item to upgrade Generator Cost',
+		'ALT+4: Goto item to upgrade Enahancment Enhancer',
+		'HINT: The hotkeys [ALT+1, 0, -, 1] will goto the item for upgrade 1, create it if you can, go back to this tab, and buy the upgrade if you can',
+		'|',
+		'Settings',
+		'1: Toggle Introduction Hints with a green border',
+		'2: Toggle Flavor text and bonus info',
+		'3: Toggle Used-In Spoiler Warning',
+		'4: Toggle Cheater Mode',
+		'5: Save Game',
+		'8: Restore detault Settings',
+		'|',
+		'Help',
+		'0-9: Expand/Collapse help sections'
 	]},
 	{t:'Create', c:[
 		'The Create tab lets you create items.',
@@ -838,7 +928,7 @@ const help = [
 		'Bulk storage storage is where surplus inventory is stored and is used in some generators.',		
 		'Bulk storage is available on items that have an inventory > 1048576 (2^20).',
 		'|',
-		'Generator generate (->) button will manually run the generator. There is a bonus for manually running a low level generators to help get started with new items.', 
+		'Generator generate (->) button will manually run the generator.', 
 		'Generator level (++) button will upgrade generators that will automatically create items every cycle.', 
 		'Note: generators with multiple outputs will use all outputs to upgrade the generator.',
 		'|',
@@ -902,13 +992,12 @@ const help = [
 	]},
 	{t:'Sources', c:[
 		'I got most of my information from:',
-		'My brother',
-		'https://periodictable.com',
-		'https://www.rsc.org/periodic-table',
-		'https://www.chemspider.com/',
-		'https://webbook.nist.gov/chemistry/name-ser/',
-		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/',
-		'https://chat.openai.com/',
+		'My brothers - Used for their smart brain skills',
+		'https://periodictable.com - Used for atom isotopes; I included the bolded isotopes',
+		'https://www.rsc.org/periodic-table - Used for atom information',
+		'https://webbook.nist.gov/chemistry/name-ser/ - Used for molecule symbols',
+		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/ - Used for learning about functional groups',
+		'https://chat.openai.com/ - Used for general questions; verified most responses with outside sources',
 		'|',
 		'If you have a suggestion of items you want added you can email: grumdrig333@gmail.com',
 	]},

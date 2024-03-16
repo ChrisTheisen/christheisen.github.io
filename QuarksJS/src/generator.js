@@ -37,7 +37,7 @@ Generator.prototype.renderInputItem = function(parent, input){
 	}
 	
 	if(!input.b.isZero()){
-		const aw = createUIElement({parent:cw, cssClasses:['row']});
+		const aw = createUIElement({parent:cw, cssClasses:['flex']});
 		input.inv.b.render(createUIElement({parent:aw}), true);
 		createUIElement({parent:aw, textContent:'/', cssClasses:[] });
 		input.b.render(createUIElement({parent:aw}), true);
@@ -64,6 +64,7 @@ Generator.prototype.renderOutput = function(parent){
 			cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
 			onclick:() => game.menu.gotoNode(x.inv.f.n)});
 
+		createUIElement({parent:row, textContent:x.a, cssClasses:['cell']});
 		formatItemSymbols(x.inv.f, createUIElement({parent:row,	cssClasses:['cell']}));
 	});
 }
@@ -90,7 +91,7 @@ Generator.prototype.render0 = function(parent){
 
 	//manual button
 	this.content.b = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
-		cssClasses:['circleButton', 'cell'], textContent:'->', title:'Manual Generate',
+		cssClasses:['circleButton', 'cell', 'genButton'], textContent:'->', title:'Manual Generate',
 		onclick:() => this.generateClick()});
 
 	//output
@@ -250,7 +251,7 @@ Generator.prototype.generate = function(){
 }
 Generator.prototype.generateClick = function(){
 	//bonus for getting started on a new generator.
-	const amount = Math.ceil(game.enhancements.powerM()) * (this.l<4?(6-this.l)*2:1);
+	const amount = Math.ceil(game.enhancements.powerM());
 	if(game.settings.c){//if cheater then just create setpoint
 		this.increaseOutput(amount);
 		return;
