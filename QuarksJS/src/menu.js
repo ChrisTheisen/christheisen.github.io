@@ -1,7 +1,8 @@
-function Menu(parent, parentDiv, input, name, b){
+function Menu(parent, parentDiv, input, id, name, b){
 	this.b = b;
 	this.d = parentDiv;
 	this.n = name;
+	this.id = id;
 	this.p = parent;
 	if(!input){return;}
 	this.children = {};
@@ -11,14 +12,14 @@ function Menu(parent, parentDiv, input, name, b){
 	const c = createUIElement({parent:parentDiv, cssClasses:['menuContentWrapper']});
 	
 	input?.forEach(x => {
-		this.children[x.n] = {};
+		this.children[x.id||x.n] = {};
 		const btnClass = x.u ? [] : ['hide']
 		const div = createUIElement({parent:c, cssClasses:['hide', 'content']});
 		const btn = createUIElement({type:'button', parent:m, textContent:x.n, cssClasses:btnClass, 
 			onclick:()=>{
-				this.current=this.current!==x.n?x.n:null; 
+				this.current=this.current!==x.id?x.id:null; 
 				this.route();
-				game.hint();//noob messages
+				if(game.h){game.intro();}//noob messages
 				} 
 			});
 		if(!x.menu){x.menu = [];}
@@ -31,7 +32,7 @@ function Menu(parent, parentDiv, input, name, b){
 		const intro = createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']});
 		intro.classList.toggle('hide', x.intro && !game.settings.h)
 
-		this.children[x.n] = new Menu(this, div, x.c, x.n, btn);
+		this.children[x.id||x.n] = new Menu(this, div, x.c, x.id, x.n, btn);
 	});
 }
 
@@ -51,24 +52,24 @@ Menu.prototype.route = function(addHistory = true){
 		x.content.g.length = 0;
 	});
 	switch(this.current){
-		case 'Discover': {
+		case 'M_1': {
 			this.renderDiscover(div);
 			break;
 		}
-		case 'Manage': {
+		case 'M_2': {
 			game.generators.forEach(x => x.content.f.length = 0);
 			this.renderManage(div);
 			break;
 		}
-		case 'Enhance':{
+		case 'M_3':{
 			this.renderEnhance(div);
 			break;
 		}
-		case 'Settings': {
+		case 'M_4': {
 			this.renderSettings(div);
 			break;
 		}
-		case 'Help': {
+		case 'M_5': {
 			this.renderHelp(div);
 			break;
 		}
@@ -93,6 +94,18 @@ Menu.prototype.route = function(addHistory = true){
 		root.replaceChildren(div);
 	}
 	this.update(); 
+}
+
+Menu.prototype.containsChild = function(input, parent = null, addHistory=true){
+	if(Object.keys(this.children ?? {}).includes(input)){
+		return true;
+	}
+	for(let [key, value] of Object.entries(this.children ?? {})){
+		if(value?.containsChild(input, this, addHistory)){
+			return true;
+		}
+	}
+	return false;
 }
 Menu.prototype.gotoNode = function(input, parent = null, addHistory=true){
 	if(Object.keys(this.children ?? {}).includes(input)){
@@ -178,67 +191,66 @@ Menu.prototype.update = function(){
 	this.children[this.current]?.update();//needed for gotoLeaf to work.
 
 	switch(game.menu.current){
-		case 'Create':{
+		case 'M_0':{
 			game.inventory.update();//updates the content quick when tab changes.
 			break;
 		}
-		case 'Discover': {
+		case 'M_1': {
 			game.inventory.update();//updates the content quick when tab changes.
 			break;
 		}
-		case 'Manage': {
+		case 'M_2': {
 			game.inventory.update();//updates the content quick when tab changes.
 			break;
 		}
-		case 'Enhance': {
+		case 'M_3': {
 			game.enhancements.update();
 			break;
 		}
-		case 'Settings':{
+		case 'M_4':{
 			
 		}
 	}
 }
-Menu.prototype.updateTable = function(){
-	const table = getUIElement('table');
+Menu.prototype.updateMM = function(){
 	const newTable = [];
-	const names = game.table.map(x => x.f.n).sort();
+	const ff = game.mm.map(x => x.f).sort((a,b) => a.n.localeCompare(b.n));
 	
-	names.forEach(x => {
-		const item = createUIElement({cssClasses:['tableItem', 'nowrap', 'row']});
+	ff.forEach(x => {
+		const item = createUIElement({cssClasses:['mmItem', 'nowrap', 'row']});
 		
-		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Table',
+		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Matter Mutator',
 			onclick:() => {
-				for(let i=0;i<game.table.length;i++){
-					if(game.table[i].f.n === x){
-						game.table.splice(i,1);
-						game.menu.updateTable();
+				for(let i=0;i<game.mm.length;i++){
+					if(game.mm[i].f.id === x.id){
+						game.mm.splice(i,1);
+						game.menu.updateMM();
 						return;
 					}
 				}
 			}
 		});
-		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell'], style:{textAlign:'left', fontSize:'14px'}});
+		createUIElement({type:'span', parent:item, textContent:x.n, cssClasses:['cell'], style:{textAlign:'left', fontSize:'14px'}});
 		
 		newTable.push(item);
 	});
 	
-	table.replaceChildren(...newTable);
+	game.dContent.mm.replaceChildren(...newTable);
 }
 Menu.prototype.isDisplayed = function(input){
-	if(!this.p){return true;}//top level, just do a true
-	return this.current === input &&  this.p.isDisplayed(this.n);
+	if(this.current === input){return true;}
+	if(!this.current || !this.children[this.current]){return false;}
+	return this.children[this.current].isDisplayed(input);
 }
 
 Menu.prototype.updateResults = function(input){
-	const table = getUIElement('table');
 	const newTable = [];
 
 	input.forEach(x => {
 		newTable.push(createUIElement({textContent:x.f?.n??x}));
 	});
 	
-	table.replaceChildren(...newTable);
+	game.dContent.mm.replaceChildren(...newTable);
 }
 
 Menu.prototype.renderDiscover = function(parent){
@@ -268,25 +280,26 @@ Menu.prototype.renderDiscover = function(parent){
 	game.settings.content.d.l.value = game.settings.d.l;
 
 	const hint = createUIElement({parent:top, cssClasses:['hintZone']});
-	const btnHint = createUIElement({type:'button', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
+	game.dContent.btnHint = createUIElement({type:'button', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
+		onclick:()=> getDiscoverHint()
+		});
+	const houtText = game.discoverHint.map(x => x.f.n).join();
+	game.dContent.hout = createUIElement({type:'span',parent:hint,textContent:houtText});
+	game.dContent.hadd = createUIElement({type:'button', textContent:'+>', parent:hint, cssClasses:game.dinterval?['circleButton']:['circleButton','hide'], style:{marginLeft:'15px'},
 		onclick:()=> {
-			setElementText(hout, generateDiscoverHint()); 
-			btnHint.classList.add('hide');  
-			game.dinterval = setTimeout(() => {
-				btnHint.classList.remove('hide');
-				game.dhint = null;
-				setElementText(hout, null);
-				
-				clearInterval(game.dinterval);
-				game.dinterval = null;
-			}, 60000);
+			game.discoverHint.forEach(x=>{
+				if(game.mm.includes(x)){return;}
+				if(x.a) { game.mm.push(x); }
+				else{makeToast(`Unable to add ${x.f.n} to the Matter Mutator.`);}
+			})
+			game.menu.updateMM();
 		}});
-	const hout = createUIElement({type:'span',parent:hint,textContent:game.dhint});
+	
 
-	createUIElement({type:'button', id:'btnScan', textContent:'Scan', parent:top,
+	game.dContent.btnScan = createUIElement({type:'button', textContent:'Scan', parent:top,
 		onclick:()=>{
-			const results = findLockedFlavorsByComponents(game.table.map(x => x.f));
-			game.table.length = 0;
+			const results = findLockedFlavorsByComponents(game.mm.map(x => x.f));
+			game.mm.length = 0;
 			if(!results.length){
 				this.updateResults(['No new items discovered']);
 				return;
@@ -309,28 +322,12 @@ Menu.prototype.renderDiscover = function(parent){
 	
 	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
 	createUIElement({type:'h3', parent:matterMutator, textContent:'Matter Mutator'});
-	const table = createUIElement({id:'table', parent: matterMutator, cssClasses:['matterMutator']});
-		const names = game.table.map(x => x.f.n).sort();
-	
-	names.forEach(x => {
-		const item = createUIElement({parent: table, cssClasses:['tableItem', 'nowrap', 'row']});
-		
-		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Table',
-			onclick:() => {
-				for(let i=0;i<game.table.length;i++){
-					if(game.table[i].f.n === x){
-						game.table.splice(i,1);
-						game.menu.updateTable();
-						return;
-					}
-				}
-			}
-		});
-		createUIElement({type:'span', parent:item, textContent:x, cssClasses:['cell'], style:{textAlign:'left', fontSize:'14px'}});
-	});
+	game.dContent.mm = createUIElement({parent: matterMutator, cssClasses:['matterMutator']});
+
+	this.updateMM();
 }
 
-Menu.prototype.renderManage = function(parent){
+Menu.prototype.renderManage = async function(parent){
 	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center'], style:{display:'table'}});
 
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
@@ -377,7 +374,7 @@ Menu.prototype.renderManage = function(parent){
 	});
 	game.settings.content.m.u.checked = game.settings.m.u;
 
-	game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
+	await game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }
 
 Menu.prototype.renderEnhance = function(parent){
@@ -431,7 +428,7 @@ Menu.prototype.renderSettings = function(parent){
 	createUIElement({type: 'textarea', parent: m, textContent: localStorage.getItem('Q'), attr:{rows:'10', cols:'80', disabled:'true'}})
 	
 	createUIElement({parent:m, textContent:'Input Load Data:'});
-	createUIElement({type: 'textarea', parent: m, id:'txtLoad', attr:{rows:'10', cols:'80'}})
+	game.settings.content.s.txtLoad = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
 	createUIElement({type:'button', parent:createUIElement({parent: parent, cssClasses:['settingsRow']}), textContent:'Load Data',
 		style:{marginLeft:'15px'}, onclick:() => loadSaveData()
 	});

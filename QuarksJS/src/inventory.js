@@ -3,13 +3,13 @@ function Inventory(){
 }
 Inventory.prototype.getInvByFlavor = function(input){
 	if(!input){return;}
-	const f = this.children[input.n];
+	const f = this.children[input.id];
 	if(f){
 		return f
 	}
 	
 	const newItem = new InventoryItem(input);
-	this.children[input.n] = newItem;
+	this.children[input.id] = newItem;
 	return newItem;
 }
 
@@ -58,7 +58,7 @@ function InventoryItem(input){
 	this.v = {a: 0, b: new Amount()};//deposit value
 	this.w = {a: 0, b: new Amount()};//withdraw amount
 	
-	AllFlavors[this.f.n]=this;
+	AllFlavors[this.f.id]=this;
 	this.content = {
 		a:[], //amount label
 		bs:null, //bulk storage area
@@ -84,20 +84,20 @@ function InventoryItem(input){
 }
 
 InventoryItem.prototype.mapGenerators = function(){
-	this.g = game.generators.filter(x => x.o.some(o => o.inv.f.n === this.f.n));
-	this.i = game.generators.filter(x => x.i.some(i => i.inv.f.n === this.f.n));
+	this.g = game.generators.filter(x => x.o.some(o => o.inv.f.id === this.f.id));
+	this.i = game.generators.filter(x => x.i.some(i => i.inv.f.id === this.f.id));
 }
 InventoryItem.prototype.calculateDemand = function(){
 	let output = 0;
 	this.i.forEach(x => {
-		output += x.f * x.i.find(y => y.inv.f.n === this.f.n).a;
+		output += x.f * x.i.find(y => y.inv.f.id === this.f.id).a;
 	});
 	return output;
 }
 InventoryItem.prototype.calculateSumFlow = function(){
 	let output = 0;
 	this.g.forEach(x => {
-		output += x.f * x.o.find(y => y.inv.f.n === this.f.n).a;
+		output += x.f * x.o.find(y => y.inv.f.id === this.f.id).a;
 	});
 	return output;
 }
@@ -111,7 +111,6 @@ InventoryItem.prototype.unlock = function(){
 }
 
 InventoryItem.prototype.renderCreate = function(parent){
-	
 	const info = createUIElement({
 		parent:createUIElement({parent: parent, cssClasses:['block', 'center', 'flex'], style:{lineHeight:'20px', fontSize:'20px'}}),
 		style:{margin:'auto',display:'flex'}
@@ -125,6 +124,22 @@ InventoryItem.prototype.renderCreate = function(parent){
 	createUIElement({type:'span', parent: m, textContent:'Mass:'})
 	this.f.m.render(createUIElement({parent:m}), true);
 	
+	if(!this.isUnlocked()){
+		createUIElement({type:'button', parent: createUIElement({parent: parent, cssClasses:['block', 'center']}), 
+		cssClasses:['itemInfo'] , textContent:'Discover This Item',
+			onclick:()=>{
+				game.mm.length = 0;
+				game.menu.gotoNode('M_1');
+				this.g[0].i.map(x => x.inv).forEach(x => {
+					if(game.mm.includes(x)){return;}
+					if(x.a) { game.mm.push(x); }
+					else{makeToast(`Unable to add ${x.f.n} to the Matter Mutator.`);}
+				});
+				game.menu.updateMM();
+			}
+		});
+		return;
+	}
 	
 	this.renderCreate0(createUIElement({parent: parent, cssClasses:['block', 'flex', 'center']}));
 	this.renderCreate1(createUIElement({parent: parent, cssClasses:['block', 'center']}));
@@ -262,7 +277,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 InventoryItem.prototype.renderDiscover = function(parent){
 	this.content.dg = createUIElement({type:'button', parent:createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Item',
-	onclick:() => game.menu.gotoNode(this.f.n)});
+	onclick:() => game.menu.gotoNode(this.f.id)});
 	formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowX:'clip', fontSize:'14px'}}));
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
@@ -270,7 +285,15 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
-	onclick:() => { if(this.a && !game.table.includes(this)){game.table.push(this); game.menu.updateTable(); this.update()}} });
+		onclick:() => { 
+			if(game.mm.includes(this)){return;}
+			if(this.a){
+				game.mm.push(this); 
+				game.menu.updateMM(); 
+				this.update()
+			}
+		}
+	});
 	
 	add.classList.toggle('disabled', !this.a);
 	
@@ -280,7 +303,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 InventoryItem.prototype.renderUsedIn = function(parent){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{width:'20%'}}), 
 		cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Item',
-	onclick:() => game.menu.gotoNode(this.f.n)});
+	onclick:() => game.menu.gotoNode(this.f.id)});
 	createUIElement({parent:parent, cssClasses:['cell'], textContent:this.f.n,style:{width:'40%', textAlign:'left'}});
 	
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'40%', textAlign:'left'}})
@@ -356,7 +379,7 @@ InventoryItem.prototype.renderManage = function(parent){
 	const n = createUIElement({type:'td', parent:row, cssClasses:['flex']});
 	createUIElement({type:'button', parent:n, 
 		cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
-		onclick:() => game.menu.gotoNode(this.f.n)});
+		onclick:() => game.menu.gotoNode(this.f.id)});
 	
 	formatItemSymbols(this.f, createUIElement({type:'td', parent:n, cssClasses:['nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px', lineHeight:'3'}}));
 	//formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}}));
@@ -370,10 +393,7 @@ InventoryItem.prototype.renderManage = function(parent){
 }
 
 InventoryItem.prototype.isDisplayed = function(){
-	const out = this.f.menu?.some(x => {
-		return x.isDisplayed(this.f.n);
-	});
-	return out;
+	return game.menu.isDisplayed(this.f.id);
 }
 
 InventoryItem.prototype.update = function(){
@@ -381,10 +401,10 @@ InventoryItem.prototype.update = function(){
 	const isUnlocked = this.isUnlocked();
 	
 	switch(game.menu.current){
-		case 'Create': {
+		case 'M_0': {
 			//These can be used in component sections of other elements
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
-			if(!this.isDisplayed()){return;}
+			if(!this.isDisplayed() || !isUnlocked){return;}
 
 			this.g.forEach(x => x.update());
 			
@@ -414,8 +434,8 @@ InventoryItem.prototype.update = function(){
 			this.w.b.update();
 			break;
 		}
-		case 'Discover': {
-			const tableContains = game.table.includes(this);
+		case 'M_1': {
+			const tableContains = game.mm.includes(this);
 			const filterDiscoverStock = game.settings.d.o && this.a < game.settings.d.l;
 			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s) && !this.f.s.replaceAll(/\W/g, '').toLowerCase().includes(game.settings.d.s);
 	
@@ -424,11 +444,11 @@ InventoryItem.prototype.update = function(){
 			this.content.p?.classList.toggle('hide', !isUnlocked || filterDiscoverStock || filterDiscoverSearch);
 			break;
 		}
-		case 'Manage': {
+		case 'M_2': {
 			const demand = this.calculateDemand();
 			const sumFlow = this.calculateSumFlow();
-			const created = ActualCreated[this.f.n] ?? 0;
-			const used = ActualUsed[this.f.n] ?? 0;
+			const created = ActualCreated[this.f.id] ?? 0;
+			const used = ActualUsed[this.f.id] ?? 0;
 			const f0 = game.settings.m.c && !created;
 			const f1 = game.settings.m.d && created === sumFlow;
 			const f2 = game.settings.m.m && created < sumFlow;

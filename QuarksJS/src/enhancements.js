@@ -42,7 +42,7 @@ function Enhancements(){
 
 //these are kept split up to give flexibility in balancing 
 Enhancements.prototype.costD = function(){
-	const a = 5*10**(1+Math.floor(this.d/AllSortedFlavors.length));
+	const a = 128*16**(4*Math.floor(this.d/AllSortedFlavors.length));
 	const i = this.d%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -63,11 +63,11 @@ Enhancements.prototype.powerD = function(){
 	return .995**(this.d * this.powerE());
 }
 Enhancements.prototype.gotoD = function(){
-	game.menu.gotoNode(this.costD().inv.f.n);
+	game.menu.gotoNode(this.costD().inv.f.id);
 }
 
 Enhancements.prototype.costE = function(){
-	const a = 25*10**(1+Math.floor(this.e/AllSortedFlavors.length));
+	const a = 1024*16**(4*Math.floor(this.e/AllSortedFlavors.length));
 	const i = this.e%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -88,11 +88,11 @@ Enhancements.prototype.powerE = function(){
 	return 1.005**this.e;
 }
 Enhancements.prototype.gotoE = function(){
-	game.menu.gotoNode(this.costE().inv.f.n);
+	game.menu.gotoNode(this.costE().inv.f.id);
 }
 
 Enhancements.prototype.costG = function(){
-	const a = 10**Math.floor(this.g/AllSortedFlavors.length);
+	const a = 32*16**(4*Math.floor(this.g/AllSortedFlavors.length));
 	const i = this.g%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -113,11 +113,11 @@ Enhancements.prototype.powerG = function(){
 	return 1.01**(this.g * this.powerE());
 }
 Enhancements.prototype.gotoG = function(){
-	game.menu.gotoNode(this.costG().inv.f.n);
+	game.menu.gotoNode(this.costG().inv.f.id);
 }
 
 Enhancements.prototype.costM = function(){
-	const a = 10**(1+Math.floor(this.m/AllSortedFlavors.length));
+	const a = 4*16**(4*Math.floor(this.m/AllSortedFlavors.length));
 	const i = this.m%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -138,7 +138,7 @@ Enhancements.prototype.powerM = function(){
 	return 1.02**(this.m * this.powerE());
 }
 Enhancements.prototype.gotoM = function(){
-	game.menu.gotoNode(this.costM().inv.f.n);
+	game.menu.gotoNode(this.costM().inv.f.id);
 }
 
 Enhancements.prototype.render = function(parent){
@@ -156,8 +156,8 @@ Enhancements.prototype.render = function(parent){
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'Need', title:'Amount needed to upgrade this enhancement'});
 
 
-	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowM = createUIElement({parent: wrapper, cssClasses:['row']});
+	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowD = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowE = createUIElement({parent: wrapper, cssClasses:['row']});
 	
@@ -172,7 +172,7 @@ Enhancements.prototype.render = function(parent){
 	this.content.e.l = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Level]' });
 
 	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Increase generator output while keeping input the same.'});
-	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Increase production when the button is clicked while keeping the input the same. This stacks with the Gen. Output enhancement.'});
+	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Increase output when the (->) button is clicked while keeping the input the same. This stacks with the Gen. Output enhancement.'});
 	createUIElement({parent:rowD, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Cost', title:'Reduce generator upgrade cost.'});
 	createUIElement({parent:rowE, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Enhancements', title:'Improve the other enhancement effects.'});
 

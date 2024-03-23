@@ -55,6 +55,13 @@ function addUIEventListener(element, func, event='click'){
 	element.addEventListener(event, func);
 }
 
+function makeToast(input){
+	const id = `TOAST_${Date.now()}`;
+	createUIElement({id: id, parent:getUIElement('toaster'), textContent:input, cssClasses:['toast'], title:'Click to dismiss',
+		onclick:()=>document.getElementById(id)?.remove()});
+	setTimeout(()=>document.getElementById(id)?.remove(),30000);
+}
+
 function isUnlocked(input){
 	if(!input.u){return false;}
 	const P = ParentMap[input.n];
@@ -67,9 +74,9 @@ function unlock(input){
 	if(!input){return;}
 	
 	input.u = true;
-	input.menu?.forEach(x => x.children[input.n].b.classList.remove('hide'));
+	input.menu?.forEach(x => x.children[input.id].b.classList.remove('hide'));
 
-	ParentMap[input.n]?.forEach(x => unlock(x));
+	ParentMap[input.id]?.forEach(x => unlock(x));
 }
 
 function formatItemSymbols(input, parent){
@@ -116,6 +123,23 @@ function toggleSetting(input){
 	}
 }
 
+function getDiscoverHint(hout, btnHint, hadd){
+	const d = game.menu.children.M_1.content;
+	
+	setElementText(game.dContent.hout, generateDiscoverHint()); 
+	game.dContent.btnHint.classList.add('hide');  
+	game.dContent.hadd.classList.remove('hide');
+	game.dinterval = setTimeout(() => {
+		game.dContent.btnHint.classList.remove('hide');
+		game.discoverHint.length = 0;
+		setElementText(game.dContent.hout, null);
+		game.dContent.hadd.classList.add('hide');
+		
+		clearInterval(game.dinterval);
+		game.dinterval = null;
+	}, 30000);
+}
+
 function generateDiscoverHint(){
 	//locked items that have all components unlocked
 	const lockedGenerators = game.generators.filter(x => x.o.some(o => !o.inv.f.u));
@@ -123,11 +147,8 @@ function generateDiscoverHint(){
 	if(!canUnlock.length){return ' None left, try again later.';}
 
 	const index = Math.floor(Math.random() * canUnlock.length);
-	const b = canUnlock[index];
-	
-	const c = b.i.map(x => x.inv.f.n);
-	game.dhint = c.join();
-	return ` ${game.dhint} `;
+	game.discoverHint = [...canUnlock[index].i].map(x => x.inv);
+	return ` ${game.discoverHint.map(x => x.f.n).join()} `;
 }
 
 function findLockedFlavorsByComponents(input){
@@ -148,8 +169,8 @@ function buildMaps(input, parent) {
 	input.forEach(x => {
 		if(parent){
 			//add to parentMap
-			if(!ParentMap[x.n]){ParentMap[x.n] = [];}
-			ParentMap[x.n].push(parent);
+			if(!ParentMap[x.id]){ParentMap[x.id] = [];}
+			ParentMap[x.id].push(parent);
 		}
 		if(x.c){
 			buildMaps(x.c, x);
@@ -176,7 +197,7 @@ function resetSettings(){
 }
 
 function loadSaveData(){
-	localStorage.setItem('Q', getUIElement('txtLoad').value);
+	localStorage.setItem('Q', game.settings.content.s.txtLoad.value);
 	load();
 }
 
@@ -221,7 +242,7 @@ function load() {
 	
 	game.clock.duration = Date.now() - data.c;
 	Object.entries(data.i).forEach(([key, value], index) => {
-		const inv = Object.values(game.inventory.children).find(x => x.f.s === key);
+		const inv = Object.values(game.inventory.children).find(x => x.f.id === key);
 		if(!inv){return;}
 	
 		inv.a = value?.a ?? 0;
@@ -281,7 +302,7 @@ function save() {
 		if(!value.a && !value.q && !value.f.u){
 			return;
 		}
-		const n = value.f.s;
+		const n = value.f.id;
 		data.i[n] = {}
 		//only save non-default values
 		if(!!value.a){ data.i[n].a = value.a; }
@@ -317,6 +338,10 @@ function hardReset(){
 	localStorage.removeItem('Q');
 	window.removeEventListener("beforeunload", saveBeforeUnload);
 	window.location.reload(false);
+}
+
+function test(){
+	makeToast("TEST MESAGE FROM CLICKER BUTTON");
 }
 
 function benchmark(){

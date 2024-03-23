@@ -14,6 +14,7 @@ function Generator({id, i=[], o=[]}){
 		c:null,//upgrade cost display
 		e:null,//enabled
 		f:[],//flow: create, manage
+		i:{},//inputs highlight when cannot afford
 		l:null,//level display
 		m:null,//max flow display
 		u:null//upgrade button
@@ -22,7 +23,7 @@ function Generator({id, i=[], o=[]}){
 Generator.prototype.renderInputItem = function(parent, input){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell']}), 
 		cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
-		onclick:() => game.menu.gotoNode(input.inv.f.n)});
+		onclick:() => game.menu.gotoNode(input.inv.f.id)});
 
 	formatItemSymbols(input.inv.f, createUIElement({parent:parent, cssClasses:['cell']}));
 
@@ -43,6 +44,7 @@ Generator.prototype.renderInputItem = function(parent, input){
 		input.b.render(createUIElement({parent:aw}), true);
 		input.b.update();//initial toggle visibility
 	}
+	this.content.i[input.inv.f.id] = cw;
 }
 Generator.prototype.renderInput = function(parent, input){
 	if(this.i.length === 0){
@@ -62,7 +64,7 @@ Generator.prototype.renderOutput = function(parent){
 		
 		createUIElement({type:'button', parent:createUIElement({parent:row, cssClasses:['cell']}), 
 			cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
-			onclick:() => game.menu.gotoNode(x.inv.f.n)});
+			onclick:() => game.menu.gotoNode(x.inv.f.id)});
 
 		createUIElement({parent:row, textContent:x.a, cssClasses:['cell']});
 		formatItemSymbols(x.inv.f, createUIElement({parent:row,	cssClasses:['cell']}));
@@ -70,6 +72,7 @@ Generator.prototype.renderOutput = function(parent){
 }
 
 Generator.prototype.render = function(parent){
+	this.content.i = {};
 	//enabled checkbox
 	const r0 = createUIElement({parent:parent, cssClasses:['row']});
 	const r1 = createUIElement({parent:parent, cssClasses:['row'], style:{backgroundColor:"var(--bg4)"}});
@@ -157,7 +160,14 @@ Generator.prototype.update = function(){
 
 Generator.prototype.canCreate = function(){
 	if(game.settings.c){return true;}
-	return !this.i.some(x => x.inv.a < x.a) && this.i.every(x => x.inv.b.compare(x.b) >= 0);
+	let output = true;
+	this.i.forEach(x => {
+		const isInsufficient = x.inv.a < x.a || x.inv.b.compare(x.b) < 0;
+		this.content.i[x.inv.f.id]?.classList.toggle('insufficient', isInsufficient);
+		if(isInsufficient) { output = false; } 
+	});
+	
+	return output;
 }
 Generator.prototype.canUpgrade = function(){
 	const cost = this.upgradeCost();
@@ -203,7 +213,7 @@ Generator.prototype.generateAmount = function() {
 Generator.prototype.decreaseInput = function(amount){
 	this.i.forEach(x => {
 		if(x.a){
-			ActualUsed[x.inv.f.n] = (ActualUsed[x.inv.f.n]??0) + x.a * amount;
+			ActualUsed[x.inv.f.id] = (ActualUsed[x.inv.f.id]??0) + x.a * amount;
 			x.inv.a -= x.a * amount
 		}
 		
@@ -217,7 +227,7 @@ Generator.prototype.decreaseInput = function(amount){
 Generator.prototype.increaseOutput = function(amount){
 	amount = amount * game.enhancements.powerG();
 	this.o.forEach(x => {
-		ActualCreated[x.inv.f.n] = amount;
+		ActualCreated[x.inv.f.id] = amount;
 		
 		if(x.a){
 			const amt = x.a * amount;
@@ -251,13 +261,16 @@ Generator.prototype.generate = function(){
 }
 Generator.prototype.generateClick = function(){
 	//bonus for getting started on a new generator.
-	const amount = Math.ceil(game.enhancements.powerM());
+	const amount = game.enhancements.powerM();
 	if(game.settings.c){//if cheater then just create setpoint
 		this.increaseOutput(amount);
 		return;
 	}
+	if(!this.canCreate()){return;}
+	
 	this.decreaseInput(1);
 	this.increaseOutput(amount);
+	this.update();
 }
 
 Generator.prototype.setFlow = function(input){

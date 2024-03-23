@@ -4,6 +4,7 @@
 	--bg2: #550000;
 	--bg3: #6500FF;
 	--bg4: #0032883D;
+	--c0: #FFFFFF;
 	--c1: #AAAAAA;
 	--c2: #555555;
 	--c3: #AA0000;
@@ -58,6 +59,10 @@ td{
 .root{
 	display:flex;
 	flex-flow:column;
+}
+
+.foot{
+	height:50px;
 }
 
 .center{
@@ -245,8 +250,7 @@ td{
 	border: solid 1px var(--c1);
 }
 
-
-.tableItem{
+.mmItem{
 	margin:5px;
 }
 
@@ -342,6 +346,10 @@ td{
 	padding:0px 5px;
 }
 
+.insufficient{
+	background-color:var(--bg2);
+}
+
 .help{
 	cursor:help;
 }
@@ -355,6 +363,23 @@ td{
 	padding: 10px;
 	margin-left:25%;
 	width:50%;
+}
+
+.toaster{
+	position:fixed;
+	top:0;
+	right:0;
+	max-width:450px;
+}
+
+.toast{
+	margin:10px;
+	padding:10px;
+	background-color:var(--bg1);
+	border:1px solid var(--c1);
+	color:var(--c0);
+	font-size:10pt;
+	cursor:pointer;
 }
 
 .hint{

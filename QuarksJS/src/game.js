@@ -28,7 +28,7 @@ GameClock.prototype.tick = function(){
 	const p = Math.min(100 * this.duration / this.updateRate, 100);
 	this.content.p.style.width = `${p}%`;
 	
-	if(game.h){	game.hint(); }
+	if(game.h){	game.intro(); }
 	if(this.duration < this.updateRate){ return; }
 	this.update();
 }
@@ -65,14 +65,14 @@ GameClock.prototype.update = function(){
 	this.toggleTabs();
 	
 	switch(game.menu.current){
-		case 'Create':
-		case 'Discover':
-		case 'Manage':
+		case 'M_0':
+		case 'M_1':
+		case 'M_2':
 		{
 			game.inventory.update();
 			break;
 		}
-		case 'Enhance':
+		case 'M_3':
 		{
 			game.enhancements.update();
 			break;
@@ -92,15 +92,15 @@ GameClock.prototype.toggleTabs = function(){
 	
 	//can discover when a generator is over level 3.
 	const canDiscover = game.generators.some(x => x.l > 3);
-	game.menu.children.Discover.b.classList.toggle('hide', !canDiscover);
+	game.menu.children.M_1.b.classList.toggle('hide', !canDiscover);
 	
 	//can manage when a generator for an item with components is over level 1.
 	const canManage = game.generators.some(x => x.l > 1 && x.i.length > 0);
-	game.menu.children.Manage.b.classList.toggle('hide', !canManage);
+	game.menu.children.M_2.b.classList.toggle('hide', !canManage);
 	
 	//can enhance when a generator for an item with components is over level 7.
 	const canEnhance = game.generators.some(x => x.l > 7 && x.i.length > 0);
-	game.menu.children.Enhance.b.classList.toggle('hide', !canEnhance);
+	game.menu.children.M_3.b.classList.toggle('hide', !canEnhance);
 }
 
 function Game(){
@@ -108,13 +108,15 @@ function Game(){
 	this.enhancements = new Enhancements();
 	this.inventory = new Inventory();
 	this.generators = [];
+	this.discoverHint = [];
+	this.dContent = {};
 	this.menu = new Menu();
 	this.h = true;
 	this.dinterval = null;
 	this.bx = 1;
 	this.by = 1;
 	this.settings = {
-		content: {d:{},m:{}},
+		content: {d:{},m:{},s:{}},
 		c: false,//cheater mode
 		h: true,//show helpful tips
 		i: true,//show info
@@ -133,12 +135,13 @@ function Game(){
 			u: false //hide used < created
 		}
 	};
-	this.table = [];
+	this.mm = [];
 }
-Game.prototype.hint = function(){
+Game.prototype.intro = function(){
 	const gic = this.inventory.children;
-	if(gic.Proton.a > 0 || gic.Neutron.a > 0 || gic.Proton.l > 0 || gic.Neutron.l > 0){
+	if(gic['04'].a > 0 || gic['05'].a > 0 || gic['04'].l > 0 || gic['05'].l > 0){
 		getUIElement('hint').classList.add('hide');
+		Array.from(document.getElementsByClassName('hintAnimate')).forEach(x => x.classList.remove('hintAnimate'));
 		this.h = false;
 		return;
 	}//far enough to no more hints
@@ -147,21 +150,22 @@ Game.prototype.hint = function(){
 	const downg = game.generators.find(x => x.o.some(y => y.inv.f.s === 'd'));
 
 	const shouldCreate = (upg.l < 4 || downg.l < 4);
-	this.menu.children.Create.b.classList.toggle('hintAnimate', shouldCreate && game.menu.current !== 'Create');
+	this.menu.children.M_0.b.classList.toggle('hintAnimate', shouldCreate && game.menu.current !== 'M_0');
 	
 	const hintZone = getUIElement('hint');
-	hintZone.classList.toggle('hintAnimate', !(upg.l >= 4 && downg.l >= 4 || game.menu.current == 'Create'));
+	hintZone.classList.toggle('hintAnimate', !(upg.l >= 4 && downg.l >= 4 || game.menu.current == 'M_0'));
 
-	const shouldSubatomic = shouldCreate && this.menu.current === 'Create';
-	this.menu.children.Create.children.Subatomic.b.classList.toggle('hintAnimate', shouldSubatomic && this.menu.children.Create.current !== 'Subatomic');
+	const shouldSubatomic = shouldCreate && this.menu.current === 'M_0';
+	this.menu.children.M_0.children.M_a.b.classList.toggle('hintAnimate', shouldSubatomic && this.menu.children.M_0.current !== 'M_a');
 
-	const shouldQuark = shouldSubatomic && this.menu.children.Create.current === 'Subatomic';
-	this.menu.children.Create.children.Subatomic.children.Quark.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.Create.children.Subatomic.current !== 'Quark' && (upg.l < 4 || downg.l < 4));
+	const shouldQuark = shouldSubatomic && this.menu.children.M_0.current === 'M_a';
+	this.menu.children.M_0.children.M_a.children._0.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.M_0.children.M_a.current !== '_0' && (upg.l < 4 || downg.l < 4));
+	if(shouldCreate || shouldSubatomic || shouldQuark){ setElementText(hintZone, 'Click the rainbow elements to get started.'); }
 
-	const shouldUp = shouldQuark && upg.l < 4  && this.menu.children.Create.children.Subatomic.current === 'Quark';
-	this.menu.children.Create.children.Subatomic.children.Quark.children['Up Quark'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < 4 && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Up Quark');
+	const shouldUp = shouldQuark && upg.l < 4  && this.menu.children.M_0.children.M_a.current === '_0';
+	this.menu.children.M_0.children.M_a.children._0.children['00'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < 4 && this.menu.children.M_0.children.M_a.children._0.current !== '00');
 	
-	const shouldUpDo = shouldUp && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Up Quark';
+	const shouldUpDo = shouldUp && this.menu.children.M_0.children.M_a.children._0.current === '00';
 	const shouldUpCreate = shouldUpDo && !upg.canUpgrade();
 	upg.content.b?.classList.toggle('hintAnimate', shouldUpCreate);
 	if(shouldUpCreate){ setElementText(hintZone, 'Create some Up Quarks by manually running the generator with the (->) button.'); }
@@ -171,10 +175,10 @@ Game.prototype.hint = function(){
 	if(shouldUpGenerate){ setElementText(hintZone, 'Upgrade the Up Quark Generator with the (++) button.'); }
 
 	const shouldDown = shouldQuark && upg.l > 3 && downg.l < 4;
-	this.menu.children.Create.children.Subatomic.children.Quark.children['Down Quark'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current !== 'Down Quark');
+	this.menu.children.M_0.children.M_a.children._0.children['01'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.M_0.children.M_a.children._0.current !== '01');
 	if(shouldDown){ setElementText(hintZone, 'Go to Down Quark.'); }
 	
-	const shouldDownDo = shouldDown && this.menu.children.Create.children.Subatomic.children.Quark.current === 'Down Quark';
+	const shouldDownDo = shouldDown && this.menu.children.M_0.children.M_a.children._0.current === '01';
 	const shouldDownCreate = shouldDownDo && !downg.canUpgrade();
 	downg.content.b?.classList.toggle('hintAnimate', shouldDownCreate);
 	if(shouldDownCreate){ setElementText(hintZone, 'Create some Down Quarks.'); }
@@ -183,28 +187,29 @@ Game.prototype.hint = function(){
 	downg.content.u?.classList.toggle('hintAnimate', shouldDownGenerate);
 	if(shouldDownGenerate){ setElementText(hintZone, 'Upgrade the Down Quark Generator.'); }
 	
-	const shouldDiscover = upg.l > 3 && downg.l > 3 && !gic.Proton.isUnlocked() && !gic.Neutron.isUnlocked();
-	this.menu.children.Discover.b.classList.toggle('hintAnimate', shouldDiscover && this.menu.current !== 'Discover');
+	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['04'].isUnlocked() && !gic['05'].isUnlocked()) ||
+		(gic['04'].isUnlocked() && game.menu.current !== 'M_1' && !gic['04'].isDisplayed());
+	this.menu.children.M_1.b.classList.toggle('hintAnimate', shouldDiscover && this.menu.current !== 'M_1');
 	if(shouldDiscover){ setElementText(hintZone, 'Go to the Discover tab at the top of the screen.'); }
 	
-	const shouldAddUp = shouldDiscover && this.menu.current === 'Discover' && !this.table.some(x => x.f.n === 'Up Quark');
-	this.inventory.children['Up Quark'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
+	const shouldAddUp = shouldDiscover && this.menu.current === 'M_1' && !this.mm.some(x => x.f.id === '00');
+	gic['00'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
 	if(shouldAddUp){ setElementText(hintZone, 'Add an Up Quark to the Matter Mutator with the (+>) button.'); }
 
-	const shouldAddDown = shouldDiscover && this.menu.current === 'Discover' && this.table.some(x => x.f.n === 'Up Quark') && !this.table.some(x => x.f.n === 'Down Quark');
-	this.inventory.children['Down Quark'].content.d?.classList.toggle('hintAnimate', shouldAddDown);
+	const shouldAddDown = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '00') && !this.mm.some(x => x.f.id === '01');
+	gic['01'].content.d?.classList.toggle('hintAnimate', shouldAddDown);
 	if(shouldAddDown){ setElementText(hintZone, 'Add a Down Quark to the Matter Mutator.'); }
 	
-	const shouldScan = shouldDiscover && this.menu.current === 'Discover' && this.table.some(x => x.f.n === 'Up Quark') && this.table.some(x => x.f.n === 'Down Quark') && !game.inventory.children.Proton.f.u;
-	getUIElement('btnScan')?.classList.toggle('hintAnimate', shouldScan);
+	const shouldScan = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '00') && this.mm.some(x => x.f.id === '01') && !gic['04'].f.u;
+	game.dContent.btnScan?.classList.toggle('hintAnimate', shouldScan);
 	if(shouldScan){ setElementText(hintZone, 'Click the Scan button to find new items and recipes.'); }
 	
-	const shouldProton = game.inventory.children.Proton.f.u;
-	const shouldProtonGo =  shouldProton && this.menu.children.Create.children.Subatomic.children.Baryon.current !== 'Proton';
-	game.inventory.children.Proton.content.dg?.classList.toggle('hintAnimate', shouldProtonGo);
+	const shouldProton = gic['04'].isUnlocked();
+	const shouldProtonGo =  shouldProton && this.menu.children.M_0.children.M_a.children._3.current !== '04';
+	gic['04'].content.dg?.classList.toggle('hintAnimate', shouldProtonGo);
 	if(shouldProtonGo){ setElementText(hintZone, 'Use the (») Goto Item button to jump to the Proton you just discovered.'); }
 	
-	if(shouldProton && this.menu.children.Create.children.Subatomic.children.Baryon.current === 'Proton'){
+	if(shouldProton && this.menu.children.M_0.children.M_a.children._3.current === '04'){
 		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
 		hintZone.classList.toggle('hintAnimate', true);
 	}
@@ -239,6 +244,22 @@ function init(){
 	game.clock.update();
 	buildUI();
 	
+	game.clock.status = 'Checking Game Data';
+	Object.values(AllFlavors).forEach(i => {
+		if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.f.id)))
+		{console.warn("MISSING GENERATOR: ", i.f.id, i.f.n);}
+	});
+	game.generators.forEach(g => {
+		g.i.forEach(i => {
+			if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.inv.f.id)))
+			{console.warn("MISSING INPUT: ", i.inv.f.id, i.inv.f.n);}
+		})
+	});
+	Object.values(AllFlavors).forEach(i => {
+		if(!game.menu.containsChild(i.f.id))
+		{console.warn("MISSING MENU: ", i.f.id, i.f.n);}
+	});
+
 	game.clock.status = 'Loading Save Data';
 	game.clock.update();
 	if(localStorage.getItem('Q')){
@@ -251,7 +272,7 @@ function init(){
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
-	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || a.f.n.localeCompare(b.f.n));
+	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || a.f.id.localeCompare(b.f.id));
 	game.clock.update();
 
 	game.clock.status = null;
@@ -259,7 +280,7 @@ function init(){
 	window.addEventListener("beforeunload", saveBeforeUnload);
 	game.clock.start();
 	game.clock.toggleTabs();
-	game.hint();
+	game.intro();
 }
 const game = new Game();
 init();
@@ -267,14 +288,13 @@ const history = [];
 let historyIndex = 0;
 //hotkeys
 onkeydown = (e) => {
+	if(document.activeElement?.nodeName.toLowerCase() === 'input'){return;}
 	switch(e.code){
 		case 'ArrowUp':{
-			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
 			game.menu.Up();
 			break;
 		}
 		case 'ArrowDown':{
-			if(document.activeElement?.nodeName.toLowerCase() === 'input'){break;}
 			game.menu.Down();
 			break;
 		}
@@ -297,13 +317,13 @@ onkeydown = (e) => {
 		}
 		case 'Numpad0':{
 			switch(game.menu.current){
-				case 'Create':{
+				case 'M_0':{
 					const a = [...document.getElementsByClassName('genButton')];
 					const b = a?.filter(x => !x.disabled) ?? [];
 					if(b.length>0){ b[0].click(); }
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][0]?.click();
 					break;
 				}
@@ -312,25 +332,24 @@ onkeydown = (e) => {
 		}
 		case 'Numpad1':{
 			switch(game.menu.current){
-				case 'Discover':{
+				case 'M_1':{
 					toggleSetting('do');
 					break;
 				}
-				case 'Manage':{
+				case 'M_2':{
 					toggleSetting('mc');
 					break;
 				}
-				case 'Enhance':{
-					console.log(e);
-					if(e.altKey){game.enhancements.gotoG();}
-					else{game.enhancements.buyG();}
+				case 'M_3':{
+					if(e.altKey){game.enhancements.gotoM();}
+					else{game.enhancements.buyM();}
 					break;
 				}
-				case 'Settings':{
+				case 'M_4':{
 					toggleSetting('h');
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][1]?.click();
 					break;
 				}
@@ -339,20 +358,24 @@ onkeydown = (e) => {
 		}
 		case 'Numpad2':{
 			switch(game.menu.current){
-				case 'Manage':{
+				case 'M_1':{
+					//focus threshold limit
+					break;
+				}
+				case 'M_2':{
 					toggleSetting('mm');
 					break;
 				}
-				case 'Enhance':{
-					if(e.altKey){game.enhancements.gotoM();}
-					else{game.enhancements.buyM();}
+				case 'M_3':{
+					if(e.altKey){game.enhancements.gotoG();}
+					else{game.enhancements.buyG();}
 					break;
 				}
-				case 'Settings':{
+				case 'M_4':{
 					toggleSetting('i');
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][2]?.click();
 					break;
 				}
@@ -361,20 +384,23 @@ onkeydown = (e) => {
 		}
 		case 'Numpad3':{
 			switch(game.menu.current){
-				case 'Manage':{
+				case 'M_1':{
+					break;
+				}
+				case 'M_2':{
 					toggleSetting('ml');
 					break;
 				}
-				case 'Enhance':{
+				case 'M_3':{
 					if(e.altKey){game.enhancements.gotoD();}
 					else{game.enhancements.buyD();}
 					break;
 				}
-				case 'Settings':{
+				case 'M_4':{
 					toggleSetting('u');
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][3]?.click();
 					break;
 				}
@@ -383,20 +409,24 @@ onkeydown = (e) => {
 		}
 		case 'Numpad4':{
 			switch(game.menu.current){
-				case 'Manage':{
+				case 'M_1':{
+					//get hint
+					break;
+				}
+				case 'M_2':{
 					toggleSetting('mn');
 					break;
 				}
-				case 'Enhance':{
+				case 'M_3':{
 					if(e.altKey){game.enhancements.gotoE();}
 					else{game.enhancements.buyE();}
 					break;
 				}
-				case 'Settings':{
+				case 'M_4':{
 					toggleSetting('c');
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][4]?.click();
 					break;
 				}
@@ -405,15 +435,15 @@ onkeydown = (e) => {
 		}
 		case 'Numpad5':{
 			switch(game.menu.current){
-				case 'Manage':{
+				case 'M_2':{
 					toggleSetting('mt');
 					break;
 				}
-				case 'Settings':{
+				case 'M_4':{
 					save();
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][5]?.click();
 					break;
 				}
@@ -422,11 +452,11 @@ onkeydown = (e) => {
 		}
 		case 'Numpad6':{
 			switch(game.menu.current){
-				case 'Manage':{
+				case 'M_2':{
 					toggleSetting('mu');
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][6]?.click();
 					break;
 				}
@@ -435,7 +465,7 @@ onkeydown = (e) => {
 		}
 		case 'Numpad7':{
 			switch(game.menu.current){
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][7]?.click();
 					break;
 				}
@@ -444,11 +474,11 @@ onkeydown = (e) => {
 		}
 		case 'Numpad8':{
 			switch(game.menu.current){
-				case 'Settings':{
+				case 'M_4':{
 					game.settings.content.s?.click();
 					break;
 				}
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][8]?.click();
 					break;
 				}
@@ -457,7 +487,7 @@ onkeydown = (e) => {
 		}
 		case 'Numpad9':{
 			switch(game.menu.current){
-				case 'Help':{
+				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][9]?.click();
 					break;
 				}
@@ -478,10 +508,7 @@ onkeydown = (e) => {
 			game.menu.gotoNode(history[historyIndex], null, false);
 			break;
 		}
-
-		default:{
-			//console.log(e);
-		}
+		default:{}
 	}
-	
 };
+
