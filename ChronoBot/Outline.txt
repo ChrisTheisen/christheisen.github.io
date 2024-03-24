@@ -1,6 +1,6 @@
 Chrono-bots
 
-like idle loops
+like idle loops or cavernous
 Science broke time; you control a robot that can gather items and upgrades to keep through the loops.
 
 -limited battery/time
