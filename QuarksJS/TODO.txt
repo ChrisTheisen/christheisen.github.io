@@ -4,6 +4,8 @@ https://webbook.nist.gov/chemistry/name-ser/
 Bugs: 
 	manage tab doesn't account for output/input.b; only does output/input.a
 
+	Toast doesn't do all missing items
+
 TODO:
 molecule grouping:
 	Organic

@@ -56,7 +56,8 @@ function addUIEventListener(element, func, event='click'){
 }
 
 function makeToast(input){
-	const id = `TOAST_${Date.now()}`;
+	const maxToast = Math.max(-1,...Array.from(document.getElementsByClassName('toast')).map(x => Number(x.id.replace('TOAST_',''))))+1;
+	const id = `TOAST_${maxToast}`;
 	createUIElement({id: id, parent:getUIElement('toaster'), textContent:input, cssClasses:['toast'], title:'Click to dismiss',
 		onclick:()=>document.getElementById(id)?.remove()});
 	setTimeout(()=>document.getElementById(id)?.remove(),30000);

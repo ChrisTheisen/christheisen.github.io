@@ -190,7 +190,7 @@ Game.prototype.intro = function(){
 	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['04'].isUnlocked() && !gic['05'].isUnlocked()) ||
 		(gic['04'].isUnlocked() && game.menu.current !== 'M_1' && !gic['04'].isDisplayed());
 	this.menu.children.M_1.b.classList.toggle('hintAnimate', shouldDiscover && this.menu.current !== 'M_1');
-	if(shouldDiscover){ setElementText(hintZone, 'Go to the Discover tab at the top of the screen.'); }
+	if(shouldDiscover && this.menu.current !== 'M_1'){ setElementText(hintZone, 'Go to the Discover tab at the top of the screen.'); }
 	
 	const shouldAddUp = shouldDiscover && this.menu.current === 'M_1' && !this.mm.some(x => x.f.id === '00');
 	gic['00'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
@@ -205,11 +205,11 @@ Game.prototype.intro = function(){
 	if(shouldScan){ setElementText(hintZone, 'Click the Scan button to find new items and recipes.'); }
 	
 	const shouldProton = gic['04'].isUnlocked();
-	const shouldProtonGo =  shouldProton && this.menu.children.M_0.children.M_a.children._3.current !== '04';
+	const shouldProtonGo =  shouldProton && this.menu.current === 'M_1';
 	gic['04'].content.dg?.classList.toggle('hintAnimate', shouldProtonGo);
 	if(shouldProtonGo){ setElementText(hintZone, 'Use the (») Goto Item button to jump to the Proton you just discovered.'); }
 	
-	if(shouldProton && this.menu.children.M_0.children.M_a.children._3.current === '04'){
+	if(shouldProton && game.inventory.children['04'].isDisplayed()){
 		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
 		hintZone.classList.toggle('hintAnimate', true);
 	}
