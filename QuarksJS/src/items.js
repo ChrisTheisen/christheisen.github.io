@@ -456,6 +456,10 @@ const whiteLiquorMote = { id:'79', s:'W.Liquor', n:'White Liquor Mote', u:false,
 const whiteLiquor = { id:'7a',s:'W.Liquor', n:'White Liquor', u:false, m: new Amount({g:1})};
 const blackLiquor = { id:'7b',s:'B.Liquor', n:'Black Liquor', u:false, m: new Amount({g:1})};
 const paperA4 = { id:'7c',s:'A4', n:'A4 Paper', u:false, m: new Amount({g:4})};
+const paperA3 = { id:'7d',s:'A3', n:'A3 Paper', u:false, m: new Amount({g:8})};
+const paperA2 = { id:'7e',s:'A2', n:'A2 Paper', u:false, m: new Amount({g:16})};
+const paperA1 = { id:'7f',s:'A1', n:'A1 Paper', u:false, m: new Amount({g:32})};
+const paperA0 = { id:'7g',s:'A0', n:'A0 Paper', u:false, m: new Amount({g:64})};
 
 //paper
 //4A0 - 256g

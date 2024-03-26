@@ -130,11 +130,35 @@ InventoryItem.prototype.renderCreate = function(parent){
 			onclick:()=>{
 				game.mm.length = 0;
 				game.menu.gotoNode('M_1');
-				this.g[0].i.map(x => x.inv).forEach(x => {
-					if(game.mm.includes(x)){return;}
-					if(x.a) { game.mm.push(x); }
-					else{makeToast(`Unable to add ${x.f.n} to the Matter Mutator.`);}
+				
+				let uc = this.g[0];
+				let lc = Infinity;
+				this.g.forEach(g => {
+					let c = 0;
+					g.i.map(x => x.inv).forEach(x => {
+						console.log(x, x.isUnlocked());
+						if(!x.isUnlocked()){ c+=100; }
+						else if(x.a<1){ c+=10; }
+						else{ c+=1; }
+					});
+					
+					if(c<lc){
+						lc = c;
+						uc = g;
+					}
 				});
+				
+				uc.i.map(x => x.inv).forEach(x => {
+					if(game.mm.includes(x)){return;}
+					if(x.a<1) { 
+						const tw = makeToast();
+						createUIElement({type:'span', parent:tw, textContent:`Unable to add ${x.f.n} (`});
+						formatItemSymbols(x.f, createUIElement({type:'span', parent:tw}));
+						createUIElement({type:'span', parent:tw, textContent:') to the Matter Mutator.'});
+					}
+					else{ game.mm.push(x); }
+				});
+				
 				game.menu.updateMM();
 			}
 		});
@@ -287,11 +311,11 @@ InventoryItem.prototype.renderDiscover = function(parent){
 		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
 		onclick:() => { 
 			if(game.mm.includes(this)){return;}
-			if(this.a){
-				game.mm.push(this); 
-				game.menu.updateMM(); 
-				this.update()
-			}
+			if(this.a < 1){ return;}
+		
+			game.mm.push(this); 
+			game.menu.updateMM(); 
+			this.update()
 		}
 	});
 	
@@ -435,12 +459,12 @@ InventoryItem.prototype.update = function(){
 			break;
 		}
 		case 'M_1': {
-			const tableContains = game.mm.includes(this);
+			const mmContains = game.mm.includes(this);
 			const filterDiscoverStock = game.settings.d.o && this.a < game.settings.d.l;
 			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s) && !this.f.s.replaceAll(/\W/g, '').toLowerCase().includes(game.settings.d.s);
 	
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
-			this.content.d?.classList.toggle('disabled', !this.a || tableContains);
+			this.content.d?.classList.toggle('disabled', this.a<1 || mmContains);
 			this.content.p?.classList.toggle('hide', !isUnlocked || filterDiscoverStock || filterDiscoverSearch);
 			break;
 		}

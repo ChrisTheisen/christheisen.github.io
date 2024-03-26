@@ -782,7 +782,7 @@ const lumber = {
 }
 
 const paper = {
-	id:'_2T', n:'Paper', u:false, c:[paperA4],
+	id:'_2T', n:'Paper', u:false, c:[paperA4, paperA3, paperA2, paperA1, paperA0],
 	info:['There are many types of paper made with different types of pulp.', ]
 }
 const woodHuman = {

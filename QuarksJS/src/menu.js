@@ -247,7 +247,7 @@ Menu.prototype.updateResults = function(input){
 	const newTable = [];
 
 	input.forEach(x => {
-		newTable.push(createUIElement({textContent:x.f?.n??x}));
+		newTable.push(createUIElement({textContent:x}));
 	});
 	
 	game.dContent.mm.replaceChildren(...newTable);
@@ -287,10 +287,11 @@ Menu.prototype.renderDiscover = function(parent){
 	game.dContent.hout = createUIElement({type:'span',parent:hint,textContent:houtText});
 	game.dContent.hadd = createUIElement({type:'button', textContent:'+>', parent:hint, cssClasses:game.dinterval?['circleButton']:['circleButton','hide'], style:{marginLeft:'15px'},
 		onclick:()=> {
+			game.mm.length = 0;
 			game.discoverHint.forEach(x=>{
 				if(game.mm.includes(x)){return;}
-				if(x.a) { game.mm.push(x); }
-				else{makeToast(`Unable to add ${x.f.n} to the Matter Mutator.`);}
+				if(x.a<1) { makeToast(`Unable to add ${x.f.n} (${x.f.s}) to the Matter Mutator.`);}
+				else{ game.mm.push(x); }
 			})
 			game.menu.updateMM();
 		}});
@@ -309,9 +310,12 @@ Menu.prototype.renderDiscover = function(parent){
 			results.forEach(x => {
 				x.o.forEach(o => {
 					o.inv.unlock();
-					unlocked.push(o.inv);
+					if(!unlocked.some(x => x === o.inv.f.n)){
+						unlocked.push(o.inv.f.n);
+					}
 				})
 			});
+			
 			this.updateResults(unlocked);
 		}});
 	

@@ -444,5 +444,13 @@ const recipes = [
 	{id:'hip_3', i:[{f:whiteLiquorMote, b:new Amount({g:1})}], o:[{f:whiteLiquor, a:1}]},
 	{id:'hip_4', i:[{f:softwoodPulp, a:4}, {f:water, b:new Amount({g:30})}], o:[{f:paperA4, a:1}]},
 	{id:'hip_5', i:[{f:hardwoodPulp, a:2}, {f:water, b:new Amount({g:30})}], o:[{f:paperA4, a:1}]},
+	{id:'hip_6', i:[{f:softwoodPulp, a:8}, {f:water, b:new Amount({g:30})}], o:[{f:paperA3, a:1}]},
+	{id:'hip_7', i:[{f:hardwoodPulp, a:4}, {f:water, b:new Amount({g:30})}], o:[{f:paperA3, a:1}]},
+	{id:'hip_8', i:[{f:softwoodPulp, a:16}, {f:water, b:new Amount({g:30})}], o:[{f:paperA2, a:1}]},
+	{id:'hip_9', i:[{f:hardwoodPulp, a:8}, {f:water, b:new Amount({g:30})}], o:[{f:paperA2, a:1}]},
+	{id:'hip_a', i:[{f:softwoodPulp, a:32}, {f:water, b:new Amount({g:30})}], o:[{f:paperA1, a:1}]},
+	{id:'hip_b', i:[{f:hardwoodPulp, a:16}, {f:water, b:new Amount({g:30})}], o:[{f:paperA1, a:1}]},
+	{id:'hip_c', i:[{f:softwoodPulp, a:64}, {f:water, b:new Amount({g:30})}], o:[{f:paperA0, a:1}]},
+	{id:'hip_d', i:[{f:hardwoodPulp, a:32}, {f:water, b:new Amount({g:30})}], o:[{f:paperA0, a:1}]},
 	
 ];
