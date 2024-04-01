@@ -460,7 +460,7 @@ const items = {
 	//CH2O: formeldehyde
 	//MDF: 9% resin, 1% paraffin, 90% wood fibers
 	
-	pfGlue:{ id:'6v', s:'pf glue', n:'Phenol Formaldehyde Resin', u: false, m: new Amount({da:})},
+	pfGlue:{ id:'6v', s:'pf glue', n:'Phenol Formaldehyde Resin', u: false, m: new Amount({da:50})},
 	
 	
 	whiteLiquorMote: { id:'6j', s:'W.Liquor', n:'White Liquor Mote', u:false, m: new Amount({pg:1})},
