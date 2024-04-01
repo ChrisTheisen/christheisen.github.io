@@ -237,27 +237,34 @@ function init(){
 	game.clock.status = 'Loading Game Data';
 	game.clock.update();
 	game.generators = recipes.map(x => new Generator({id:x.id, i:x.i, o:x.o}));
-	buildMaps(items, null);
+	buildMaps(itemsMenu, null);
 	Object.values(game.inventory.children).forEach(x => x.mapGenerators());
 	
 	game.clock.status = 'Initializing UI';
 	game.clock.update();
 	buildUI();
 	
+	const max_item = Object.values(AllFlavors).map(x => x.f.id).sort((a,b) => sortID(a,b,-1))[0];
+	const max_gen = game.generators.map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
+	setElementText(getUIElement('version'), `${max_item}.${max_gen}`);
+	
 	game.clock.status = 'Checking Game Data';
-	Object.values(AllFlavors).forEach(i => {
-		if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.f.id)))
-		{console.warn("MISSING GENERATOR: ", i.f.id, i.f.n);}
+	//Item exists but no generator
+	Object.values(items).forEach(i => {
+		if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.id)))
+		{console.warn("MISSING GENERATOR: ", i.id, i.n);}
 	});
+	//No generator exists to output another input.
 	game.generators.forEach(g => {
 		g.i.forEach(i => {
 			if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.inv.f.id)))
 			{console.warn("MISSING INPUT: ", i.inv.f.id, i.inv.f.n);}
 		})
 	});
-	Object.values(AllFlavors).forEach(i => {
-		if(!game.menu.containsChild(i.f.id))
-		{console.warn("MISSING MENU: ", i.f.id, i.f.n);}
+	//item exists but isn't in a menu
+	Object.values(items).forEach(i => {
+		if(!game.menu.containsChild(i.id))
+		{console.warn("MISSING MENU: ", i.id, i.n);}
 	});
 
 	game.clock.status = 'Loading Save Data';
@@ -266,13 +273,12 @@ function init(){
 		load();
 	}
 	else{
-		const aaa = game.generators.filter(x => x.i.length === 0);
-		const bbb = aaa.forEach(x => x.o.forEach(y => y.inv.unlock()));
+		game.generators.filter(x => x.i.length === 0).forEach(x => x.o.forEach(y => y.inv.unlock()));
 	}
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
-	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || a.f.id.localeCompare(b.f.id));
+	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || sortID(a.f.id,b.f.id));
 	game.clock.update();
 
 	game.clock.status = null;
@@ -441,6 +447,7 @@ onkeydown = (e) => {
 				}
 				case 'M_4':{
 					save();
+					game.menu.route();
 					break;
 				}
 				case 'M_5':{

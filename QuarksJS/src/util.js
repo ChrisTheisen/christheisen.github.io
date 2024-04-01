@@ -349,6 +349,24 @@ function test(){
 	makeToast("TEST MESAGE FROM CLICKER BUTTON");
 }
 
+function sortID(a,b,dir=1){
+	const c = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	let valA = 0;
+	let valB = 0;
+	
+	[...a.replace('_','')].forEach(x => {
+		valA *= c.length;
+		valA += c.indexOf(x);
+	});
+	
+	[...b.replace('_','')].forEach(x => {
+		valB *= c.length;
+		valB += c.indexOf(x);
+	})
+
+	return (valA-valB)*dir;
+}
+
 function benchmark(){
 	const a = [];
 	const b = [];

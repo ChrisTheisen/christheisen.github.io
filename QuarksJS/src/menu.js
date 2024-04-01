@@ -424,12 +424,13 @@ Menu.prototype.renderSettings = function(parent){
 
 	createUIElement({type: 'hr', parent: parent});
 
-	const l = createUIElement({parent: parent, cssClasses:['settingsRow']})
+	const l = createUIElement({parent: parent, cssClasses:['settingsRow','pointer'], onclick:()=>{save(); this.route();}})
 	createUIElement({type: 'span', parent:l, textContent:'Last save at: '});
 	createUIElement({type: 'span', parent:l, textContent:new Date(new Date() - game.clock.lastSave).toLocaleString()});
 
 	const m = createUIElement({parent: parent, cssClasses:['settingsRow']})
 	createUIElement({type: 'textarea', parent: m, textContent: localStorage.getItem('Q'), attr:{rows:'10', cols:'80', disabled:'true'}})
+	
 	
 	createUIElement({parent:m, textContent:'Input Load Data:'});
 	game.settings.content.s.txtLoad = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
