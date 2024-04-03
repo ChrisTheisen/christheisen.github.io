@@ -5,16 +5,6 @@
 //3) Add the items to the menu in data.js
 
 const recipes = [
-//TEST
-	// {id:'T_0', i:[], o:[{f:items.test_0, a:1}]},	
-	// {id:'T_1', i:[], o:[{f:items.test_1, a:1}]},	
-	// {id:'T_2', i:[], o:[{f:items.test_2, a:1}]},	
-	// {id:'T_3', i:[], o:[{f:items.test_3, a:1}]},	
-	// {id:'T_4', i:[{f:items.test_0, b:new Amount({Da:20})}], o:[{f:items.test_4, a:1}]},	
-	// {id:'T_5', i:[{f:items.test_1, a:5}, {f:items.test_0, b:new Amount({Da:20})}], o:[{f:items.test_5, a:1}]},	
-	// {id:'T_6', i:[{f:items.test_1, a:5},{f:items.test_0, a:10, b:new Amount({Da:20,pg:2})}], o:[{f:items.test_6, a:1}]},	
-	// {id:'T_7', i:[{f:items.test_1, a:1}], o:[{f:items.test_7, a:1}]},	
-
 //subatomic
 	{id:'r_0', i:[], o:[{f:items.Q_Up, a:1}]},
 	{id:'r_1', i:[], o:[{f:items.Q_Down, a:1}]},
@@ -418,6 +408,10 @@ const recipes = [
 	{id:'r_6p', i:[{f:items.C12, a:6}, {f:items.H1, a:6}, {f:items.O16, a:1}], o:[{f:items.phenol, a:1}]},
 	{id:'r_6q', i:[{f:items.benzene, a:1}, {f:items.O16, a:1}], o:[{f:items.phenol, a:1}]},
 	{id:'r_6r', i:[{f:items.toluene, a:1}, {f:items.dioxygen, a:2}], o:[{f:items.phenol, a:1}, {f:items.carbonDioxide, a:1}, {f:items.water, a:1}]},
+	{id:'r_73', i:[{f:items.C12, a:7}, {f:items.H1, a:8}, {f:items.O16, a:2}], o:[{f:items.pfGlue, a:1}]},
+	{id:'r_74', i:[{f:items.phenol, a:1}, {f:items.formeldehyde, a:1}], o:[{f:items.pfGlue, a:1}]},
+	{id:'r_75', i:[{f:items.pfGlue, a:120443472867}], o:[{f:items.pfGlueDrip, a:1}]},
+	{id:'r_76', i:[{f:items.pfGlueDrip, a:40000000000}], o:[{f:items.pfGlueDrop, a:1}]},
 	
 
 //inorganic
@@ -444,8 +438,15 @@ const recipes = [
 	{id:'r_6K', i:[{f:items.softwoodChip, a:5}, {f:items.whiteLiquor, a:10}], o:[{f:items.softwoodPulp, a:6}, {f:items.blackLiquor, a:4}]},
 	{id:'r_6L', i:[{f:items.hardwoodChip, a:3625}], o:[{f:items.hardwood5x10x3, a:1}]},
 	{id:'r_6M', i:[{f:items.softwoodChip, a:4100}], o:[{f:items.softwood5x10x3, a:1}]},
-	{id:'r_71', i:[{f:items.hardwoodChip, a:9440}], o:[{f:items.hardPly12, a:1}]},
-	{id:'r_72', i:[{f:items.softwoodChip, a:16992}], o:[{f:items.softPly12, a:1}]},
+	{id:'r_71', i:[{f:items.hardwoodChip, a:9440}, {f:items.pfGlueDrop, a:1532}], o:[{f:items.hardPly12, a:1}]},
+	{id:'r_72', i:[{f:items.softwoodChip, a:16992}, {f:items.pfGlueDrop, a:1380}], o:[{f:items.softPly12, a:1}]},
+	{id:'r_73', i:[{f:items.hardwoodChip, a:14160}, {f:items.pfGlueDrop, a:2298}], o:[{f:items.hardPly18, a:1}]},
+	{id:'r_74', i:[{f:items.softwoodChip, a:25488}, {f:items.pfGlueDrop, a:2070}], o:[{f:items.softPly18, a:1}]},
+	{id:'r_75', i:[{f:items.hardwoodChip, a:18880}, {f:items.pfGlueDrop, a:3064}], o:[{f:items.hardPly24, a:1}]},
+	{id:'r_76', i:[{f:items.softwoodChip, a:33984}, {f:items.pfGlueDrop, a:2760}], o:[{f:items.softPly24, a:1}]},
+	{id:'r_77', i:[{f:items.hardwoodChip, a:22027}, {f:items.pfGlueDrop, a:3574}], o:[{f:items.hardPly28, a:1}]},
+	{id:'r_78', i:[{f:items.softwoodChip, a:39648}, {f:items.pfGlueDrop, a:3220}], o:[{f:items.softPly28, a:1}]},
+
 
 //human Industrial Paper
 	{id:'r_6N', i:[{f:items.water, a:22380000000}, {f:items.NaOH, a:1865000000}, {f:items.Na2S, a:373000000}], o:[{f:items.whiteLiquorMote, a:1}]},

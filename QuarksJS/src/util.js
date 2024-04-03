@@ -349,53 +349,89 @@ function test(){
 	makeToast("TEST MESAGE FROM CLICKER BUTTON");
 }
 
-function sortID(a,b,dir=1){
+function toC(input){
 	const c = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	let valA = 0;
-	let valB = 0;
+
+	let output = '';
+	while(input>0){
+		let d = input%c.length;
+		input = Math.floor(input/c.length);
+		output = c[d]+output;
+	}
 	
-	[...a.replace('_','')].forEach(x => {
-		valA *= c.length;
-		valA += c.indexOf(x);
+	return output;
+}
+
+function toInt(input){
+	const c = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	let output = 0;
+	
+	[...input.replace('_','')].forEach(x => {
+		output *= c.length;
+		output += c.indexOf(x);
 	});
 	
-	[...b.replace('_','')].forEach(x => {
-		valB *= c.length;
-		valB += c.indexOf(x);
-	})
+	return output;
+}
 
+function sortID(a,b,dir=1){
+	let valA = toInt(a);
+	let valB = toInt(b);
+	
 	return (valA-valB)*dir;
 }
 
-function benchmark(){
-	const a = [];
-	const b = [];
+function checkIDs(input, prefix){
+	const ids = input.map(x => x.id.replace(prefix, ''));
+	const max = input.map(x => x.id.replace(prefix, '')).sort((a,b) => sortID(a,b,-1))[0];
+	const zz = toInt(max);
+	console.log("MAX", max, zz);
+	const output = [];
+	//do this case custom.
+	const p = Object.values(items).filter(x => x.id === '0');
+	if(p.length !== 1){console.log(0, p.length, p);}
+	
+	for(let i=1;i<zz;i++){
+		const a = toC(i);
+		const f = input.filter(x => x.id === `${prefix}${a}`);
+		if(f.length !== 1){
+			console.warn(i, a, f.length, f);
+			output.push(`${prefix}${a}`);
+		}
+	}
+	
+	return output;
+}
 
-	for(let i=0;i<100000;i++){
-		a.push(new Amount({
-				Da: Math.floor(Math.random() * MassUnits.Da.c),
-				g:Math.floor(Math.random() * MassUnits.g.c),
-				Tg: Math.floor(Math.random() * MassUnits.Tg.c),
-				MO: Math.floor(Math.random() * MassUnits.MO.c),
-				
-			})
-		);		
-		b.push(new Amount({
-				Da: Math.floor(Math.random() * MassUnits.Da.c),
-				pg: Math.floor(Math.random() * MassUnits.pg.c),
-				Tg: Math.floor(Math.random() * MassUnits.Tg.c),
-				GM: Math.floor(Math.random() * MassUnits.GM.c),
-			})
-		);
+function checkItemIDs(){
+	console.log("ITEM CHECK");
+	checkIDs(Object.values(items), '');
+}
+
+function checkRecipeIDs(){
+	console.log("RECIPE CHECK");
+	checkIDs(game.generators, 'r_');
+}
+
+function checkMenuIDs(){
+	console.log("MENU CHECK");
+	const ids = getMenuIDs().filter(x => x.startsWith('m_')).map(x => ({id:x}));
+	checkIDs(ids, 'm_');
+}
+
+function getMenuIDs(input = {c:itemsMenu}, ids = []){
+	const c = Object.values(input?.c ?? {});
+	if(input.id){ids.push(input.id)};
+	if(!c || c.length === 0){
+		return ids;
 	}
-	
-	const start = performance.now();
-	
-	for(let i=0;i<100000;i++){
-		a[i].divide(b[i]);
-	}
-	
-	const stop = performance.now();
-	
-	console.log('BENCHMARK', start, stop, stop-start);
+	c.forEach(x => getMenuIDs(x, ids));	
+	return ids;
+}
+
+function doIDCheck(){
+	console.log('Quick ID check tool:');
+	checkItemIDs();
+	checkRecipeIDs();
+	checkMenuIDs();
 }

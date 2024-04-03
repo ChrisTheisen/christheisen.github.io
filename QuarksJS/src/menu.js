@@ -98,14 +98,15 @@ Menu.prototype.route = function(addHistory = true){
 
 Menu.prototype.containsChild = function(input, parent = null, addHistory=true){
 	if(Object.keys(this.children ?? {}).includes(input)){
-		return true;
+		return this.children[input];
 	}
 	for(let [key, value] of Object.entries(this.children ?? {})){
-		if(value?.containsChild(input, this, addHistory)){
-			return true;
+		const temp = value?.containsChild(input, this, addHistory);
+		if(temp){
+			return temp;
 		}
 	}
-	return false;
+	return null;
 }
 Menu.prototype.gotoNode = function(input, parent = null, addHistory=true){
 	if(Object.keys(this.children ?? {}).includes(input)){

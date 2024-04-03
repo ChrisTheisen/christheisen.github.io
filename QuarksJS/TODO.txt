@@ -1,12 +1,12 @@
 https://periodictable.com/index.html
 https://webbook.nist.gov/chemistry/name-ser/
+https://www.builderscalculator.com/lumber-weight-calculator/
 
 Bugs: 
 	manage tab doesn't account for output/input.b; only does output/input.a
 
-	Toast doesn't do all missing items
-
 TODO:
+
 molecule grouping:
 	Organic
 		-IUPAC groupings?

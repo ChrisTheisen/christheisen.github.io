@@ -139,7 +139,7 @@ function Game(){
 }
 Game.prototype.intro = function(){
 	const gic = this.inventory.children;
-	if(gic['04'].a > 0 || gic['05'].a > 0 || gic['04'].l > 0 || gic['05'].l > 0){
+	if(gic['4'].a > 0 || gic['5'].a > 0 || gic['4'].l > 0 || gic['5'].l > 0){
 		getUIElement('hint').classList.add('hide');
 		Array.from(document.getElementsByClassName('hintAnimate')).forEach(x => x.classList.remove('hintAnimate'));
 		this.h = false;
@@ -159,13 +159,13 @@ Game.prototype.intro = function(){
 	this.menu.children.M_0.children.M_a.b.classList.toggle('hintAnimate', shouldSubatomic && this.menu.children.M_0.current !== 'M_a');
 
 	const shouldQuark = shouldSubatomic && this.menu.children.M_0.current === 'M_a';
-	this.menu.children.M_0.children.M_a.children._0.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.M_0.children.M_a.current !== '_0' && (upg.l < 4 || downg.l < 4));
+	this.menu.children.M_0.children.M_a.children.m_0.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.M_0.children.M_a.current !== 'm_0' && (upg.l < 4 || downg.l < 4));
 	if(shouldCreate || shouldSubatomic || shouldQuark){ setElementText(hintZone, 'Click the rainbow elements to get started.'); }
 
-	const shouldUp = shouldQuark && upg.l < 4  && this.menu.children.M_0.children.M_a.current === '_0';
-	this.menu.children.M_0.children.M_a.children._0.children['00'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < 4 && this.menu.children.M_0.children.M_a.children._0.current !== '00');
+	const shouldUp = shouldQuark && upg.l < 4  && this.menu.children.M_0.children.M_a.current === 'm_0';
+	this.menu.children.M_0.children.M_a.children.m_0.children['0'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < 4 && this.menu.children.M_0.children.M_a.children.m_0.current !== '0');
 	
-	const shouldUpDo = shouldUp && this.menu.children.M_0.children.M_a.children._0.current === '00';
+	const shouldUpDo = shouldUp && this.menu.children.M_0.children.M_a.children.m_0.current === '0';
 	const shouldUpCreate = shouldUpDo && !upg.canUpgrade();
 	upg.content.b?.classList.toggle('hintAnimate', shouldUpCreate);
 	if(shouldUpCreate){ setElementText(hintZone, 'Create some Up Quarks by manually running the generator with the (->) button.'); }
@@ -175,10 +175,10 @@ Game.prototype.intro = function(){
 	if(shouldUpGenerate){ setElementText(hintZone, 'Upgrade the Up Quark Generator with the (++) button.'); }
 
 	const shouldDown = shouldQuark && upg.l > 3 && downg.l < 4;
-	this.menu.children.M_0.children.M_a.children._0.children['01'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.M_0.children.M_a.children._0.current !== '01');
+	this.menu.children.M_0.children.M_a.children.m_0.children['1'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.M_0.children.M_a.children.m_0.current !== '1');
 	if(shouldDown){ setElementText(hintZone, 'Go to Down Quark.'); }
 	
-	const shouldDownDo = shouldDown && this.menu.children.M_0.children.M_a.children._0.current === '01';
+	const shouldDownDo = shouldDown && this.menu.children.M_0.children.M_a.children.m_0.current === '1';
 	const shouldDownCreate = shouldDownDo && !downg.canUpgrade();
 	downg.content.b?.classList.toggle('hintAnimate', shouldDownCreate);
 	if(shouldDownCreate){ setElementText(hintZone, 'Create some Down Quarks.'); }
@@ -187,29 +187,29 @@ Game.prototype.intro = function(){
 	downg.content.u?.classList.toggle('hintAnimate', shouldDownGenerate);
 	if(shouldDownGenerate){ setElementText(hintZone, 'Upgrade the Down Quark Generator.'); }
 	
-	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['04'].isUnlocked() && !gic['05'].isUnlocked()) ||
-		(gic['04'].isUnlocked() && game.menu.current !== 'M_1' && !gic['04'].isDisplayed());
+	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['4'].isUnlocked() && !gic['5'].isUnlocked()) ||
+		(gic['4'].isUnlocked() && game.menu.current !== 'M_1' && !gic['4'].isDisplayed());
 	this.menu.children.M_1.b.classList.toggle('hintAnimate', shouldDiscover && this.menu.current !== 'M_1');
 	if(shouldDiscover && this.menu.current !== 'M_1'){ setElementText(hintZone, 'Go to the Discover tab at the top of the screen.'); }
 	
-	const shouldAddUp = shouldDiscover && this.menu.current === 'M_1' && !this.mm.some(x => x.f.id === '00');
-	gic['00'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
+	const shouldAddUp = shouldDiscover && this.menu.current === 'M_1' && !this.mm.some(x => x.f.id === '0');
+	gic['0'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
 	if(shouldAddUp){ setElementText(hintZone, 'Add an Up Quark to the Matter Mutator with the (+>) button.'); }
 
-	const shouldAddDown = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '00') && !this.mm.some(x => x.f.id === '01');
-	gic['01'].content.d?.classList.toggle('hintAnimate', shouldAddDown);
+	const shouldAddDown = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '0') && !this.mm.some(x => x.f.id === '1');
+	gic['1'].content.d?.classList.toggle('hintAnimate', shouldAddDown);
 	if(shouldAddDown){ setElementText(hintZone, 'Add a Down Quark to the Matter Mutator.'); }
 	
-	const shouldScan = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '00') && this.mm.some(x => x.f.id === '01') && !gic['04'].f.u;
+	const shouldScan = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '0') && this.mm.some(x => x.f.id === '1') && !gic['4'].f.u;
 	game.dContent.btnScan?.classList.toggle('hintAnimate', shouldScan);
 	if(shouldScan){ setElementText(hintZone, 'Click the Scan button to find new items and recipes.'); }
 	
-	const shouldProton = gic['04'].isUnlocked();
+	const shouldProton = gic['4'].isUnlocked();
 	const shouldProtonGo =  shouldProton && this.menu.current === 'M_1';
-	gic['04'].content.dg?.classList.toggle('hintAnimate', shouldProtonGo);
+	gic['4'].content.dg?.classList.toggle('hintAnimate', shouldProtonGo);
 	if(shouldProtonGo){ setElementText(hintZone, 'Use the (») Goto Item button to jump to the Proton you just discovered.'); }
 	
-	if(shouldProton && game.inventory.children['04'].isDisplayed()){
+	if(shouldProton && game.inventory.children['4'].isDisplayed()){
 		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
 		hintZone.classList.toggle('hintAnimate', true);
 	}
@@ -244,7 +244,7 @@ function init(){
 	game.clock.update();
 	buildUI();
 	
-	const max_item = Object.values(AllFlavors).map(x => x.f.id).sort((a,b) => sortID(a,b,-1))[0];
+	const max_item = Object.values(items).map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
 	const max_gen = game.generators.map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
 	setElementText(getUIElement('version'), `${max_item}.${max_gen}`);
 	
