@@ -457,7 +457,7 @@ const items = {
 	
 	//MDF: 9% resin, 1% paraffin, 90% wood fibers
 	
-	pfGlue:{ id:'6v', s:'pf glue', n:'Phenol Formaldehyde Resin', u: false, m: new Amount({da:124})},
+	pfGlue:{ id:'6v', s:'pf glue', n:'Phenol Formaldehyde Resin', u: false, m: new Amount({Da:124})},
 	pfGlueDrip:{ id:'6w', s:'pf glue', n:'Phenol Formaldehyde Resin Drip', u: false, m: new Amount({pg:25})},
 	pfGlueDrop:{ id:'6F', s:'pf glue', n:'Phenol Formaldehyde Resin Drop', u: false, m: new Amount({g:1})},
 	
