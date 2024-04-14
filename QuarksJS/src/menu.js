@@ -57,7 +57,7 @@ Menu.prototype.route = function(addHistory = true){
 			break;
 		}
 		case 'M_2': {
-			game.generators.forEach(x => x.content.f.length = 0);
+			game.generators.forEach(x => x.content.f = null);
 			this.renderManage(div);
 			break;
 		}
@@ -75,7 +75,7 @@ Menu.prototype.route = function(addHistory = true){
 		}
 		default:{
 			if(AllFlavors[this.current]){
-				game.generators.forEach(x => x.content.f.length = 0);
+				game.generators.forEach(x => x.content.f = null);
 				//if it has mass it is a creatable item
 				AllFlavors[this.current].renderCreate(div);
 			}

@@ -13,7 +13,7 @@ function Generator({id, i=[], o=[]}){
 		b:null,//manual generate button
 		c:null,//upgrade cost display
 		e:null,//enabled
-		f:[],//flow: create, manage
+		f:null,//flow: create, manage
 		i:{},//inputs highlight when cannot afford
 		l:null,//level display
 		m:null,//max flow display
@@ -84,6 +84,7 @@ Generator.prototype.render = function(parent){
 	
 	this.render0(r0);
 	this.render1(r1);
+	this.update();
 }
 Generator.prototype.render0 = function(parent){
 	this.content.e = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{verticalAlign:'middle'}}),
@@ -101,16 +102,15 @@ Generator.prototype.render0 = function(parent){
 	this.renderOutput(createUIElement({parent: parent, cssClasses:['cell', 'nowrap']}));
 	
 	//flow
-	const f = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}),
-		cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+	this.content.f = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}),
+		cssClasses:['flow', 'help', 'genFlow'], title:'Target Flow is the desired amount of this item to generate every tick.', 
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
-	f.value = this.f;
-	this.content.f.push(f);
+	this.content.f.value = this.f;
 }
 Generator.prototype.render1 = function(parent){
 	//upgrade
 	this.content.u = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
-		cssClasses:['circleButton', 'cell'], textContent:'++', title:'Upgrade Generator', onclick:() => this.upgrade()});
+		cssClasses:['circleButton', 'cell', 'genLevel'], textContent:'++', title:'Upgrade Generator', onclick:() => this.upgrade()});
 
 	//const w0 = createUIElement({parent:parent, cssClasses:['cell', 'nowrap']});;
 	//upgrade cost
@@ -149,7 +149,10 @@ Generator.prototype.update = function(){
 	}
 	setElementText(this.content.c, uc);
 	if(this.content.e){this.content.e.checked = this.e;}
-	if(this.content.f){this.content.f.value = this.f;}
+	if(this.content.f){
+		this.content.f.value = this.f;
+		this.content.f.disabled = this.l === 0;;
+	}
 	setElementText(this.content.l, this.l);
 	setElementText(this.content.m, mf);
 	if(this.content.u){
@@ -275,7 +278,8 @@ Generator.prototype.generateClick = function(){
 
 Generator.prototype.setFlow = function(input){
 	const max = this.maxFlow();
-	const value = Math.min(input, max);
+	const value = Math.min(input??0, max);
 	this.f = Math.max(0,value);
-	this.content.f.forEach(x => { x.max = this.maxFlow(); x.value = this.f; x.disabled = this.l === 0;});
+	this.content.f.max = this.maxFlow(); 
+	this.content.f.value = this.f;
 }

@@ -294,6 +294,11 @@ const history = [];
 let historyIndex = 0;
 //hotkeys
 onkeydown = (e) => {
+	if(e.code === 'Escape'){
+		//clear focus
+		document.activeElement.blur();
+		return;
+	}
 	if(document.activeElement?.nodeName.toLowerCase() === 'input'){return;}
 	switch(e.code){
 		case 'ArrowUp':{
@@ -326,7 +331,7 @@ onkeydown = (e) => {
 				case 'M_0':{
 					const a = [...document.getElementsByClassName('genButton')];
 					const b = a?.filter(x => !x.disabled) ?? [];
-					if(b.length>0){ b[0].click(); }
+					b.forEach(x => x.click());
 					break;
 				}
 				case 'M_5':{
@@ -338,6 +343,12 @@ onkeydown = (e) => {
 		}
 		case 'Numpad1':{
 			switch(game.menu.current){
+				case 'M_0':{
+					const a = [...document.getElementsByClassName('genLevel')];
+					const b = a?.filter(x => !x.disabled) ?? [];
+					b.forEach(x => x.click());
+					break;
+				}
 				case 'M_1':{
 					toggleSetting('do');
 					break;
@@ -364,6 +375,13 @@ onkeydown = (e) => {
 		}
 		case 'Numpad2':{
 			switch(game.menu.current){
+				case 'M_0':{
+					const a = [...document.getElementsByClassName('flow')];
+					const b = a?.filter(x => !x.disabled) ?? [];
+					if(b.length>0){ b[0].focus(); }
+					e.preventDefault();
+					break;
+				}
 				case 'M_1':{
 					//focus threshold limit
 					break;

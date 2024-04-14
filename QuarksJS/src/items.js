@@ -399,7 +399,7 @@ const items = {
 	softLignin: { id:'5X', s:'S.Lignin', n:'Softwood Lignin', u: false, m: new Amount({Da:12900})},
 	
 	//monosaccharide 
-	glucose: { id:'5Y', s:'C(6)H(12)O(6)', n:'D-Glucose', u:false, m: new Amount({Da:180})},
+	glucose: { id:'5Y', s:'C(6)H(12)O(6)', n:'Glucose', u:false, m: new Amount({Da:180})},
 	fructose: { id:'5Z', s:'C(6)H(12)O(6)', n:'Fructose', u:false, m: new Amount({Da:180})},
 	ribose: { id:'60', s:'C(5)H(10)O(5)', n:'Ribose', u:false, m: new Amount({Da:150})},
 	sucrose: { id:'61', s:'C(12)H(22)O(11)', n:'Sucrose', u:false, m: new Amount({Da:342})},

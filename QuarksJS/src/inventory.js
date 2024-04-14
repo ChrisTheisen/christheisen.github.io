@@ -356,11 +356,10 @@ InventoryItem.prototype.renderManage = function(parent){
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:igr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
-			const f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:igr}), style:{width:'30%'},
+			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:igr}), style:{width:'30%'},
 				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
 				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
-			f.value = x.f;
-			x.content.f.push(f);
+			x.content.f.value = x.f;
 		});
 	}
 	if(this.g.length){
@@ -381,11 +380,10 @@ InventoryItem.prototype.renderManage = function(parent){
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:ogr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
-			const f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:ogr}), style:{width:'30%'},
+			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:ogr}), style:{width:'30%'},
 				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
 				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
-			f.value = x.f;
-			x.content.f.push(f);
+			x.content.f.value = x.f;
 		});
 	}
 	
