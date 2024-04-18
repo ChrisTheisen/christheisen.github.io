@@ -7,6 +7,9 @@ Bugs:
 
 TODO:
 
+on manage expand ability to hide generators with Flow = 0;
+	expand to modal instead?
+
 molecule grouping:
 	Organic
 		-IUPAC groupings?

@@ -378,7 +378,10 @@ onkeydown = (e) => {
 				case 'M_0':{
 					const a = [...document.getElementsByClassName('flow')];
 					const b = a?.filter(x => !x.disabled) ?? [];
-					if(b.length>0){ b[0].focus(); }
+					if(b.length>0){ 
+						b[0].focus(); 
+						b[0].select();
+						}
 					e.preventDefault();
 					break;
 				}

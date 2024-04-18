@@ -246,7 +246,6 @@ function load() {
 	}
 	
 	const a = Date.now() - data.c;
-	console.log(a);
 	game.clock.duration = a;
 	Object.entries(data.i).forEach(([key, value], index) => {
 		const inv = Object.values(game.inventory.children).find(x => x.f.id === key);

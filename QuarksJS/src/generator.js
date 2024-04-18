@@ -105,6 +105,7 @@ Generator.prototype.render0 = function(parent){
 	this.content.f = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}),
 		cssClasses:['flow', 'help', 'genFlow'], title:'Target Flow is the desired amount of this item to generate every tick.', 
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
+	this.content.f.onkeyup = (e) => { this.setFlow(this.content.f.value); }
 	this.content.f.value = this.f;
 }
 Generator.prototype.render1 = function(parent){
@@ -150,7 +151,6 @@ Generator.prototype.update = function(){
 	setElementText(this.content.c, uc);
 	if(this.content.e){this.content.e.checked = this.e;}
 	if(this.content.f){
-		this.content.f.value = this.f;
 		this.content.f.disabled = this.l === 0;;
 	}
 	setElementText(this.content.l, this.l);
@@ -280,6 +280,8 @@ Generator.prototype.setFlow = function(input){
 	const max = this.maxFlow();
 	const value = Math.min(input??0, max);
 	this.f = Math.max(0,value);
-	this.content.f.max = this.maxFlow(); 
-	this.content.f.value = this.f;
+	if(this.content.f){
+		this.content.f.max = this.maxFlow(); 
+		this.content.f.value = this.f;
+	}
 }
