@@ -33,12 +33,11 @@ Inventory.prototype.renderManage = function(parent){
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Item', style:{width:'10%', textAlign:'left'}});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Flow', title:'The total setpoint amount for all generators that output a given item', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Created', title:'Actual amount created in last cycle', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
 	
-	Object.values(this.children).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
+	Object.values(this.children).filter(x => x.f.u).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
 		x.renderManage(t);
 	});
 }
@@ -90,6 +89,7 @@ InventoryItem.prototype.mapGenerators = function(){
 InventoryItem.prototype.calculateDemand = function(){
 	let output = 0;
 	this.i.forEach(x => {
+		if(!x.e){return;}
 		output += x.f * x.i.find(y => y.inv.f.id === this.f.id).a;
 	});
 	return output;
@@ -334,69 +334,17 @@ InventoryItem.prototype.renderUsedIn = function(parent){
 	formatItemSymbols(this.f, createUIElement({type:'span', parent:ow, cssClasses:['cell']}));
 }
 InventoryItem.prototype.renderManage = function(parent){
+	if(!this.isUnlocked()){return;}
+	
 	const row = createUIElement({type:'tr', parent:parent});
-	
-	const dr = []
-	if(this.i.length){
-		const ir = createUIElement({type:'tr', parent:parent, cssClasses:['hide']});
-		dr.push(ir);
-		const iw = createUIElement({type:'td', parent:ir, attr:{colspan:'7'}});
-		const it = createUIElement({type:'table', parent:iw, style:{borderLeft:'solid 5px #001035', width:'100%'}});
-
-		const ihr = createUIElement({type:'tr', parent:it});
-		createUIElement({type:'th', parent:ihr, attr:{colspan:'4'}, textContent:`Generators with ${this.f.n} as an input:`});
-		
-		this.i.forEach(x => {
-			const igr = createUIElement({type:'tr', parent:it});
-			const ins = x.i.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
-			const outs = x.o.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
-			const inn = x.i.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
-			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
-			
-			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
-			createUIElement({type:'td', parent:igr, textContent:'->'});
-			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
-			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:igr}), style:{width:'30%'},
-				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
-				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
-			x.content.f.value = x.f;
-		});
-	}
-	if(this.g.length){
-		const or = createUIElement({type:'tr', parent:parent, cssClasses:['hide']});
-		dr.push(or);
-		const ow = createUIElement({type:'td', parent:or, attr:{colspan:'7'}});
-		const ot = createUIElement({type:'table', parent:ow, style:{borderLeft:'solid 5px #001035', width:'100%'}});
-
-		const ohr = createUIElement({type:'tr', parent:ot});
-		createUIElement({type:'th', parent:ohr, attr:{colspan:'4'}, textContent:`Generators with ${this.f.n} as an output:`});
-		
-		this.g.forEach(x => {
-			const ogr = createUIElement({type:'tr', parent:ot});
-			const ins = x.i.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
-			const outs = x.o.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
-			const inn = x.i.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
-			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
-			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
-			createUIElement({type:'td', parent:ogr, textContent:'->'});
-			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
-			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:ogr}), style:{width:'30%'},
-				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
-				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
-			x.content.f.value = x.f;
-		});
-	}
-	
 	row.classList.toggle('hide', !this.isUnlocked());
 	this.content.m = row;
 
 	const expander = createUIElement({type:'button', parent:createUIElement({type:'td', parent:row}), 
-		cssClasses:['expandHeader'], textContent:'>', title:'Expand Details',
+		cssClasses:['expandHeader'], textContent:'≡', title:'Expand Details',
 		onclick:() => {
-			dr.forEach(x => x.classList.toggle('hide'));
-			setElementText(expander, expander.textContent === '>'?'v':'>');
+			this.renderManageModal();
 		}})
-	
 	
 	const n = createUIElement({type:'td', parent:row, cssClasses:['flex']});
 	createUIElement({type:'button', parent:n, 
@@ -408,10 +356,85 @@ InventoryItem.prototype.renderManage = function(parent){
 	
 	this.content.a.push(createUIElement({type:'td', parent:row, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
 	
-	this.content.f = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
 	this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
 	this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
 	this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+}
+InventoryItem.prototype.renderManageModal = function(){
+	console.log(this);
+	const parent = createUIElement({cssClasses:['manageModalWrapper']});
+	const modal = getUIElement("manageModalForm");
+	
+	const dr = [];
+	createUIElement({type:'h2', parent:parent, textContent:this.f.n});
+	const fWrapper = createUIElement({parent:parent, style:{display:'inline-block'}});
+	createUIElement({type:'input', parent:createUIElement({type:'label', parent:fWrapper, textContent:'Hide Flow <= limit: '}), 
+		title:'Hide Flow <= limit', attr:{type:'checkbox'}, style:{float:'left', marginRight:'10px'},
+		onclick:(e) => { 
+			dr.forEach(x => {
+				x.row.classList.toggle('hide', e.target.checked && x.g.f <= Number(limit.value));
+			});
+		}
+	});
+	const limit = createUIElement({type:'input', parent:fWrapper, attr:{type:'number', min:0, max:1000000000000, value:0}, style:{width:'50px'}});
+
+	
+	if(this.i.length){
+
+		createUIElement({type:'h4', parent:parent, textContent:`Generators with ${this.f.n} as an input:`});
+		const it = createUIElement({type:'table', parent:parent, style:{width:'100%'}});
+		
+		this.i.forEach(x => {
+			const igr = createUIElement({type:'tr', parent:it});
+			dr.push({row:igr, g:x});
+			const ins = x.i.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join(', ');
+			const outs = x.o.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join(', ');
+			const inn = x.i.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join(', ');
+			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join(', ');
+			
+			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:igr}),
+				title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
+
+			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
+			createUIElement({type:'td', parent:igr, textContent:'->'});
+			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
+			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:igr}),
+				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
+			x.content.f.value = x.f;
+		});
+	}
+	
+	if(this.g.length){
+
+		createUIElement({type:'h4', parent:parent, textContent:`Generators with ${this.f.n} as an output:`});
+		const ot = createUIElement({type:'table', parent:parent, style:{width:'100%'}});
+		
+		this.g.forEach(x => {
+			const ogr = createUIElement({type:'tr', parent:ot});
+			dr.push({row:ogr, g:x});
+			const ins = x.i.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
+			const outs = x.o.map(x => `${x.inv.f.s}:${x.a?x.a:''}`).join();
+			const inn = x.i.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
+			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
+			
+			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:ogr}),
+				title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
+			
+			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
+			createUIElement({type:'td', parent:ogr, textContent:'->'});
+			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
+			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:ogr}),
+				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
+			x.content.f.value = x.f;
+		});
+	}
+	
+	createUIElement({type:'button', parent:parent, textContent:'OK'});
+	modal.replaceChildren(parent);
+	getUIElement("manageModal").showModal();
+
 }
 
 InventoryItem.prototype.isDisplayed = function(){
@@ -468,23 +491,22 @@ InventoryItem.prototype.update = function(){
 		}
 		case 'M_2': {
 			const demand = this.calculateDemand();
-			const sumFlow = this.calculateSumFlow();
 			const created = ActualCreated[this.f.id] ?? 0;
 			const used = ActualUsed[this.f.id] ?? 0;
 			const f0 = game.settings.m.c && !created;
-			const f1 = game.settings.m.d && created === sumFlow;
-			const f2 = game.settings.m.m && created < sumFlow;
-			const f3 = game.settings.m.l && created < used;
-			const f4 = game.settings.m.n && !used;
-			const f5 = game.settings.m.s && used === demand;
-			const f6 = game.settings.m.t && used < demand;
-			const f7 = game.settings.m.u && used < created;
+			const f1 = game.settings.m.m && created < demand;
+			const f2 = game.settings.m.l && created < used;
+			const f3 = game.settings.m.n && !used;
+			const f4 = game.settings.m.t && used < demand;
+			const f5 = game.settings.m.u && used < created;
+			const f6 = game.settings.m.x && !demand;
+			const f7 = game.settings.m.y && demand < created;
+			const f8 = game.settings.m.z && demand < used;
 
 			this.g.forEach(x => x.update());
 
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
-			this.content.m?.classList.toggle('hide', !isUnlocked || f0||f1||f2||f3||f4||f5||f6||f7);
-			setElementText(this.content.f, sumFlow);
+			this.content.m?.classList.toggle('hide', !isUnlocked || f0||f1||f2||f3||f4||f5||f6||f7||f8);
 			setElementText(this.content.z, demand);
 			setElementText(this.content.n, Math.floor(created));
 			setElementText(this.content.q, used);

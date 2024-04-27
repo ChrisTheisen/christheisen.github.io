@@ -128,11 +128,14 @@ function Game(){
 		},
 		m: {//manage filters
 			c: false,//hide created === 0
-			m: false,//hide created < setpoint
+			m: false,//hide created < demand
 			l: false,//hide created < used
 			n: false,//hide used === 0
 			t: false,//hide used < demand
-			u: false //hide used < created
+			u: false, //hide used < created
+			x: false,//hide demand === 0
+			y: false,//hide demand < created
+			z: false //hide demand < used
 		}
 	};
 	this.mm = [];
@@ -299,6 +302,9 @@ onkeydown = (e) => {
 		document.activeElement.blur();
 		return;
 	}
+	else if(e.code === 'KeyZ' && e.altKey && e.ctrlKey && e.shiftKey){
+		doIDCheck();
+	}
 	if(document.activeElement?.nodeName.toLowerCase() === 'input'){return;}
 	switch(e.code){
 		case 'ArrowUp':{
@@ -386,7 +392,7 @@ onkeydown = (e) => {
 					break;
 				}
 				case 'M_1':{
-					//focus threshold limit
+					//focus limit input
 					break;
 				}
 				case 'M_2':{

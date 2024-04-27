@@ -269,8 +269,8 @@ Menu.prototype.renderDiscover = function(parent){
 		}, 'keyup');
 	game.settings.content.d.s.value = game.settings.d.s;
 	
-	game.settings.content.d.o = createUIElement({type:'input', parent:createUIElement({type:'label', parent:f1, textContent:'Filter items below threshold: '}), 
-		title:'Filter below threshold', attr:{type:'checkbox'}, style:{float:'left'},
+	game.settings.content.d.o = createUIElement({type:'input', parent:createUIElement({type:'label', parent:f1, textContent:'Filter items below limit: '}), 
+		title:'Filter below limit', attr:{type:'checkbox'}, style:{float:'left'},
 		onclick:(e) => {
 			game.settings.d.o = !game.settings.d.o;
 			game.inventory.update();
@@ -311,7 +311,7 @@ Menu.prototype.renderDiscover = function(parent){
 			results.forEach(x => {
 				x.o.forEach(o => {
 					o.inv.unlock();
-					if(!unlocked.some(x => x === o.inv.f.n)){
+					if(!isUnlocked(o.inv.f.n) && !unlocked.some(x => x === o.inv.f.n)){
 						unlocked.push(o.inv.f.n);
 					}
 				})
@@ -337,6 +337,7 @@ Menu.prototype.renderManage = async function(parent){
 
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
+	const f2 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 
 	const w00 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	game.settings.content.m.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0'}), 
@@ -346,7 +347,7 @@ Menu.prototype.renderManage = async function(parent){
 	game.settings.content.m.c.checked = game.settings.m.c;
 	
 	const w01 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	game.settings.content.m.m = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Created < Σ(Flow)'}), 
+	game.settings.content.m.m = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Created < Demand'}), 
 		title:'Hide Created < Setpoint', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
 	});
@@ -378,6 +379,25 @@ Menu.prototype.renderManage = async function(parent){
 		onclick:(e) => { game.settings.m.u = !game.settings.m.u; game.inventory.update(); }
 	});
 	game.settings.content.m.u.checked = game.settings.m.u;
+
+	const w20 = createUIElement({parent:f2, cssClasses:['filterChk']});
+	game.settings.content.m.x = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w20, textContent:'Hide Demand = 0'}), 
+		title:'Hide Demand = 0', attr:{type:'checkbox'},
+		onclick:(e) => { game.settings.m.x = !game.settings.m.x; game.inventory.update(); }
+	})
+	game.settings.content.m.x.checked = game.settings.m.x;
+	const w21 = createUIElement({parent:f2, cssClasses:['filterChk']});
+	game.settings.content.m.y = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w21, textContent:'Hide Demand < Created'}), 
+		title:'Hide Used < Demand', attr:{type:'checkbox'},
+		onclick:(e) => { game.settings.m.y = !game.settings.m.y; game.inventory.update(); }
+	});
+	game.settings.content.m.y.checked = game.settings.m.y;
+	const w22 = createUIElement({parent:f2, cssClasses:['filterChk']});
+	game.settings.content.m.z = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w22, textContent:'Hide Demand < Used'}), 
+		title:'Hide Used < Created', attr:{type:'checkbox'},
+		onclick:(e) => { game.settings.m.z = !game.settings.m.z; game.inventory.update(); }
+	});
+	game.settings.content.m.z.checked = game.settings.m.z;
 
 	await game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
 }

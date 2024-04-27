@@ -43,6 +43,16 @@ td{
 	white-space:nowrap;
 }
 
+::backdrop {
+	background-color: var(--c2);
+	opacity: .5;
+}
+
+.mamageModal {
+	background-color: var(--bg0);
+	color: var(--c1);
+}
+
 .version{
 	position:fixed;
 	bottom:2px;

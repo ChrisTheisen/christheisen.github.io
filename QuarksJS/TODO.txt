@@ -9,6 +9,8 @@ TODO:
 
 on manage expand ability to hide generators with Flow = 0;
 	expand to modal instead?
+		-reduce rendered elements on page load
+	
 
 molecule grouping:
 	Organic

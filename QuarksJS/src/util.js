@@ -232,6 +232,9 @@ function load() {
 	game.settings.m.n = data.s?.mn ?? false;
 	game.settings.m.t = data.s?.mt ?? false;
 	game.settings.m.u = data.s?.mu ?? false;
+	game.settings.m.x = data.s?.mx ?? false;
+	game.settings.m.y = data.s?.my ?? false;
+	game.settings.m.z = data.s?.mz ?? false;
 	
 	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.e = data.e?.e ?? 0;
@@ -302,6 +305,9 @@ function save() {
 	data.s.mn = game.settings.m.n?1:0;
 	data.s.mt = game.settings.m.t?1:0;
 	data.s.mu = game.settings.m.u?1:0;
+	data.s.mx = game.settings.m.x?1:0;
+	data.s.my = game.settings.m.y?1:0;
+	data.s.mz = game.settings.m.z?1:0;
 	
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
@@ -418,6 +424,10 @@ function checkMenuIDs(){
 	console.log("MENU CHECK");
 	const ids = getMenuIDs().filter(x => x.startsWith('m_')).map(x => ({id:x}));
 	checkIDs(ids, 'm_');
+	
+	//menus with multiple parents on purpose.
+	const expectedDuplicate = [paper];
+	console.log("Known Duplicate Menus:", expectedDuplicate);
 }
 
 function getMenuIDs(input = {c:itemsMenu}, ids = []){
