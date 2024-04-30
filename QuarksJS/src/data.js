@@ -864,8 +864,8 @@ const itemsMenu = [
 //base tabs
 const tabs = [
 	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'As the tab title suggests, this is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
-	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you get stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
-	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item supply and demand.'}, 
+	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
+	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than created you have a deficit.'], intro:'This is a central location to monitor item flow.'}, 
 	{id:'M_3', n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator upgrade cost. They do not change the set-point limits or generator levels.'}, 
 	{id:'M_4', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
 	{id:'M_5', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
@@ -918,6 +918,9 @@ const help = [
 		'4: Toggle Hide Used = 0',
 		'5: Toggle Hide Used < Demand',
 		'6: Toggle Hide Used < Created',
+		'7: Toggle Hide Demand = 0',
+		'8: Toggle Hide Demand < Created',
+		'9: Toggle Hide Demand < Used',
 		'|',
 		'Enhance',
 		'1: Buy upgrade for Manual Output',
@@ -976,23 +979,15 @@ const help = [
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your generators. It displays the input and output of each generator and the amount created and used during the last update.',
 		'|',
-		'The Manage table has several filters to help manage the resources.',
-		'Hide Created === 0 : will hide all rows that have no items created.',
-		'Hide Created < Flow : will hide all the rows where the generator flow was not achieved',
-		'Hide Created < Used : will hide all the rows with a deficit',
-		'|',
-		'Hide Used === 0 : will hide all the rows where no items were used.',
-		'Hide Used < Demand : will hide all rows where the expected demand was not achieved',
-		'Hide Used < Created : will hide all rows with a surplus',
+		'The checkbox filters can show and hide items to check specific conditions.',
 		'|',
 		'The table columns describe the supply and demand of each item.',
-		'[>] : this button will expand a row to view all generators related to an item',
 		'Item : is the symbol of the item. Hover to see the full name.',
 		'Owned : is the amount of the items you currently have in your inventory.',
-		'Flow : is the sum of generator flow setpoints that can output this item.',
-		'Demand : is the expected demand based on generator flow setpoints.',
+		'Demand : is the demand based on all enabled generator flow.',
 		'Created : is the actual amount created in the last cycle.',
 		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators.',
+		'[≡] : this button will expand a row to view all generators related to an item',
 		'|',
 		'The Manage tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 1.'
 	]},
@@ -1007,7 +1002,7 @@ const help = [
 		'|',
 		'Enhancement costs are generated programmatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can affect the enhancement costs.',
 		'|',
-		'The Enhance tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 7.'
+		'The Enhance tab is unlocked when a generator for an item with components (not a quark, lepton, or gauge boson) is over level 7.'
 	]},
 	{t:'Settings', c:[
 		'Settings can affect the difficulty and functionality of the game.',

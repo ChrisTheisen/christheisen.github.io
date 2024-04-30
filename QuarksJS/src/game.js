@@ -84,6 +84,11 @@ GameClock.prototype.update = function(){
 		save();
 		this.lastSave = this.saveRate;
 	}
+	
+	const tm = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
+	const tms = createUIElement({});
+	tm.render(tms, true);
+	getUIElement('totalMass').replaceChildren(tms);
 }
 GameClock.prototype.toggleTabs = function(){
 	//show progress bar when a generator is over level 0.
@@ -219,17 +224,6 @@ Game.prototype.intro = function(){
 	
 }
 
-window.onkeydown = function(e){
-	if(e.code === 'Space'){
-		if(!game.clock.intervalID){
-			game.clock.start();
-		}
-		else{
-			game.clock.stop();
-		}
-	}
-}
-
 function buildUI(){
 	const root = getUIElement('nav');
 	createUIElement({type:'h1', parent:root, textContent:'Quarks'});
@@ -306,6 +300,16 @@ onkeydown = (e) => {
 		doIDCheck();
 	}
 	if(document.activeElement?.nodeName.toLowerCase() === 'input'){return;}
+
+	if(e.code === 'Space'){
+		if(!game.clock.intervalID){
+			game.clock.start();
+		}
+		else{
+			game.clock.stop();
+		}
+	}
+
 	switch(e.code){
 		case 'ArrowUp':{
 			game.menu.Up();
@@ -499,6 +503,9 @@ onkeydown = (e) => {
 		}
 		case 'Numpad7':{
 			switch(game.menu.current){
+				case 'M_2':{
+					toggleSetting('mx');
+				}
 				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][7]?.click();
 					break;
@@ -508,6 +515,9 @@ onkeydown = (e) => {
 		}
 		case 'Numpad8':{
 			switch(game.menu.current){
+				case 'M_2':{
+					toggleSetting('my');
+				}
 				case 'M_4':{
 					game.settings.content.s?.click();
 					break;
@@ -521,6 +531,9 @@ onkeydown = (e) => {
 		}
 		case 'Numpad9':{
 			switch(game.menu.current){
+				case 'M_2':{
+					toggleSetting('mz');
+				}
 				case 'M_5':{
 					[...document.getElementsByClassName('helpTopic')][9]?.click();
 					break;

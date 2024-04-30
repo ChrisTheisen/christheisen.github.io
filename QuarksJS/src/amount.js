@@ -158,6 +158,9 @@ Amount.prototype.magnitude = function(){
 	if(this.Da){return MassUnits.Da.i;}
 	return 0;
 }
+Amount.prototype.clone = function(){
+	return new Amount({Da:this.Da,pg:this.pg,g:this.g,Tg:this.Tg,Yg:this.Yg,MO:this.MO,GM:this.GM,CM:this.CM});
+}
 
 Amount.prototype.convert = function(){
 	this.GM += (this.CM % 1) * MassUnits.GM.c

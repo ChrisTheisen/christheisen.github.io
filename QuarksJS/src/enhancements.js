@@ -42,7 +42,7 @@ function Enhancements(){
 
 //these are kept split up to give flexibility in balancing 
 Enhancements.prototype.costD = function(){
-	const a = 128*16**(4*Math.floor(this.d/AllSortedFlavors.length));
+	const a = 128*16**(4*Math.floor(this.d/AllSortedFlavors.length))+Math.floor(this.d**1.75);
 	const i = this.d%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -67,7 +67,7 @@ Enhancements.prototype.gotoD = function(){
 }
 
 Enhancements.prototype.costE = function(){
-	const a = 1024*16**(4*Math.floor(this.e/AllSortedFlavors.length));
+	const a = 1024*16**(4*Math.floor(this.e/AllSortedFlavors.length))+Math.floor(this.e**2);
 	const i = this.e%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -92,7 +92,7 @@ Enhancements.prototype.gotoE = function(){
 }
 
 Enhancements.prototype.costG = function(){
-	const a = 32*16**(4*Math.floor(this.g/AllSortedFlavors.length));
+	const a = 32*16**(4*Math.floor(this.g/AllSortedFlavors.length))+Math.floor(this.g**1.5);
 	const i = this.g%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -117,7 +117,7 @@ Enhancements.prototype.gotoG = function(){
 }
 
 Enhancements.prototype.costM = function(){
-	const a = 4*16**(4*Math.floor(this.m/AllSortedFlavors.length));
+	const a = 4*16**(4*Math.floor(this.m/AllSortedFlavors.length))+Math.floor(this.m**1.25);
 	const i = this.m%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -161,7 +161,7 @@ Enhancements.prototype.render = function(parent){
 	const rowD = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowE = createUIElement({parent: wrapper, cssClasses:['row']});
 	
-	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Increase generator output while keeping input the same.', onclick:() => this.buyG() });
+	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Increase all generator output while keeping input the same.', onclick:() => this.buyG() });
 	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Increase output from button clicks while keeping input the same.', onclick:() => this.buyM() });
 	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Reduce generator upgrade cost.', onclick:() => this.buyD() });
 	this.content.e.b = createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Improve the other enhancement effects.', onclick:() => this.buyE() });
@@ -171,7 +171,7 @@ Enhancements.prototype.render = function(parent){
 	this.content.d.l = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.e.l = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Level]' });
 
-	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Increase generator output while keeping input the same.'});
+	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Increase all generator output while keeping input the same.'});
 	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Increase output when the (->) button is clicked while keeping the input the same. This stacks with the Gen. Output enhancement.'});
 	createUIElement({parent:rowD, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Cost', title:'Reduce generator upgrade cost.'});
 	createUIElement({parent:rowE, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Enhancements', title:'Improve the other enhancement effects.'});

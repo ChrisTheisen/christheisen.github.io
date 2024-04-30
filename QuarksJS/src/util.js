@@ -59,8 +59,9 @@ function makeToast(input){
 	const maxToast = Math.max(-1,...Array.from(document.getElementsByClassName('toast')).map(x => Number(x.id.replace('TOAST_',''))))+1;
 	const id = `TOAST_${maxToast}`;
 
-	const output = createUIElement({id: id, parent:getUIElement('toaster'), textContent:input, cssClasses:['toast'], title:'Click to dismiss',
+	const output = createUIElement({id: id, parent:getUIElement('toaster'), cssClasses:['toast'], title:'Click to dismiss',
 		onclick:()=>document.getElementById(id)?.remove()});
+	formatItemSymbols({s:input}, output);
 
 	setTimeout(()=>document.getElementById(id)?.remove(),30000);
 	
@@ -350,10 +351,6 @@ function hardReset(){
 	localStorage.removeItem('Q');
 	window.removeEventListener("beforeunload", saveBeforeUnload);
 	window.location.reload(false);
-}
-
-function test(){
-	makeToast("TEST MESAGE FROM CLICKER BUTTON");
 }
 
 function toC(input){

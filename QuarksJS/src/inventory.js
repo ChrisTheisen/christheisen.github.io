@@ -28,14 +28,14 @@ Inventory.prototype.renderDiscover = function(parent){
 	});
 }
 Inventory.prototype.renderManage = function(parent){
-	const t = createUIElement({type:'table', parent: parent, style:{margin:'auto'}});
+	const t = createUIElement({type:'table', parent: parent, style:{margin:'auto', borderCollapse:'collapse'}});
 	const h = createUIElement({type:'tr', parent: t});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Item', style:{width:'10%', textAlign:'left'}});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Created', title:'Actual amount created in last cycle', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
+	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	
 	Object.values(this.children).filter(x => x.f.u).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
 		x.renderManage(t);
@@ -101,6 +101,11 @@ InventoryItem.prototype.calculateSumFlow = function(){
 	});
 	return output;
 }
+InventoryItem.prototype.totalMass = function(){
+	let a = this.f.m.clone().scale(this.a);
+	a.add(this.b);
+	return a;
+}
 
 InventoryItem.prototype.isUnlocked = function(){
 	return isUnlocked(this.f);
@@ -136,7 +141,6 @@ InventoryItem.prototype.renderCreate = function(parent){
 				this.g.forEach(g => {
 					let c = 0;
 					g.i.map(x => x.inv).forEach(x => {
-						console.log(x, x.isUnlocked());
 						if(!x.isUnlocked()){ c+=100; }
 						else if(x.a<1){ c+=10; }
 						else{ c+=1; }
@@ -151,10 +155,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 				uc.i.map(x => x.inv).forEach(x => {
 					if(game.mm.includes(x)){return;}
 					if(x.a<1) { 
-						const tw = makeToast();
-						createUIElement({type:'span', parent:tw, textContent:`Unable to add ${x.f.n} (`});
-						formatItemSymbols(x.f, createUIElement({type:'span', parent:tw}));
-						createUIElement({type:'span', parent:tw, textContent:') to the Matter Mutator.'});
+						makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Matter Mutator. You must have at least one in inventory.`);
 					}
 					else{ game.mm.push(x); }
 				});
@@ -336,16 +337,10 @@ InventoryItem.prototype.renderUsedIn = function(parent){
 InventoryItem.prototype.renderManage = function(parent){
 	if(!this.isUnlocked()){return;}
 	
-	const row = createUIElement({type:'tr', parent:parent});
+	const row = createUIElement({type:'tr', parent:parent, cssClasses:['manageRow']});
 	row.classList.toggle('hide', !this.isUnlocked());
 	this.content.m = row;
 
-	const expander = createUIElement({type:'button', parent:createUIElement({type:'td', parent:row}), 
-		cssClasses:['expandHeader'], textContent:'≡', title:'Expand Details',
-		onclick:() => {
-			this.renderManageModal();
-		}})
-	
 	const n = createUIElement({type:'td', parent:row, cssClasses:['flex']});
 	createUIElement({type:'button', parent:n, 
 		cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
@@ -359,14 +354,23 @@ InventoryItem.prototype.renderManage = function(parent){
 	this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
 	this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
 	this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	
+	const expander = createUIElement({type:'button', parent:createUIElement({type:'td', parent:row}), 
+		cssClasses:['expandHeader'], textContent:'≡', title:'Expand Details',
+		onclick:() => {
+			this.renderManageModal();
+		}})
+	
+
 }
 InventoryItem.prototype.renderManageModal = function(){
 	console.log(this);
 	const parent = createUIElement({cssClasses:['manageModalWrapper']});
 	const modal = getUIElement("manageModalForm");
-	
+	createUIElement({type:'button', parent:parent, textContent:'X', style:{padding:'5px',margin:'0',fontSize:'10px',position:'absolute',right:'10px',top:'10px'}});
+
 	const dr = [];
-	createUIElement({type:'h2', parent:parent, textContent:this.f.n});
+	createUIElement({type:'h1', parent:parent, textContent:this.f.n});
 	const fWrapper = createUIElement({parent:parent, style:{display:'inline-block'}});
 	createUIElement({type:'input', parent:createUIElement({type:'label', parent:fWrapper, textContent:'Hide Flow <= limit: '}), 
 		title:'Hide Flow <= limit', attr:{type:'checkbox'}, style:{float:'left', marginRight:'10px'},
@@ -431,7 +435,6 @@ InventoryItem.prototype.renderManageModal = function(){
 		});
 	}
 	
-	createUIElement({type:'button', parent:parent, textContent:'OK'});
 	modal.replaceChildren(parent);
 	getUIElement("manageModal").showModal();
 

@@ -184,10 +184,11 @@ Generator.prototype.canUpgrade = function(){
 	return Math.min(...temp);
 }
 Generator.prototype.maxFlow = function(){
+	if(this.l===0){return 0;}
 	const a = this.l**2;
 	const b = this.l**1.5;
 	const c = this.l;
-	return Math.floor(a+b+c);
+	return Math.floor(a+b+c-2);
 }
 Generator.prototype.upgradeCost = function(){
 	const s = game.enhancements.powerD();
@@ -205,7 +206,11 @@ Generator.prototype.upgrade = function(){
 	//if it was max, keep it max. If it was set to a different value leave it there.
 	if(isMax){ this.setFlow(this.maxFlow());}
 	
-	this.o.forEach(x => x.inv.a -= cost);
+	this.o.forEach(x => {
+		x.inv.a -= cost;
+		x.inv.update();
+	});
+	
 	this.update();
 }
 Generator.prototype.autoUpgrade = function(){

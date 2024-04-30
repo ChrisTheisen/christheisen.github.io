@@ -4,6 +4,7 @@
 	--bg2: #550000;
 	--bg3: #6500FF;
 	--bg4: #0032883D;
+	--bg5: #222222;
 	--c0: #FFFFFF;
 	--c1: #AAAAAA;
 	--c2: #555555;
@@ -44,7 +45,7 @@ td{
 }
 
 ::backdrop {
-	background-color: var(--c2);
+	background-color: var(--bg5);
 	opacity: .5;
 }
 
@@ -53,12 +54,26 @@ td{
 	color: var(--c1);
 }
 
+.manageRow{
+	border-bottom: solid 1px var(--bg4);
+	background: linear-gradient(0turn, var(--bg4), var(--bg0), var(--bg4));
+}
+
 .version{
 	position:fixed;
 	bottom:2px;
 	left: 2px;
 	color: var(--c2);
 	font-size: 12px;
+}
+
+.totalMass{
+	position:fixed;
+	bottom:2px;
+	right:10px;
+	font-size: 12px;
+	display: inline-flex;
+	line-height: 20px;
 }
 
 .settingsRow input[type=checkbox] {

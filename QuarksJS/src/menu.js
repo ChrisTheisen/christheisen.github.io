@@ -291,7 +291,7 @@ Menu.prototype.renderDiscover = function(parent){
 			game.mm.length = 0;
 			game.discoverHint.forEach(x=>{
 				if(game.mm.includes(x)){return;}
-				if(x.a<1) { makeToast(`Unable to add ${x.f.n} (${x.f.s}) to the Matter Mutator.`);}
+				if(x.a<1) { makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Matter Mutator. You must have at least one in inventory.`);}
 				else{ game.mm.push(x); }
 			})
 			game.menu.updateMM();
