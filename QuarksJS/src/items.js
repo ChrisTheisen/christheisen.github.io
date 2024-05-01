@@ -480,8 +480,8 @@ const items = {
 	paperA0: { id:'6E',s:'A0', n:'A0 Paper', u:false, m: new Amount({g:64})},
 	
 	//trains
-	trainBalast: { id:'6O',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:64})},
-	railTie: { id:'6P',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:64})},
+	trainBallast: { id:'6M',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:64})},
+	railTie: { id:'6N',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:64})},
 
 
 	//planet types:

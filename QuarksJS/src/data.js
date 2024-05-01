@@ -824,8 +824,13 @@ const paperMaking = {
 	id:'m_2X', n:'Paper Making', u:false, c:[items.whiteLiquorMote,items.whiteLiquor,items.blackLiquor,paper],
 	info: ['Chemicals used in paper making.']
 }
+
+const trains = {
+	id:'m_33', n:'Trains', u:false, c:[items.trainBallast,items.railTie],
+	info:['Trains are one of the most efficient ways to move humans and cargo.', ]
+}
 const industrial = {
-	id:'m_2Y', n:'Industrial', u:false, c:[paperMaking],
+	id:'m_2Y', n:'Industrial', u:false, c:[paperMaking,trains],
 	info: ['Industrial items are generally chemicals used in industrial production proceses.']
 }
 
