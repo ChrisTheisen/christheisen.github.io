@@ -770,8 +770,29 @@ const simpleCompounds = {
 	info:['Simple Compounds are made on a molecular level and have few elements.']
 }
 
+const feldspar = {
+	id:'m_30', n:'Feldspar', u:false, c:[items.plagioclaseFeldspar,items.alkaliFeldspar],
+	info:['Feldspars are a group of rocks that make up over half of the Earth\'s crust.', 'There are many types of feldspars, I have included some.']
+}
+
+const mica = {
+	id:'m_31', n:'Mica', u:false, c:[items.biotiteMica],
+	info:['Mica is a type of mineral that can be broken into thin plates.', 'There are many types of micas, I have included some.']
+}
+
+const granite = {
+	id:'m_32', n:'Granite', u:false, c:[items.syenogranite,items.monzogranite],
+	info:['Granite is a type of rock primarily containing quartz and feldspar.', 'There are many types of granites, I have included some.']
+	
+}
+
+const minerals = {
+	id:'m_2Z', n:'Minerals', u:false, c:[items.quartz,feldspar,granite,mica],
+	info:['Minerals are the components of rocks.', 'As with many things in this game mineral types have been simplified.']
+}
+
 const inorganic = {
-	id:'m_2R', n:'Inorganic Compounds', u:false, c:[simpleCompounds,metalAlloys,salt,acid,base],
+	id:'m_2R', n:'Inorganic Compounds', u:false, c:[simpleCompounds,metalAlloys,salt,acid,base,minerals],
 	info:['Inorganic compounds do not contain carbon-hydrogen bonds.']
 }
 

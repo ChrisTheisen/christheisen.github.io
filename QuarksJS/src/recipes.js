@@ -447,7 +447,6 @@ const recipes = [
 	{id:'r_77', i:[{f:items.hardwoodChip, a:22027}, {f:items.pfGlueDrop, a:3574}], o:[{f:items.hardPly28, a:1}]},
 	{id:'r_78', i:[{f:items.softwoodChip, a:39648}, {f:items.pfGlueDrop, a:3220}], o:[{f:items.softPly28, a:1}]},
 
-
 //human Industrial Paper
 	{id:'r_6N', i:[{f:items.water, a:22380000000}, {f:items.NaOH, a:1865000000}, {f:items.Na2S, a:373000000}], o:[{f:items.whiteLiquorMote, a:1}]},
 	{id:'r_6O', i:[{f:items.water, b:new Amount({Da:402840000000})}, {f:items.NaOH, b:new Amount({Da:145470000000})}, {f:items.Na2S, b:new Amount({Da:52966000000})}], o:[{f:items.whiteLiquorMote, a:1}]},
@@ -463,4 +462,8 @@ const recipes = [
 	{id:'r_6Y', i:[{f:items.hardwoodPulp, a:16}, {f:items.water, b:new Amount({g:30})}], o:[{f:items.paperA1, a:1}]},
 	{id:'r_6Z', i:[{f:items.softwoodPulp, a:64}, {f:items.water, b:new Amount({g:30})}], o:[{f:items.paperA0, a:1}]},
 	{id:'r_70', i:[{f:items.hardwoodPulp, a:32}, {f:items.water, b:new Amount({g:30})}], o:[{f:items.paperA0, a:1}]},
+	
+//human industrial Trains
+	{id:'r_7d', i:[{f:items.hardwoodChip, a:32}], o:[{f:items.railTie, a:1}]},
+	
 ];

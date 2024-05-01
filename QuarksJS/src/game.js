@@ -5,8 +5,8 @@ function GameClock(){
 	Object.defineProperty(this, 'tickRate', {value:100, writable: false});
 	//in ms
 	Object.defineProperty(this, 'updateRate', {value:1000, writable: false});
-	//upper limit in ms on away time
-	Object.defineProperty(this, 'maxGameClock', {value:10000, writable: false});
+	//upper limit in ms on away time; 1 year.
+	Object.defineProperty(this, 'maxGameClock', {value:31536000000, writable: false});
 	
 	this.lastSave = 0;//updates since last save
 	this.duration = 0;//time since last update
@@ -51,8 +51,12 @@ GameClock.prototype.render = function(){
 GameClock.prototype.update = function(){
 	this.content.s.classList.toggle('hide', !this.status);
 	setElementText(this.content.s, this.status);
-	this.content.t.classList.toggle('hide', this.duration < (this.updateRate * 2));
-	setElementText(this.content.t, parseInt(this.duration));
+	
+	const showTime = this.duration > (this.updateRate * 2);
+	this.content.t.classList.toggle('hide', !showTime);
+	if(showTime){ 
+		setElementText(this.content.t, (parseInt(this.duration)/ this.updateRate).toFixed(2)); 
+	}
 	
 	if(this.duration < this.updateRate){return;}
 	this.duration -= this.updateRate;

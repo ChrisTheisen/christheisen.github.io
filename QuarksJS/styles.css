@@ -275,6 +275,10 @@ td{
 	border: solid 1px var(--c1);
 }
 
+.clockTime{
+	float:left;
+}
+
 .mmItem{
 	margin:5px;
 }

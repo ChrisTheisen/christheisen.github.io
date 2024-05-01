@@ -435,6 +435,13 @@ const items = {
 	mildSteel: { id:'6h', s:'M.Steel', n: 'Mild Steel', u: false, m: new Amount({Da:5612})},
 	highSteel: { id:'6i', s:'H.Steel', n: 'High Steel', u: false, m: new Amount({Da:5660})},
 	
+	quartz:{ id:'6O', s:'SiO(2)', n: 'Quartz', u: false, m: new Amount({Da:5612})},
+	plagioclaseFeldspar:{ id:'6P', s:'', n: 'Plagioclase Feldspar', u: false, m: new Amount({Da:5612})},
+	alkaliFeldspar:{ id:'6Q', s:'', n: 'Alkali Feldspar', u: false, m: new Amount({Da:5612})},
+	biotiteMica:{ id:'6R', s:'', n: 'Biotite', u: false, m: new Amount({Da:5612})},
+	syenogranite:{ id:'6S', s:'', n: 'Syenogranite', u: false, m: new Amount({Da:5612})},
+	monzogranite:{ id:'6T', s:'', n: 'Monzogranite', u: false, m: new Amount({Da:5612})},
+	
 	//wood
 	hardwoodParticle: { id:'6j', s:'H.Part', n:'Hardwood Particle', u: false, m: new Amount({Da:1664000})},
 	softwoodParticle: { id:'6k', s:'S.Part', n:'Softwood Particle', u: false, m: new Amount({Da:1406000})},
@@ -473,8 +480,8 @@ const items = {
 	paperA0: { id:'6E',s:'A0', n:'A0 Paper', u:false, m: new Amount({g:64})},
 	
 	//trains
-	trainBalast: { id:'6M',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:64})},
-	railTie: { id:'6N',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:64})},
+	trainBalast: { id:'6O',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:64})},
+	railTie: { id:'6P',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:64})},
 
 
 	//planet types:
