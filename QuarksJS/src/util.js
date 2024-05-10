@@ -393,7 +393,6 @@ function checkIDs(input, prefix){
 	const output = [];
 	//do this case custom.
 	const p = Object.values(items).filter(x => x.id === '0');
-	if(p.length !== 1){console.log(0, p.length, p);}
 	
 	for(let i=1;i<zz;i++){
 		const a = toC(i);

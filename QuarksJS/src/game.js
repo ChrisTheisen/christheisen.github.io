@@ -25,12 +25,12 @@ GameClock.prototype.tick = function(){
 	this.duration = Math.min(this.duration, this.maxGameClock);
 	this.lastUpdate = now;
 
-	const p = Math.min(100 * this.duration / this.updateRate, 100);
-	this.content.p.style.width = `${p}%`;
+	const p = this.duration / this.updateRate;
+	this.content.p.style.width = `${Math.min(100 * p, 100)}%`;
 	
 	if(game.h){	game.intro(); }
 	if(this.duration < this.updateRate){ return; }
-	this.update();
+	this.update(p);
 }
 GameClock.prototype.stop = function(){
 	clearInterval(this.intervalID);
@@ -48,24 +48,26 @@ GameClock.prototype.render = function(){
 	this.content.t = createUIElement({parent:wrapper, cssClasses:['clockTime']});
 }
 
-GameClock.prototype.update = function(){
+GameClock.prototype.update = function(input = 1){
 	this.content.s.classList.toggle('hide', !this.status);
 	setElementText(this.content.s, this.status);
 	
 	const showTime = this.duration > (this.updateRate * 2);
 	this.content.t.classList.toggle('hide', !showTime);
 	if(showTime){ 
-		setElementText(this.content.t, (parseInt(this.duration)/ this.updateRate).toFixed(2)); 
+		setElementText(this.content.t, input.toFixed(1)); 
 	}
 	
 	if(this.duration < this.updateRate){return;}
-	this.duration -= this.updateRate;
 	
-	//do generates
-	ActualUsed = {};
-	ActualCreated = {};
-	game.generators.forEach(x => {x.autoUpgrade(); x.generate();});
-	
+	input = Math.min(100, input);
+	while(--input > 0){
+		this.duration -= this.updateRate;
+		//do generates
+		ActualUsed = {};
+		ActualCreated = {};
+		game.generators.forEach(x => {x.autoUpgrade(); x.generate();});
+	}
 	this.toggleTabs();
 	
 	switch(game.menu.current){

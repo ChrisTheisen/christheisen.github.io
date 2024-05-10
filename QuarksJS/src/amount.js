@@ -122,7 +122,7 @@ Amount.prototype.update = function(){
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
 	
-	const da = Math.floor(this.Da * 10000)/10000;
+	const da = Number.isInteger(this.Da) ? this.Da.toFixed(0) :  this.Da.toFixed(4);
 	setElementText(this.content.Da, da);
 	setElementText(this.content.pg, Math.floor(this.pg));
 	setElementText(this.content.g, Math.floor(this.g));

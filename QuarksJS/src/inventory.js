@@ -364,7 +364,6 @@ InventoryItem.prototype.renderManage = function(parent){
 
 }
 InventoryItem.prototype.renderManageModal = function(){
-	console.log(this);
 	const parent = createUIElement({cssClasses:['manageModalWrapper']});
 	const modal = getUIElement("manageModalForm");
 	createUIElement({type:'button', parent:parent, textContent:'X', style:{padding:'5px',margin:'0',fontSize:'10px',position:'absolute',right:'10px',top:'10px'}});
