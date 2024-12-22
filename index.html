@@ -1,23 +1,84 @@
 <html>
-  <head>
-    <title>Chris Theisen</title>
-  </head>
-  <body>
-    //TODO: make personal page.
-    <h3>Side Project Fun Times</h3>
-    <ul>
-      <li><a href="Drawing/">Drawing</a></li>
-      <li><a href="OrgChart/">Charting</a></li>
-      <li><a href="Sol/">Sol Sim</a></li>
-      <li><a href="https://multitudesofminions.github.io/">Multitudes of Minions</a></li>
-      <li><a href="Umbrella/">Umbrellas</a></li>
-      <li><a href="Absorb/">Absorb Game</a>(use arrow keys, avoid red)</li>
-      <li><a href="Ballsplosion/">BallSplosion</a></li>
-      <li><a href="GW2ItemTracker/">GW2ItemTracker</a></li>
-      <li><a href="https://www.audiotasklist.com/">Routine Manager (concept)</a></li>
-      <li><a href="QuickMaths/">Quick Maths Training</a></li>
-      <li><a href="QuarksJS/">Quarks</a></li>
-      <li><a href="https://github.com/ChrisTheisen/ROOSFAFS/releases/latest" target="_blank">ROOSFAFS Download</a></li>
-    </ul>
-  </body>
+	<head>
+		<title>Chris Theisen</title>
+		<style>
+			body{font-family: sans-serif; padding:20px;}
+			menu{display:flex; list-style-type: none; }
+			
+			.wrapper{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.hide{display:none;}
+			.content{
+				width: 400px; 
+				padding: 20px;
+				border: solid 1px black; 
+				border-radius: 20% / 40%; 
+			}
+		</style>
+		<script>
+			function setActive(input){
+				const a = document.getElementsByClassName('content');
+				Array.from(a).forEach(x => x.classList.toggle('hide', true));
+				document.getElementById(input).classList.toggle('hide', false);
+			}
+		</script>
+	</head>
+	<body>
+		<div id='top-wrapper' class='wrapper'>
+			<div id='top' class='top-wrapper'>
+				<p>
+					My name is Chris Theisen. I mostly develop in C#/JS/MSSQL.
+				</p>
+				<p>
+					This is a place where I put some side projects.
+				</p>
+				<div class='menu-wrapper'>
+					<menu>
+						<li><button id='mnuTools' onclick='setActive("tools")'>Tools</button></li>
+						<li><button id='mnuGames' onclick='setActive("games")'>Games</button></li>
+						<li><button id='mnuSampl' onclick='setActive("sampl")'>Samples</button></li>
+						<li><button id='mnuConta' onclick='setActive("conta")'>Contact</button></li>
+					</menu>
+				</div>
+			</div>
+		</div>
+		<div id='content-wrapper' class='wrapper'>
+			<div id='tools' class='content hide'>
+				<h3>Tools</h3>
+				<ul>
+					<li><a href="https://github.com/ChrisTheisen/ROOSFAFS/releases/latest" target="_blank">ROOSFAFS Download</a> (Windows file searching program)</li>
+					<li><a href="QuickMaths/">Quick Maths Training</a> (Type answer and press 'Enter')</li>
+					<li><a href="https://www.audiotasklist.com/"> Audio Task List (Routine assistant) (Proof of concept)</a></li>
+				</ul>
+			</div>
+			<div id='sampl' class='content hide'>
+				<h3>Samples</h3>
+				Mostly learning Canvas tags
+				<ul>
+					<li><a href="OrgChart/">Charting</a></li>
+					<li><a href="Drawing/">Drawing</a></li>
+					<li><a href="Sol/">Sol Sim</a></li>
+					<li><a href="Umbrella/">Umbrellas</a></li>
+					<li><a href="Ballsplosion/">BallSplosion</a></li>
+				</ul>
+			</div>
+			<div id='games' class='content hide'>
+				<h3>Games</h3>
+				and game related tools
+				<ul>
+					<li><a href="Absorb/">Absorb Game</a>(use arrow keys, avoid red)</li>
+					<li><a href="https://multitudesofminions.github.io/">Multitudes of Minions</a> (Mostly done/abandoned)</li>
+					<li><a href="QuarksJS/">Quarks</a> (In progress)</li>
+					<li><a href="GW2ItemTracker/">GW2ItemTracker</a></li>
+				</ul>
+			</div>
+			<div id='conta' class='content hide'>
+				<h3>Contact</h3>
+				//TODO: setup contact
+			</div>
+		</div>
+	</body>
 </html>
