@@ -464,6 +464,6 @@ const recipes = [
 	{id:'r_70', i:[{f:items.hardwoodPulp, a:32}, {f:items.water, b:new Amount({g:30})}], o:[{f:items.paperA0, a:1}]},
 	
 //human industrial Trains
-	{id:'r_7d', i:[{f:items.hardwoodChip, a:32}], o:[{f:items.railTie, a:1}]},
+	{id:'r_7d', i:[{f:items.hardwoodChip, a:2500}], o:[{f:items.railTie, a:1}]},
 	
 ];

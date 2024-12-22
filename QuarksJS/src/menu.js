@@ -318,6 +318,7 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
+			this.route();//update Discover
 		}});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
@@ -338,7 +339,20 @@ Menu.prototype.renderManage = async function(parent){
 	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
 	const f2 = createUIElement({parent:filter, cssClasses:['row', 'center']});
+	const fa = createUIElement({parent:filter, cssClasses:['row', 'center']});
 
+	const wa0 = createUIElement({parent:fa, cssClasses:['filterChk']});
+	game.settings.content.m.a = createUIElement({type:'input', parent:createUIElement({type:'label', parent:wa0, textContent:'Live-Update'}), 
+		title:'Live-Update', attr:{type:'checkbox'},
+		onclick:(e) => { game.settings.m.a = !game.settings.m.a; }
+	});
+	game.settings.content.m.a.checked = game.settings.m.a;
+	const wa1 = createUIElement({parent:fa, cssClasses:['filterChk']});
+	const wa2 = createUIElement({parent:fa, cssClasses:['filterChk']});
+	createUIElement({type:'button', parent:wa2, textContent: 'Update Table', cssClasses:['smallButton'],
+		onclick:() => game.inventory.update()
+	});
+	
 	const w00 = createUIElement({parent:f0, cssClasses:['filterChk']});
 	game.settings.content.m.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0'}), 
 		title:'Hide Created = 0', attr:{type:'checkbox'},
@@ -400,6 +414,7 @@ Menu.prototype.renderManage = async function(parent){
 	game.settings.content.m.z.checked = game.settings.m.z;
 
 	await game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
+	game.inventory.update();
 }
 
 Menu.prototype.renderEnhance = function(parent){
@@ -454,7 +469,7 @@ Menu.prototype.renderSettings = function(parent){
 	
 	
 	createUIElement({parent:m, textContent:'Input Load Data:'});
-	game.settings.content.s.txtLoad = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
+	game.settings.content.s = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
 	createUIElement({type:'button', parent:createUIElement({parent: parent, cssClasses:['settingsRow']}), textContent:'Load Data',
 		style:{marginLeft:'15px'}, onclick:() => loadSaveData()
 	});
@@ -462,13 +477,13 @@ Menu.prototype.renderSettings = function(parent){
 	createUIElement({type: 'hr', parent: parent});
 
 	const s = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.s = createUIElement({type:'button', parent:s, textContent:'Restore Default Settings', 
+	createUIElement({type:'button', parent:s, textContent:'Restore Default Settings', 
 		style:{marginLeft:'15px'}, onclick:() => resetSettings()
 	});
 
 	const z = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'button', parent:z, textContent:'HARD RESET', 
-		style:{marginLeft:'15px'}, onclick:() => { if(window.confirm("Really lose all data and reset the whole game?")){hardReset();} }
+		style:{marginLeft:'15px'}, onclick:() => { if(window.confirm("Confirm: clear save data and reset game?")){hardReset();} }
 	});
 
 }

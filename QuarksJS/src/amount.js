@@ -18,14 +18,14 @@
 const MAX_INVENTORY = 2**50;
 
 const MassUnits = {
-	Da:{i: 0, s:'Da',n:'Dalton',c:602217364335},
-	pg:{i: 1, s:'pg',n:'Picogram',c:1000000000000},
-	g:{i: 2, s:'g',n:'Gram',c:1000000000000},
-	Tg:{i: 3, s:'Tg',n:'Teragram',c:1000000000000},
-	Yg:{i: 4, s:'Yg',n:'Yattogram',c:1988000000},
-	MO:{i: 5, s:'M☉',n:'Solar Mass',c:1000000000000},
-	GM:{i: 6, s:'M_gal',n:'Galactic Mass',c:1000000000000},
-	CM:{i: 7, s:'M_uni',n:'Cosmic Mass',c:Number.POSITIVE_INFINITY}
+	Da:{i: 0, s:'Da',n:'Dalton',		c:602217364335,		emb:1,emr:8},
+	pg:{i: 1, s:'pg',n:'Picogram',		c:1000000000000,	emb:8,emr:16},
+	g: {i: 2, s:'g', n:'Gram',			c:1000000000000,	emb:16,emr:32},
+	Tg:{i: 3, s:'Tg',n:'Teragram',		c:1000000000000,	emb:48,emr:64},
+	Yg:{i: 4, s:'Yg',n:'Yattogram',		c:1988000000,		emb:144,emr:128},
+	MO:{i: 5, s:'M☉',n:'Solar Mass',	c:1000000000000,	emb:432,emr:256},
+	GM:{i: 6, s:'GM',n:'Galactic Mass',	c:1000000000000,	emb:1296,emr:512},
+	CM:{i: 7, s:'CM',n:'Cosmic Mass',	c:Number.MAX_VALUE,	emb:3888,emr:1024}
 }
 
 function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})){
@@ -77,11 +77,11 @@ Amount.prototype.render = function(parent, isInline = false){
 	const wg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.g = createUIElement({type:'span', parent:wg, textContent:this.g});
 	createUIElement({type:'span', parent:wg, textContent:` ${MassUnits.g.s}`, title:`${MassUnits.g.n}`});
-
+	
 	const wTg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.Tg = createUIElement({type:'span', parent:wTg, textContent:this.Tg});
 	createUIElement({type:'span', parent:wTg, textContent:` ${MassUnits.Tg.s}`, title:`${MassUnits.Tg.n}`});
-
+	
 	const wYg = createUIElement({parent:w, cssClasses:cssU});
 	this.content.Yg = createUIElement({type:'span', parent:wYg, textContent:this.Yg});
 	createUIElement({type:'span', parent:wYg, textContent:` ${MassUnits.Yg.s}`, title:`${MassUnits.Yg.n}`});
@@ -122,15 +122,14 @@ Amount.prototype.update = function(){
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
 	
-	const da = Number.isInteger(this.Da) ? this.Da.toFixed(0) :  this.Da.toFixed(4);
-	setElementText(this.content.Da, da);
-	setElementText(this.content.pg, Math.floor(this.pg));
-	setElementText(this.content.g, Math.floor(this.g));
-	setElementText(this.content.Tg, Math.floor(this.Tg));
-	setElementText(this.content.Yg, Math.floor(this.Yg));
-	setElementText(this.content.MO, Math.floor(this.MO));
-	setElementText(this.content.GM, Math.floor(this.GM));
-	setElementText(this.content.CM, Math.floor(this.CM));
+	setElementText(this.content.Da, this.Da.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3}));
+	setElementText(this.content.pg, Math.floor(this.pg).toLocaleString());
+	setElementText(this.content.g, Math.floor(this.g).toLocaleString());
+	setElementText(this.content.Tg, Math.floor(this.Tg).toLocaleString());
+	setElementText(this.content.Yg, Math.floor(this.Yg).toLocaleString());
+	setElementText(this.content.MO, Math.floor(this.MO).toLocaleString());
+	setElementText(this.content.GM, Math.floor(this.GM).toLocaleString());
+	setElementText(this.content.CM, Math.floor(this.CM).toLocaleString());
 }
 Amount.prototype.isZero = function(){
 	return !this.Da && !this.pg && !this.g && !this.Tg && !this.Yg && !this.MO && !this.GM && !this.CM;
@@ -139,30 +138,30 @@ Amount.prototype.compare = function(input){
 	input.convert();//standardize
 	this.convert();//standardize
 	return this.CM - input.CM || 
-		this.GM - input.GM || 
-		this.MO - input.MO || 
-		this.Yg - input.Yg || 
-		this.Tg - input.Tg || 
-		this.g - input.g || 
-		this.pg - input.pg || 
-		this.Da - input.Da;	
+	this.GM - input.GM || 
+	this.MO - input.MO || 
+	this.Yg - input.Yg || 
+	this.Tg - input.Tg || 
+	this.g - input.g || 
+	this.pg - input.pg || 
+	this.Da - input.Da;	
 }
 Amount.prototype.magnitude = function(){
-	if(this.CM){return MassUnits.CM.i;}
-	if(this.GM){return MassUnits.GM.i;}
-	if(this.MO){return MassUnits.MO.i;}
-	if(this.Yg){return MassUnits.Yg.i;}
-	if(this.Tg){return MassUnits.Tg.i;}
-	if(this.g){return MassUnits.g.i;}
-	if(this.pg){return MassUnits.pg.i;}
-	if(this.Da){return MassUnits.Da.i;}
-	return 0;
+	if(this.CM){return MassUnits.CM;}
+	if(this.GM){return MassUnits.GM;}
+	if(this.MO){return MassUnits.MO;}
+	if(this.Yg){return MassUnits.Yg;}
+	if(this.Tg){return MassUnits.Tg;}
+	if(this.g){return MassUnits.g;}
+	if(this.pg){return MassUnits.pg;}
+	return MassUnits.Da;
 }
 Amount.prototype.clone = function(){
 	return new Amount({Da:this.Da,pg:this.pg,g:this.g,Tg:this.Tg,Yg:this.Yg,MO:this.MO,GM:this.GM,CM:this.CM});
 }
 
 Amount.prototype.convert = function(){
+	//Convert fractional of units to lower amount and floor units larger than Da
 	this.GM += (this.CM % 1) * MassUnits.GM.c
 	this.CM = Math.floor(this.CM);
 	this.MO += (this.GM % 1) * MassUnits.MO.c
@@ -178,21 +177,23 @@ Amount.prototype.convert = function(){
 	this.Da += (this.pg % 1) * MassUnits.Da.c
 	this.pg = Math.floor(this.pg);
 	
-	while(this.Da > MassUnits.Da.c){ this.Da -= MassUnits.Da.c; this.pg++; }
-	while(this.pg > MassUnits.pg.c){ this.pg -= MassUnits.pg.c; this.g++; }
-	while(this.g > MassUnits.g.c){ this.g -= MassUnits.g.c; this.Tg++; }
-	while(this.Tg > MassUnits.Tg.c){ this.Tg -= MassUnits.Tg.c; this.Yg++; }
-	while(this.Yg > MassUnits.Yg.c){ this.Yg -= MassUnits.Yg.c; this.MO++; }
-	while(this.MO > MassUnits.MO.c){ this.MO -= MassUnits.MO.c; this.GM++; }
-	while(this.GM > MassUnits.GM.c){ this.GM -= MassUnits.GM.c; this.CM++; }
+	//If enough of a unit exists convert up.
+	if(this.Da > MassUnits.Da.c){ this.pg += Math.floor(this.Da/MassUnits.Da.c); this.Da = this.Da%MassUnits.Da.c; }
+	if(this.pg > MassUnits.pg.c){ this.g += Math.floor(this.pg/MassUnits.pg.c); this.pg = this.pg%MassUnits.pg.c; }
+	if(this.g > MassUnits.g.c){ this.g -= MassUnits.g.c; this.Tg++; }
+	if(this.Tg > MassUnits.Tg.c){ this.Tg -= MassUnits.Tg.c; this.Yg++; }
+	if(this.Yg > MassUnits.Yg.c){ this.Yg -= MassUnits.Yg.c; this.MO++; }
+	if(this.MO > MassUnits.MO.c){ this.MO -= MassUnits.MO.c; this.GM++; }
+	if(this.GM > MassUnits.GM.c){ this.GM -= MassUnits.GM.c; this.CM++; }
 	
-	while(this.Da < 0){ this.Da += MassUnits.Da.c; this.pg--; }
-	while(this.pg < 0){ this.pg += MassUnits.pg.c; this.g--; }
-	while(this.g < 0){ this.g += MassUnits.g.c; this.Tg--; }
-	while(this.Tg < 0){ this.Tg += MassUnits.Tg.c; this.Yg--; }
-	while(this.Yg < 0){ this.Yg += MassUnits.Yg.c; this.MO--; }
-	while(this.MO < 0){ this.MO += MassUnits.MO.c; this.GM--; }
-	while(this.GM < 0){ this.GM += MassUnits.GM.c; this.CM--; }
+	//If there is a negative in a unit convert down.
+	if(this.Da < 0){ this.Da += MassUnits.Da.c; this.pg--; }
+	if(this.pg < 0){ this.pg += MassUnits.pg.c; this.g--; }
+	if(this.g < 0){ this.g += MassUnits.g.c; this.Tg--; }
+	if(this.Tg < 0){ this.Tg += MassUnits.Tg.c; this.Yg--; }
+	if(this.Yg < 0){ this.Yg += MassUnits.Yg.c; this.MO--; }
+	if(this.MO < 0){ this.MO += MassUnits.MO.c; this.GM--; }
+	if(this.GM < 0){ this.GM += MassUnits.GM.c; this.CM--; }
 }
 
 Amount.prototype.add = function(input){
@@ -237,8 +238,8 @@ Amount.prototype.scale = function(input){
 
 Amount.prototype.estDivide = function(input){
 	const out = new Amount();
-	const a = this.magnitude();
-	const b = input.magnitude();
+	const a = this.magnitude().i;
+	const b = input.magnitude().i;
 	
 	if(b>a){return 0;}
 	if(a>b){
@@ -267,13 +268,13 @@ Amount.prototype.estDivide = function(input){
 
 Amount.prototype.toBigInt = function(input){
 	let output = BigInt(Math.floor(this.CM));
-
+	
 	output *= BigInt(MassUnits.GM.c);
 	output += BigInt(Math.floor(this.GM));
-
+	
 	output *= BigInt(MassUnits.MO.c);
 	output += BigInt(Math.floor(this.MO));
-
+	
 	output *= BigInt(MassUnits.Yg.c);
 	output += BigInt(Math.floor(this.Yg));
 	

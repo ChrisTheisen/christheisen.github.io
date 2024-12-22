@@ -52,8 +52,9 @@ function InventoryItem(input){
 	this.f = input;//flavor
 	this.g = [];//generators that output this item
 	this.i = [];//generators that input this item
+	this.m = input.m.magnitude();//item mass magnitude
 	this.q = false;//show used in
-	
+
 	this.v = {a: 0, b: new Amount()};//deposit value
 	this.w = {a: 0, b: new Amount()};//withdraw amount
 	
@@ -68,6 +69,7 @@ function InventoryItem(input){
 		i:null, //inventory
 		m:null, //manage parent row(for hiding locked/filtered)
 		n:null, //actual-created label
+		o:null, //isOwned message on discover
 		p:null, //discover parent row(for hiding locked/filtered)
 		q:null, //actual used label
 		r:null, //used in list container
@@ -175,7 +177,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 InventoryItem.prototype.renderCreate0 = function(parent){
 	
 	this.content.i = createUIElement({parent: parent, style:{width:'50%', paddingRight:'10px'}})
-	createUIElement({parent:this.content.i, cssClasses:['title'], textContent:'Inventory', title:`Maximum capacity is ${MAX_INVENTORY}`});
+	createUIElement({parent:this.content.i, cssClasses:['title'], textContent:'Inventory', title:`Maximum capacity is ${MAX_INVENTORY.toLocaleString()}`});
 	
 	const row = createUIElement({parent:this.content.i});
 	
@@ -305,9 +307,6 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	onclick:() => game.menu.gotoNode(this.f.id)});
 	formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowX:'clip', fontSize:'14px'}}));
 	
-	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
-	const own = createUIElement({type:'span', parent:ow, textContent:this.a});
-	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
 		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
 		onclick:() => { 
@@ -321,9 +320,12 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	});
 	
 	add.classList.toggle('disabled', !this.a);
-	
-	this.content.a.push(own);
+
+	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'30%', textAlign:'left', fontSize:'14px'}})
+	const own = createUIElement({type:'span', parent:ow});
+
 	this.content.d = add;
+	this.content.o = own;
 }
 InventoryItem.prototype.renderUsedIn = function(parent){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{width:'20%'}}), 
@@ -371,15 +373,25 @@ InventoryItem.prototype.renderManageModal = function(){
 	const dr = [];
 	createUIElement({type:'h1', parent:parent, textContent:this.f.n});
 	const fWrapper = createUIElement({parent:parent, style:{display:'inline-block'}});
-	createUIElement({type:'input', parent:createUIElement({type:'label', parent:fWrapper, textContent:'Hide Flow <= limit: '}), 
+	const enforceLimit = createUIElement({type:'input', parent:createUIElement({type:'label', parent:fWrapper, textContent:'Hide Flow <= limit: '}), 
 		title:'Hide Flow <= limit', attr:{type:'checkbox'}, style:{float:'left', marginRight:'10px'},
-		onclick:(e) => { 
+		onclick:(e) => {
+			const value = Number(limit.value);
 			dr.forEach(x => {
-				x.row.classList.toggle('hide', e.target.checked && x.g.f <= Number(limit.value));
+				x.row.classList.toggle('hide', e.target.checked && x.g.f <= value);
 			});
 		}
 	});
-	const limit = createUIElement({type:'input', parent:fWrapper, attr:{type:'number', min:0, max:1000000000000, value:0}, style:{width:'50px'}});
+	const limit = createUIElement({type:'input', parent:fWrapper, 
+		attr:{type:'number', min:0, max:1000000000000, value:0}, 
+		style:{width:'50px'},
+		onchange:(e) => {
+			const value = Number(e.target.value);
+			dr.forEach(x => {
+				x.row.classList.toggle('hide', enforceLimit.checked && x.g.f <= value);
+			});
+		}
+	});
 
 	
 	if(this.i.length){
@@ -435,8 +447,8 @@ InventoryItem.prototype.renderManageModal = function(){
 	}
 	
 	modal.replaceChildren(parent);
+	game.manageModalItem = this.f.id;
 	getUIElement("manageModal").showModal();
-
 }
 
 InventoryItem.prototype.isDisplayed = function(){
@@ -448,9 +460,9 @@ InventoryItem.prototype.update = function(){
 	const isUnlocked = this.isUnlocked();
 	
 	switch(game.menu.current){
-		case 'M_0': {
+		case 'M_0': {//Create
 			//These can be used in component sections of other elements
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
+			this.content.a.forEach(x => setElementText(x, Math.floor(this.a).toLocaleString()));
 			if(!this.isDisplayed() || !isUnlocked){return;}
 
 			this.g.forEach(x => x.update());
@@ -481,18 +493,23 @@ InventoryItem.prototype.update = function(){
 			this.w.b.update();
 			break;
 		}
-		case 'M_1': {
+		case 'M_1': {//Discover
 			const mmContains = game.mm.includes(this);
 			const filterDiscoverStock = game.settings.d.o && this.a < game.settings.d.l;
 			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s) && !this.f.s.replaceAll(/\W/g, '').toLowerCase().includes(game.settings.d.s);
 	
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
+			setElementText(this.content.o, this.a>0?'':'None Owned');
 			this.content.d?.classList.toggle('disabled', this.a<1 || mmContains);
 			this.content.p?.classList.toggle('hide', !isUnlocked || filterDiscoverStock || filterDiscoverSearch);
 			break;
 		}
-		case 'M_2': {
-			const demand = this.calculateDemand();
+		case 'M_2': {//Manage
+			if(!isUnlocked){
+				this.content.m?.classList.add('hide');
+				return;
+			}
+			
+			const demand = Demand[this.f.id] ?? 0;
 			const created = ActualCreated[this.f.id] ?? 0;
 			const used = ActualUsed[this.f.id] ?? 0;
 			const f0 = game.settings.m.c && !created;
@@ -505,10 +522,16 @@ InventoryItem.prototype.update = function(){
 			const f7 = game.settings.m.y && demand < created;
 			const f8 = game.settings.m.z && demand < used;
 
-			this.g.forEach(x => x.update());
+			const hide = f0||f1||f2||f3||f4||f5||f6||f7||f8;
+			this.content.m?.classList.toggle('hide', hide);
+			if(hide){return;}
+			
+			if(getUIElement("manageModal").open && this.f.id === game.manageModalItem){
+				this.g.forEach(x => x.update());
+				this.i.forEach(x => x.update());
+			}
 
 			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
-			this.content.m?.classList.toggle('hide', !isUnlocked || f0||f1||f2||f3||f4||f5||f6||f7||f8);
 			setElementText(this.content.z, demand);
 			setElementText(this.content.n, Math.floor(created));
 			setElementText(this.content.q, used);

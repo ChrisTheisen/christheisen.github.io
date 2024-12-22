@@ -435,12 +435,18 @@ const items = {
 	mildSteel: { id:'6h', s:'M.Steel', n: 'Mild Steel', u: false, m: new Amount({Da:5612})},
 	highSteel: { id:'6i', s:'H.Steel', n: 'High Steel', u: false, m: new Amount({Da:5660})},
 	
+	calciumCarbonate:{id:'6T', s:'CaCO3', n:'Calcium Carbonate', u:false, m: new Amount({Da:100})},
 	quartz:{ id:'6O', s:'SiO(2)', n: 'Quartz', u: false, m: new Amount({Da:5612})},
 	plagioclaseFeldspar:{ id:'6P', s:'', n: 'Plagioclase Feldspar', u: false, m: new Amount({Da:5612})},
 	alkaliFeldspar:{ id:'6Q', s:'', n: 'Alkali Feldspar', u: false, m: new Amount({Da:5612})},
+	potassiumFeldspar:{ id:'6U', s:'KAlSi3O8', n:'Potassium Feldspar', u: false, m: new Amount({Da:278})},
 	biotiteMica:{ id:'6R', s:'', n: 'Biotite', u: false, m: new Amount({Da:5612})},
-	syenogranite:{ id:'6S', s:'', n: 'Syenogranite', u: false, m: new Amount({Da:5612})},
-	monzogranite:{ id:'6T', s:'', n: 'Monzogranite', u: false, m: new Amount({Da:5612})},
+	sandGrain:{id:'6V',s:'GoS', n:'Grain of Sand', u:false, m:new Amount({pg: 2000000})}, //made out of potassiumFeldspar
+	//calciam carbonate: 83%*100
+	//sand 10%: potassiumFeldspar
+	//clay: 5%: Kaolinite: Al2Si2O5(OH)4
+	//organic material: 97%C + 1%S + 2%N [97*12 + 2*14 + 32] = 1224
+	//limestone:{id:'6S', s'CaCO3', n:'Limestone', u:false, m: new Amount({Da:
 	
 	//wood
 	hardwoodParticle: { id:'6j', s:'H.Part', n:'Hardwood Particle', u: false, m: new Amount({Da:1664000})},
@@ -468,7 +474,6 @@ const items = {
 	pfGlueDrip:{ id:'6w', s:'pf glue', n:'Phenol Formaldehyde Resin Drip', u: false, m: new Amount({pg:25})},
 	pfGlueDrop:{ id:'6F', s:'pf glue', n:'Phenol Formaldehyde Resin Drop', u: false, m: new Amount({g:1})},
 	
-	
 	whiteLiquorMote: { id:'6x', s:'W.Liquor', n:'White Liquor Mote', u:false, m: new Amount({pg:1})},
 	whiteLiquor: { id:'6y',s:'W.Liquor', n:'White Liquor', u:false, m: new Amount({g:1})},
 	blackLiquor: { id:'6z',s:'B.Liquor', n:'Black Liquor', u:false, m: new Amount({g:1})},
@@ -480,8 +485,8 @@ const items = {
 	paperA0: { id:'6E',s:'A0', n:'A0 Paper', u:false, m: new Amount({g:64})},
 	
 	//trains
-	trainBallast: { id:'6M',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:64})},
-	railTie: { id:'6N',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:64})},
+	trainBallast: { id:'6M',s:'RR Balast', n:'Railroad Balast', u:false, m: new Amount({g:1000})},
+	railTie: { id:'6N',s:'RR Tie', n:'Railroad Tie', u:false, m: new Amount({g:5000})},
 
 
 	//planet types:

@@ -4,8 +4,16 @@ function Enhancements(){
 	this.g = 0;//generator booster
 	this.m = 0;//manual click booster
 	
+	this.totalGenerated = new Amount();
+
+	this.powerD = 0;
+	this.powerE = 0;
+	this.powerG = Array(Object.keys(MassUnits).length).fill(1);
+	this.powerM = 1;
+	this.powerTGB = Array(Object.keys(MassUnits).length).fill(1);
+	
 	this.content = {
-		d: {
+		d: {//discount
 			a: null,//amount
 			b: null,//button
 			h: null,//have
@@ -13,7 +21,7 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
-		e: {
+		e: {//enhancement bonus
 			a: null,//amount
 			b: null,//button
 			h: null,//have
@@ -21,7 +29,7 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
-		g: {
+		g: {//generator bonus
 			a: null,//amount
 			b: null,//button
 			h: null,//have
@@ -29,7 +37,7 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
-		m: {
+		m: {//manual bonus
 			a: null,//amount
 			b: null,//button
 			h: null,//have
@@ -37,12 +45,35 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
+		t: {//total mass generated
+			b: null,//bonus
+			g: null,//generated
+		}
 	};
+}
+
+//calculate once and use saved values every cycle.
+Enhancements.prototype.setPowers = function(){
+	this.setPowerE();
+	this.setPowerD();
+	this.setPowerG();
+	this.setPowerM();
+	this.setPowerTGB();
+};
+
+Enhancements.prototype.setPowerTGB = function(){
+	const tm = this.totalGenerated.magnitude();
+	const pct = this.totalGenerated[tm.s]/tm.c;
+	const baseBonus = tm.emb + (pct * tm.emr);
+	
+	for(let i=0;i<this.powerTGB.length; i++){
+		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 24));
+	}
 }
 
 //these are kept split up to give flexibility in balancing 
 Enhancements.prototype.costD = function(){
-	const a = 128*16**(4*Math.floor(this.d/AllSortedFlavors.length))+Math.floor(this.d**1.75);
+	const a = 128*16**(4*Math.floor(this.d/AllSortedFlavors.length))+this.d*6+Math.floor(this.d**1.75);
 	const i = this.d%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -59,15 +90,15 @@ Enhancements.prototype.buyD = function(){
 	
 	this.update();
 }
-Enhancements.prototype.powerD = function(){
-	return .9995**(this.d * this.powerE());
+Enhancements.prototype.setPowerD = function(){
+	this.powerD = .9995**(this.d * this.powerE);
 }
 Enhancements.prototype.gotoD = function(){
 	game.menu.gotoNode(this.costD().inv.f.id);
 }
 
 Enhancements.prototype.costE = function(){
-	const a = 1024*16**(4*Math.floor(this.e/AllSortedFlavors.length))+Math.floor(this.e**2);
+	const a = 1024*16**(4*Math.floor(this.e/AllSortedFlavors.length))+this.e*8+Math.floor(this.e**2);
 	const i = this.e%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -84,15 +115,15 @@ Enhancements.prototype.buyE = function(){
 	
 	this.update();
 }
-Enhancements.prototype.powerE = function(){
-	return 1.005**this.e;
+Enhancements.prototype.setPowerE = function(){
+	this.powerE = 1.005**this.e;
 }
 Enhancements.prototype.gotoE = function(){
 	game.menu.gotoNode(this.costE().inv.f.id);
 }
 
 Enhancements.prototype.costG = function(){
-	const a = 32*16**(4*Math.floor(this.g/AllSortedFlavors.length))+Math.floor(this.g**1.5);
+	const a = 32*16**(4*Math.floor(this.g/AllSortedFlavors.length))+this.g*4+Math.floor(this.g**1.5);
 	const i = this.g%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -109,15 +140,21 @@ Enhancements.prototype.buyG = function(){
 	
 	this.update();
 }
-Enhancements.prototype.powerG = function(){
-	return 1.01**(this.g * this.powerE());
+Enhancements.prototype.setPowerG = function(){
+	let base = 1+(.01 * this.g**2 * this.powerE);
+	
+	for(let i=0;i<this.powerG.length; i++){
+		this.powerG[i] = Math.max(1, base / ((i+1) ** 2));
+	}
+	//this.powerG = 1+(.01 * this.g**2 * this.powerE);
+	//this.powerG = 1.01**(this.g * this.powerE);
 }
 Enhancements.prototype.gotoG = function(){
 	game.menu.gotoNode(this.costG().inv.f.id);
 }
 
 Enhancements.prototype.costM = function(){
-	const a = 4*16**(4*Math.floor(this.m/AllSortedFlavors.length))+Math.floor(this.m**1.25);
+	const a = 4*16**(4*Math.floor(this.m/AllSortedFlavors.length))+this.m*2+Math.floor(this.m**1.25);
 	const i = this.m%AllSortedFlavors.length;
 	return {a:a, inv:AllSortedFlavors[i]};
 }
@@ -134,8 +171,9 @@ Enhancements.prototype.buyM = function(){
 	
 	this.update();
 }
-Enhancements.prototype.powerM = function(){
-	return 1.02**(this.m * this.powerE());
+Enhancements.prototype.setPowerM = function(){
+	this.powerM = 1+(10 * this.m * this.powerE);
+	//this.powerM = 1.02**(this.m * this.powerE);
 }
 Enhancements.prototype.gotoM = function(){
 	game.menu.gotoNode(this.costM().inv.f.id);
@@ -155,14 +193,13 @@ Enhancements.prototype.render = function(parent){
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'/', title:'Ratio vinculum'});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'Need', title:'Amount needed to upgrade this enhancement'});
 
-
 	const rowM = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowD = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowE = createUIElement({parent: wrapper, cssClasses:['row']});
 	
-	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Increase all generator output while keeping input the same.', onclick:() => this.buyG() });
-	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Increase output from button clicks while keeping input the same.', onclick:() => this.buyM() });
+	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Multiplies all generator output while keeping input the same.', onclick:() => this.buyG() });
+	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Multiply the output from button clicks while keeping input the same.', onclick:() => this.buyM() });
 	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Reduce generator upgrade cost.', onclick:() => this.buyD() });
 	this.content.e.b = createUIElement({type:'button', parent:rowE, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Improve the other enhancement effects.', onclick:() => this.buyE() });
 	
@@ -171,8 +208,8 @@ Enhancements.prototype.render = function(parent){
 	this.content.d.l = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.e.l = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[Level]' });
 
-	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Increase all generator output while keeping input the same.'});
-	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Increase output when the (->) button is clicked while keeping the input the same. This stacks with the Gen. Output enhancement.'});
+	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Multiply all generator output while keeping input the same.'});
+	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Multiply the output when the (->) button is clicked while keeping the input the same.'});
 	createUIElement({parent:rowD, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Cost', title:'Reduce generator upgrade cost.'});
 	createUIElement({parent:rowE, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Enhancements', title:'Improve the other enhancement effects.'});
 
@@ -205,6 +242,16 @@ Enhancements.prototype.render = function(parent){
 	this.content.m.a = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[amount]' });
 	this.content.d.a = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[amount]' });
 	this.content.e.a = createUIElement({parent:rowE, cssClasses:['cell'], textContent:'[amount]' });
+	
+	const bonusWrapper = createUIElement({parent: parent, cssClasses:['center', 'bonusWrapper']});
+	createUIElement({parent: bonusWrapper, textContent: 'Total Mass Bonus: '});
+	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'The Total Mass Bonus (TMB) increases all generator outputs.'});
+	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'TMB starts with a small bonus when the total mass is over 65536 Da and increases with greater total mass.'});
+	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'TMB has a reduced effect on larger items.'});
+	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: '//TODO: Display TMB bonus for different sizes.'});
+	this.content.t.b = createUIElement({parent: bonusWrapper, textContent: '1'});
+	
+	this.update();
 }
 Enhancements.prototype.update = function(){
 	const cg = this.costG();
@@ -212,10 +259,10 @@ Enhancements.prototype.update = function(){
 	const cd = this.costD();
 	const ce = this.costE();
 
-	const pg = this.powerG().toFixed(5);
-	const pm = this.powerM().toFixed(5);
-	const pd = this.powerD().toFixed(5);
-	const pe = this.powerE().toFixed(5);
+	const pg = this.powerG[0].toFixed(5);
+	const pm = this.powerM.toFixed(5);
+	const pd = this.powerD.toFixed(5);
+	const pe = this.powerE.toFixed(5);
 
 	setElementText(this.content?.d?.a, cd.a);
 	this.content?.d?.b.classList.toggle('disabled', cd.inv.a < cd.a);
@@ -244,4 +291,6 @@ Enhancements.prototype.update = function(){
 	setElementText(this.content?.m?.l, this.m);
 	setElementText(this.content?.m?.n, cm.inv.f.n);
 	setElementText(this.content?.m?.p, pm);
+	
+	setElementText(this.content?.t?.b, this.powerTGB[0].toFixed(6)});
 }

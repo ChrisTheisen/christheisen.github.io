@@ -32,6 +32,10 @@ button{
 	cursor: pointer;
 }
 
+.smallButton{
+	padding: 0 15px;
+}
+
 a, a:visited{
 	color: var(--c1);
 }
@@ -42,6 +46,10 @@ th{
 
 td{
 	white-space:nowrap;
+}
+
+hr {
+	border-color: var(--bg1);
 }
 
 ::backdrop {
@@ -108,7 +116,7 @@ td{
 .content{
 	margin-top: 10px;
 	padding-bottom: 10px;
-	border-top: solid 1px var(--c2);
+	border-top: solid 1px var(--bg1);
 	width:100%;
 	flex:1 1 auto;
 	min-width:800px;
@@ -161,14 +169,14 @@ td{
 }
 
 .block{
-	border: solid 1px var(--c2);
+	border: solid 1px var(--bg1);
 	text-align: center;
 	padding: 10px;
 	min-width:800px;
 }
 
 .bLeft{
-	border-left: solid 1px var(--c2);
+	border-left: solid 1px var(--bg1);
 }
 
 .componentList{
@@ -284,7 +292,7 @@ td{
 }
 
 .filterWrapper{
-	border-bottom:solid 1px var(--c1);
+	border-bottom:solid 1px var(--bg1);
 	font-size:14px;
 }
 
@@ -336,6 +344,12 @@ td{
 	margin:0 2px;
 }
 
+.bonusWrapper{
+	border-top: 1px solid var(--bg1);
+	padding-top:25px;
+	margin-top:25px;
+}
+
 .flow{
 	font-size:22px;
 	width:150px;
@@ -360,7 +374,7 @@ td{
 .discoverContainer{
 	max-height: calc(100vh - 400px);
 	overflow-y:auto;
-	min-width:300px;
+	min-width:175px;
 }
 
 .disabled{

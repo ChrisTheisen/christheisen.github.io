@@ -59,23 +59,27 @@ GameClock.prototype.update = function(input = 1){
 	}
 	
 	if(this.duration < this.updateRate){return;}
+	game.enhancements.setPowers();
 	
-	input = Math.min(100, input);
+	input = Math.min(game.settings.s, input);
 	while(--input > 0){
 		this.duration -= this.updateRate;
 		//do generates
 		ActualUsed = {};
 		ActualCreated = {};
+		Demand = {};
 		game.generators.forEach(x => {x.autoUpgrade(); x.generate();});
 	}
 	this.toggleTabs();
 	
 	switch(game.menu.current){
-		case 'M_0':
-		case 'M_1':
-		case 'M_2':
+		case 'M_0'://create
+		case 'M_1'://discover
+		case 'M_2'://manage
 		{
-			game.inventory.update();
+			if(game.settings.m.a){ 
+				game.inventory.update();
+			}
 			break;
 		}
 		case 'M_3':
@@ -91,9 +95,9 @@ GameClock.prototype.update = function(input = 1){
 		this.lastSave = this.saveRate;
 	}
 	
-	const tm = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
+	game.enhancements.totalGenerated = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	const tms = createUIElement({});
-	tm.render(tms, true);
+	game.enhancements.totalGenerated.render(tms, true);
 	getUIElement('totalMass').replaceChildren(tms);
 }
 GameClock.prototype.toggleTabs = function(){
@@ -126,18 +130,21 @@ function Game(){
 	this.dinterval = null;
 	this.bx = 1;
 	this.by = 1;
+	this.manageModalItem = null;
 	this.settings = {
 		content: {d:{},m:{},s:{}},
 		c: false,//cheater mode
 		h: true,//show helpful tips
 		i: true,//show info
 		u: true,//show used-in warning
+		s: 100,//speed/max cycles to run on one update
 		d: { //discover filters
 			l:0,//stock limit
 			o: false,//filter unowned
 			s: null//filter search
 		},
 		m: {//manage filters
+			a: false,//auto update
 			c: false,//hide created === 0
 			m: false,//hide created < demand
 			l: false,//hide created < used
@@ -252,7 +259,7 @@ function init(){
 	setElementText(getUIElement('version'), `${max_item}.${max_gen}`);
 	
 	game.clock.status = 'Checking Game Data';
-	//Item exists but no generator
+	//Item exists but no recipe
 	Object.values(items).forEach(i => {
 		if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.id)))
 		{console.warn("MISSING GENERATOR: ", i.id, i.n);}
@@ -525,7 +532,7 @@ onkeydown = (e) => {
 					toggleSetting('my');
 				}
 				case 'M_4':{
-					game.settings.content.s?.click();
+					resetSettings();
 					break;
 				}
 				case 'M_5':{

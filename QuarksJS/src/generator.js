@@ -185,15 +185,15 @@ Generator.prototype.canUpgrade = function(){
 }
 Generator.prototype.maxFlow = function(){
 	if(this.l===0){return 0;}
-	const a = this.l**2;
-	const b = this.l**1.5;
+	const a = this.l**4;
+	const b = this.l**2;
 	const c = this.l;
 	return Math.floor(a+b+c-2);
 }
 Generator.prototype.upgradeCost = function(){
-	const s = game.enhancements.powerD();
-	const a = s*this.l**3;
-	const b = s*this.l**2;
+	const s = game.enhancements.powerD;
+	const a = s*this.l**5;
+	const b = s*this.l**3;
 	const c = s*this.l;
 	return Math.ceil((a+b+c+1)/this.o.length);
 }
@@ -217,6 +217,7 @@ Generator.prototype.autoUpgrade = function(){
 	if(this.a && this.canUpgrade() >= 2){ this.upgrade(); }
 }
 Generator.prototype.generateAmount = function() {
+	//wtf is this nonsense; could probably be cleaner
 	const values = [
 		...this.i.map(x => x.a===0?Number.POSITIVE_INFINITY:x.inv.a/x.a),
 		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
@@ -228,6 +229,7 @@ Generator.prototype.decreaseInput = function(amount){
 	this.i.forEach(x => {
 		if(x.a){
 			ActualUsed[x.inv.f.id] = (ActualUsed[x.inv.f.id]??0) + x.a * amount;
+			Demand[x.inv.f.id] = (Demand[x.inv.f.id]??0) + x.a * (this.f??0);
 			x.inv.a -= x.a * amount
 		}
 		
@@ -235,21 +237,27 @@ Generator.prototype.decreaseInput = function(amount){
 			x.inv.b.subtract(x.b.scale(amount));
 		}
 		
-		x.inv.update();
+		if(game.menu.current !== 'M_2' || game.settings.m.a){
+			x.inv.update();
+		}
 	});
 }
 Generator.prototype.increaseOutput = function(amount){
-	amount = amount * game.enhancements.powerG();
 	this.o.forEach(x => {
-		ActualCreated[x.inv.f.id] = amount;
+		const xm = x.inv.m.i;
+		const tgb = game.enhancements.powerTGB[xm];
+		const pg = game.enhancements.powerG[xm];
+		
+		const temp = amount * pg * tgb;
+		ActualCreated[x.inv.f.id] = temp;
 		
 		if(x.a){
-			const amt = x.a * amount;
+			const amt = x.a * temp;
 			x.inv.a += amt;
 		}
 		
 		if(!x.b.isZero()){
-			const amt = x.b.scale(amount);
+			const amt = x.b.scale(temp);
 			x.inv.b.add(amt);
 		}
 		
@@ -258,7 +266,10 @@ Generator.prototype.increaseOutput = function(amount){
 			x.inv.a = MAX_INVENTORY;
 			x.inv.b.add(new Amount().add(x.inv.f.m).scale(surplus));
 		}
-		x.inv.update();
+		
+		if(game.menu.current !== 'M_2' || game.settings.m.a){
+			x.inv.update();
+		}
 	});
 }
 Generator.prototype.generate = function(){
@@ -274,14 +285,13 @@ Generator.prototype.generate = function(){
 	this.increaseOutput(amount);
 }
 Generator.prototype.generateClick = function(){
-	//bonus for getting started on a new generator.
-	const amount = game.enhancements.powerM();
+	const amount = game.enhancements.powerM;
 	if(game.settings.c){//if cheater then just create setpoint
 		this.increaseOutput(amount);
 		return;
 	}
 	if(!this.canCreate()){return;}
-	
+
 	this.decreaseInput(1);
 	this.increaseOutput(amount);
 	this.update();

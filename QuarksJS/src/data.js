@@ -15,6 +15,7 @@ const AllFlavors = {};
 let AllSortedFlavors = [];
 let ActualUsed = {};
 let ActualCreated = {};
+let Demand = {};
 
 const Quark = {
     id:'m_0', n:'Quark', u: true, c:[items.Q_Up,items.Q_Down],
@@ -780,14 +781,8 @@ const mica = {
 	info:['Mica is a type of mineral that can be broken into thin plates.', 'There are many types of micas, I have included some.']
 }
 
-const granite = {
-	id:'m_32', n:'Granite', u:false, c:[items.syenogranite,items.monzogranite],
-	info:['Granite is a type of rock primarily containing quartz and feldspar.', 'There are many types of granites, I have included some.']
-	
-}
-
 const minerals = {
-	id:'m_2Z', n:'Minerals', u:false, c:[items.quartz,feldspar,granite,mica],
+	id:'m_2Z', n:'Minerals', u:false, c:[items.quartz,feldspar,mica],
 	info:['Minerals are the components of rocks.', 'As with many things in this game mineral types have been simplified.']
 }
 
@@ -889,10 +884,10 @@ const itemsMenu = [
 
 //base tabs
 const tabs = [
-	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'As the tab title suggests, this is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
-	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new resources. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
+	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
+	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the matter mutator. Scanning items does not destroy them.'}, 
 	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than created you have a deficit.'], intro:'This is a central location to monitor item flow.'}, 
-	{id:'M_3', n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'Enhancements upgrades increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator upgrade cost. They do not change the set-point limits or generator levels.'}, 
+	{id:'M_3', n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator upgrade cost. They do not change the set-point limits or generator levels.'}, 
 	{id:'M_4', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
 	{id:'M_5', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -1007,6 +1002,9 @@ const help = [
 		'|',
 		'The checkbox filters can show and hide items to check specific conditions.',
 		'|',
+		'Live-Update will toggle the table being updated every cycle. If it is disabled the table can be updated with the "Update Table" button.',
+		'If you are experiencing performance issues on the Manage tab try disabling Live-Update.',
+		'|',
 		'The table columns describe the supply and demand of each item.',
 		'Item : is the symbol of the item. Hover to see the full name.',
 		'Owned : is the amount of the items you currently have in your inventory.',
@@ -1028,6 +1026,8 @@ const help = [
 		'|',
 		'Enhancement costs are generated programmatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can affect the enhancement costs.',
 		'|',
+		'Total Mass Bonus (TMB) : This increases output based on the total mass of your inventory. Higher total mass gives a larger bonus.',
+		'|',
 		'The Enhance tab is unlocked when a generator for an item with components (not a quark, lepton, or gauge boson) is over level 7.'
 	]},
 	{t:'Settings', c:[
@@ -1043,10 +1043,10 @@ const help = [
 		'Brothers - Used for their smart brain skills',
 		'Wife/kids - Testing the game',
 		'https://periodictable.com - Used for atom isotopes; I included the bolded isotopes',
-		'https://www.rsc.org/periodic-table - Used for atom information',
+		'https://www.rsc.org/periodic-table - Used for other atom information',
 		'https://webbook.nist.gov/chemistry/name-ser/ - Used for molecule symbols',
 		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/ - Used for learning about functional groups',
-		'https://chat.openai.com/ - Used for general questions; verified most responses with outside sources',
+		'https://chat.openai.com/ && https://gemini.google.com/app - Used for general questions; verified most responses with outside sources',
 		'|',
 		'If you have a suggestion of items you want added or concerns about accuracy you can email: grumdrig333@gmail.com',
 	]},

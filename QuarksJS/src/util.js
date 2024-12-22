@@ -189,6 +189,7 @@ function resetSettings(){
 	game.settings.h = true;
 	game.settings.i = true;
 	game.settings.u = true;
+	game.settings.s = 100;
 	game.settings.d.o = false;
 	game.settings.d.s = null;
 	game.settings.m.c = false;
@@ -203,7 +204,7 @@ function resetSettings(){
 }
 
 function loadSaveData(){
-	localStorage.setItem('Q', game.settings.content.s.txtLoad.value);
+	localStorage.setItem('Q', game.settings.content.s.value);
 	load();
 }
 
@@ -224,9 +225,11 @@ function load() {
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
+	game.settings.s = data.s?.s ?? 100;
 	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
+	game.settings.m.a = data.s?.ma ?? false;
 	game.settings.m.c = data.s?.mc ?? false;
 	game.settings.m.m = data.s?.mm ?? false;
 	game.settings.m.l = data.s?.ml ?? false;
@@ -297,9 +300,11 @@ function save() {
 	data.s.h = game.settings.h?1:0;
 	data.s.i = game.settings.i?1:0;
 	data.s.u = game.settings.u?1:0;
+	data.s.s = game.settings.s??100;
 	data.s.dl = game.settings.d.l??0;
 	data.s.do = game.settings.d.o?1:0;
 	//if(game.settings.d.s){data.s.ds = game.settings.d.s;}
+	data.s.ma = game.settings.m.a?1:0;
 	data.s.mc = game.settings.m.c?1:0;
 	data.s.mm = game.settings.m.m?1:0;
 	data.s.ml = game.settings.m.l?1:0;
