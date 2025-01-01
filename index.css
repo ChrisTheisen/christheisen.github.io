@@ -14,12 +14,6 @@ menu{
   font-size:16pt;
   cursor: pointer;
 }
-.mnuButton:first-child{
-  border-radius:10px 0 0 0;
-}
-.mnuButton:last-child{
-  border-radius:0 10px 0 0;
-}
 .activeButton{
   background-color: #ffffff;
   border: solid 1px #000000;
