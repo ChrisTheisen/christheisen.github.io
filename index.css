@@ -11,6 +11,7 @@ menu{
 .mnuButton{
   background-color: #999999;
   border: none;
+  font-size:16pt;
 }
 .activeButton{
   background-color: #ffffff;
