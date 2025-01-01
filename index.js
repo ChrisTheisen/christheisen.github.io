@@ -8,7 +8,6 @@ function init(){
   const buttons = Array.from(document.getElementsByClassName('mnuButton'));
   buttons.forEach(x => {
     const id = x.id.replace('mnu','div'); 
-    console.log(id);
     x.addEventListener('click', () => setActive(id));
   });
 }
