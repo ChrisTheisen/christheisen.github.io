@@ -6,13 +6,15 @@ body{
 menu{
   display:flex; 
   list-style-type: none; 
+  margin:0px;
 }
 .mnuButton{
-  background-color: #ffffff;
+  background-color: #999999;
   border: none;
 }
 .activeButton{
-  background-color: blue;
+  background-color: #ffffff;
+  border: solid 1px #000000;
 }
 
 .wrapper{
