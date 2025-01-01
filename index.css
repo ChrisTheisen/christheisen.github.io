@@ -12,10 +12,12 @@ menu{
   background-color: #999999;
   border: none;
   font-size:16pt;
+  cursor: pointer;
 }
 .activeButton{
   background-color: #ffffff;
   border: solid 1px #000000;
+  border-bottom:none;
 }
 
 .wrapper{
