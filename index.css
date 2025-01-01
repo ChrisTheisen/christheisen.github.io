@@ -7,6 +7,13 @@ menu{
   display:flex; 
   list-style-type: none; 
 }
+.mnuButton{
+  background-color: #000000;
+  border: none;
+}
+.activeButton{
+  background-color: blue;
+}
 
 .wrapper{
   display: flex;
