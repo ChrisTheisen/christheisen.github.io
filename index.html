@@ -20,16 +20,16 @@
 				</p>
 				<div class='menu-wrapper'>
 					<menu>
-						<li><button id='mnuTools' onclick='() => setActive("tools");'>Tools</button></li>
-						<li><button id='mnuGames' onclick='() => setActive("games");'>Games</button></li>
-						<li><button id='mnuSample' onclick='() => setActive("sample");'>Samples</button></li>
-						<li><button id='mnuContact' onclick='() => setActive("contact");'>Contact</button></li>
+						<li><button id='mnuTools' class='mnuButton'>Tools</button></li>
+						<li><button id='mnuGames' class='mnuButton'>Games</button></li>
+						<li><button id='mnuSample' class='mnuButton'>Samples</button></li>
+						<li><button id='mnuContact' class='mnuButton'>Contact</button></li>
 					</menu>
 				</div>
 			</div>
 		</div>
 		<div id='content-wrapper' class='wrapper'>
-			<div id='tools' class='content hide'>
+			<div id='divTools' class='content hide'>
 				<h3>Tools</h3>
 				<ul>
 					<li><a href="https://github.com/ChrisTheisen/ROOSFAFS/releases/latest" target="_blank">ROOSFAFS Download</a> (Windows file searching program)</li>
@@ -37,7 +37,7 @@
 					<li><a href="https://www.audiotasklist.com/"> Audio Task List (Routine assistant) (Proof of concept)</a></li>
 				</ul>
 			</div>
-			<div id='games' class='content hide'>
+			<div id='divGames' class='content hide'>
 				<h3>Games</h3>
 				and game related tools
 				<ul>
@@ -47,7 +47,7 @@
 					<li><a href="GW2ItemTracker/">GW2ItemTracker</a></li>
 				</ul>
 			</div>
-			<div id='sample' class='content hide'>
+			<div id='divSample' class='content hide'>
 				<h3>Samples</h3>
 				Mostly learning Canvas tags
 				<ul>
@@ -58,7 +58,7 @@
 					<li><a href="Ballsplosion/">BallSplosion</a></li>
 				</ul>
 			</div>
-			<div id='contact' class='content hide'>
+			<div id='divContact' class='content hide'>
 				<h3>Contact</h3>
 				//TODO: setup contact
 			</div>
