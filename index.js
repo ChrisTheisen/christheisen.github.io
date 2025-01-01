@@ -11,7 +11,7 @@ function setActive(input){
 function init(){
   const buttons = Array.from(document.getElementsByClassName('mnuButton'));
   buttons.forEach(x => {
-    x.addEventListener('click', () => setActive(this));
+    x.addEventListener('click', () => setActive(x));
   });
 }
 
