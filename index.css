@@ -16,8 +16,8 @@ menu{
 .hide{ display:none; }
 .content{
   background-color: #ffffff;
-  width: 400px; 
+  width: 600px; 
   padding: 20px 0px 20px 40px;
   border: solid 1px black; 
-  border-radius: 20% / 40%; 
+  border-radius: 12% / 50%; 
 }
