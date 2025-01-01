@@ -1,6 +1,6 @@
 function setActive(input){
   const a = document.getElementsByClassName('content');
-  Array.from(a).forEach(x => x.classList.toggle('hide', true);
+  Array.from(a).forEach(x => x.classList.toggle('hide', true));
   document.getElementById(input.id.replace('mnu','div')).classList.toggle('hide', false);
 
   const b = document.getElementsByClassName('mnuButton');
