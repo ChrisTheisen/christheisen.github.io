@@ -68,7 +68,7 @@ const B = {
 };
 const C = {
 	id:'m_9', n:'Carbon', u:false, c:[items.C12,items.C13],
-	info: ['Carbon is used in organic matter and many industries. C14 is has a halflife of ~5700 years and is used to date dead organic matter.']
+	info: ['Carbon is used in organic matter and many industries. C14 is not in this game but is has a halflife of ~5700 years and is used to date dead organic matter.']
 };
 const N = {
 	id:'m_a', n:'Nitrogen', u:false, c:[items.N14,items.N15],

@@ -95,7 +95,9 @@ GameClock.prototype.update = function(input = 1){
 		this.lastSave = this.saveRate;
 	}
 	
-	game.enhancements.totalGenerated = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
+	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
+	game.enhancements.totalGenerated = TM;
+	
 	const tms = createUIElement({});
 	game.enhancements.totalGenerated.render(tms, true);
 	getUIElement('totalMass').replaceChildren(tms);
@@ -154,6 +156,10 @@ function Game(){
 			x: false,//hide demand === 0
 			y: false,//hide demand < created
 			z: false //hide demand < used
+		},
+		n:{//number settings
+			b: 10,//base
+			s: 0,//significant digits to display
 		}
 	};
 	this.mm = [];
@@ -465,11 +471,6 @@ onkeydown = (e) => {
 				}
 				case 'M_2':{
 					toggleSetting('mn');
-					break;
-				}
-				case 'M_3':{
-					if(e.altKey){game.enhancements.gotoE();}
-					else{game.enhancements.buyE();}
 					break;
 				}
 				case 'M_4':{

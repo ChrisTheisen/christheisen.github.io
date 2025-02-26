@@ -107,7 +107,7 @@ function toggleSetting(input){
 	const a = [...input];
 	const z = a.pop();
 	let s = game.settings;
-	let c = game.settings.content;
+	let c = game.settings.content.s;
 	a.forEach(x => {s = s[x]; c = c[x];});
 	s[z] = !s[z];
 	c[z].checked = s[z];
@@ -124,6 +124,12 @@ function toggleSetting(input){
 		case'u':{ break; }
 		case'mc':{
 			game.inventory.update();
+			break;
+		}
+		case'nb':{
+			break;
+		}
+		case'ns':{
 			break;
 		}
 	}
@@ -241,7 +247,6 @@ function load() {
 	game.settings.m.z = data.s?.mz ?? false;
 	
 	game.enhancements.d = data.e?.d ?? 0;
-	game.enhancements.e = data.e?.e ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
 	game.enhancements.m = data.e?.m ?? 0;
 
@@ -288,7 +293,6 @@ function save() {
 		g:{},
 		e:{
 			d:game.enhancements.d,
-			e:game.enhancements.e,
 			g:game.enhancements.g,
 			m:game.enhancements.m
 		}, 
@@ -314,6 +318,8 @@ function save() {
 	data.s.mx = game.settings.m.x?1:0;
 	data.s.my = game.settings.m.y?1:0;
 	data.s.mz = game.settings.m.z?1:0;
+	data.s.nb = game.settings?.n?.b??10;
+	data.s.ns = game.settings?.n?.s??6;
 	
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
@@ -446,4 +452,15 @@ function doIDCheck(){
 	checkItemIDs();
 	checkRecipeIDs();
 	checkMenuIDs();
+}
+
+function copyText(input, success='Copied Success', failure='Copy Failed'){
+	console.log(input);
+	navigator.clipboard.writeText(input)
+    .then(() => {
+		makeToast(success);
+    })
+    .catch(() => {
+		makeToast(failure);
+    });
 }

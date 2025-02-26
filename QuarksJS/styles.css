@@ -1,4 +1,4 @@
-:root{
+ :root{
 	--bg0: #000000;
 	--bg1: #003288;
 	--bg2: #550000;
@@ -122,9 +122,6 @@ hr {
 	min-width:800px;
 }
 
-.activeFlavor{
-}
-
 .title{
 	font-size: 24px;
 	font-weight: bold;
@@ -161,6 +158,11 @@ hr {
 	display: table-cell;
 	padding: 0 5px;
 	vertical-align:middle;
+}
+
+.headerCell{
+	font-weight: bold;
+	text-decoration: underline;
 }
 
 .info{
@@ -309,7 +311,8 @@ hr {
 }
 
 .discover{
-
+	max-height: calc(100vh - 290px);
+	overflow-y:auto;
 }
 
 .discoverLeft{

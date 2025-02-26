@@ -277,7 +277,10 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 	game.settings.content.d.o.checked = game.settings.d.o;
 	game.settings.content.d.l = createUIElement({type:'input', parent:f1, attr:{type:'number', min:0, max:1000000000000}, style:{width:'50px'},
-		onchange: (e) => { game.settings.d.l = e.target.value;}});
+		onchange: (e) => { 
+			game.settings.d.l = e.target.value;
+			game.inventory.update();
+		}});
 	game.settings.content.d.l.value = game.settings.d.l;
 
 	const hint = createUIElement({parent:top, cssClasses:['hintZone']});
@@ -435,41 +438,57 @@ Menu.prototype.renderHelp = function(parent){
 
 Menu.prototype.renderSettings = function(parent){
 	const h = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.h = createUIElement({type:'input', parent:createUIElement({type:'label', parent:h, textContent:'Show Introduction Hints with a green border'}), 
+	game.settings.content.s.h = createUIElement({type:'input', parent:createUIElement({type:'label', parent:h, textContent:'Show Introduction Hints with a green border'}), 
 		title:'Toggle Introduction Hints', attr:{type:'checkbox'},
 		onclick:() => toggleSetting('h', this)});
-	game.settings.content.h.checked = game.settings.h;
+	game.settings.content.s.h.checked = game.settings.h;
 
 	const i = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.i = createUIElement({type:'input', parent:createUIElement({type:'label', parent:i, textContent:'Show Flavor text and bonus info'}), 
+	game.settings.content.s.i = createUIElement({type:'input', parent:createUIElement({type:'label', parent:i, textContent:'Show Flavor text and bonus info'}), 
 		title:'Toggle Info Snippets', attr:{type:'checkbox'},
 		onclick:() => toggleSetting('i', this)});
-	game.settings.content.i.checked = game.settings.i;
+	game.settings.content.s.i.checked = game.settings.i;
 
 	const u = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.u = createUIElement({type:'input', parent:createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning'}), 
+	game.settings.content.s.u = createUIElement({type:'input', parent:createUIElement({type:'label', parent:u, textContent:'Show Used-In Spoiler Warning'}), 
 		title:'Show Used-In Warning',attr:{type:'checkbox'},
 		onclick:() => toggleSetting('u')});
-	game.settings.content.u.checked = game.settings.u;
+	game.settings.content.s.u.checked = game.settings.u;
 
 	const c = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Mode (creating items has no cost)'}), 
+	game.settings.content.s.sc = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Mode (creating items has no cost)'}), 
 		title:'Cheater Mode', attr:{type:'checkbox'},
 		onclick:() => toggleSetting('c', this)});
-	game.settings.content.c.checked = game.settings.c;
+	game.settings.content.s.sc.checked = game.settings.c;
+
+	const nb = createUIElement({parent:parent, cssClasses:['settingsRow']});
+	game.settings.content.s.nb = createUIElement({type:'input', parent:createUIElement({type:'label', parent:nb, textContent:'Number base: '}), 
+		title:'Number Base', attr:{type:'number', min:2, max:36},
+		onclick:() => toggleSetting('nb', this)});
+	game.settings.content.s.nb.value = game.settings.nb;
+
 
 	createUIElement({type: 'hr', parent: parent});
 
 	const l = createUIElement({parent: parent, cssClasses:['settingsRow','pointer'], onclick:()=>{save(); this.route();}})
-	createUIElement({type: 'span', parent:l, textContent:'Last save at: '});
-	createUIElement({type: 'span', parent:l, textContent:new Date(new Date() - game.clock.lastSave).toLocaleString()});
+	createUIElement({type: 'span', parent:l, title:'Click to save', textContent:'Last save at: '});
+	createUIElement({type: 'span', parent:l, title:'Click to save', textContent:new Date(new Date() - game.clock.lastSave).toLocaleString()});
 
-	const m = createUIElement({parent: parent, cssClasses:['settingsRow']})
-	createUIElement({type: 'textarea', parent: m, textContent: localStorage.getItem('Q'), attr:{rows:'10', cols:'80', disabled:'true'}})
+	const m = createUIElement({parent: parent, cssClasses:['settingsRow','pointer'],
+		title:'Click to copy save data',
+		onclick: () => copyText(localStorage.getItem('Q'))
+
+	})
+	createUIElement({type: 'textarea', parent: m, textContent: localStorage.getItem('Q'), 
+		attr:{rows:'10', cols:'80', readonly:'true'},
+		title:'Click to copy save data', cssClasses:['pointer'],
+		onclick: () => copyText(localStorage.getItem('Q'))
+
+	})
 	
 	
 	createUIElement({parent:m, textContent:'Input Load Data:'});
-	game.settings.content.s = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
+	game.settings.content.s.s = createUIElement({type: 'textarea', parent: m, attr:{rows:'10', cols:'80'}})
 	createUIElement({type:'button', parent:createUIElement({parent: parent, cssClasses:['settingsRow']}), textContent:'Load Data',
 		style:{marginLeft:'15px'}, onclick:() => loadSaveData()
 	});

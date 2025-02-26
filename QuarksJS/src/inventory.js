@@ -495,7 +495,7 @@ InventoryItem.prototype.update = function(){
 		}
 		case 'M_1': {//Discover
 			const mmContains = game.mm.includes(this);
-			const filterDiscoverStock = game.settings.d.o && this.a < game.settings.d.l;
+			const filterDiscoverStock = iBBgame.settings.d.o && this.a < game.settings.d.l;
 			const filterDiscoverSearch = game.settings.d.s && !this.f.n.toLowerCase().includes(game.settings.d.s) && !this.f.s.replaceAll(/\W/g, '').toLowerCase().includes(game.settings.d.s);
 	
 			setElementText(this.content.o, this.a>0?'':'None Owned');
