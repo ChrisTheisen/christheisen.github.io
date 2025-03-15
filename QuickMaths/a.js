@@ -1,6 +1,5 @@
 'use strict';
 
-
 //practice
 	//pass all equations from level
 
@@ -9,7 +8,7 @@
 	//lose a heart when you get one wrong
 	//fill progress bar to pass
 
-//math levels mostly based on: https://mathfactsmatter.com/the-7-levels-of-math-fact-fluency/#
+//Levels based on what my teacher wife told me to do.
 
 let difficulty = 0;
 let score = 0;
@@ -32,55 +31,108 @@ const practice = document.getElementById('practice');
 const header = document.getElementById('header');
 
 const levels = [
-	{//0: purple
-		A:{min:0, max:5}
+	{//0: addition 1
+		name: 'Addition 1',
+		op: 'A',
+		lhsMin: 0,
+		lhsMax: 5,
+		rhsMin: 0,
+		rhsMax: 5
 	},
-	{//1: red
-		A:{min:6, max:10},
-		S:{min:0, max:5}
+	{//1: addition 2
+		name: 'Addition 2',
+		op: 'A',
+		lhsMin: 0,
+		lhsMax: 10,
+		rhsMin: 0,
+		rhsMax: 10
 	},
-	{//2: orange
-		A:{min:10, max:16},
-		S:{min:4, max:11}
+	{//2: addition 3
+		name: 'Addition 3',
+		op: 'A',
+		lhsMin: 0,
+		lhsMax: 10,
+		rhsMin: 0,
+		rhsMax: 20
 	},
-	{//3: yellow
-		A:{min:16, max:20},
-		S:{min:11, max:15},
-		M:{min:0, max:2}
+	{//3: subtraction 1
+		name: 'Subtraction 1',
+		op: 'S',
+		lhsMin: 0,
+		lhsMax: 5,
+		rhsMin: 0,
+		rhsMax: 5
 	},
-	{//4: green
-		S:{min:16, max:20},
-		M:{min:3, max:5},
-		D:{min:0, max:2}
+	{//4: subtraction 2
+		name: 'Subtraction 2',
+		op: 'S',
+		lhsMin: 0,
+		lhsMax: 10,
+		rhsMin: 0,
+		rhsMax: 10
 	},
-	{//5: light blue
-		M:{min:6, max:8},
-		D:{min:3, max:5}
+	{//5: subtraction 3
+		name: 'Subtraction 3',
+		op: 'S',
+		lhsMin: 0,
+		lhsMax: 20,
+		rhsMin: 0,
+		rhsMax: 10
 	},
-	{//6: dark blue
-		M:{min:9, max:12},
-		D:{min:6, max:8}
+	{//6: multiplication 1
+		name: 'Multiplication 1',
+		op: 'M',
+		lhsMin: 0,
+		lhsMax: 5,
+		rhsMin: 0,
+		rhsMax: 25
 	},
-	{//7: purple
-		D:{min:9, max:12}
+	{//7: multiplication 2
+		name: 'Multiplication 2',
+		op: 'M',
+		lhsMin: 0,
+		lhsMax: 7,
+		rhsMin: 0,
+		rhsMax: 49
+	},
+	{//8: multiplication 3
+		name: 'Multiplication 3',
+		op: 'M',
+		lhsMin: 0,
+		lhsMax: 12,
+		rhsMin: 0,
+		rhsMax: 144
+	},
+	{//9: division 1
+		name: 'Division 1',
+		op: 'D',
+		lhsMin: 1,
+		lhsMax: 5,
+		rhsMin: 0,
+		rhsMax: 5
+	},
+	{//10: division 2
+		name: 'Division 2',
+		op: 'D',
+		lhsMin: 1,
+		lhsMax: 10,
+		rhsMin: 0,
+		rhsMax: 10
+	},
+	{//11: division 3
+		name: 'Division 3',
+		op: 'D',
+		lhsMin: 1,
+		lhsMax: 12,
+		rhsMin: 0,
+		rhsMax: 12
 	}
 ];
 
-function pickAKey(input){
-	const keys = Object.keys(input);
-	const index = randomInt(0, keys.length-1);
-	return keys[index];
-}
-function pickOne(array){
-	const index = randomInt(0, array.length)
-	const option = array[index];
-	return option;
-}
-
 function levelUp(){
-	difficulty = Math.min(7,difficulty+1);
+	difficulty = Math.min(levels.length-1,difficulty+1);
 	lvl.value=difficulty+'';
-	generateLevelEquations();
+	generatePracticeEquations();
 
 	wrapper.classList.add('hide');
 	showEncourage(300);
@@ -91,10 +143,10 @@ function levelUp(){
 function levelDown(){
 	difficulty = Math.max(0,difficulty-1);
 	lvl.value=difficulty+'';
-	generateLevelEquations();
+	generatePracticeEquations();
 }
 function correct(){
-	launchFirework(4);
+	launchFirework(3);
 	updateEquation();
 	score+=practiceDone;
 	prog.value = score-1;
@@ -128,28 +180,23 @@ function checkAnswer(){
 		incorrect();
 	}
 	
-	while(false){
-		levelUp();
-	}
-	while(false){
-		levelDown();
-	}
 	ans.value = '';
 	ans.focus();
 }
 
+const ALLOWED_KEYS = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Enter', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete']);
+
 ans.addEventListener('keydown', (e) => {
-	const keys = ['ArrowLeft','ArrowRight','Backspace','Delete'];
-	if(e.key.toLowerCase() === 'enter'){
+	const key = e.key;
+	
+	if (key === 'Enter') {
 		checkAnswer();
 		return;
 	}
 	
-	if(!keys.includes(e.key)){
-		if(!'0123456789'.includes(e.key) || ans.value.length > 3){
-			e.preventDefault();
-			return;
-		}
+	if (!ALLOWED_KEYS.has(key) || 
+		(key >= '0' && key <= '9' && ans.value.length > 3)) {
+		e.preventDefault();
 	}
 });
 
@@ -159,35 +206,32 @@ function randomInt(min, max){
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function buildA(min, max){
-	const sum = randomInt(min, max);
-	const addA = randomInt(min, sum);
-	const addB = sum-addA;
-	return {s:'+', a:addA, b:addB, c:sum};
+function buildA(lhsMin, lhsMax, rhsMin, rhsMax){
+	const addendA = randomInt(lhsMin, lhsMax);
+	const sum = randomInt(Math.max(rhsMin, addendA), rhsMax);
+	const addendB = sum - addendA;
+	return {s:'+', a:addendA, b:addendB, c:sum};
 }
-function buildS(min, max){
-	const minuend = randomInt(min, max);
-	const subtrahend = randomInt(min, minuend);
-	const difference = minuend-subtrahend;
+
+function buildS(lhsMin, lhsMax, rhsMin, rhsMax){
+	const subtrahend = randomInt(lhsMin, lhsMax);
+	const difference = randomInt(rhsMin, rhsMax);
+	const minuend = subtrahend + difference;
 	return {s:'-', a:minuend, b:subtrahend, c:difference};
 }
-function buildM(min, max){
-	const m2 = Math.max(10, max);
-	const temp = randomInt(min, max);
-	const aorb = randomInt(0,1);
-	const multiplicandA = aorb === 0 ? temp : randomInt(0,m2);
-	const multiplicandB = aorb === 0 ? randomInt(0,m2) : temp;
+
+function buildM(lhsMin, lhsMax, rhsMin, rhsMax){
+	const multiplicandA = randomInt(lhsMin, lhsMax);
+	const minb = multiplicandA ? rhsMin / multiplicandA : lhsMin;
+	const maxb = multiplicandA ? rhsMax / multiplicandA : lhsMax;
+	const multiplicandB = randomInt(minb, maxb);
 	const product = multiplicandA * multiplicandB;
 	return {s:'x', a:multiplicandA, b:multiplicandB, c:product};
 }
-function buildD(min, max){
-	const m2 = Math.max(10, max);
-	const temp = randomInt(min, max);
-	const aorb = randomInt(0,1);
-	if(aorb){temp = Math.max(temp, 1);}//no 0 divisor
-	
-	const quotient = aorb === 0 ? temp : randomInt(0,m2);
-	const divisor = aorb === 0 ? randomInt(1,m2) : temp;
+
+function buildD(lhsMin, lhsMax, rhsMin, rhsMax){
+	const divisor = randomInt(Math.max(1, rhsMin), rhsMax); // Ensure no division by zero
+	const quotient = randomInt(lhsMin, lhsMax);
 	const dividend = divisor * quotient;
 	return {s:'÷', a:dividend, b:divisor, c:quotient};
 }
@@ -211,8 +255,7 @@ function updateEquation(){
 		rem.parentNode.classList.add('hide');
 		quiz.classList.remove('hide');
 		header.textContent = 'Quiz Time';
-		bgColor.classList.add('grass');
-		bgColor.classList.remove('robin');
+		setBgColor('#87CE87'); // Green for quiz mode
 		heart.textContent = '♥'.repeat(hearts);
 	}
 	else{
@@ -220,31 +263,28 @@ function updateEquation(){
 		rem.parentNode.classList.remove('hide');
 		quiz.classList.add('hide');
 		header.textContent = "Let's Practice";
-		bgColor.classList.remove('grass');
-		bgColor.classList.add('robin');
+		setBgColor('#87CEEB'); // Blue for practice mode
 	}
-
 }
 function generateRandomEquation(){
-	const key = pickAKey(levels[difficulty]);
-	const min = levels[difficulty][key].min;
-	const max = levels[difficulty][key].max;
-	
-	switch(key){
+	const level = levels[difficulty];
+	const { op, lhsMin, lhsMax, rhsMin, rhsMax } = level;
+
+	switch(op){
 		case 'A':{
-			eqs.push(buildA(min, max));
+			eqs.push(buildA(lhsMin, lhsMax, rhsMin, rhsMax));
 			break;
 		}
 		case 'S':{
-			eqs.push(buildS(min, max));
+			eqs.push(buildS(lhsMin, lhsMax, rhsMin, rhsMax));
 			break;
 		}
 		case 'M':{
-			eqs.push(buildM(min, max));
+			eqs.push(buildM(lhsMin, lhsMax, rhsMin, rhsMax));
 			break;
 		}
 		case 'D':{
-			eqs.push(buildD(min, max));
+			eqs.push(buildD(lhsMin, lhsMax, rhsMin, rhsMax));
 			break;
 		}
 		default:{
@@ -254,87 +294,113 @@ function generateRandomEquation(){
 	}
 }
 
-function addIfNotExist(s, a, b, c){
-	//no duplicates
-	if(eqs.some(x => x.s === s && x.a === a && x.b === b && x.c === c)){
-		return;
+function shuffleArray(array) {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
 	}
-	eqs.push({s:s, a:a, b:b, c:c});
+	return array;
 }
 
-function generateLevelEquations(){
-	hearts=3;
-	score=0;
+function generatePracticeEquations() {
+	hearts = 3;
+	score = 0;
 	difficulty = Number(lvl.value);
-	const keys = Object.keys(levels[difficulty]);
 	eqs.length = 0;
 	practiceDone = 0;
-	keys.forEach(
-		key => {
-			const min = levels[difficulty][key].min;
-			const max = levels[difficulty][key].max;
-			
-			switch(key){
-				case 'A':{
-					for(let sum=min;sum<=max;sum++){
-						for(let addend=min;addend<=sum;addend++){
-							addIfNotExist('+', addend, sum-addend, sum);
-						}
-					}
-					break;
-				}
-				case 'S':{
-					for(let minuend=min;minuend<=max;minuend++){
-						for(let subtrahend=min;subtrahend<=minuend;subtrahend++){
-							addIfNotExist('-', minuend, subtrahend, minuend-subtrahend);
-						}
-					}
-					break;
-				}
-				case 'M':{
-					const m2 = Math.max(10, max);
-					for(let temp=min;temp<=max;temp++){
-						for(let multiplicand=0;multiplicand<=m2;multiplicand++){
-							addIfNotExist('x', temp, multiplicand, temp*multiplicand);
-							if(temp !== multiplicand){
-								addIfNotExist('x', multiplicand, temp, temp*multiplicand);
-							}
-						}
-					}
-					break;
-				}
-				case 'D':{
-					const m2 = Math.max(10, max);
-					for(let i=min;i<=max;i++){
-						for(let j=0;j<=m2;j++){
-							if(i){//no 0 divisor
-								addIfNotExist('÷', i*j, i, j);
-							}
-							if(j){//no 0 divisor
-								addIfNotExist('÷', i*j, j, i);
-							}
-						}
-					}
-					break;
-				}
-				default:{
-					eqs.push({s:'+', a:1, b:1, c:2});
-					break;
+	
+	const level = levels[difficulty];
+	const { op, lhsMin, lhsMax, rhsMin, rhsMax } = level;
+	
+	const equations = new Set();
+	
+	const addEquation = (s, a, b, c) => {
+		//add equation as a string to the set to verify uniqueness
+		equations.add(JSON.stringify({a, b, c, s}));
+	};
+	
+	switch(op) {
+		case 'A': {
+			for(let addendA = lhsMin; addendA <= lhsMax; addendA++) {
+				for(let sum = Math.max(rhsMin, addendA); sum <= rhsMax; sum++) {
+					const addendB = sum - addendA;
+					addEquation('+', addendA, addendB, sum);
 				}
 			}
+			break;
 		}
-	);
-	
-	for(let i=eqs.length;i;){
-		const r = Math.floor(Math.random() * i--);
-		const temp = eqs[i];
-		eqs[i] = eqs[r];
-		eqs[r] = temp;
+		case 'S': {
+			for(let difference = rhsMin; difference <= rhsMax; difference++) {
+				for(let minuend = Math.max(lhsMin, difference); minuend <= lhsMax; minuend++) {
+					const subtrahend = minuend - difference;
+					addEquation('-', minuend, subtrahend, difference);
+				}
+			}
+			break;
+		}
+		case 'M': {
+			for(let multiplicandA = lhsMin; multiplicandA <= lhsMax; multiplicandA++) {
+				const minb = multiplicandA ? Math.ceil(rhsMin / multiplicandA) : lhsMin;
+				const maxb = multiplicandA ? Math.min(Math.floor(rhsMax / multiplicandA), lhsMax) : lhsMax;
+				for(let multiplicandB = minb; multiplicandB <= maxb; multiplicandB++) {
+					const product = multiplicandA * multiplicandB;
+					addEquation('x', multiplicandA, multiplicandB, product);
+				}
+			}
+			break;
+		}
+		case 'D': {
+			for(let divisor = lhsMin; divisor <= lhsMax; divisor++) {
+				if(divisor === 0) continue;
+				for(let quotient = rhsMin; quotient <= rhsMax; quotient++) {
+					const dividend = divisor * quotient;
+					addEquation('÷', dividend, divisor, quotient);
+				}
+			}
+			break;
+		}
+		default: {
+			addEquation('+', 1, 1, 2);
+			break;
+		}
 	}
-
+	
+	//convert to equation objects
+	const eqsArray = Array.from(equations).map(eq => JSON.parse(eq));
+	//shuffle the equations
+	eqs.push(...shuffleArray(eqsArray));
+	//update the current equation
 	updateEquation();
+	//focus on the answer input
 	ans.focus();
 }
 
-generateLevelEquations();
+function populateSelectOptions() {
+	const select = lvl;
+	levels.forEach((level, index) => {
+		const option = document.createElement('option');
+		option.value = index;
+		option.textContent = level.name;
+		select.appendChild(option);
+	});
+}
+
+populateSelectOptions();
+generatePracticeEquations();
 ans.focus();
+
+// Instructions overlay handling
+function showInstructions() {
+    document.getElementById('instructionsOverlay').classList.add('show');
+}
+
+function hideInstructions() {
+    document.getElementById('instructionsOverlay').classList.remove('show');
+    localStorage.setItem('instructionsShown', 'true');
+    ans.focus();
+}
+
+// Show instructions on first visit
+if (!localStorage.getItem('instructionsShown')) {
+    showInstructions();
+}

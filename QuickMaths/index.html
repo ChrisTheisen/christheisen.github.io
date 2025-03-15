@@ -14,26 +14,10 @@
 			body{
 				font-family: sans-serif;
 				color: #335;
+				margin: 0;
+				padding: 0;
 			}
 			
-			.robin{
-				background-color: #87CEEB;				
-				position: fixed;
-				top:0;
-				bottom:0;
-				left:0;
-				right:0;
-			}
-			
-			.grass{
-				background-color: #87CE87;
-				position: fixed;
-				top:0;
-				bottom:0;
-				left:0;
-				right:0;
-			}
-		
 			.bg{
 				position: fixed;
 				inset: 0;
@@ -46,43 +30,53 @@
 			}
 			
 			.top{
-				z-index:100;
+				z-index: 100;
+				position: relative;
 			}
 			
 			.hide{
 				display:none;
 			}
 			
-			.letsPractice{
-			
-			}
-			
 			.topRow{
 				text-align: center;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				background: transparent;
+				padding: 20px 0;
+				z-index: 1;
 			}
 			
 			.header{
 				font-size: 72pt;
 				font-weight: bold;
-				width:100%;
+				width: 100%;
+				margin: 0;
+				line-height: 1.2;
 			}
 			
 			.fillPage{
-			  display: table;
-			  position: absolute;
-			  top: 0;
-			  left: 0;
-			  height: 100%;
-			  width: 100%;
+				display: table;
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				padding-top: calc(72pt + 60px); /* Header font size + padding */
+				box-sizing: border-box;
 			}
 			
 			.cell{
-				display:table-cell;
-				vertical-align:middle;
+				display: table-cell;
+				vertical-align: middle;
 			}
 			
 			.content{
-				text-align:center;
+				text-align: center;
+				position: relative;
+				z-index: 0;
 			}
 			
 			.equation{
@@ -99,6 +93,10 @@
 				width: 225px;
 				border-radius: 30px;
 				padding: 5px;
+				margin-bottom: 20px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
 			}
 			
 			.prg{
@@ -109,38 +107,178 @@
 				font-size: 48pt;
 				color: red;
 			}
+			
+			.submit {
+				font-size: 36pt;
+				padding: 10px 20px;
+				border-radius: 15px;
+				background-color: #4CAF50;
+				color: white;
+				border: none;
+				cursor: pointer;
+				display: block;
+				margin: 0 auto;
+				min-width: 225px;
+			}
+			
+			.submit:hover {
+				background-color: #45a049;
+			}
+			
+			.submit:active {
+				background-color: #3d8b40;
+			}
+			
+			.overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0, 0, 0, 0.8);
+				display: none;
+				z-index: 1000;
+			}
+
+			.overlay.show {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.instructions {
+				background: white;
+				padding: 2rem;
+				border-radius: 15px;
+				max-width: 600px;
+				width: 90%;
+				position: relative;
+			}
+
+			.instructions h2 {
+				color: #335;
+				margin-top: 0;
+			}
+
+			.instructions ul {
+				padding-left: 1.5rem;
+				margin-bottom: 2rem;
+			}
+
+			.instructions li {
+				margin-bottom: 0.5rem;
+			}
+
+			.close-button {
+				position: absolute;
+				top: 1rem;
+				right: 1rem;
+				background: none;
+				border: none;
+				font-size: 1.5rem;
+				cursor: pointer;
+				color: #335;
+			}
+
+			.close-button:hover {
+				color: #557;
+			}
+
+			.start-button {
+				background-color: #4CAF50;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				border-radius: 5px;
+				font-size: 1.2rem;
+				cursor: pointer;
+				display: block;
+				margin: 0 auto;
+			}
+
+			.start-button:hover {
+				background-color: #45a049;
+			}
+
+			.help-button {
+				font-size: 16pt;
+				background: none;
+				border: none;
+				color: #335;
+				cursor: pointer;
+				margin-right: 10px;
+				vertical-align: middle;
+				z-index: 100;
+			}
+			
+			.help-button:hover {
+				color: #557;
+			}
+
+			#difficulty {
+				border-radius: 5px;
+				border: 1px solid #335;
+				cursor: pointer;
+				z-index: 100;
+			}
+
+			#difficulty:hover {
+				border-color: #557;
+			}
+			
+			.controls-container {
+				position: fixed;
+				top: 0;
+				right: 0;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				z-index: 100;
+			}
+			
 		</style>
 	</head>
 	<body>
-		<div id="bgColor" class="robin">
+		<div class="overlay" id="instructionsOverlay">
+			<div class="instructions">
+				<button class="close-button" onclick="hideInstructions()">&times;</button>
+				<h2>How to Play Quick Maths</h2>
+				<ul>
+					<li><strong>Practice Mode:</strong> Solve all equations to unlock Quiz Mode</li>
+					<li><strong>Quiz Mode:</strong> Get 10 correct answers to level up</li>
+					<li><strong>Hearts:</strong> You have 3 hearts in Quiz Mode. You lose a heart for each wrong answer. - don't lose them all!</li>
+					<li><strong>Controls:</strong>
+						<ul>
+							<li>Type your answer using number keys</li>
+							<li>Press Enter or click Submit to submit</li>
+							<li>Use the dropdown in the top right to select difficulty level</li>
+						</ul>
+					</li>
+				</ul>
+				<button class="start-button" onclick="hideInstructions()">Start Playing!</button>
+			</div>
+		</div>
+		<div>
 			<canvas class="bg" id="fireworks"></canvas>
 			<div id="wrapper">
+				<div class="controls-container">
+					<select class="top" id="difficulty" onChange="generatePracticeEquations()"></select>
+					<button class="help-button top" onclick="showInstructions()" title="Show Instructions">?</button>
+				</div>
 				<div class="topRow">
 					<label id="header" class="header">Let's Practice</label>
 					<hr/>
 				</div>
 				<div class="fillPage">
-
 					<div class="cell">
 						<div id="content" class="content">
-							<div style="position:fixed; top:0; right:0;">
-								<select class="top" id="difficulty" onChange="generateLevelEquations()">
-									<option value="0">Level 1</option>
-									<option value="1">Level 2</option>
-									<option value="2">Level 3</option>
-									<option value="3">Level 4</option>
-									<option value="4">Level 5</option>
-									<option value="5">Level 6</option>
-									<option value="6">Level 7</option>
-									<option value="7">Level 8</option>
-								</select>
-							</div>
 
 							<div class="equation">
 								<label id="equation">1+1</label>
 							</div>
 							<div class="top">
 								<input type="tel" id="answer" class="answer" />
+								<button id="submit" class="submit" onclick="checkAnswer()">Submit</button>
 							</div>
 							<div>
 								<div id="quiz" class="hide">
@@ -159,5 +297,6 @@
 		</div>
 		<script src="f.js"></script>
 		<script src="a.js"></script>
+		<script src="t.js"></script>
 	</body>
 </html>
