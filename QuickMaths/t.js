@@ -4,10 +4,10 @@ function validateEquation(eq, level){
 		return  {m: 'Violates integer', p: false};
 	}
 
-	if(eq.a > level.lhsMax || eq.b > level.lhsMax || eq.c > level.rhsMax){
+	if((eq.s !== '÷' && eq.a > level.lhsMax) || eq.b > level.lhsMax || eq.c > level.rhsMax){
 		return {m: 'Violates max', p: false};
 	}
-	if(eq.z < level.lhsMin || eq.b < level.lhsMin || eq.c < level.rhsMin){
+	if(eq.a < level.lhsMin || eq.b < level.lhsMin || eq.c < level.rhsMin){
 		return  {m: 'Violates min', p: false};
 	}
 
