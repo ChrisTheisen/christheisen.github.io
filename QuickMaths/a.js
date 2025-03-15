@@ -208,15 +208,15 @@ function randomInt(min, max){
 
 function buildA(lhsMin, lhsMax, rhsMin, rhsMax){
 	const addendA = randomInt(lhsMin, lhsMax);
-	const sum = randomInt(Math.max(rhsMin, addendA), rhsMax);
+	const sum = randomInt(Math.max(rhsMin, addendA), Math.min(addendA+lhsMax, rhsMax));
 	const addendB = sum - addendA;
 	return {s:'+', a:addendA, b:addendB, c:sum};
 }
 
 function buildS(lhsMin, lhsMax, rhsMin, rhsMax){
-	const subtrahend = randomInt(lhsMin, lhsMax);
 	const difference = randomInt(rhsMin, rhsMax);
-	const minuend = subtrahend + difference;
+	const minuend = randomInt(Math.max(lhsMin, difference), lhsMax);
+	const subtrahend = minuend - difference;
 	return {s:'-', a:minuend, b:subtrahend, c:difference};
 }
 
