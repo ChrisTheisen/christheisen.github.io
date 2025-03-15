@@ -170,7 +170,7 @@ function incorrect(){
 }
 
 function checkAnswer(){
-	if(!ans.value.trim() === ''){return;}
+	if(!ans.value.trim()){return;}
 	const x = Number(ans.value);
 	eq.classList.remove('wrong');
 
