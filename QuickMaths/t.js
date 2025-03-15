@@ -42,8 +42,8 @@ function validateEquation(eq, level){
 		default:{	
 			return {m: 'Violates known equations', p: false};
 		}
-		return {m: null, p: true};
 	}
+	return {m: null, p: true};
 }
 
 function test(index){
