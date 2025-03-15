@@ -1,48 +1,44 @@
 function validateEquation(eq, level){
 	// Check for integers and non-negative values
-	if(!Number.isInteger(eq.a) || !Number.isInteger(eq.b) || !Number.isInteger(eq.c) ||
-	   eq.a < 0 || eq.b < 0 || eq.c < 0){
-		return false;
+	if(!Number.isInteger(eq.a) || !Number.isInteger(eq.b) || !Number.isInteger(eq.c)){
+		return  {m: 'Violates integer', p: false};
 	}
 
 	if(eq.a > level.lhsMax || eq.b > level.lhsMax || eq.c > level.rhsMax){
-		return false;
+		return {m: 'Violates max', p: false};
 	}
 	if(eq.z < level.lhsMin || eq.b < level.lhsMin || eq.c < level.rhsMin){
-		return false;
+		return  {m: 'Violates min', p: false};
 	}
 
 	switch(eq.s){
 		case '+':{
 			if((eq.a+eq.b)!==eq.c){
-				return false;
+				return  {m: 'Violates additon equals', p: false};
 			}
-			return true;
 		}	
 		case '-':{
 			if((eq.a-eq.b)!==eq.c){
-				return false;
+				return {m: 'Violates subtraction equals', p: false};
 			}
-			return true;
 		}			
 		case 'x':{
 			if((eq.a*eq.b)!==eq.c){
-				return false;
+				return {m: 'Violates multiplication equals', p: false};
 			}
-			return true;
 		}
 		case '÷':{
 			if(eq.b===0){
-				return false;
+				return {m: 'Violates divide by zero', p: false};
 			}
 			if((eq.a/eq.b)!==eq.c){
-				return false;
+				return {m: 'Violates division equals', p: false};
 			}
-			return true;
 		}
 		default:{	
-			return false;
+			return {m: 'Violates known equations', p: false};
 		}
+		return {m: null, p: true};
 	}
 }
 
@@ -52,6 +48,7 @@ function test(index){
 
 	console.log(`Testing ${name}`);
 	let allValid = true;
+	const violations = new Set();
     //just assume 100 of each level is enough
 	for(let i=0;i<100;i++){
 		let eq = null;
@@ -77,8 +74,10 @@ function test(index){
 				break;
 			}
 		}
-		if(!validateEquation(eq, level)){
-			console.log(level, eq);
+		const isValid = validateEquation(eq, level);
+		if(!isValid.p && !violations.has(isValid.m)){
+			violations.add(isValid.m);
+			console.log(level, eq, isValid.m);
 			allValid = false;
 		}
 	}
