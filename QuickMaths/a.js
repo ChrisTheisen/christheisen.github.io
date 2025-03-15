@@ -222,8 +222,8 @@ function buildS(lhsMin, lhsMax, rhsMin, rhsMax){
 
 function buildM(lhsMin, lhsMax, rhsMin, rhsMax){
 	const multiplicandA = randomInt(lhsMin, lhsMax);
-	const minb = multiplicandA ? rhsMin / multiplicandA : lhsMin;
-	const maxb = multiplicandA ? rhsMax / multiplicandA : lhsMax;
+	const minb = multiplicandA ? Math.max(rhsMin / multiplicandA, lhsMin) : lhsMin;
+	const maxb = multiplicandA ? Math.min(rhsMax / multiplicandA, lhsMax) : lhsMax;
 	const multiplicandB = randomInt(minb, maxb);
 	const product = multiplicandA * multiplicandB;
 	return {s:'x', a:multiplicandA, b:multiplicandB, c:product};
