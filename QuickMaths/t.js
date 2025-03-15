@@ -53,8 +53,8 @@ function test(index){
 	console.log(`Testing ${name}`);
 	let allValid = true;
 	const violations = new Set();
-    //just assume 100 of each level is enough
-	for(let i=0;i<100;i++){
+    //just assume 1000 of each level is enough
+	for(let i=0;i<1000;i++){
 		let eq = null;
 		switch(op){
 			case 'A':{
@@ -85,17 +85,16 @@ function test(index){
 			allValid = false;
 		}
 	}
-	if(allValid){
-		console.log('All valid');
-	}
-	else{
-		console.log('Not all valid');
-	}
+	return allValid
 }
 
 function testAll(){
+	let allValid = true;
 	for(let i=0;i<levels.length;i++){
-		test(i);
+		allValid = test(i) && allValid;
+	}
+	if(allValid){
+		console.log('All valid');
 	}
 }
 
