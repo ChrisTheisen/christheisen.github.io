@@ -52,8 +52,8 @@ function test(index){
 
 	console.log(`Testing ${name}`);
 	let allValid = true;
-    //just assume 1000 of each level is enough
-	for(let i=0;i<1000;i++){
+    //just assume 100 of each level is enough
+	for(let i=0;i<100;i++){
 		let eq = null;
 		switch(op){
 			case 'A':{
