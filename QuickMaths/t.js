@@ -16,16 +16,19 @@ function validateEquation(eq, level){
 			if((eq.a+eq.b)!==eq.c){
 				return  {m: 'Violates additon equals', p: false};
 			}
+			break;
 		}	
 		case '-':{
 			if((eq.a-eq.b)!==eq.c){
 				return {m: 'Violates subtraction equals', p: false};
 			}
+			break;
 		}			
 		case 'x':{
 			if((eq.a*eq.b)!==eq.c){
 				return {m: 'Violates multiplication equals', p: false};
 			}
+			break;
 		}
 		case '÷':{
 			if(eq.b===0){
@@ -34,6 +37,7 @@ function validateEquation(eq, level){
 			if((eq.a/eq.b)!==eq.c){
 				return {m: 'Violates division equals', p: false};
 			}
+			break;
 		}
 		default:{	
 			return {m: 'Violates known equations', p: false};
