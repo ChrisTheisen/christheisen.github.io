@@ -1,7 +1,14 @@
-function validateEquation(eq){
+function validateEquation(eq, level){
 	// Check for integers and non-negative values
 	if(!Number.isInteger(eq.a) || !Number.isInteger(eq.b) || !Number.isInteger(eq.c) ||
 	   eq.a < 0 || eq.b < 0 || eq.c < 0){
+		return false;
+	}
+
+	if(eq.a > level.lhsMax || eq.b > level.lhsMax || eq.c > level.rhsMax){
+		return false;
+	}
+	if(eq.z < level.lhsMin || eq.b < level.lhsMin || eq.c < level.rhsMin){
 		return false;
 	}
 
@@ -70,7 +77,7 @@ function test(index){
 				break;
 			}
 		}
-		if(!validateEquation(eq)){
+		if(!validateEquation(eq, level)){
 			console.log(level, eq);
 			allValid = false;
 		}
