@@ -109,7 +109,7 @@ function test(index){
 
 function testAll(){
 	let allValid = testPractice();
-	console.log('Practice Tested:', allValid);
+	console.log('Practice Equations Valid:', allValid);
 	for(let i=0;i<levels.length;i++){
 		allValid = test(i) && allValid;
 	}
