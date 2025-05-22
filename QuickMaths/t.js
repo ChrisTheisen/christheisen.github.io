@@ -60,7 +60,7 @@ function testPractice(){
 				console.log(level, eq, isValid.m);
 				allValid = false;
 			}
-		}
+		});
 	}
 	return violations.size > 0;
 }
