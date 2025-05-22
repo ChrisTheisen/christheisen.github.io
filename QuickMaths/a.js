@@ -106,7 +106,7 @@ const levels = [
 	{//9: division 1
 		name: 'Division 1',
 		op: 'D',
-		lhsMin: 1,
+		lhsMin: 0,
 		lhsMax: 5,
 		rhsMin: 0,
 		rhsMax: 5
@@ -114,7 +114,7 @@ const levels = [
 	{//10: division 2
 		name: 'Division 2',
 		op: 'D',
-		lhsMin: 1,
+		lhsMin: 0,
 		lhsMax: 10,
 		rhsMin: 0,
 		rhsMax: 10
@@ -122,7 +122,7 @@ const levels = [
 	{//11: division 3
 		name: 'Division 3',
 		op: 'D',
-		lhsMin: 1,
+		lhsMin: 0,
 		lhsMax: 12,
 		rhsMin: 0,
 		rhsMax: 12
