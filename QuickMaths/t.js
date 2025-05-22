@@ -62,7 +62,7 @@ function testPractice(){
 			}
 		});
 	}
-	generatePracticeLevels();
+	generatePracticeEquations();
 	return violations.size > 0;
 }
 
