@@ -62,6 +62,7 @@ function testPractice(){
 			}
 		});
 	}
+	generatePracticeLevels();
 	return violations.size > 0;
 }
 
