@@ -62,6 +62,7 @@ function testPractice(){
 			}
 		}
 	}
+	return violations.size > 0;
 }
 
 function test(index){
@@ -107,7 +108,7 @@ function test(index){
 }
 
 function testAll(){
-	let allValid = true;
+	let allValid = testPractice();
 	for(let i=0;i<levels.length;i++){
 		allValid = test(i) && allValid;
 	}
