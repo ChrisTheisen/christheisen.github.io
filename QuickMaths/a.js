@@ -323,7 +323,7 @@ function generatePracticeEquations() {
 	switch(op) {
 		case 'A': {
 			for(let addendA = lhsMin; addendA <= lhsMax; addendA++) {
-				for(let sum = Math.max(rhsMin, addendA); sum <= rhsMax; sum++) {
+				for(let sum = Math.max(rhsMin, addendA); sum <= Math.min(addendA+lhsMax, rhsMax); sum++) {
 					const addendB = sum - addendA;
 					addEquation('+', addendA, addendB, sum);
 				}
