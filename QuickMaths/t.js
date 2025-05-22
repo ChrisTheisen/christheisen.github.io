@@ -49,21 +49,20 @@ function validateEquation(eq, level){
 }
 
 function testPractice(){
-	const violations = new Set();
+	let allValid = true
 	for(let i=0;i<levels.length;i++){
 		const level = levels[i];
 		generateLevelEquations(i);
 		eqs.forEach(x => {
 			const isValid = validateEquation(x, level);
-			if(!isValid.p && !violations.has(isValid.m)){
-				violations.add(isValid.m);
+			if(!isValid.p){
 				console.log(level, x, isValid.m);
 				allValid = false;
 			}
 		});
 	}
 	generatePracticeEquations();
-	return violations.size > 0;
+	return allValid;
 }
 
 function test(index){
@@ -110,6 +109,7 @@ function test(index){
 
 function testAll(){
 	let allValid = testPractice();
+	console.log('Practice Tested:', allValid);
 	for(let i=0;i<levels.length;i++){
 		allValid = test(i) && allValid;
 	}
