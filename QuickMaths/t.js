@@ -53,11 +53,11 @@ function testPractice(){
 	for(let i=0;i<levels.length;i++){
 		const level = levels[i];
 		generateLevelEquations(i);
-		eqs.forEach(ex => {
-			const isValid = validateEquation(eq, level);
+		eqs.forEach(x => {
+			const isValid = validateEquation(x, level);
 			if(!isValid.p && !violations.has(isValid.m)){
 				violations.add(isValid.m);
-				console.log(level, eq, isValid.m);
+				console.log(level, x, isValid.m);
 				allValid = false;
 			}
 		});
