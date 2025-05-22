@@ -48,6 +48,22 @@ function validateEquation(eq, level){
 	return {m: null, p: true};
 }
 
+function testPractice(){
+	const violations = new Set();
+	for(let i=0;i<levels.length;i++){
+		const level = levels[i];
+		generateLevelEquations(i);
+		eqs.foreach(ex => {
+			const isValid = validateEquation(eq, level);
+			if(!isValid.p && !violations.has(isValid.m)){
+				violations.add(isValid.m);
+				console.log(level, eq, isValid.m);
+				allValid = false;
+			}
+		}
+	}
+}
+
 function test(index){
 	const level = levels[index];
 	const { op, lhsMin, lhsMax, rhsMin, rhsMax, name } = level;
