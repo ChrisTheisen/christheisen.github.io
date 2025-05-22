@@ -1,3 +1,5 @@
+//TODO: write some tests to check the practice mode eqution generation.
+
 function validateEquation(eq, level){
 	// Check for integers and non-negative values
 	if(!Number.isInteger(eq.a) || !Number.isInteger(eq.b) || !Number.isInteger(eq.c)){
