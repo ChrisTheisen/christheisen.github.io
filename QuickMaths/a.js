@@ -304,9 +304,13 @@ function shuffleArray(array) {
 }
 
 function generatePracticeEquations() {
+	difficulty = Number(lvl.value);
+	generateLevelEquations(difficulty);
+}
+
+function generateLevelEquations(difficulty){
 	hearts = 3;
 	score = 0;
-	difficulty = Number(lvl.value);
 	eqs.length = 0;
 	practiceDone = 0;
 	
