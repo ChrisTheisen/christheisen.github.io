@@ -161,39 +161,44 @@ Amount.prototype.clone = function(){
 }
 
 Amount.prototype.convert = function(){
-	//Convert fractional of units to lower amount and floor units larger than Da
-	this.GM += (this.CM % 1) * MassUnits.GM.c
-	this.CM = Math.floor(this.CM);
-	this.MO += (this.GM % 1) * MassUnits.MO.c
-	this.GM = Math.floor(this.GM);
-	this.Yg += (this.MO % 1) * MassUnits.Yg.c
-	this.MO = Math.floor(this.MO);
-	this.Tg += (this.Yg % 1) * MassUnits.Tg.c
-	this.Yg = Math.floor(this.Yg);
-	this.g += (this.Tg % 1) * MassUnits.g.c
-	this.Tg = Math.floor(this.Tg);
-	this.pg += (this.g % 1) * MassUnits.pg.c
-	this.g = Math.floor(this.g);
-	this.Da += (this.pg % 1) * MassUnits.Da.c
+	//TODO: cleanup to not use this[unit.s] as this is not the correct way to access the properties
+	const units = Object.entries(MassUnits).map(u => ({key:u[0], value:u[1]}));
+
+	// Convert fractional parts down
+	for (let i = 1; i < units.length - 1; i++) {
+		const smaller = Object.values(units).find(u => u.value.i === i);
+		const larger = Object.values(units).find(u => u.value.i === i + 1);
+		const fractional = this[smaller.key] % 1;
+		this[larger.key] += fractional * smaller.value.c;
+		this[smaller.key] = Math.floor(this[smaller.key]);
+	}
 	this.pg = Math.floor(this.pg);
-	
-	//If enough of a unit exists convert up.
-	if(this.Da > MassUnits.Da.c){ this.pg += Math.floor(this.Da/MassUnits.Da.c); this.Da = this.Da%MassUnits.Da.c; }
-	if(this.pg > MassUnits.pg.c){ this.g += Math.floor(this.pg/MassUnits.pg.c); this.pg = this.pg%MassUnits.pg.c; }
-	if(this.g > MassUnits.g.c){ this.g -= MassUnits.g.c; this.Tg++; }
-	if(this.Tg > MassUnits.Tg.c){ this.Tg -= MassUnits.Tg.c; this.Yg++; }
-	if(this.Yg > MassUnits.Yg.c){ this.Yg -= MassUnits.Yg.c; this.MO++; }
-	if(this.MO > MassUnits.MO.c){ this.MO -= MassUnits.MO.c; this.GM++; }
-	if(this.GM > MassUnits.GM.c){ this.GM -= MassUnits.GM.c; this.CM++; }
-	
-	//If there is a negative in a unit convert down.
-	if(this.Da < 0){ this.Da += MassUnits.Da.c; this.pg--; }
-	if(this.pg < 0){ this.pg += MassUnits.pg.c; this.g--; }
-	if(this.g < 0){ this.g += MassUnits.g.c; this.Tg--; }
-	if(this.Tg < 0){ this.Tg += MassUnits.Tg.c; this.Yg--; }
-	if(this.Yg < 0){ this.Yg += MassUnits.Yg.c; this.MO--; }
-	if(this.MO < 0){ this.MO += MassUnits.MO.c; this.GM--; }
-	if(this.GM < 0){ this.GM += MassUnits.GM.c; this.CM--; }
+
+	// Convert up when exceeding unit capacity (in reverse order)
+	for (let i = units.length - 2; i >= 0; i--) {
+		const smaller = Object.values(units).find(u => u.value.i === i);
+		const larger = Object.values(units).find(u => u.value.i === i + 1);
+		if (this[smaller.key] > smaller.value.c) {
+			const carry = Math.floor(this[smaller.key] / smaller.value.c);
+			this[larger.key] += carry;
+			this[smaller.key] %= smaller.value.c;
+		}
+	}
+
+	//TODO: handle negative values
+	if(this.toBigInt() < 0){
+		console.warn('Negative amount', this);
+		return;
+	}
+
+	for (let i = 0; i < units.length - 1; i++) {
+		const smaller = Object.values(units).find(u => u.value.i === i);
+		const larger = Object.values(units).find(u => u.value.i === i + 1);
+		while(this[smaller.key] < 0) {
+			this[larger.key]--;
+			this[smaller.key] += smaller.value.c;
+		}
+	}
 }
 
 Amount.prototype.add = function(input){
@@ -315,4 +320,9 @@ Amount.prototype.divide = function(input){
 	const result = a/b;
 	this.fromBigInt(result);
 	return this;
+}
+
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { Amount, MassUnits };
 }
