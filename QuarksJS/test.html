@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Amount Class Tests</title>
+    <script src="src/amount.js"></script>
+    <script src="test/test_amount.js"></script>
+</head>
+<body>
+    <h1>Amount Class Tests</h1>
+    <div id="results"></div>
+    <script>
+        // Override console.log to show results in the page
+        const originalConsoleLog = console.log;
+        const resultsDiv = document.getElementById('results');
+        console.log = function() {
+            const args = Array.from(arguments);
+            const message = args.join(' ');
+            const p = document.createElement('p');
+            p.textContent = message;
+            resultsDiv.appendChild(p);
+            originalConsoleLog.apply(console, args);
+        };
+        
+        // Run tests
+        console.log('Running Amount class tests...');
+        console.log('===========================');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Amount Class Tests</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Amount Class Tests</h1>
+    <div id="results"></div>
+    <script src="../src/amount.js"></script>
+    <script src="../src/util.js"></script>
+    <script>
+        // Override console.log to show results in the page
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const resultsDiv = document.getElementById('results');
+        
+        console.log = function() {
+            const args = Array.from(arguments);
+            const message = args.join(' ');
+            const p = document.createElement('p');
+            p.textContent = message;
+            resultsDiv.appendChild(p);
+            originalConsoleLog.apply(console, args);
+        };
+
+        console.error = function() {
+            const args = Array.from(arguments);
+            const message = args.join(' ');
+            const p = document.createElement('p');
+            p.textContent = message;
+            p.className = 'error';
+            resultsDiv.appendChild(p);
+            originalConsoleError.apply(console, args);
+        };
+        
+        // Run tests
+        console.log('Running Amount class tests...');
+        console.log('===========================');
+    </script>
+    <script src="test_amount.js"></script>
+</body>
+</html> 

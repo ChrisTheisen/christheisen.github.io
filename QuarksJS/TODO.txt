@@ -13,6 +13,8 @@ Bugs:
 
 	manage table updating with 0s when non-live update
 
+	adjust TGB
+
 TODO:
 	-About: Change email: github@christheisen.com.
 	-Update github website

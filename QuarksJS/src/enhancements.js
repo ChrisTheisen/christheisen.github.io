@@ -77,6 +77,8 @@ Enhancements.prototype.setPowerTGB = function(){
 	const pct = this.totalGenerated[tm.s]/tm.c;
 	const baseBonus = tm.emb + (pct * (tm.emr - tm.emb));
 	
+	//console.log(tm, baseBonus);
+
 	for(let i=0;i<this.powerTGB.length; i++){
 		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 24));
 	}

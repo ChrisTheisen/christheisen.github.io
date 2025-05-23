@@ -259,11 +259,11 @@ function init(){
 	game.clock.status = 'Initializing UI';
 	game.clock.update();
 	buildUI();
-	
+
 	const max_item = Object.values(items).map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
 	const max_gen = game.generators.map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
 	setElementText(getUIElement('version'), `${max_item}.${max_gen}`);
-	
+
 	game.clock.status = 'Checking Game Data';
 	//Item exists but no recipe
 	Object.values(items).forEach(i => {
@@ -282,7 +282,6 @@ function init(){
 		if(!game.menu.containsChild(i.id))
 		{console.warn("MISSING MENU: ", i.id, i.n);}
 	});
-
 	game.clock.status = 'Loading Save Data';
 	game.clock.update();
 	if(localStorage.getItem('Q')){
@@ -294,9 +293,10 @@ function init(){
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
+	console.log(0, items.Q_Up.m);
 	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || sortID(a.f.id,b.f.id));
+	console.log(1, items.Q_Up.m);
 	game.clock.update();
-
 	game.clock.status = null;
 	game.clock.update();
 	window.addEventListener("beforeunload", saveBeforeUnload);
