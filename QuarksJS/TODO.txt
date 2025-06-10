@@ -19,8 +19,9 @@ TODO:
 	-About: Change email: github@christheisen.com.
 	-Update github website
 
-	-make a copy save to clipboard button.
+    -progress bar timer on toast	
 
+    -Don't need to create "Total Mass" element; every cycle
 
 	Number Settings
 		Base

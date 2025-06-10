@@ -134,14 +134,14 @@ function Game(){
 	this.by = 1;
 	this.manageModalItem = null;
 	this.settings = {
-		content: {d:{},m:{},s:{}},
+		content: {d:{},m:{},s:{n:{}}},
 		c: false,//cheater mode
 		h: true,//show helpful tips
 		i: true,//show info
 		u: true,//show used-in warning
 		s: 100,//speed/max cycles to run on one update
 		d: { //discover filters
-			l:0,//stock limit
+			l: 0,//stock limit
 			o: false,//filter unowned
 			s: null//filter search
 		},
@@ -159,7 +159,7 @@ function Game(){
 		},
 		n:{//number settings
 			b: 10,//base
-			s: 0,//significant digits to display
+			s: 15,//significant digits to display
 		}
 	};
 	this.mm = [];
@@ -293,9 +293,7 @@ function init(){
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();
-	console.log(0, items.Q_Up.m);
 	AllSortedFlavors = Object.values(AllFlavors).sort((a,b) => a.f.m.compare(b.f.m) || sortID(a.f.id,b.f.id));
-	console.log(1, items.Q_Up.m);
 	game.clock.update();
 	game.clock.status = null;
 	game.clock.update();

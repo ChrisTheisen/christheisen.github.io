@@ -1002,7 +1002,7 @@ const help = [
 		'|',
 		'The checkbox filters can show and hide items to check specific conditions.',
 		'|',
-		'Live-Update will toggle the table being updated every cycle. If it is disabled the table can be updated with the "Update Table" button.',
+		'Live-Update will toggle the table being updated every cycle. If it is disabled the table can be updated with the "Refresh Table" button.',
 		'If you are experiencing performance issues on the Manage tab try disabling Live-Update.',
 		'|',
 		'The table columns describe the supply and demand of each item.',

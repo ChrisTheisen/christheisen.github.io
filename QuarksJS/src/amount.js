@@ -67,35 +67,35 @@ Amount.prototype.render = function(parent, isInline = false){
 	this.content.e = createUIElement({parent:w, textContent:'None', cssClasses:cssU});
 	
 	const wDa = createUIElement({parent:w, cssClasses:cssU});
-	this.content.Da = createUIElement({type:'span', parent:wDa, textContent:this.Da});
+	this.content.Da = createUIElement({type:'span', parent:wDa, textContent:formatNumberFromSettings(this.Da)});
 	createUIElement({type:'span', parent:wDa, textContent:` ${MassUnits.Da.s}`, title:`${MassUnits.Da.n}`});
 	
 	const wpg = createUIElement({parent:w, cssClasses:cssU});
-	this.content.pg = createUIElement({type:'span', parent:wpg, textContent:this.pg});
+	this.content.pg = createUIElement({type:'span', parent:wpg, textContent:formatNumberFromSettings(this.pg)});
 	createUIElement({type:'span', parent:wpg, textContent:` ${MassUnits.pg.s}`, title:`${MassUnits.pg.n}`});
 	
 	const wg = createUIElement({parent:w, cssClasses:cssU});
-	this.content.g = createUIElement({type:'span', parent:wg, textContent:this.g});
+	this.content.g = createUIElement({type:'span', parent:wg, textContent:formatNumberFromSettings(this.g)});
 	createUIElement({type:'span', parent:wg, textContent:` ${MassUnits.g.s}`, title:`${MassUnits.g.n}`});
 	
 	const wTg = createUIElement({parent:w, cssClasses:cssU});
-	this.content.Tg = createUIElement({type:'span', parent:wTg, textContent:this.Tg});
+	this.content.Tg = createUIElement({type:'span', parent:wTg, textContent:formatNumberFromSettings(this.Tg)});
 	createUIElement({type:'span', parent:wTg, textContent:` ${MassUnits.Tg.s}`, title:`${MassUnits.Tg.n}`});
 	
 	const wYg = createUIElement({parent:w, cssClasses:cssU});
-	this.content.Yg = createUIElement({type:'span', parent:wYg, textContent:this.Yg});
+	this.content.Yg = createUIElement({type:'span', parent:wYg, textContent:formatNumberFromSettings(this.Yg)});
 	createUIElement({type:'span', parent:wYg, textContent:` ${MassUnits.Yg.s}`, title:`${MassUnits.Yg.n}`});
 	
 	const wMO = createUIElement({parent:w, cssClasses:cssU});
-	this.content.MO = createUIElement({type:'span', parent:wMO, textContent:this.MO});
+	this.content.MO = createUIElement({type:'span', parent:wMO, textContent:formatNumberFromSettings(this.MO)});
 	createUIElement({type:'span', parent:wMO, textContent:` ${MassUnits.MO.s}`, title:`${MassUnits.MO.n}`});
 	
 	const wGM = createUIElement({parent:w, cssClasses:cssU});
-	this.content.GM = createUIElement({type:'span', parent:wGM, textContent:this.GM});
+	this.content.GM = createUIElement({type:'span', parent:wGM, textContent:formatNumberFromSettings(this.GM)});
 	createUIElement({type:'span', parent:wGM, textContent:` ${MassUnits.GM.s}`, title:`${MassUnits.GM.n}`});
 	
 	const wCM = createUIElement({parent:w, cssClasses:cssU});
-	this.content.CM = createUIElement({type:'span', parent:wCM, textContent:this.CM});
+	this.content.CM = createUIElement({type:'span', parent:wCM, textContent:formatNumberFromSettings(this.CM)});
 	createUIElement({type:'span', parent:wCM, textContent:` ${MassUnits.CM.s}`, title:`${MassUnits.CM.n}`});
 	
 	this.content.w = w;
@@ -122,14 +122,14 @@ Amount.prototype.update = function(){
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
 	
-	setElementText(this.content.Da, this.Da.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3}));
-	setElementText(this.content.pg, Math.floor(this.pg).toLocaleString());
-	setElementText(this.content.g, Math.floor(this.g).toLocaleString());
-	setElementText(this.content.Tg, Math.floor(this.Tg).toLocaleString());
-	setElementText(this.content.Yg, Math.floor(this.Yg).toLocaleString());
-	setElementText(this.content.MO, Math.floor(this.MO).toLocaleString());
-	setElementText(this.content.GM, Math.floor(this.GM).toLocaleString());
-	setElementText(this.content.CM, Math.floor(this.CM).toLocaleString());
+	setElementText(this.content.Da, formatNumberFromSettings(this.Da.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3})));
+	setElementText(this.content.pg, formatNumberFromSettings(this.pg));
+	setElementText(this.content.g,  formatNumberFromSettings(this.g));
+	setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));
+	setElementText(this.content.Yg, formatNumberFromSettings(this.Yg));
+	setElementText(this.content.MO, formatNumberFromSettings(this.MO));
+	setElementText(this.content.GM, formatNumberFromSettings(this.GM));
+	setElementText(this.content.CM, formatNumberFromSettings(this.CM));
 }
 Amount.prototype.isZero = function(){
 	return !this.Da && !this.pg && !this.g && !this.Tg && !this.Yg && !this.MO && !this.GM && !this.CM;

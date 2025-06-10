@@ -18,7 +18,7 @@ function getUIElement(input){
 }
 function removeUIElement(input){
 	const e = UIElement[input];
-	if(e===null){return;}
+	if(!e){return;}
 	e.parentNode.removeChild(e);
 	delete UIElement[input];
 }
@@ -28,12 +28,16 @@ function createUIElement({type='div', id=null, parent=null, cssClasses=[], style
 		let e = getUIElement(id);
 		if(e){
 			if(textContent){ setElementText(e, textContent); }
+
 			return e;
 		}
 	}
 	
 	e = document.createElement(type);
-	if(id){ e.id = id; }
+	if(id){
+		e.id = id;
+		UIElement[id] = e;
+	}
 
 	for([key, value] of Object.entries(style)){ e.style[key] = value; }
 	for([key, value] of Object.entries(attr)){ e.setAttribute(key, value); }
@@ -60,10 +64,10 @@ function makeToast(input){
 	const id = `TOAST_${maxToast}`;
 
 	const output = createUIElement({id: id, parent:getUIElement('toaster'), cssClasses:['toast'], title:'Click to dismiss',
-		onclick:()=>document.getElementById(id)?.remove()});
+		onclick:()=>removeUIElement(id)});
 	formatItemSymbols({s:input}, output);
 
-	setTimeout(()=>document.getElementById(id)?.remove(),30000);
+	setTimeout(()=>removeUIElement(id),30000);
 	
 	return output;
 }
@@ -89,7 +93,7 @@ function formatItemSymbols(input, parent){
 	let s = input.s.replaceAll('[', '<sup>').replaceAll(']', '</sup>')
 	s = s.replaceAll('(', '<sub>').replaceAll(')', '</sub>');
 	s = s.replaceAll('{', '(').replaceAll('}', ')');
-	parent.title = input.n;
+	if(input.n){parent.title = input.n;}
 	parent.innerHTML = s;
 }
 
@@ -104,32 +108,39 @@ function unlockedFlavors(){
 }
 
 function toggleSetting(input){
+    //get child settings from string
 	const a = [...input];
 	const z = a.pop();
 	let s = game.settings;
 	let c = game.settings.content.s;
 	a.forEach(x => {s = s[x]; c = c[x];});
-	s[z] = !s[z];
-	c[z].checked = s[z];
+
 	switch(input){
-		case'c':{ break; }
+        case'u':
+		case'c': { 
+	        s[z] = !s[z];
+	        c[z].checked = s[z];    
+            break; 
+        }
 		case'h':{ 
+	        s[z] = !s[z];
+	        c[z].checked = s[z];    
 			Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !s[z]));
 			break; 
 		}
 		case'i':{ 
+	        s[z] = !s[z];
+	        c[z].checked = s[z];    
 			Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !s[z]) );
 			break; 
 		}
-		case'u':{ break; }
-		case'mc':{
-			game.inventory.update();
-			break;
-		}
 		case'nb':{
+	        s[z] = Number(c[z].value)??10;
 			break;
 		}
 		case'ns':{
+            c[z].value = enforceLimits(3,15,c[z].value);
+	        s[z] = c[z].valueAsNumber??15;
 			break;
 		}
 	}
@@ -214,6 +225,13 @@ function loadSaveData(){
 	load();
 }
 
+function enforceLimits(a, b, value){
+    if(!value){return null;}
+    if(a===b){return a;}//if a===b that is the only valid value
+    if(a>b){a=a+b;b=a-b;a=a-b;}//if a>b swap values.
+    return Math.max(Math.min(value, b), a);
+}
+
 function load() {
 	let temp = localStorage.getItem('Q');
 	if(!temp){return;}
@@ -232,6 +250,8 @@ function load() {
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
 	game.settings.s = data.s?.s ?? 100;
+    game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
+    game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 15;
 	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
@@ -245,7 +265,7 @@ function load() {
 	game.settings.m.x = data.s?.mx ?? false;
 	game.settings.m.y = data.s?.my ?? false;
 	game.settings.m.z = data.s?.mz ?? false;
-	
+
 	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
 	game.enhancements.m = data.e?.m ?? 0;
@@ -307,7 +327,8 @@ function save() {
 	data.s.s = game.settings.s??100;
 	data.s.dl = game.settings.d.l??0;
 	data.s.do = game.settings.d.o?1:0;
-	//if(game.settings.d.s){data.s.ds = game.settings.d.s;}
+    data.s.nb = game.settings.n.b??10;
+    data.s.ns = game.settings.n.s??15;
 	data.s.ma = game.settings.m.a?1:0;
 	data.s.mc = game.settings.m.c?1:0;
 	data.s.mm = game.settings.m.m?1:0;
@@ -454,13 +475,15 @@ function doIDCheck(){
 	checkMenuIDs();
 }
 
-function copyText(input, success='Copied Success', failure='Copy Failed'){
+async function copyText(input, success='Copy Success', failure='Copy Failed'){
 	console.log(input);
-	navigator.clipboard.writeText(input)
-    .then(() => {
-		makeToast(success);
-    })
-    .catch(() => {
-		makeToast(failure);
-    });
+	try{
+		await navigator.clipboard.writeText(input)
+		    .then(() => {makeToast(success);})
+            .catch(() => {console.error('catch1'); makeToast(failure)})
+	}
+    catch(error) {
+		console.error(error);
+		makeToast(failure); 
+	}
 }
