@@ -31,7 +31,25 @@ const practice = document.getElementById('practice');
 const header = document.getElementById('header');
 
 const levels = [
-	{//0: addition 1
+	{//0: counting 1
+		name: 'Counting 1',
+		op: 'C',
+		lhsMin: 1,
+		lhsMax: 5
+	},
+	{//1: counting 2
+		name: 'Counting 2',
+		op: 'C',
+		lhsMin: 1,
+		lhsMax: 10
+	},
+	{//2: counting 3
+		name: 'Counting 3',
+		op: 'C',
+		lhsMin: 1,
+		lhsMax: 20
+	},
+	{//3: addition 1
 		name: 'Addition 1',
 		op: 'A',
 		lhsMin: 0,
@@ -39,7 +57,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 5
 	},
-	{//1: addition 2
+	{//4: addition 2
 		name: 'Addition 2',
 		op: 'A',
 		lhsMin: 0,
@@ -47,7 +65,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 10
 	},
-	{//2: addition 3
+	{//5: addition 3
 		name: 'Addition 3',
 		op: 'A',
 		lhsMin: 0,
@@ -55,7 +73,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 20
 	},
-	{//3: subtraction 1
+	{//6: subtraction 1
 		name: 'Subtraction 1',
 		op: 'S',
 		lhsMin: 0,
@@ -63,7 +81,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 5
 	},
-	{//4: subtraction 2
+	{//7: subtraction 2
 		name: 'Subtraction 2',
 		op: 'S',
 		lhsMin: 0,
@@ -71,7 +89,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 10
 	},
-	{//5: subtraction 3
+	{//8: subtraction 3
 		name: 'Subtraction 3',
 		op: 'S',
 		lhsMin: 0,
@@ -79,7 +97,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 10
 	},
-	{//6: multiplication 1
+	{//9: multiplication 1
 		name: 'Multiplication 1',
 		op: 'M',
 		lhsMin: 0,
@@ -87,7 +105,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 25
 	},
-	{//7: multiplication 2
+	{//X: multiplication 2
 		name: 'Multiplication 2',
 		op: 'M',
 		lhsMin: 0,
@@ -95,7 +113,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 49
 	},
-	{//8: multiplication 3
+	{//E: multiplication 3
 		name: 'Multiplication 3',
 		op: 'M',
 		lhsMin: 0,
@@ -103,7 +121,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 144
 	},
-	{//9: division 1
+	{//10: division 1
 		name: 'Division 1',
 		op: 'D',
 		lhsMin: 0,
@@ -111,7 +129,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 5
 	},
-	{//10: division 2
+	{//11: division 2
 		name: 'Division 2',
 		op: 'D',
 		lhsMin: 0,
@@ -119,7 +137,7 @@ const levels = [
 		rhsMin: 0,
 		rhsMax: 10
 	},
-	{//11: division 3
+	{//12: division 3
 		name: 'Division 3',
 		op: 'D',
 		lhsMin: 0,
@@ -207,6 +225,17 @@ function randomInt(min, max){
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function mapC(input){
+	const a = ': '.repeat(Math.floor(input/2));
+	const b = input%2===1?'.':'';
+	return {s:'', a:a, b:b, c:input};
+}
+
+function buildC(lhsMin, lhsMax){
+	const n = randomInt(lhsMin, lhsMax);
+	return mapC(n);
+}
+
 function buildA(lhsMin, lhsMax, rhsMin, rhsMax){
 	const addendA = randomInt(lhsMin, lhsMax);
 	const sum = randomInt(Math.max(rhsMin, addendA), Math.min(addendA+lhsMax, rhsMax));
@@ -240,7 +269,7 @@ function buildD(lhsMin, lhsMax, rhsMin, rhsMax){
 function updateEquation(){
 	eq.classList.remove('wrong');
 
-	if(!eqs.length){
+	if(!eqs.length){//no more equations; to a test time!
 		if(missed.length){
 			while(missed.length){eqs.push(missed.pop());}
 		}
@@ -272,6 +301,10 @@ function generateRandomEquation(){
 	const { op, lhsMin, lhsMax, rhsMin, rhsMax } = level;
 
 	switch(op){
+		case 'C':{
+			eqs.push(buildC(lhsMin, lhsMax));
+			break;
+		}
 		case 'A':{
 			eqs.push(buildA(lhsMin, lhsMax, rhsMin, rhsMax));
 			break;
@@ -290,6 +323,7 @@ function generateRandomEquation(){
 		}
 		default:{
 			eqs.push({s:'+', a:1, b:1, c:2});
+			alert(`Unknown op (code:0): ${op}`);
 			break;
 		}
 	}
@@ -325,6 +359,12 @@ function generateLevelEquations(difficulty){
 	};
 	
 	switch(op) {
+		case 'C': {
+			for(let i = lhsMin; i <= lhsMax; i++){
+				equations.add(JSON.stringify(mapC(i)));
+			}
+			break;
+		}
 		case 'A': {
 			for(let addendA = lhsMin; addendA <= lhsMax; addendA++) {
 				for(let sum = Math.max(rhsMin, addendA); sum <= Math.min(addendA+lhsMax, rhsMax); sum++) {
@@ -366,6 +406,7 @@ function generateLevelEquations(difficulty){
 		}
 		default: {
 			addEquation('+', 1, 1, 2);
+			alert(`Unkown op (code:1): ${op}`);
 			break;
 		}
 	}
