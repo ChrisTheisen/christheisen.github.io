@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TDV</title>
+  <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/viz.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/full.render.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      font-size: 1em;
+    }
+    label {
+      margin-right: 20px;
+    }
+    input[type="checkbox"]{
+      margin-right: 0;
+    }
+    g g{
+      cursor: pointer;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/acorn@8/dist/acorn.min.js"></script>
+
+</head>
+<body>
+  <h2>Theresmore Dependency Viewer</h2>
+  <div id='top'>
+    <p>
+      This is a bodged together site to generate dependancy graphs based on the game <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.
+      In most choices between ease of use and ease of making this tool I leaned towards ease of making the tool.
+    </p>
+    <p>
+      <a href="https://www.theresmoregame.com/play/static/js/main.81939200.js" target="_blank">Save This JS</a> <br/>
+      If that link doesn't work find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a>
+    </p>
+    <p>
+      Upload the file here:
+      <input type="file" id="fileInput" />
+    </p>
+  
+    <hr/>
+    <p>Select sections to include in graph.</p>
+    
+    <input type="checkbox" id="chkBuilding" checked />
+    <label for="chkBuilding">building</label>
+    
+    <input type="checkbox" id="chkEnemy" checked />
+    <label for="chkEnemy">enemy</label>
+    
+    <input type="checkbox" id="chkDiplomacy" checked />
+    <label for="chkDiplomacy">diplomacy</label>
+  
+    <input type="checkbox" id="chkLegacy" checked />
+    <label for="chkLegacy">legacy</label>
+  
+    <input type="checkbox" id="chkPrayer" checked />
+    <label for="chkPrayer">prayer</label>
+  
+    <input type="checkbox" id="chkResource" checked />
+    <label for="chkResource">resource</label>
+  
+    <input type="checkbox" id="chkTech" checked />
+    <label for="chkTech">tech</label>
+  
+    <input type="checkbox" id="chkUnits" checked />
+    <label for="chkUnits">units</label>
+    
+    <br/>
+    
+    <input type="checkbox" id="chkFilterOrphans" checked/>
+    <label for="chkFilterOrphans">Filter Orphans (Filter unconnected nodes)</label>
+    <br/>
+    <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
+    <label for="chkToggleOutputs">Hide JSON (Toggle viewing the data included in graph as JSON)</label>
+    
+  
+    <hr/>
+    
+    <button id='GOTIME' onClick="GOTIME()" disabled>Generate</button>
+    
+    <br/>
+    <button id="CLEAR" style="display:none;" onClick="CLEAR()">Clear Outputs</button>
+    <textarea id="parsed" style="display:none;" placeholder="JSON will appear here..."></textarea>
+    <textarea id="graphviz" style="display:none;" placeholder="graphviz dot syntax will appear here, copy to the Graphviz viewer below..."></textarea>
+  
+  </div>
+  <div id='bottom' style="display:none;">
+    <div style="width:100vw; display:flex" >
+      <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;"></div>
+      <pre id="divDetails" style="width:20vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
+    </div>
+  </div>
+
+  <script>
+    //Object.values(dataSets).map(ds => dataSets.resource.map(x => x.id).map(r => ({R:r, C:ds.filter(x => x.gen?.some(y => y.type === 'cap' && y.id === r))})).filter(x => x.C.length > 0));
+    //TODO: also hide graphviz with hide JSON checkbox
+    
+    //TODO: might need a more dynamic/complex approach as the tooltips are truncated.
+    //Generate JSON along with graphviz
+    //use viz.js instaed of current iframe
+    //Use some magic to link json to svg
+    
+    const dataSets = {};
+
+   // Shared function to extract matches
+    function extractArrays(content, regex) {
+      const matches = content.match(regex);
+      return matches || [];
+    }
+
+    // Define all your regex patterns here
+    const patterns = [
+      {
+        label: 'building',
+        regex: /\{[^}]*?id\s*:\s*["']common_house["'][^}]*?cat\s*:\s*["']living_quarters["'][^}]*?\}/g
+      },
+      {
+        label: 'enemy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_burial_place["'][^}]*?army\s*:\s*\[/g
+      },
+      {
+        label: 'diplomacy',
+        regex: /\{[^}]*?id\s*:\s*["']nightdale_protectorate["'][^}]*?relationship\s*:\s*30[^}]*?\}/g
+      },
+      {
+        label: 'legacy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_treasury["'][^}]*?req\s*:\s*\[/g
+      },
+      {
+        label: 'prayer',
+        regex: /\{[^}]*?id\s*:\s*["']praise_gods["'][^}]*?type\s*:\s*["']prayer["'][^}]*?\}/g
+      },
+      {
+        label: 'resource',
+        regex: /\{[^}]*?id\s*:\s*["']research["'][^}]*?cap\s*:\s*500[^}]*?\}/g
+      },
+      {
+        label: 'tech',
+        regex: /\{[^}]*?id\s*:\s*["']trading_woods["'][^}]*?req\s*:\s*\[[\s\S]*?gen\s*:\s*\[[\s\S]*?\][^}]*?\}/g
+      },
+      {
+        label: 'unit',
+        regex: /\{[^}]*?id\s*:\s*["']settlement_defenses["'][^}]*?type\s*:\s*["']settlement["'][^}]*?\}/g
+      },
+    ];
+    
+    function extractArrayAroundObject(content, regex) {
+      if(!regex) {return null;}
+      const objectMatch = regex.exec(content);
+      if (!objectMatch) {
+        console.log(`No object found with regex ${regex}`);
+        return null;
+      }
+    
+      const startIndex = objectMatch.index;
+    
+      // Walk backward to find the opening bracket of the array
+      let arrayStart = startIndex;
+      while (arrayStart > 0 && content[arrayStart] !== '[') {
+        arrayStart--;
+      }
+    
+      // Walk forward to find the closing bracket of the array
+      let arrayEnd = arrayStart;
+      let bracketDepth = 0;
+      let inString = false;
+      let stringChar = '';
+      let escaped = false;
+    
+      for (let i = arrayStart; i < content.length; i++) {
+        const char = content[i];
+    
+        if (inString) {
+          if (escaped) {
+            escaped = false;
+          } else if (char === '\\') {
+            escaped = true;
+          } else if (char === stringChar) {
+            inString = false;
+          }
+          continue;
+        }
+    
+        if (char === '"' || char === "'") {
+          inString = true;
+          stringChar = char;
+          continue;
+        }
+    
+        if (char === '[') {
+          bracketDepth++;
+        } else if (char === ']') {
+          bracketDepth--;
+          if (bracketDepth === 0) {
+            arrayEnd = i + 1;
+            break;
+          }
+        }
+      }
+    
+      if (bracketDepth !== 0) {
+        console.warn('Failed to find complete array');
+        return null;
+      }
+    
+      const arrayText = content.slice(arrayStart, arrayEnd);
+      return arrayText;
+    }
+    
+    function readerOnload(e) {
+      const content = e.target.result;
+
+      patterns.forEach(({ label, regex }) => {
+        const arrayText = extractArrayAroundObject(content, regex);
+        if (arrayText) {
+          try {
+            dataSets[label] = eval(arrayText);
+          } catch (err) {
+            console.warn(`Failed to parse ${label}:`, err);
+          }
+        }
+        
+        try {
+          const parsedArray = eval(arrayText);
+          dataSets[label] = parsedArray;
+        } catch (err) {
+          console.warn(`Failed to parse ${label}:`, err);
+        }
+      });
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = readerOnload;
+      reader.readAsText(file);
+      document.getElementById('GOTIME').disabled = false;
+    });
+  
+  
+    function toggleOutputs(hide){
+      document.getElementById('CLEAR').style.display = hide ? 'none' : 'block';
+      document.getElementById('parsed').style.display = hide ? 'none' : 'block';
+      document.getElementById('graphviz').style.display = hide ? 'none' : 'block';
+    }
+  
+    function removeResourceReqs(data) {
+      const output = data.map(item => {
+        // Copy only relevant properties
+        const { id, req, reqFound, type, gen } = item;
+        const temp = (req ||[]).concat(reqFound||[]);//combine to get a single req list
+        
+        return {
+          id,
+          type,
+          res: temp?.filter(r => r.type === "resource"),//get all the resources
+          req: temp?.filter(r => r.type !== "resource"),//get all the not resources
+          gen: gen
+          
+        };
+      });
+      return output;
+    }
+    
+    function parseData() {
+      const b = removeResourceReqs(dataSets.building || []);
+      const e = removeResourceReqs(dataSets.enemy || []);
+      const d = removeResourceReqs(dataSets.diplomacy || []);
+      const l = removeResourceReqs(dataSets.legacy || []);
+      const p = removeResourceReqs(dataSets.prayer || []);
+      const r = removeResourceReqs(dataSets.resource || []);
+      const t = removeResourceReqs(dataSets.tech || []);
+      const u = removeResourceReqs(dataSets.units || []);
+    
+      let included = [];
+      if(document.getElementById('chkBuilding').checked){
+        included = included.concat(b);
+      }
+      if(document.getElementById('chkEnemy').checked){
+        included = included.concat(e);
+      }
+      if(document.getElementById('chkDiplomacy').checked){
+        included = included.concat(d);
+      }
+      if(document.getElementById('chkLegacy').checked){
+        included = included.concat(l);
+      }
+      if(document.getElementById('chkPrayer').checked){
+        included = included.concat(p);
+      }
+      if(document.getElementById('chkTech').checked){
+        included = included.concat(t);
+      }
+      if(document.getElementById('chkUnits').checked){
+        included = included.concat(u);
+      }
+    
+      document.getElementById('parsed').value = JSON.stringify(included, null, 2);
+      return included;
+    }
+    
+    function getType(input){
+        if(dataSets.building.some(x => x.id === input)){
+          return 'building';
+        }
+        else if(dataSets.enemy.some(x => x.id === input)){
+          return 'enemy';
+        }
+        else if(dataSets.diplomacy.some(x => x.id === input)){
+          return 'diplomacy';
+        }
+        else if(dataSets.legacy.some(x => x.id === input)){
+          return 'legacy';
+        }
+        else if(dataSets.prayer.some(x => x.id === input)){
+          const x = dataSets.prayer.find(x => x.id === input);
+          return x.type;
+        }
+        else if(dataSets.resource.some(x => x.id === input)){
+          return 'resource';
+        }
+        else if(dataSets.tech.some(x => x.id === input)){
+          return 'tech';
+        }
+        else if(dataSets.units.some(x => x.id === input)){
+          return 'unit';
+        }
+        return 'N/A';
+      //TODO: build types; this is placeholder for testing
+      return 'building';
+    }
+    
+    function buildVizDep(input) {
+      const output = [];
+      
+      input.req?.forEach(x => {
+          const label = x.value > 1 ? `[label = ${x.value}]` : '';
+          output.push(`  ${x.id} -> ${input.id} ${label}`)
+      });
+      return output;
+    }
+    
+    function hasDep(input, all){
+        const dep = all.some(x => x.req?.some(y => y.id === input.id));
+        return dep.length > 0;
+    }
+    
+    function formatNumber(input){
+      
+      if(isNaN(input)) { return input; }
+      
+      if(input % 1000999 === 0){return `${input/1000000}M`;}
+      if(input % 1000 === 0){return `${input/1000}K`;}
+      return input;
+    }
+    
+    function buildGraphViz(input){
+      if(Object.keys(dataSets).length === 0){
+        alert('No Data. Select a file and check some section checkboxes.');
+        return;
+      }
+      
+      const types = {
+        building: new Set(),
+        enemy: new Set(),
+        diplomacy: new Set(),
+        legacy: new Set(),
+        prayer: new Set(),
+        spell: new Set(),
+        resource: new Set(),
+        cap: new Set(),
+        stat: new Set(),
+        tech: new Set(),
+        unit: new Set()
+      };
+      
+      const fo = document.getElementById('chkFilterOrphans')?.checked;
+      const nodes = fo ? input.filter(x => x.req?.length || hasDep(x, input)) : input;
+      
+      const resNodes = nodes.filter(x => x.res.length > 0)
+        .sort((a,b) => a.id.localeCompare(b.id))
+        .map(n => `   ${n.id} [tooltip = "${n.res.map(r => `${r.id}&#9;${formatNumber(r.value)}`).join('&#13;&#10;')}"]` );
+
+      const deps = nodes.map(x => {
+        const type = getType(x.id);
+
+        if(types.hasOwnProperty(type)) { types[type].add(x.id); }
+        else{console.log("IDK TYPE0", x)}
+        x.req?.forEach(y => {
+          const rType = y.type || getType(y.id);
+          if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
+          else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
+          else if(rType === 'army') {types.unit.add(y.id);}
+          else{console.log("IDK TYPE1", x, y)}
+        })
+        
+        return buildVizDep(x);
+      }).flat().filter(x => x);
+
+      const lines = [];
+      
+      const special = [];
+      if(deps.some(x => x.includes('theresmore_richest_nation'))){ special.push('coin;'); }
+      if(deps.some(x => x.includes('mausoleum_gods'))){ special.push('tome_wisdom;'); }
+      if(deps.some(x => x.includes('reactivate_portal'))){ special.push('relic;'); }
+      if(deps.some(x => x.includes('titan_gift_t'))){ special.push('titan_gift;'); }
+      const gems = [];
+      if(deps.some(x => x.includes('statue_virtue'))){ gems.push('gem0;'); }
+      if(deps.some(x => x.includes('fortified_citadel'))){ gems.push('gem1;'); }
+      if(deps.some(x => x.includes('holy_site'))){ gems.push('gem2;'); }
+      const gemNode = gems.length>0?`   {node [label="gem"] ${gems.join(' ')}}`:'';
+      
+      if(deps.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
+      if(deps.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
+      
+
+      lines.push('digraph TM {');
+      lines.push('  fontname="Helvetica,Arial,sans-serif"');
+	    lines.push('  node [fontname="Helvetica,Arial,sans-serif"]');
+      lines.push('  edge [fontname="Helvetica,Arial,sans-serif"]');
+      lines.push('  overlap=false;');
+      if(special.length + gems.length > 0){
+        lines.push('  //special resource');
+        lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
+        lines.push(`    ${special.join(' ')}`);
+        lines.push(gemNode);
+      }
+      if(types.building.size){
+        lines.push('  //building');
+        lines.push('  node [shape=ellipse style=filled fillcolor="#ffffaa"];');
+        lines.push(`    ${Array.from(types.building).join('; ')};`);
+      }
+      if(types.enemy.size){
+        lines.push('  //enemy');
+        lines.push('  node [shape=octagon style=filled fillcolor="#ff7777"];');
+        lines.push(`    ${Array.from(types.enemy).join('; ')};`);
+      }
+      if(types.diplomacy.size){
+        lines.push('  //diplomacy');
+        lines.push('  node [shape=octagon style=filled fillcolor="#ffaa77"];');
+        lines.push(`    ${Array.from(types.diplomacy).join('; ')};`);
+      }
+      if(types.legacy.size){
+        lines.push('  //legacy');
+        lines.push('  node [shape=invhouse style=filled fillcolor="#ff77ff"];');
+        lines.push(`    ${Array.from(types.legacy).join('; ')};`);
+      }
+      if(types.prayer.size){
+        lines.push('  //prayer');
+        lines.push('  node [shape=house style=filled fillcolor="#aaaaff"];');
+        lines.push(`    ${Array.from(types.prayer).join('; ')};`);
+      }
+      if(types.spell.size){
+        lines.push('  //spell');
+        lines.push('  node [shape=house style=filled fillcolor="#aaffff"];');
+        lines.push(`    ${Array.from(types.spell).join('; ')};`);
+      }
+      if(types.resource.size){
+        lines.push('  //resource');
+        lines.push('  node [shape=house style=filled fillcolor="#ffdd77"];');
+        lines.push(`    ${Array.from(types.resource).concat(Array.from(types.cap)).join('; ')};`);
+      }
+      if(types.tech.size){
+        lines.push('  //tech');
+        lines.push('  node [shape=box style=filled fillcolor="#ccffcc"];');
+        lines.push(`    ${Array.from(types.tech).join('; ')};`);
+      }
+      if(types.unit.size){
+        lines.push('  //unit');
+        lines.push('  node [shape=box style=filled fillcolor="#77ffff"];');
+        lines.push(`    ${Array.from(types.unit).join('; ')};`);
+      }
+      lines.push('  //other (NG+)');
+      lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
+      lines.push('  ');
+      
+      resNodes.forEach(x => lines.push(x));
+      deps.forEach(x => lines.push(x));
+
+      if(deps.some(x => x.includes('end_era_4_1'))){ lines.push('  end_era_4_1 -> end_4'); }
+      if(deps.some(x => x.includes('end_era_4_2'))){ lines.push('  end_era_4_2 -> end_4'); }
+      
+      if(deps.some(x => x.includes('theresmore_richest_nation'))){ lines.push('  theresmore_richest_nation -> coin'); }
+      if(deps.some(x => x.includes('mausoleum_gods'))){ lines.push('  mausoleum_gods -> tome_wisdom'); }
+      if(deps.some(x => x.includes('reactivate_portal'))){ lines.push('  reactivate_portal -> relic'); }
+      if(deps.some(x => x.includes('titan_gift_t'))){ lines.push('  titan_gift_t -> titan_gift'); }
+      if(deps.some(x => x.includes('statue_virtue'))){ lines.push('  statue_virtue -> gem0'); }
+      if(deps.some(x => x.includes('fortified_citadel'))){ lines.push('  fortified_citadel -> gem1'); }
+      if(deps.some(x => x.includes('holy_site'))){ lines.push('  holy_site -> gem2'); }
+      lines.push('}');
+      
+      return lines.join('\n');
+    }
+    
+    function showDetails(input){
+      const div = document.getElementById('divDetails');
+      div.textContent = JSON.stringify(input, null, 2);
+    }
+    
+    function findItems(input){
+      const matches = [];
+      
+      Object.values(dataSets).forEach(x => {
+        const match = x.filter(y => y.id === input);
+        if(match.length > 0){
+          matches.push(match);
+        }
+        
+      })
+      
+      const output = matches.flat();
+      return output;
+    }
+    
+    function renderSVG(input){
+      const viz = new Viz();
+      viz.renderSVGElement(input)
+        .then(function(element) {
+          document.getElementById("svgOutput").appendChild(element);
+          
+          const svgContainer = document.getElementById('svgOutput');
+          const svg = svgContainer.querySelector('svg');
+          
+          if (svg) {
+            svg.addEventListener('click', function (e) {
+              const target = e.target;
+          
+              // Check if the clicked element is a <text> or inside one
+              let textElement = target.closest('text') || target.closest('tspan');
+              if (textElement) {
+                const clickedText = textElement.textContent.trim();
+                showDetails(findItems(clickedText));
+              }
+            });
+          }
+        })
+      .catch(function(error) {
+        console.error("Viz.js error:", error);
+      });
+      
+    }
+    
+    function GOTIME(){
+      const output = document.getElementById("graphviz");
+      output.value = '';
+
+      const gv = buildGraphViz(parseData());
+      output.valut = gv;
+      
+      const btn = document.getElementById('GOTIME');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      setTimeout(() => {
+        renderSVG(gv);
+        btn.textContent = 'Generate';
+        btn.disabled = false;
+        
+        document.getElementById('top').style.display = 'none';
+        document.getElementById('bottom').style.display = 'block';
+        alert('Done! Scroll around and click on nodes.');
+        
+      }, 10)
+
+    }
+    
+    function CLEAR(){
+      document.getElementById("parsed").value = '';
+      document.getElementById("graphviz").value = '';
+    }
+  </script>
+</body>
+</html>
