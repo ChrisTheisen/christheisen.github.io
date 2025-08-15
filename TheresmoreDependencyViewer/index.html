@@ -39,9 +39,7 @@
       In most choices between ease of use and ease of making this tool I leaned towards ease of making the tool.
     </p>
     <p>
-      You can use a pre-saved js version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
-    </p>
-    <p>
+      You can use a pre-saved version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
       Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a>
     </p>
     <p>
@@ -247,7 +245,6 @@
         return response.text();
       })
       .then(content => {
-        console.log(content);
         buildDataSets(content);
       })
       .catch(error => {
