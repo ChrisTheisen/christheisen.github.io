@@ -30,8 +30,6 @@
       cursor: pointer;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/acorn@8/dist/acorn.min.js"></script>
-
 </head>
 <body>
   <h2>Theresmore Dependency Viewer</h2>
@@ -41,8 +39,10 @@
       In most choices between ease of use and ease of making this tool I leaned towards ease of making the tool.
     </p>
     <p>
-      <a href="https://www.theresmoregame.com/play/static/js/main.81939200.js" target="_blank">Save This JS</a> <br/>
-      If that link doesn't work find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a>
+      You can use a pre-saved js version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
+    </p>
+    <p>
+      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a>
     </p>
     <p>
       Upload the file here:
@@ -87,7 +87,7 @@
   
     <hr/>
     
-    <button id='GOTIME' onClick="GOTIME()" disabled>Generate</button>
+    <button id='GOTIME' onClick="GOTIME()">Generate</button>
     
     <br/>
     <button id="CLEAR" style="display:none;" onClick="CLEAR()">Clear Outputs</button>
@@ -103,14 +103,6 @@
   </div>
 
   <script>
-    //Object.values(dataSets).map(ds => dataSets.resource.map(x => x.id).map(r => ({R:r, C:ds.filter(x => x.gen?.some(y => y.type === 'cap' && y.id === r))})).filter(x => x.C.length > 0));
-    //TODO: also hide graphviz with hide JSON checkbox
-    
-    //TODO: might need a more dynamic/complex approach as the tooltips are truncated.
-    //Generate JSON along with graphviz
-    //use viz.js instaed of current iframe
-    //Use some magic to link json to svg
-    
     const dataSets = {};
 
    // Shared function to extract matches
@@ -218,9 +210,11 @@
       return arrayText;
     }
     
-    function readerOnload(e) {
-      const content = e.target.result;
-
+    function buildDataSets(content){
+      if(!content){
+        Object.keys(dataSets).forEach(key => delete dataSets[key]);
+      }
+      
       patterns.forEach(({ label, regex }) => {
         const arrayText = extractArrayAroundObject(content, regex);
         if (arrayText) {
@@ -239,6 +233,28 @@
         }
       });
     }
+    
+    function readerOnload(e) {
+      buildDataSets(e.target.result)
+    }
+    
+    function loadDefault(){
+      fetch('./default.txt')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load default.txt: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(content => {
+        console.log(content);
+        buildDataSets(content);
+      })
+      .catch(error => {
+        console.error('Error loading default file:', error);
+      });
+    }
+    loadDefault();
 
     document.getElementById('fileInput').addEventListener('change', function (event) {
       const file = event.target.files[0];
@@ -247,7 +263,6 @@
       const reader = new FileReader();
       reader.onload = readerOnload;
       reader.readAsText(file);
-      document.getElementById('GOTIME').disabled = false;
     });
   
   
