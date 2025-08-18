@@ -27,9 +27,22 @@
     input[type="checkbox"]{
       margin-right: 0;
     }
-    g g{
+    g g text{
       cursor: pointer;
     }
+    .foundNode{
+      animation: blinkHighlight .5s linear;
+    }
+    
+    @keyframes blinkHighlight {
+      0%   { stroke: #000000; stroke-width: 0px; }
+      20%   { stroke: #ff0000; stroke-width: 1px; }
+      40%   { stroke: #aaaa00; stroke-width: 2px; }
+      60%  { stroke: #00ff00; stroke-width: 3px; }
+      80%  { stroke: #00aaaa; stroke-width: 2px; }
+      100% { stroke: #0000ff; stroke-width: 1px; }
+    }
+
   </style>
 </head>
 <body>
@@ -83,10 +96,10 @@
     <br/>
     
     <input type="checkbox" id="chkFilterOrphans" checked/>
-    <label for="chkFilterOrphans">Filter Orphans (Filter unconnected nodes)</label>
+    <label for="chkFilterOrphans">Filter Orphans (Do not include unconnected nodes)</label>
     <br/>
     <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
-    <label for="chkToggleOutputs">Hide JSON (Used for debugging)</label>
+    <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
     
   
     <hr/>
@@ -102,9 +115,9 @@
   <div id='bottom' style="display:none;">
     <div id='redo' style="float:right;position:fixed;right:10px;top:10px;display: flex;">
       <div style="margin-right:30px;">
-        <button onclick="downloadSVG()">Download</button>
+        <button onclick="downloadSVG()">Download Chart</button>
       </div>
-      <button onclick='redo()'>Redo</button>
+      <button onclick='redo()'>Chart Settings</button>
     </div>
     
     <div style="width:100vw; display:flex" >
@@ -521,6 +534,7 @@
     function showDetails(input){
       const div = document.getElementById('divDetails');
       div.textContent = JSON.stringify(input, null, 2);
+      setTimeout(() => document.getElementById('svgOutput').querySelector('svg').querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode')), 500);
     }
     
     function findItems(input){
@@ -537,28 +551,34 @@
       const output = matches.flat();
       return output;
     }
-    
+
     function renderSVG(input){
       const viz = new Viz();
+      const svgContainer = document.getElementById('svgOutput');
+      svgContainer.replaceChildren();
+
       viz.renderSVGElement(input)
         .then(function(element) {
           document.getElementById("svgOutput").appendChild(element);
           
-          const svgContainer = document.getElementById('svgOutput');
           const svg = svgContainer.querySelector('svg');
           
-          if (svg) {
-            svg.addEventListener('click', function (e) {
-              const target = e.target;
-          
-              // Check if the clicked element is a <text> or inside one
-              let textElement = target.closest('text') || target.closest('tspan');
-              if (textElement) {
-                const clickedText = textElement.textContent.trim();
-                showDetails(findItems(clickedText));
-              }
-            });
+          if (!svg) {
+            console.warn('Could not find SVG node.');
+            return;
           }
+        
+          svg.addEventListener('click', function (e) {
+            const target = e.target;
+            // Check if the clicked element is a <text> or inside one
+            let textElement = target.closest('text') || target.closest('tspan');
+            if (textElement) {
+              const clickedText = textElement.textContent.trim();
+              showDetails(findItems(clickedText));
+            }
+          });
+          
+          svg.addEventListener('mouseup', updatePanLoc);
         })
       .catch(function(error) {
         console.error("Viz.js error:", error);
@@ -606,6 +626,7 @@
       })
       .then(content => {
         buildDataSets(content);
+        GOTIME();
       })
       .catch(error => {
         console.error('Error loading default file:', error);
@@ -629,6 +650,16 @@
         console.warn(`Node "${nodeId}" not found.`);
         return;
       }
+      console.log("foundNode", node);
+      
+      
+      svg.querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode'));
+      node.classList.add('foundNode');
+      setTimeout(() => {
+        node.classList.remove('foundNode');
+      }, 1000);
+      
+
       const viewport = panZoomInstance.getSizes();
       const bbox = node.getBBox();
       const ctm = node.getCTM();
@@ -687,11 +718,12 @@
       const pan = panZoomInstance.getPan();
       const oldZoom = panZoomInstance.getZoom();
       const newZoom = oldZoom + delta;
+      if(newZoom > 2.05 || newZoom < .1){return;}
       
       panZoomInstance.zoom(newZoom);
       panZoomInstance.pan({x: pan.x / oldZoom * newZoom, y: pan.y / oldZoom * newZoom});
 
-      updateZoomIndicator(newZoom);
+      updateZoomIndicator(panZoomInstance.getZoom());
     }
   
     function setupZoom(svg) {
@@ -711,6 +743,11 @@
     
       // Initial value
       updateZoomIndicator(panZoomInstance.getZoom());
+      
+
+      if (window.panZoomInstance) {
+        window.panZoomInstance.destroy();
+      }
       
       window.panZoomInstance = panZoomInstance;
     }
@@ -768,7 +805,8 @@
         document.getElementById('bottom').style.display = 'block';
         setTimeout(() => {
           findNode('node1');
-          alert('Done!\n\nNavigate around with arrow keys, direction buttons, or click/drag.\nClick on nodes for additional details.\nUse find tool on right to find nodes.');
+          document.getElementById('svgOutput').querySelector('svg').querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode'));
+          alert('Chart Ready!\n\nNavigate around with arrow keys, direction buttons, or click/drag.\nClick on nodes for additional details.\nUse search tool on right to find nodes.');
         }, 10)
         
       }, 10)
@@ -776,7 +814,6 @@
     }
     
     function redo(){
-        Object.keys(dataSets).forEach(key => delete dataSets[key]);
         document.getElementById('top').style.display = 'block';
         document.getElementById('bottom').style.display = 'none';
     }
