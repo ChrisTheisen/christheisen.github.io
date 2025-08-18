@@ -5,6 +5,8 @@
   <title>TDV</title>
   <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/viz.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/full.render.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+
   <style>
     body {
       font-family: sans-serif;
@@ -16,7 +18,6 @@
       font-family: monospace;
     }
     button {
-      margin-top: 1em;
       padding: 0.5em 1em;
       font-size: 1em;
     }
@@ -35,8 +36,7 @@
   <h2>Theresmore Dependency Viewer</h2>
   <div id='top'>
     <p>
-      This is a bodged together site to generate dependancy graphs based on the game <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.
-      In most choices between ease of use and ease of making this tool I leaned towards ease of making the tool.
+      This is a bodged together site with a lot of AI generated code. It is used to generate dependancy graphs based on the game <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.
     </p>
     <p>
       You can use a pre-saved version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
@@ -100,13 +100,47 @@
   
   </div>
   <div id='bottom' style="display:none;">
-    <div id='redo' style="float:right;position:fixed;right:10px;top:10px;">
+    <div id='redo' style="float:right;position:fixed;right:10px;top:10px;display: flex;">
+      <div style="margin-right:30px;">
+        <button onclick="downloadSVG()">Download</button>
+      </div>
       <button onclick='redo()'>Redo</button>
     </div>
-
+    
     <div style="width:100vw; display:flex" >
-      <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;"></div>
-      <pre id="divDetails" style="width:20vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
+      <div id="zoom-controls" style="position:absolute; bottom: 20px; left: 10px;display:flex; flex-direction:row; gap: 2px;">
+        <div id="zoomIndicator" style="margin:5px; font-family:sans-serif;display:flex; flex-direction:column; gap: 2px;">
+          <button style="width:30px; padding:0; margin:0;" onclick="adjustZoom(.1);">+</button>
+          <button style="width:30px; padding:0; margin:0;" onclick="resetZoom()">=</button>
+          <button style="width:30px; padding:0; margin:0;" onclick="adjustZoom(-.1)">−</button>
+          <span id="zoomValue">1.00</span>
+        </div>
+        
+        <div syle="display:flex; flex-direction:column; gap: 2px">
+          <div id="pan-controls" style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
+            <div></div>
+            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 0, y: 500}); updatePanLoc();">↑</button>
+            <div></div>
+          
+            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 500, y: 0}); updatePanLoc();">←</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="findNode('node1')">⊙</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: -500, y: 0}); updatePanLoc();">→</button>
+          
+            <div></div>
+            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 0, y: -500}); updatePanLoc();">↓</button>
+            <div></div>
+          </div>
+          <span id="curLocX"></span>x<span id="curLocY"></span>
+        </div>
+    </div>
+
+      <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:hidden; border:1px solid #ccc; margin:0;"></div>
+      <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
+        <input id="txtSearch" style="width:97%; height: 30px;"/>
+        <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodeByText(document.getElementById('txtSearch').value);">Search</button>
+        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="findNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
+        <pre id="divDetails" style="width:100%; height:calc(95vh - 90px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
+      </div>
     </div>
   </div>
 
@@ -229,7 +263,6 @@
         // Copy only relevant properties
         const { id, req, reqFound, type, gen } = item;
         const temp = (req ||[]).concat(reqFound||[]);//combine to get a single req list
-        console.log(item);
         return {
           id,
           type,
@@ -254,31 +287,24 @@
     
       let included = [];
       if(document.getElementById('chkBuilding').checked){
-        console.log('Building', b);
         included = included.concat(b);
       }
       if(document.getElementById('chkEnemy').checked){
-        console.log('Enemy', e);
         included = included.concat(e);
       }
       if(document.getElementById('chkDiplomacy').checked){
-        console.log('Diplomacy', d);
         included = included.concat(d);
       }
       if(document.getElementById('chkLegacy').checked){
-        console.log('Legacy', l);
         included = included.concat(l);
       }
       if(document.getElementById('chkPrayer').checked){
-        console.log('Prayer', p);
         included = included.concat(p);
       }
       if(document.getElementById('chkTech').checked){
-        console.log('Tech', t);
         included = included.concat(t);
       }
       if(document.getElementById('chkUnits').checked){
-        console.log('Units', u);
         included = included.concat(u);
       }
     
@@ -401,6 +427,24 @@
 	    lines.push('  node [fontname="Helvetica,Arial,sans-serif"]');
       lines.push('  edge [fontname="Helvetica,Arial,sans-serif"]');
       lines.push('  overlap=false;');
+      lines.push('  subgraph cluster_key {');
+      lines.push('    label="Key";');
+      lines.push('    style=dashed;');
+      lines.push('    fontsize=12;');
+      lines.push('    rank=min;');
+      lines.push('    rankdir=TB;');
+      lines.push('    key_special_resource [label="Special Resource" shape=house style=filled fillcolor="#ff5555"];');
+      lines.push('    key_building [label="Building" shape=ellipse style=filled fillcolor="#ffff55"];');
+      lines.push('    key_enemy [label="Enemy" shape=octagon style=filled fillcolor="#ffaa55"];');
+      lines.push('    key_diplomacy [label="Diplomacy" shape=octagon style=filled fillcolor="#aaff55"];');
+      lines.push('    key_legacy [label="Legacy" shape=invhouse style=filled fillcolor="#55ff55"];');
+      lines.push('    key_prayer [label="Prayer" shape=house style=filled fillcolor="#55ffaa"];');
+      lines.push('    key_spell [label="Spell" shape=house style=filled fillcolor="#55ffff"];');
+      lines.push('    key_resource [label="Resource" shape=house style=filled fillcolor="#55aaff"];');
+      lines.push('    key_tech [label="Tech" shape=box style=filled fillcolor="#7777ff"];');
+      lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
+      lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
+      lines.push('  }');
       if(special.length + gems.length > 0){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
@@ -577,7 +621,124 @@
       reader.onload = readerOnload;
       reader.readAsText(file);
     });
+        
+    function findNode(nodeId) {
+      const svg = document.querySelector('#svgOutput svg');
+      const node = svg.querySelector(`#${CSS.escape(nodeId)}`);
+      if (!node) {
+        console.warn(`Node "${nodeId}" not found.`);
+        return;
+      }
+      const viewport = panZoomInstance.getSizes();
+      const bbox = node.getBBox();
+      const ctm = node.getCTM();
+
+      const Y = ctm.d * (bbox.y + viewport.viewBox.height);
+      const X = ctm.a * bbox.x;
+      
+      const offsetX = (svg.parentNode.clientWidth / 2) - (bbox.width / 2);
+      const offsetY = (svg.parentNode.clientHeight / 3) - (bbox.height / 2);
+    
+      panZoomInstance.pan({x: -X + offsetX, y: -Y + offsetY});
+      updatePanLoc();
+    }
+
+    function findNodeByText(text) {
+      const svg = document.querySelector('#svgOutput svg');
+      const texts = svg.querySelectorAll('text');
+    
+      const matches = [];
+      const a = text.trim().toLowerCase().replaceAll(' ', '_');
+      for (const t of texts) {
+        const b = t.textContent.trim();
+        if (a.includes(b) || b.includes(a)) {
+          matches.push(t.closest('g'));
+        }
+      }
+    
+      const select = document.getElementById('nodeFinder');
+      select.innerHTML = ''; // Clear previous options
+      const option = document.createElement('option');
+      
+      option.textContent = "<- Select Node ->";
+      select.appendChild(option);
+
+      
+      matches.map(x => ({id: x.id, value: x.getElementsByTagName('text')[0].textContent}))
+          .sort((a,b) => a.value.localeCompare(b.value)).forEach(x => {
+        const option = document.createElement('option');
+        
+        option.value = x.id;
+        option.textContent = x.value;
+        select.appendChild(option);
+      });
+          
+      return matches;
+    }
+    
+    function resetZoom() {
+      panZoomInstance.reset();
+      panZoomInstance.fit();
+      panZoomInstance.center();
+      updateZoomIndicator(panZoomInstance.getZoom());
+    }
+
+    function adjustZoom(delta) {
+      const pan = panZoomInstance.getPan();
+      const oldZoom = panZoomInstance.getZoom();
+      const newZoom = oldZoom + delta;
+      
+      panZoomInstance.zoom(newZoom);
+      panZoomInstance.pan({x: pan.x / oldZoom * newZoom, y: pan.y / oldZoom * newZoom});
+
+      updateZoomIndicator(newZoom);
+    }
   
+    function setupZoom(svg) {
+      const panZoomInstance = svgPanZoom(svg, {
+        zoomEnabled: false,
+        panEnabled: true,
+        controlIconsEnabled: true,
+        fit: true,
+        center: true,
+        minZoom: 0.1,
+        maxZoom: 2,
+        zoomScaleSensitivity: 0.2,
+        beforeZoom: function(oldZoom, newZoom) {
+          updateZoomIndicator(newZoom);
+        }
+      });
+    
+      // Initial value
+      updateZoomIndicator(panZoomInstance.getZoom());
+      
+      window.panZoomInstance = panZoomInstance;
+    }
+    
+    function updateZoomIndicator(zoom) {
+      const zoomDisplay = document.getElementById('zoomValue');
+      if (zoomDisplay) {
+        zoomDisplay.textContent = zoom.toFixed(2);
+      }
+    }
+    
+    function updatePanLoc(){
+      const loc = panZoomInstance.getPan();
+      
+      document.getElementById('curLocX').textContent = (loc.x * -1).toFixed(2);
+      document.getElementById('curLocY').textContent = (loc.y * -1).toFixed(2);
+    }
+
+    function initZoom(){
+      const observer = new MutationObserver(() => {
+        const svg = document.querySelector('#svgOutput svg');
+        if (svg) {
+          setupZoom(svg);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.getElementById('svgOutput'), { childList: true });
+    }
     
     function GOTIME(){
       const output = document.getElementById("graphviz");
@@ -597,13 +758,17 @@
       btn.textContent = 'Generating...';
       setTimeout(() => {
         renderSVG(gv);
+        initZoom();
+        
+        
         btn.textContent = 'Generate';
         btn.disabled = false;
         
         document.getElementById('top').style.display = 'none';
         document.getElementById('bottom').style.display = 'block';
         setTimeout(() => {
-          alert('Done! The graph might look blank if centered on an empty space.\n\nScroll around and click on nodes for additional details.\nUse browser find (CTRL+F) to search for nodes.\nClick Redo in the top corner to select different datasets.');
+          findNode('node1');
+          alert('Done!\n\nNavigate around with arrow keys, direction buttons, or click/drag.\nClick on nodes for additional details.\nUse find tool on right to find nodes.');
         }, 10)
         
       }, 10)
@@ -620,6 +785,50 @@
       document.getElementById("parsed").value = '';
       document.getElementById("graphviz").value = '';
     }
+    
+    function downloadSVG() {
+      const svg = document.querySelector('#svgOutput svg');
+      if (!svg) return;
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString(svg);
+      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'TM dependency graph.svg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    document.addEventListener('keydown', (e) => {
+      const panStep = 50; // pixels per key press
+    
+      let dx = 0, dy = 0;
+      switch (e.key) {
+        case 'ArrowUp':    dy = panStep; break;
+        case 'ArrowDown':  dy = -panStep; break;
+        case 'ArrowLeft':  dx = panStep; break;
+        case 'ArrowRight': dx = -panStep; break;
+        default: return; // ignore other keys
+      }
+    
+      e.preventDefault(); // prevent page scroll
+      const currentPan = panZoomInstance.getPan();
+      panZoomInstance.pan({
+        x: currentPan.x + dx,
+        y: currentPan.y + dy
+      });
+      
+      updatePanLoc();
+    });
+    
+    document.getElementById('txtSearch').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // Optional: prevent form submission or page reload
+        findNodeByText(this.value);
+        document.getElementById('nodeFinder').focus();
+      }
+    });
   </script>
 </body>
 </html>
