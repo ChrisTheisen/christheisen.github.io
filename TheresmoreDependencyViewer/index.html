@@ -78,19 +78,19 @@
     <input type="checkbox" id="chkDiplomacy" checked />
     <label for="chkDiplomacy">diplomacy</label>
   
-    <input type="checkbox" id="chkLegacy" checked />
+    <input type="checkbox" id="chkLegacy" />
     <label for="chkLegacy">legacy</label>
   
-    <input type="checkbox" id="chkPrayer" checked />
+    <input type="checkbox" id="chkPrayer" />
     <label for="chkPrayer">prayer</label>
   
-    <input type="checkbox" id="chkResource" checked />
+    <input type="checkbox" id="chkResource" />
     <label for="chkResource">resource</label>
   
     <input type="checkbox" id="chkTech" checked />
     <label for="chkTech">tech</label>
   
-    <input type="checkbox" id="chkUnits" checked />
+    <input type="checkbox" id="chkUnits" />
     <label for="chkUnits">units</label>
     
     <br/>
@@ -806,7 +806,6 @@
         setTimeout(() => {
           findNode('node1');
           document.getElementById('svgOutput').querySelector('svg').querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode'));
-          alert('Chart Ready!\n\nNavigate around with arrow keys, direction buttons, or click/drag.\nClick on nodes for additional details.\nUse search tool on right to find nodes.');
         }, 10)
         
       }, 10)
