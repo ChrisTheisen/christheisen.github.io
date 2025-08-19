@@ -42,6 +42,21 @@
       80%  { stroke: #00aaaa; stroke-width: 2px; }
       100% { stroke: #0000ff; stroke-width: 1px; }
     }
+    .focusNode{
+      stroke: #ff0000;
+      stroke-width: 3px;
+      filter: brightness(1.5);
+    }
+    .focusChildren{
+      stroke: #ff7700;
+      stroke-width: 3px;
+      filter: brightness(1.2);
+    }
+    .focusParents{
+      stroke: #ff0077;
+      stroke-width: 3px;
+      filter: brightness(1.2);
+    }
 
   </style>
 </head>
@@ -81,7 +96,7 @@
     <input type="checkbox" id="chkLegacy" />
     <label for="chkLegacy">legacy</label>
   
-    <input type="checkbox" id="chkPrayer" />
+    <input type="checkbox" id="chkPrayer" checked/>
     <label for="chkPrayer">prayer</label>
   
     <input type="checkbox" id="chkResource" />
@@ -136,7 +151,7 @@
             <div></div>
           
             <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 500, y: 0}); updatePanLoc();">←</button>
-            <button style="width:30px; padding:0; margin:0;" onclick="findNode('node1')">⊙</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="panToNode('node1')">⊙</button>
             <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: -500, y: 0}); updatePanLoc();">→</button>
           
             <div></div>
@@ -150,15 +165,18 @@
       <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:hidden; border:1px solid #ccc; margin:0;"></div>
       <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
         <input id="txtSearch" style="width:97%; height: 30px;"/>
-        <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodeByText(document.getElementById('txtSearch').value);">Search</button>
-        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="findNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
+        <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodesByText(document.getElementById('txtSearch').value);">Search</button>
+        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
         <pre id="divDetails" style="width:100%; height:calc(95vh - 90px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
       </div>
     </div>
   </div>
 
   <script>
+  //TODO: indicate children of selected record
+  //TODO: maintain some of selected highlight
     const dataSets = {};
+    let parsedData = [];
 
    // Shared function to extract matches
     function extractArrays(content, regex) {
@@ -206,7 +224,7 @@
       if(!regex) {return null;}
       const objectMatch = regex.exec(content);
       if (!objectMatch) {
-        console.log(`No object found with regex ${regex}`);
+        console.warn(`No object found with regex ${regex}`);
         return null;
       }
     
@@ -299,6 +317,7 @@
       const u = removeResourceReqs(dataSets.unit || []);
     
       let included = [];
+      parsedData = [].concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
       if(document.getElementById('chkBuilding').checked){
         included = included.concat(b);
       }
@@ -367,8 +386,7 @@
     }
     
     function hasDep(input, all){
-        const dep = all.some(x => x.req?.some(y => y.id === input.id));
-        return dep.length > 0;
+        return all.some(x => x.req?.some(y => y.id === input.id));
     }
     
     function formatNumber(input){
@@ -406,13 +424,13 @@
         const type = getType(x.id);
 
         if(types.hasOwnProperty(type)) { types[type].add(x.id); }
-        else{console.log("IDK TYPE0", x)}
+        else{console.warn("INVALID TYPE0", x)}
         x.req?.forEach(y => {
           const rType = y.type || getType(y.id);
           if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
           else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
           else if(rType === 'army') {types.unit.add(y.id);}
-          else{console.log("IDK TYPE1", x, y)}
+          else{console.warn("INVALID TYPE1", x, y)}
         })
         
         return buildVizDep(x);
@@ -531,10 +549,14 @@
       return lines.join('\n');
     }
     
+    function removeClass(input){
+      document.getElementById('svgOutput').querySelector('svg').querySelectorAll(`.${input}`).forEach(n => n.classList.remove(input));
+    }
+    
     function showDetails(input){
       const div = document.getElementById('divDetails');
       div.textContent = JSON.stringify(input, null, 2);
-      setTimeout(() => document.getElementById('svgOutput').querySelector('svg').querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode')), 500);
+      setTimeout(() => removeClass('foundNode'), 500);
     }
     
     function findItems(input){
@@ -550,6 +572,81 @@
       
       const output = matches.flat();
       return output;
+    }
+    
+    function focusNode(target){
+      // Check if the clicked element is a <text> or inside one
+      let textElement = target.closest('text') || target.closest('tspan');
+      if (textElement) {
+        const clickedText = textElement.textContent.trim();
+        showDetails(findItems(clickedText));
+      }
+      
+      let ancestorId = target.id;
+      let node = target;
+      while(!ancestorId && node.parentNode){
+        node = node.parentNode;
+        ancestorId = node.id;
+      }
+      
+      
+      if(ancestorId === 'graph0'){return;}
+      //panToNode(ancestorId);
+      
+      removeClass('focusNode');
+      const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
+      shape.classList.add('focusNode');
+      focusChildren(target.textContent.trim());
+      focusParents(target.textContent.trim());
+    }
+    
+    function findNodeByText(text) {
+      const svg = document.querySelector('#svgOutput svg');
+      const texts = svg.querySelectorAll('text');
+    
+      for (const t of texts) {
+        const b = t.textContent.trim();
+        
+        if (text === b) {
+          return t.closest('g');
+        }
+      }
+
+    }
+
+    function focusChildren(input){
+      const deps = parsedData.filter(x => x.req?.some(y => y.id === input));
+      if(!Array.isArray(deps)){return;}
+
+      removeClass('focusChildren');
+      for(const dep of deps){
+        node = findNodeByText(dep.id);
+        if(!node){
+          console.warn("DEP NOT FOUND", dep);
+          continue;
+        }
+
+        const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
+        shape.classList.add('focusChildren');
+      }
+    }
+    
+    function focusParents(input){
+      const reqs = parsedData.find(x => x.id === input)?.req?.map(x => x.id);
+      if(!Array.isArray(reqs)){return;}
+      
+      removeClass('focusParents');
+      for(const req of reqs){
+        node = findNodeByText(req);
+        if(!node){
+          console.warn("REQ NOT FOUND", req);
+          continue;
+        }
+
+        const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
+        shape.classList.add('focusParents');
+      }
+      
     }
 
     function renderSVG(input){
@@ -568,15 +665,11 @@
             return;
           }
         
-          svg.addEventListener('click', function (e) {
-            const target = e.target;
-            // Check if the clicked element is a <text> or inside one
-            let textElement = target.closest('text') || target.closest('tspan');
-            if (textElement) {
-              const clickedText = textElement.textContent.trim();
-              showDetails(findItems(clickedText));
-            }
-          });
+          svg.addEventListener('click', (e) => {
+              focusNode(e.target);
+              document.getElementById('nodeFinder').selectedIndex = 0;
+            
+            });
           
           svg.addEventListener('mouseup', updatePanLoc);
         })
@@ -643,21 +736,20 @@
       reader.readAsText(file);
     });
         
-    function findNode(nodeId) {
+    function panToNode(nodeId) {
       const svg = document.querySelector('#svgOutput svg');
       const node = svg.querySelector(`#${CSS.escape(nodeId)}`);
       if (!node) {
         console.warn(`Node "${nodeId}" not found.`);
         return;
       }
-      console.log("foundNode", node);
-      
-      
-      svg.querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode'));
+
+      removeClass('foundNode');
       node.classList.add('foundNode');
       setTimeout(() => {
         node.classList.remove('foundNode');
       }, 1000);
+      focusNode(node.getElementsByTagName('text')[0]);
       
 
       const viewport = panZoomInstance.getSizes();
@@ -674,14 +766,15 @@
       updatePanLoc();
     }
 
-    function findNodeByText(text) {
+    function findNodesByText(text) {
       const svg = document.querySelector('#svgOutput svg');
       const texts = svg.querySelectorAll('text');
     
       const matches = [];
       const a = text.trim().toLowerCase().replaceAll(' ', '_');
       for (const t of texts) {
-        const b = t.textContent.trim();
+        const b = t.textContent.trim().toLowerCase();
+        
         if (a.includes(b) || b.includes(a)) {
           matches.push(t.closest('g'));
         }
@@ -804,8 +897,18 @@
         document.getElementById('top').style.display = 'none';
         document.getElementById('bottom').style.display = 'block';
         setTimeout(() => {
-          findNode('node1');
-          document.getElementById('svgOutput').querySelector('svg').querySelectorAll('.foundNode').forEach(n => n.classList.remove('foundNode'));
+          const housing = findNodeByText('housing')?.id;
+          
+          if(housing){
+            panToNode(housing);
+          }
+          else{
+            panToNode('node1');
+            removeClass('foundNode');
+            removeClass('focusNode');
+            removeClass('focusChildren');
+            removeClass('focusParents');
+          }
         }, 10)
         
       }, 10)
@@ -861,7 +964,7 @@
     document.getElementById('txtSearch').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault(); // Optional: prevent form submission or page reload
-        findNodeByText(this.value);
+        findNodesByText(this.value);
         document.getElementById('nodeFinder').focus();
       }
     });
