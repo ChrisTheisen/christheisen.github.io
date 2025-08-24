@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    //TODO: mobile clicking support
+    //TODO: resource cap lookup -> fix clicking parent/child
+    //TODO: luck buildings
+    //TODO: army boons
+    //TODO: svg
+    
+  </script>
   <meta charset="UTF-8">
   <title>TDV</title>
   <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/viz.js"></script>
@@ -10,7 +18,6 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #f2f2f2;
     }
     textarea {
       width: 100%;
@@ -21,6 +28,20 @@
       padding: 0.5em 1em;
       font-size: 1em;
     }
+
+    body.night-mode {
+      background-color: black;
+      color: white;
+    }
+
+    body.night-mode input,
+    body.night-mode select,
+    body.night-mode button {
+      background-color: #0d0d0d;
+      color: #a2a2a2;
+      border: 1px solid #343;
+    }
+    
     label {
       margin-right: 20px;
     }
@@ -57,6 +78,28 @@
       stroke-width: 3px;
       filter: brightness(1.2);
     }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: sans-serif;
+    }
+    
+    .label-text {
+      font-weight: bold;
+    }
+    
+    .description {
+      color: #555;
+      font-size: 0.9em;
+    }
+
 
   </style>
 </head>
@@ -84,38 +127,73 @@
       </small>
     </p>
     
-    <input type="checkbox" id="chkBuilding" checked />
-    <label for="chkBuilding">building</label>
+    <p>
+      <input type="checkbox" id="chkBuilding" checked />
+      <label for="chkBuilding">building</label>
+      
+      <input type="checkbox" id="chkEnemy" checked />
+      <label for="chkEnemy">enemy</label>
+      
+      <input type="checkbox" id="chkDiplomacy" checked />
+      <label for="chkDiplomacy">diplomacy</label>
     
-    <input type="checkbox" id="chkEnemy" checked />
-    <label for="chkEnemy">enemy</label>
+      <input type="checkbox" id="chkLegacy" />
+      <label for="chkLegacy">legacy</label>
     
-    <input type="checkbox" id="chkDiplomacy" checked />
-    <label for="chkDiplomacy">diplomacy</label>
-  
-    <input type="checkbox" id="chkLegacy" />
-    <label for="chkLegacy">legacy</label>
-  
-    <input type="checkbox" id="chkPrayer" checked/>
-    <label for="chkPrayer">prayer</label>
-  
-    <input type="checkbox" id="chkResource" />
-    <label for="chkResource">resource</label>
-  
-    <input type="checkbox" id="chkTech" checked />
-    <label for="chkTech">tech</label>
-  
-    <input type="checkbox" id="chkUnits" />
-    <label for="chkUnits">units</label>
+      <input type="checkbox" id="chkPrayer" checked/>
+      <label for="chkPrayer">prayer</label>
     
-    <br/>
+      <input type="checkbox" id="chkResource" />
+      <label for="chkResource">resource</label>
     
-    <input type="checkbox" id="chkFilterOrphans" checked/>
-    <label for="chkFilterOrphans">Filter Orphans (Do not include unconnected nodes)</label>
-    <br/>
-    <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
-    <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
+      <input type="checkbox" id="chkTech" checked />
+      <label for="chkTech">tech</label>
     
+      <input type="checkbox" id="chkUnits" />
+      <label for="chkUnits">units</label>
+    </p>
+
+    <p>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" id="rdoReq" name="option" value="dep" checked>
+          <span class="label-text">Dependency</span>
+          <span class="description">(Defaault) Shows which nodes are required to unlock progress.</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" id="rdoCap" name="option" value="cap" >
+          <span class="label-text">Capacity</span>
+          <span class="description">Only shows nodes that increase resource capacity.</span>
+        </label>
+
+        <label class="radio-item">
+          <input type="radio" id="rdoUnits" name="option" value="units" disabled>
+          <span class="label-text">Units</span>
+          <span class="description">Only shows nodes increase army unit stats. (in progress) </span>
+        </label>
+
+      </div>
+    </p>
+    
+    <p>
+      <label for="ddlDirection">Graph direction</label>
+      <select id="ddlDirection">
+        <option value="TB" selected>Top to Bottom</option>
+        <option value="BT">Bottom to Top</option>
+        <option value="LR">Left to Right</option>
+        <option value="RL">Right to Left</option>
+      </select>
+      <br/>
+      <input type="checkbox" id="chkNight" onchange="document.body.classList.toggle('night-mode', this.checked)"/>
+      <label for="chkNight">Night Mode (Black background)</label>
+      <br/>
+      <input type="checkbox" id="chkLegacyResource" checked/>
+      <label for="chkLegacyResource">Show Legacy Resources (Coin, Gem, etc...)</label>
+      <br/>
+      <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
+      <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
+    </p>
   
     <hr/>
     
@@ -164,62 +242,24 @@
 
       <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:hidden; border:1px solid #ccc; margin:0;"></div>
       <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
-        <input id="txtSearch" style="width:97%; height: 30px;"/>
+        <input id="txtSearch" style="width:97%; height: 30px;" placeholder="Search nodes here"/>
         <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodesByText(document.getElementById('txtSearch').value);">Search</button>
         <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
-        <pre id="divDetails" style="width:100%; height:calc(95vh - 90px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
+        <pre id="divDetails" style="width:100%; height:calc(95vh - 130px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
       </div>
     </div>
   </div>
 
   <script>
-  //TODO: indicate children of selected record
-  //TODO: maintain some of selected highlight
     const dataSets = {};
     let parsedData = [];
-
-   // Shared function to extract matches
+    let parentsChildren = {children:{}, parents:{}};
+//START EXTRACT THERESMORE DATA REGION
     function extractArrays(content, regex) {
       const matches = content.match(regex);
       return matches || [];
     }
 
-    // Define all your regex patterns here
-    const patterns = [
-      {
-        label: 'building',
-        regex: /\{[^}]*?id\s*:\s*["']common_house["'][^}]*?cat\s*:\s*["']living_quarters["'][^}]*?\}/g
-      },
-      {
-        label: 'enemy',
-        regex: /\{[^}]*?id\s*:\s*["']ancient_burial_place["'][^}]*?army\s*:\s*\[/g
-      },
-      {
-        label: 'diplomacy',
-        regex: /\{[^}]*?id\s*:\s*["']nightdale_protectorate["'][^}]*?relationship\s*:\s*30[^}]*?\}/g
-      },
-      {
-        label: 'legacy',
-        regex: /\{[^}]*?id\s*:\s*["']ancient_treasury["'][^}]*?req\s*:\s*\[/g
-      },
-      {
-        label: 'prayer',
-        regex: /\{[^}]*?id\s*:\s*["']praise_gods["'][^}]*?type\s*:\s*["']prayer["'][^}]*?\}/g
-      },
-      {
-        label: 'resource',
-        regex: /\{[^}]*?id\s*:\s*["']research["'][^}]*?cap\s*:\s*500[^}]*?\}/g
-      },
-      {
-        label: 'tech',
-        regex: /\{[^}]*?id\s*:\s*["']trading_woods["'][^}]*?req\s*:\s*\[[\s\S]*?gen\s*:\s*\[[\s\S]*?\][^}]*?\}/g
-      },
-      {
-        label: 'unit',
-        regex: /\{[^}]*?id\s*:\s*["']settlement_defenses["'][^}]*?type\s*:\s*["']settlement["'][^}]*?\}/g
-      },
-    ];
-    
     function extractArrayAroundObject(content, regex) {
       if(!regex) {return null;}
       const objectMatch = regex.exec(content);
@@ -282,14 +322,60 @@
       const arrayText = content.slice(arrayStart, arrayEnd);
       return arrayText;
     }
-  
-    function toggleOutputs(hide){
-      document.getElementById('CLEAR').style.display = hide ? 'none' : 'block';
-      document.getElementById('parsed').style.display = hide ? 'none' : 'block';
-      document.getElementById('graphviz').style.display = hide ? 'none' : 'block';
+    
+    const patterns = [
+      {
+        label: 'building',
+        regex: /\{[^}]*?id\s*:\s*["']common_house["'][^}]*?cat\s*:\s*["']living_quarters["'][^}]*?\}/g
+      },
+      {
+        label: 'enemy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_burial_place["'][^}]*?army\s*:\s*\[/g
+      },
+      {
+        label: 'diplomacy',
+        regex: /\{[^}]*?id\s*:\s*["']nightdale_protectorate["'][^}]*?relationship\s*:\s*30[^}]*?\}/g
+      },
+      {
+        label: 'legacy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_treasury["'][^}]*?req\s*:\s*\[/g
+      },
+      {
+        label: 'prayer',
+        regex: /\{[^}]*?id\s*:\s*["']praise_gods["'][^}]*?type\s*:\s*["']prayer["'][^}]*?\}/g
+      },
+      {
+        label: 'resource',
+        regex: /\{[^}]*?id\s*:\s*["']research["'][^}]*?cap\s*:\s*500[^}]*?\}/g
+      },
+      {
+        label: 'tech',
+        regex: /\{[^}]*?id\s*:\s*["']trading_woods["'][^}]*?req\s*:\s*\[[\s\S]*?gen\s*:\s*\[[\s\S]*?\][^}]*?\}/g
+      },
+      {
+        label: 'unit',
+        regex: /\{[^}]*?id\s*:\s*["']settlement_defenses["'][^}]*?type\s*:\s*["']settlement["'][^}]*?\}/g
+      },
+    ];
+    function buildDataSets(content){
+      if(!content){
+        Object.keys(dataSets).forEach(key => delete dataSets[key]);
+      }
+      
+      patterns.forEach(({ label, regex }) => {
+        const arrayText = extractArrayAroundObject(content, regex);
+        if (arrayText) {
+          try {
+            dataSets[label] = eval(arrayText);
+          } catch (err) {
+            console.warn(`Failed to parse ${label}:`, err);
+          }
+        }
+      });
     }
-  
-    function removeResourceReqs(data) {
+//END EXTRACT DATA REGION
+//START DATA PRORCESSING REGION
+    function mapData(data) {
       const output = data.map(item => {
         // Copy only relevant properties
         const { id, req, reqFound, type, gen } = item;
@@ -299,22 +385,37 @@
           type,
           res: temp?.filter(r => r.type === "resource"),//get all the resources
           req: temp?.filter(r => r.type !== "resource"),//get all the not resources
-          gen: gen
+          gen: gen?.filter(x => !["building", "tech"].includes(x.type))//Ignore the mutually exclusive building/tech
           
         };
       });
       return output;
     }
     
-    function parseData() {
-      const b = removeResourceReqs(dataSets.building || []);
-      const e = removeResourceReqs(dataSets.enemy || []);
-      const d = removeResourceReqs(dataSets.diplomacy || []);
-      const l = removeResourceReqs(dataSets.legacy || []);
-      const p = removeResourceReqs(dataSets.prayer || []);
-      const r = removeResourceReqs(dataSets.resource || []);
-      const t = removeResourceReqs(dataSets.tech || []);
-      const u = removeResourceReqs(dataSets.unit || []);
+    function findItems(input){
+      const matches = [];
+      
+      Object.values(dataSets).forEach(x => {
+        const match = x.filter(y => y.id === input);
+        if(match.length > 0){
+          matches.push(match);
+        }
+        
+      })
+      
+      const output = matches.flat();
+      return output;
+    }
+        
+    function consolidateData() {
+      const b = mapData(dataSets.building || []);
+      const e = mapData(dataSets.enemy || []);
+      const d = mapData(dataSets.diplomacy || []);
+      const l = mapData(dataSets.legacy || []);
+      const p = mapData(dataSets.prayer || []);
+      const r = mapData(dataSets.resource || []);
+      const t = mapData(dataSets.tech || []);
+      const u = mapData(dataSets.unit || []);
     
       let included = [];
       parsedData = [].concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
@@ -343,50 +444,34 @@
       document.getElementById('parsed').value = JSON.stringify(included, null, 2);
       return included;
     }
-    
+
     function getType(input){
-        if(dataSets.building.some(x => x.id === input)){
-          return 'building';
-        }
-        else if(dataSets.enemy.some(x => x.id === input)){
-          return 'enemy';
-        }
-        else if(dataSets.diplomacy.some(x => x.id === input)){
-          return 'diplomacy';
-        }
-        else if(dataSets.legacy.some(x => x.id === input)){
-          return 'legacy';
-        }
-        else if(dataSets.prayer.some(x => x.id === input)){
-          const x = dataSets.prayer.find(x => x.id === input);
-          return x.type;
-        }
-        else if(dataSets.resource.some(x => x.id === input)){
-          return 'resource';
-        }
-        else if(dataSets.tech.some(x => x.id === input)){
-          return 'tech';
-        }
-        else if(dataSets.unit.some(x => x.id === input)){
-          return 'unit';
-        }
-        return 'N/A';
-      //TODO: build types; this is placeholder for testing
-      return 'building';
-    }
-    
-    function buildVizDep(input) {
-      const output = [];
-      
-      input.req?.forEach(x => {
-          const label = x.value > 1 ? `[label = ${x.value}]` : '';
-          output.push(`  ${x.id} -> ${input.id} ${label}`)
-      });
-      return output;
-    }
-    
-    function hasDep(input, all){
-        return all.some(x => x.req?.some(y => y.id === input.id));
+      if(dataSets.building.some(x => x.id === input)){
+        return 'building';
+      }
+      else if(dataSets.enemy.some(x => x.id === input)){
+        return 'enemy';
+      }
+      else if(dataSets.diplomacy.some(x => x.id === input)){
+        return 'diplomacy';
+      }
+      else if(dataSets.legacy.some(x => x.id === input)){
+        return 'legacy';
+      }
+      else if(dataSets.prayer.some(x => x.id === input)){
+        const x = dataSets.prayer.find(x => x.id === input);
+        return x.type;
+      }
+      else if(dataSets.resource.some(x => x.id === input)){
+        return 'resource';
+      }
+      else if(dataSets.tech.some(x => x.id === input)){
+        return 'tech';
+      }
+      else if(dataSets.unit.some(x => x.id === input)){
+        return 'unit';
+      }
+      return 'N/A';
     }
     
     function formatNumber(input){
@@ -398,65 +483,16 @@
       return input;
     }
     
-    function buildGraphViz(input){
-      const types = {
-        building: new Set(),
-        enemy: new Set(),
-        diplomacy: new Set(),
-        legacy: new Set(),
-        prayer: new Set(),
-        spell: new Set(),
-        resource: new Set(),
-        cap: new Set(),
-        stat: new Set(),
-        tech: new Set(),
-        unit: new Set()
-      };
+    function graphVizHeader(input){
+      const isNight = document.getElementById('chkNight').checked;
       
-      const fo = document.getElementById('chkFilterOrphans')?.checked;
-      const nodes = fo ? input.filter(x => x.req?.length || hasDep(x, input)) : input;
-      
-      const resNodes = nodes.filter(x => x.res.length > 0)
-        .sort((a,b) => a.id.localeCompare(b.id))
-        .map(n => `   ${n.id} [tooltip = "${n.res.map(r => `${r.id}&#9;${formatNumber(r.value)}`).join('&#13;&#10;')}"]` );
-
-      const deps = nodes.map(x => {
-        const type = getType(x.id);
-
-        if(types.hasOwnProperty(type)) { types[type].add(x.id); }
-        else{console.warn("INVALID TYPE0", x)}
-        x.req?.forEach(y => {
-          const rType = y.type || getType(y.id);
-          if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
-          else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
-          else if(rType === 'army') {types.unit.add(y.id);}
-          else{console.warn("INVALID TYPE1", x, y)}
-        })
-        
-        return buildVizDep(x);
-      }).flat().filter(x => x);
-
       const lines = [];
-      
-      const special = [];
-      if(deps.some(x => x.includes('theresmore_richest_nation'))){ special.push('coin;'); }
-      if(deps.some(x => x.includes('mausoleum_gods'))){ special.push('tome_wisdom;'); }
-      if(deps.some(x => x.includes('reactivate_portal'))){ special.push('relic;'); }
-      if(deps.some(x => x.includes('titan_gift_t'))){ special.push('titan_gift;'); }
-      const gems = [];
-      if(deps.some(x => x.includes('statue_virtue'))){ gems.push('gem0;'); }
-      if(deps.some(x => x.includes('fortified_citadel'))){ gems.push('gem1;'); }
-      if(deps.some(x => x.includes('holy_site'))){ gems.push('gem2;'); }
-      const gemNode = gems.length>0?`   {node [label="gem"] ${gems.join(' ')}}`:'';
-      
-      if(deps.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
-      if(deps.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
-      
-
       lines.push('digraph TM {');
+	    lines.push(`  bgcolor="#${isNight?'0d0d0d':'ffffff'}"`);
       lines.push('  fontname="Helvetica,Arial,sans-serif"');
 	    lines.push('  node [fontname="Helvetica,Arial,sans-serif"]');
       lines.push('  edge [fontname="Helvetica,Arial,sans-serif"]');
+      lines.push(`  rankdir="${document.getElementById('ddlDirection').value}";`)
       lines.push('  overlap=false;');
       lines.push('  subgraph cluster_key {');
       lines.push('    label="Key";');
@@ -476,77 +512,199 @@
       lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
       lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
       lines.push('  }');
-      if(special.length + gems.length > 0){
+      if(input.special?.size){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
-        lines.push(`    ${special.join(' ')}`);
-        lines.push(gemNode);
+        lines.push(`    ${Array.from(input.special).join(' ')}`);
       }
-      if(types.building.size){
+      if(input.building?.size){
         lines.push('  //building');
         lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
-        lines.push(`    ${Array.from(types.building).join('; ')};`);
+        lines.push(`    ${Array.from(input.building).join('; ')};`);
       }
-      if(types.enemy.size){
+      if(input.enemy?.size){
         lines.push('  //enemy');
         lines.push('  node [shape=octagon style=filled fillcolor="#ffaa55"];');
-        lines.push(`    ${Array.from(types.enemy).join('; ')};`);
+        lines.push(`    ${Array.from(input.enemy).join('; ')};`);
       }
-      if(types.diplomacy.size){
+      if(input.diplomacy?.size){
         lines.push('  //diplomacy');
         lines.push('  node [shape=octagon style=filled fillcolor="#aaff55"];');
-        lines.push(`    ${Array.from(types.diplomacy).join('; ')};`);
+        lines.push(`    ${Array.from(input.diplomacy).join('; ')};`);
       }
-      if(types.legacy.size){
+      if(input.legacy.size){
         lines.push('  //legacy');
         lines.push('  node [shape=invhouse style=filled fillcolor="#55ff55"];');
-        lines.push(`    ${Array.from(types.legacy).join('; ')};`);
+        lines.push(`    ${Array.from(input.legacy).join('; ')};`);
       }
-      if(types.prayer.size){
+      if(input.prayer?.size){
         lines.push('  //prayer');
         lines.push('  node [shape=house style=filled fillcolor="#55ffaa"];');
-        lines.push(`    ${Array.from(types.prayer).join('; ')};`);
+        lines.push(`    ${Array.from(input.prayer).join('; ')};`);
       }
-      if(types.spell.size){
+      if(input.spell?.size){
         lines.push('  //spell');
         lines.push('  node [shape=house style=filled fillcolor="#55ffff"];');
-        lines.push(`    ${Array.from(types.spell).join('; ')};`);
+        lines.push(`    ${Array.from(input.spell).join('; ')};`);
       }
-      if(types.resource.size){
+      if(input.resource?.size){
         lines.push('  //resource');
         lines.push('  node [shape=house style=filled fillcolor="#55aaff"];');
-        lines.push(`    ${Array.from(types.resource).concat(Array.from(types.cap)).join('; ')};`);
+        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).join('; ')};`);
       }
-      if(types.tech.size){
+      if(input.tech?.size){
         lines.push('  //tech');
         lines.push('  node [shape=box style=filled fillcolor="#7777ff"];');
-        lines.push(`    ${Array.from(types.tech).join('; ')};`);
+        lines.push(`    ${Array.from(input.tech).join('; ')};`);
       }
-      if(types.unit.size){
+      if(input.unit?.size){
         lines.push('  //unit');
         lines.push('  node [shape=box style=filled fillcolor="#ff77ff"];');
-        lines.push(`    ${Array.from(types.unit).join('; ')};`);
+        lines.push(`    ${Array.from(input.unit).join('; ')};`);
       }
       lines.push('  //other (NG+)');
       lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
       lines.push('  ');
-      
-      resNodes.forEach(x => lines.push(x));
-      deps.forEach(x => lines.push(x));
 
-      if(deps.some(x => x.includes('end_era_4_1'))){ lines.push('  end_era_4_1 -> end_4'); }
-      if(deps.some(x => x.includes('end_era_4_2'))){ lines.push('  end_era_4_2 -> end_4'); }
+      return lines;
+    }
+    
+    function groupData(input, filter, buildItem, prop){
+      const types = {
+        special: new Set(),
+        building: new Set(),
+        enemy: new Set(),
+        diplomacy: new Set(),
+        legacy: new Set(),
+        prayer: new Set(),
+        spell: new Set(),
+        resource: new Set(),
+        cap: new Set(),
+        stat: new Set(),
+        tech: new Set(),
+        unit: new Set()
+      };
       
-      if(deps.some(x => x.includes('theresmore_richest_nation'))){ lines.push('  theresmore_richest_nation -> coin'); }
-      if(deps.some(x => x.includes('mausoleum_gods'))){ lines.push('  mausoleum_gods -> tome_wisdom'); }
-      if(deps.some(x => x.includes('reactivate_portal'))){ lines.push('  reactivate_portal -> relic'); }
-      if(deps.some(x => x.includes('titan_gift_t'))){ lines.push('  titan_gift_t -> titan_gift'); }
-      if(deps.some(x => x.includes('statue_virtue'))){ lines.push('  statue_virtue -> gem0'); }
-      if(deps.some(x => x.includes('fortified_citadel'))){ lines.push('  fortified_citadel -> gem1'); }
-      if(deps.some(x => x.includes('holy_site'))){ lines.push('  holy_site -> gem2'); }
-      lines.push('}');
+      const nodes = input.filter(x => filter(x));
+
+      const output = nodes.map(x => {
+        const type = getType(x.id);
+
+        if(types.hasOwnProperty(type)) { types[type].add(x.id); }
+
+        x[prop]?.forEach(y => {
+          const rType = y.type || getType(y.id);
+          if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
+          else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
+          else if(rType === 'army') {types.unit.add(y.id);}
+        })
+        
+        return buildItem(x);
+      }).flat().filter(x => x);
+
+      if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
+      if(output.some(x => x.includes('end_era_4_2'))){ output.push('  end_era_4_2 -> end_4'); }
       
-      return lines.join('\n');
+      if(document.getElementById('chkLegacyResource').checked){
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin;'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom;'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic;'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift;'); }
+        const gems = [];
+        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0;'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1;'); }
+        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2;'); }
+        if(gems.length > 0) { types.special.add(`   {node [label="gem"] ${gems.join(' ')}}`);}
+        
+        if(output.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
+        if(output.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
+        
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ output.push('  theresmore_richest_nation -> coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ output.push('  mausoleum_gods -> tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ output.push('  reactivate_portal -> relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ output.push('  titan_gift_t -> titan_gift'); }
+        if(output.some(x => x.includes('statue_virtue'))){ output.push('  statue_virtue -> gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ output.push('  fortified_citadel -> gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ output.push('  holy_site -> gem2'); }
+      }
+
+      output.push('}');
+      
+      return {types:types, lines:output};
+    }
+    
+    function hasDep(input){
+        return input.req?.length || parsedData.some(x => x.req?.some(y => y.id === input.id));
+    }
+    
+    function hasCap(input){
+      const output = Array.isArray(input.gen) && input.gen.some(x => x.type === 'cap');
+
+      if(['exhibit_flame', 'commercial_monopolies', 'mind_shrine', 'harvest_shrine', 'statue_lurezia', 'statue_firio'].includes(input.id)){
+        console.log(input, output);
+        
+      }
+      return output;
+    }
+    
+    function buildVizItemDep(input) {
+      const output = [];
+      const isNight = document.getElementById('chkNight').checked;
+
+      input.req?.forEach(x => {
+          const label = x.value > 1 ? ` label = ${x.value}` : '';
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+
+          output.push(`  ${x.id} -> ${input.id} [${color}${label}]`)
+      });
+      return output;
+    }
+    
+    function buildVizItemCap(input) {
+      const output = [];
+      const isNight = document.getElementById('chkNight').checked;
+
+      input.gen?.filter(x => x.type === 'cap').forEach(x => {
+          const label = x.value > 1 ? ` label = ${x.value}` : '';
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+
+          output.push(`  ${x.id} -> ${input.id} [${color}${label}]`)
+      });
+      return output;
+    }
+    
+    function buildGraphVizDep(){
+      const data = consolidateData();
+      const {types, lines} = groupData(data, hasDep, buildVizItemDep, 'req');
+      const header = graphVizHeader(types);
+
+      return header.concat(lines).join('\n');
+    }
+    
+    function buildGraphVizCap(){
+      const data = consolidateData();
+      data
+      
+      const {types, lines} = groupData(data, hasCap, buildVizItemCap, 'gen');
+
+      //find all the resources that can have the capacity increased.
+      const caps = new Set(parsedData.filter(x => Array.isArray(x.gen) && x.gen.length > 0 && x.gen.some(x => x.type === 'cap')).map(x => x.gen).flat().filter(x => x.type === 'cap').map(x => x.id).sort())
+      
+      types.resource.clear();
+      //add the resources in for funzies
+      for(const x of caps){
+        types.resource.add(x);
+      }
+      const header = graphVizHeader(types);
+      
+      return header.concat(lines).join('\n');
+    }
+//END DATA PROCESSING REGION
+//START HTML UI REGION
+    function toggleOutputs(hide){
+      document.getElementById('CLEAR').style.display = hide ? 'none' : 'block';
+      document.getElementById('parsed').style.display = hide ? 'none' : 'block';
+      document.getElementById('graphviz').style.display = hide ? 'none' : 'block';
     }
     
     function removeClass(input){
@@ -559,47 +717,31 @@
       setTimeout(() => removeClass('foundNode'), 500);
     }
     
-    function findItems(input){
-      const matches = [];
-      
-      Object.values(dataSets).forEach(x => {
-        const match = x.filter(y => y.id === input);
-        if(match.length > 0){
-          matches.push(match);
-        }
-        
-      })
-      
-      const output = matches.flat();
-      return output;
+    function updateZoomIndicator(zoom) {
+      const zoomDisplay = document.getElementById('zoomValue');
+      if (zoomDisplay) {
+        zoomDisplay.textContent = zoom.toFixed(2);
+      }
     }
     
-    function focusNode(target){
-      // Check if the clicked element is a <text> or inside one
-      let textElement = target.closest('text') || target.closest('tspan');
-      if (textElement) {
-        const clickedText = textElement.textContent.trim();
-        showDetails(findItems(clickedText));
-      }
+    function updatePanLoc(){
+      const loc = panZoomInstance.getPan();
       
-      let ancestorId = target.id;
-      let node = target;
-      while(!ancestorId && node.parentNode){
-        node = node.parentNode;
-        ancestorId = node.id;
-      }
-      
-      
-      if(ancestorId === 'graph0'){return;}
-      //panToNode(ancestorId);
-      
-      removeClass('focusNode');
-      const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
-      shape.classList.add('focusNode');
-      focusChildren(target.textContent.trim());
-      focusParents(target.textContent.trim());
+      document.getElementById('curLocX').textContent = (loc.x * -1).toFixed(2);
+      document.getElementById('curLocY').textContent = (loc.y * -1).toFixed(2);
     }
     
+    function redo(){
+        document.getElementById('top').style.display = 'block';
+        document.getElementById('bottom').style.display = 'none';
+    }
+    
+    function CLEAR(){
+      document.getElementById("parsed").value = '';
+      document.getElementById("graphviz").value = '';
+    }
+//END HTML UI REGION
+//START SVG INTERACTION REGION
     function findNodeByText(text) {
       const svg = document.querySelector('#svgOutput svg');
       const texts = svg.querySelectorAll('text');
@@ -613,129 +755,79 @@
       }
 
     }
-
-    function focusChildren(input){
-      const deps = parsedData.filter(x => x.req?.some(y => y.id === input));
-      if(!Array.isArray(deps)){return;}
-
-      removeClass('focusChildren');
-      for(const dep of deps){
-        node = findNodeByText(dep.id);
-        if(!node){
-          console.warn("DEP NOT FOUND", dep);
-          continue;
-        }
-
-        const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
-        shape.classList.add('focusChildren');
+    
+    function highlightNode(node, className) {
+      if (node) {
+        const nodeGroup = node.closest('g.node');
+        const shape = nodeGroup.querySelector('polygon, ellipse');
+        if (shape) shape.classList.add(className);
       }
     }
     
-    function focusParents(input){
-      const reqs = parsedData.find(x => x.id === input)?.req?.map(x => x.id);
-      if(!Array.isArray(reqs)){return;}
-      
-      removeClass('focusParents');
-      for(const req of reqs){
-        node = findNodeByText(req);
-        if(!node){
-          console.warn("REQ NOT FOUND", req);
-          continue;
-        }
-
-        const shape = node.getElementsByTagName('polygon')[0] || node.getElementsByTagName('ellipse')[0];
-        shape.classList.add('focusParents');
+    function getEdgeMapFromDot(input) {
+      const output = { children: {}, parents: {} };
+    
+      // Match lines like: nodeA -> nodeB
+      const edgeRegex = /^\s*([\w\d_]+)\s*->\s*([\w\d_]+)\b/gm;
+      let match;
+    
+      while ((match = edgeRegex.exec(input)) !== null) {
+        const parent = match[1];
+        const child = match[2];
+    
+        if (!output.children[parent]) output.children[parent] = [];
+        output.children[parent].push(child);
+    
+        if (!output.parents[child]) output.parents[child] = [];
+        output.parents[child].push(parent);
       }
-      
-    }
-
-    function renderSVG(input){
-      const viz = new Viz();
-      const svgContainer = document.getElementById('svgOutput');
-      svgContainer.replaceChildren();
-
-      viz.renderSVGElement(input)
-        .then(function(element) {
-          document.getElementById("svgOutput").appendChild(element);
-          
-          const svg = svgContainer.querySelector('svg');
-          
-          if (!svg) {
-            console.warn('Could not find SVG node.');
-            return;
-          }
-        
-          svg.addEventListener('click', (e) => {
-              focusNode(e.target);
-              document.getElementById('nodeFinder').selectedIndex = 0;
-            
-            });
-          
-          svg.addEventListener('mouseup', updatePanLoc);
-        })
-      .catch(function(error) {
-        console.error("Viz.js error:", error);
-      });
-      
+    
+      return output;
     }
     
-        
-    function buildDataSets(content){
-      if(!content){
-        Object.keys(dataSets).forEach(key => delete dataSets[key]);
+    function focusChildren(input) {
+      const children = parentsChildren.children[input];
+      if(!Array.isArray(children)){return;}
+      for(const child of children){
+        highlightNode(findNodeByText(child), 'focusChildren');
       }
+
+    }
+    
+    function focusParents(input) {
+      const parents = parentsChildren.parents[input];
+      if(!Array.isArray(parents)){return;}
+      for(const parent of parents){
+        highlightNode(findNodeByText(parent), 'focusParents');
+      }
+    }
+    
+    function clearHighlights() {
+      ['focusNode', 'focusChildren', 'focusParents'].forEach(x => {
+        document.querySelectorAll('.' + x).forEach(el => el.classList.remove(x));
+      });
+    }
+
+    function focusNode(target){
+      //if the closest ancestor with an ID is graph0 don't do this.
+      let ancestorId = target.id;
+      let node = target;
+      while(!ancestorId && node.parentNode){
+        node = node.parentNode;
+        ancestorId = node.id;
+      }
+      if(ancestorId === 'graph0'){return;}
+
       
-      patterns.forEach(({ label, regex }) => {
-        const arrayText = extractArrayAroundObject(content, regex);
-        if (arrayText) {
-          try {
-            dataSets[label] = eval(arrayText);
-          } catch (err) {
-            console.warn(`Failed to parse ${label}:`, err);
-          }
-        }
-        
-        try {
-          const parsedArray = eval(arrayText);
-          dataSets[label] = parsedArray;
-        } catch (err) {
-          console.warn(`Failed to parse ${label}:`, err);
-        }
-      });
-      parseData();
+      clearHighlights();
+      highlightNode(target, 'focusNode');
+      focusChildren(target.textContent);
+      focusParents(target.textContent);
+      
+      const clickedText = target.textContent.trim();
+      showDetails(findItems(clickedText));
     }
-    
-    function readerOnload(e) {
-      buildDataSets(e.target.result)
-    }
-    
-    function loadDefault(){
-      fetch('./default.txt')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to load default.txt: ${response.statusText}`);
-        }
-        return response.text();
-      })
-      .then(content => {
-        buildDataSets(content);
-        GOTIME();
-      })
-      .catch(error => {
-        console.error('Error loading default file:', error);
-      });
-    }
-    loadDefault();
 
-    document.getElementById('fileInput').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = readerOnload;
-      reader.readAsText(file);
-    });
-        
     function panToNode(nodeId) {
       const svg = document.querySelector('#svgOutput svg');
       const node = svg.querySelector(`#${CSS.escape(nodeId)}`);
@@ -756,13 +848,16 @@
       const bbox = node.getBBox();
       const ctm = node.getCTM();
 
-      const Y = ctm.d * (bbox.y + viewport.viewBox.height);
-      const X = ctm.a * bbox.x;
+      const nodeY = ctm.d * (bbox.y + viewport.viewBox.height);
+      const nodeX = ctm.a * bbox.x;
       
       const offsetX = (svg.parentNode.clientWidth / 2) - (bbox.width / 2);
       const offsetY = (svg.parentNode.clientHeight / 3) - (bbox.height / 2);
+      
+      const X = Math.min(0, -nodeX + offsetX);
+      const Y = Math.min(0, -nodeY + offsetY);
     
-      panZoomInstance.pan({x: -X + offsetX, y: -Y + offsetY});
+      panZoomInstance.pan({x: X, y: Y});
       updatePanLoc();
     }
 
@@ -845,20 +940,6 @@
       window.panZoomInstance = panZoomInstance;
     }
     
-    function updateZoomIndicator(zoom) {
-      const zoomDisplay = document.getElementById('zoomValue');
-      if (zoomDisplay) {
-        zoomDisplay.textContent = zoom.toFixed(2);
-      }
-    }
-    
-    function updatePanLoc(){
-      const loc = panZoomInstance.getPan();
-      
-      document.getElementById('curLocX').textContent = (loc.x * -1).toFixed(2);
-      document.getElementById('curLocY').textContent = (loc.y * -1).toFixed(2);
-    }
-
     function initZoom(){
       const observer = new MutationObserver(() => {
         const svg = document.querySelector('#svgOutput svg');
@@ -870,26 +951,106 @@
       observer.observe(document.getElementById('svgOutput'), { childList: true });
     }
     
+    function downloadSVG() {
+      const svg = document.querySelector('#svgOutput svg');
+      if (!svg) return;
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString(svg);
+      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'TM dependency graph.svg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+//END SVG INTERACTION REGION
+//START BUILD SVG REGION
+    function renderSVG(input){
+      const viz = new Viz();
+      const svgContainer = document.getElementById('svgOutput');
+      svgContainer.replaceChildren();
+  
+      viz.renderSVGElement(input)
+        .then(function(element) {
+          document.getElementById("svgOutput").appendChild(element);
+          
+          const svg = svgContainer.querySelector('svg');
+          
+          if (!svg) {
+            console.warn('Could not find SVG node.');
+            return;
+          }
+        
+          svg.addEventListener('click', (e) => {
+              focusNode(e.target);
+              document.getElementById('nodeFinder').selectedIndex = 0;
+            
+            });
+          
+          svg.addEventListener('mouseup', updatePanLoc);
+        })
+      .catch(function(error) {
+        console.error("Viz.js error:", error);
+      });
+      
+    }
+//END BUILD SVG REGION
+//START INIT/GOTIME REGION
+    function loadDefault(){
+      fetch('./default.txt')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load default.txt: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(content => {
+        buildDataSets(content);
+        GOTIME();
+      })
+      .catch(error => {
+        console.error('Error loading default file:', error);
+      });
+    }
+    loadDefault();
+    
     function GOTIME(){
       const output = document.getElementById("graphviz");
       output.value = '';
 
-      const pd = parseData();
       if(Object.keys(dataSets).length === 0){
         alert('No Data. Select a file and check some section checkboxes.');
         return;
       }
-      
-      const gv = buildGraphViz(pd);
-      output.value = gv;
-      
       const btn = document.getElementById('GOTIME');
       btn.disabled = true;
       btn.textContent = 'Generating...';
+      
+      let gv = null;
+      const selectedMode = document.querySelector('input[name="option"]:checked')?.value;
+      switch (selectedMode) {
+        case 'dep':
+          gv = buildGraphVizDep();
+          break;
+        case 'cap':
+          gv = buildGraphVizCap();
+          break;
+        case 'army':
+          alert('in progress');
+          //gv = buildGraphVizUnits();
+          break;
+        default:
+          alert('Unknown mode selected.');
+          return;
+      }
+      
+      parentsChildren = getEdgeMapFromDot(gv);
+      output.value = gv;
+      
       setTimeout(() => {
         renderSVG(gv);
         initZoom();
-        
         
         btn.textContent = 'Generate';
         btn.disabled = false;
@@ -914,34 +1075,20 @@
       }, 10)
 
     }
-    
-    function redo(){
-        document.getElementById('top').style.display = 'block';
-        document.getElementById('bottom').style.display = 'none';
-    }
-    
-    function CLEAR(){
-      document.getElementById("parsed").value = '';
-      document.getElementById("graphviz").value = '';
-    }
-    
-    function downloadSVG() {
-      const svg = document.querySelector('#svgOutput svg');
-      if (!svg) return;
-      const serializer = new XMLSerializer();
-      const source = serializer.serializeToString(svg);
-      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'TM dependency graph.svg';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    
+//END INIT/GOTIME REGION
+//START EVENT LISTENER REGION
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => buildDataSets(e.target.result);
+      reader.readAsText(file);
+    });
+        
     document.addEventListener('keydown', (e) => {
-      const panStep = 50; // pixels per key press
-    
+      const panStep = e.ctrlKey ? 1000 : 100; // pixels per key press
+
       let dx = 0, dy = 0;
       switch (e.key) {
         case 'ArrowUp':    dy = panStep; break;
@@ -954,8 +1101,8 @@
       e.preventDefault(); // prevent page scroll
       const currentPan = panZoomInstance.getPan();
       panZoomInstance.pan({
-        x: currentPan.x + dx,
-        y: currentPan.y + dy
+        x: Math.min(0, currentPan.x + dx),
+        y: Math.min(0, currentPan.y + dy)
       });
       
       updatePanLoc();
@@ -968,6 +1115,7 @@
         document.getElementById('nodeFinder').focus();
       }
     });
+//END EVENT LISTENER REGION
   </script>
 </body>
 </html>
