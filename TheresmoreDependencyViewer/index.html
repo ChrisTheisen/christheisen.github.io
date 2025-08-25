@@ -266,7 +266,7 @@
 
       <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:hidden; border:1px solid #ccc; margin:0;"></div>
       <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
-        <input id="txtSearch" style="width:97%; height: 30px;" placeholder="Search nodes here"/>
+        <input id="txtSearch" style="width:97%; height: 30px;" placeholder="Search nodes here (shortcut: /)"/>
         <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodesByText(document.getElementById('txtSearch').value);">Search</button>
         <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
         <pre id="divDetails" style="width:100%; height:calc(95vh - 130px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
@@ -1256,6 +1256,16 @@
     });
         
     document.addEventListener('keydown', (e) => {
+      const active = document.activeElement;
+      const isTyping = (
+        active.tagName === 'INPUT' ||
+        active.tagName === 'TEXTAREA' ||
+        active.tagName === 'SELECT' ||
+        active.isContentEditable
+      );
+      
+      if (isTyping) return; // Skip pan logic if user is interacting with a form field
+      
       const panStep = e.ctrlKey ? 1000 : 100; // pixels per key press
 
       let dx = 0, dy = 0;
@@ -1278,6 +1288,20 @@
         document.getElementById('nodeFinder').focus();
       }
     });
+    
+    document.addEventListener('keydown', (e) => {
+      // Trigger on `/` key, but ignore if already typing in an input or textarea
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const active = document.activeElement;
+        const isTyping = active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable;
+    
+        if (!isTyping) {
+          e.preventDefault(); // Prevent typing the slash
+          document.getElementById('txtSearch')?.focus();
+        }
+      }
+    });
+
 //END EVENT LISTENER REGION
   </script>
 </body>
