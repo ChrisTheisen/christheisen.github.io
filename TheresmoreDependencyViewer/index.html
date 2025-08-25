@@ -1177,6 +1177,7 @@
       })
       .then(content => {
         buildDataSets(content);
+        GOTIME();
       })
       .catch(error => {
         console.error('Error loading default file:', error);
