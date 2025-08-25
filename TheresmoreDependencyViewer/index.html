@@ -3,11 +3,9 @@
 <head>
   <script>
     //TODO: mobile clicking support
-    //TODO: resource cap lookup -> fix clicking parent/child
     //TODO: luck buildings
     //TODO: army boons
-    //TODO: svg
-    
+
   </script>
   <meta charset="UTF-8">
   <title>TDV</title>
@@ -51,6 +49,11 @@
     g g text{
       cursor: pointer;
     }
+    
+    #svgOutput svg{
+      overflow: visible !important;
+    }
+    
     .foundNode{
       animation: blinkHighlight .5s linear;
     }
@@ -107,14 +110,17 @@
   <h2>Theresmore Dependency Viewer</h2>
   <div id='top'>
     <p>
-      This is a bodged together site with a lot of AI generated code. It is used to generate dependancy graphs based on the game <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.
+      This uses a couple libraries to try to make sense of the comples dependencies in <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.<br/>
+      Libraries used are:
+      <ul>
+        <li><a href="https://www.npmjs.com/package/@viz-js/viz">Viz.js</a> - for generating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/svg-pan-zoom">SVG pan-zoom</a> - for navigating the svg graph</li>
+      </ul>
     </p>
     <p>
       You can use a pre-saved version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
-      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a>
-    </p>
-    <p>
-      Upload the file here:
+      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
+      Then upload the file here:
       <input type="file" id="fileInput" />
     </p>
   
@@ -158,7 +164,7 @@
         <label class="radio-item">
           <input type="radio" id="rdoReq" name="option" value="dep" checked>
           <span class="label-text">Dependency</span>
-          <span class="description">(Defaault) Shows which nodes are required to unlock progress.</span>
+          <span class="description">(Default) Shows which nodes are required to unlock progress.</span>
         </label>
       
         <label class="radio-item">
@@ -166,17 +172,29 @@
           <span class="label-text">Capacity</span>
           <span class="description">Only shows nodes that increase resource capacity.</span>
         </label>
-
+        
         <label class="radio-item">
-          <input type="radio" id="rdoUnits" name="option" value="units" disabled>
-          <span class="label-text">Units</span>
-          <span class="description">Only shows nodes increase army unit stats. (in progress) </span>
+          <input type="radio" id="rdoLuck" name="option" value="luk" >
+          <span class="label-text">Lucky Stones</span>
+          <span class="description">Shows how to gain lucky stones and how they can be spent.</span>
         </label>
 
       </div>
     </p>
     
     <p>
+      <label for="layoutSelector">Layout engine:</label>
+      <select id="layoutSelector" name="layout">
+        <option value="dot">dot – Hierarchical (directed graphs)</option>
+        <option value="neato">neato – Spring model (undirected graphs)</option>
+        <option value="fdp">fdp – Force-directed placement</option>
+        <option value="twopi">twopi – Radial layout (concentric circles)</option>
+        <option value="circo">circo – Circular layout (cyclic/symmetric)</option>
+        <option value="osage">osage – Clustered layout (nested groups)</option>
+        <option value="patchwork">patchwork – Treemap-style layout</option>
+      </select>
+      <span class="description">I like dot, but feel free to try out others.</span>
+      <br/>
       <label for="ddlDirection">Graph direction</label>
       <select id="ddlDirection">
         <option value="TB" selected>Top to Bottom</option>
@@ -184,9 +202,11 @@
         <option value="LR">Left to Right</option>
         <option value="RL">Right to Left</option>
       </select>
-      <br/>
+      <span class="description">Only relevent for dot layout.</span>
+    </p>
+    <p>
       <input type="checkbox" id="chkNight" onchange="document.body.classList.toggle('night-mode', this.checked)"/>
-      <label for="chkNight">Night Mode (Black background)</label>
+      <label for="chkNight">Night Mode (Dark background)</label>
       <br/>
       <input type="checkbox" id="chkLegacyResource" checked/>
       <label for="chkLegacyResource">Show Legacy Resources (Coin, Gem, etc...)</label>
@@ -225,15 +245,15 @@
         <div syle="display:flex; flex-direction:column; gap: 2px">
           <div id="pan-controls" style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
             <div></div>
-            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 0, y: 500}); updatePanLoc();">↑</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(0, 500)">↑</button>
             <div></div>
           
-            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 500, y: 0}); updatePanLoc();">←</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(500, 0)">←</button>
             <button style="width:30px; padding:0; margin:0;" onclick="panToNode('node1')">⊙</button>
-            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: -500, y: 0}); updatePanLoc();">→</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(-500, 0)">→</button>
           
             <div></div>
-            <button style="width:30px; padding:0; margin:0;" onclick="panZoomInstance.panBy({x: 0, y: -500}); updatePanLoc();">↓</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(0, -500)">↓</button>
             <div></div>
           </div>
           <span id="curLocX"></span>x<span id="curLocY"></span>
@@ -254,6 +274,25 @@
     const dataSets = {};
     let parsedData = [];
     let parentsChildren = {children:{}, parents:{}};
+    
+    //just a quick check here; looks like a few duplicate ids
+    function findDuplicateIds() {
+      const seen = new Map();
+      const duplicates = new Set();
+    
+      for (const obj of parsedData) {
+        const id = obj.id;
+        if (seen.has(id)) {
+          duplicates.add(id);
+        } else {
+          seen.set(id, true);
+        }
+      }
+    
+      return Array.from(duplicates);
+    }
+
+    
 //START EXTRACT THERESMORE DATA REGION
     function extractArrays(content, regex) {
       const matches = content.match(regex);
@@ -375,14 +414,14 @@
     }
 //END EXTRACT DATA REGION
 //START DATA PRORCESSING REGION
-    function mapData(data) {
+    function mapData(data, defaultType) {
       const output = data.map(item => {
         // Copy only relevant properties
         const { id, req, reqFound, type, gen } = item;
         const temp = (req ||[]).concat(reqFound||[]);//combine to get a single req list
         return {
           id,
-          type,
+          type: type || defaultType,
           res: temp?.filter(r => r.type === "resource"),//get all the resources
           req: temp?.filter(r => r.type !== "resource"),//get all the not resources
           gen: gen?.filter(x => !["building", "tech"].includes(x.type))//Ignore the mutually exclusive building/tech
@@ -408,14 +447,14 @@
     }
         
     function consolidateData() {
-      const b = mapData(dataSets.building || []);
-      const e = mapData(dataSets.enemy || []);
-      const d = mapData(dataSets.diplomacy || []);
-      const l = mapData(dataSets.legacy || []);
-      const p = mapData(dataSets.prayer || []);
-      const r = mapData(dataSets.resource || []);
-      const t = mapData(dataSets.tech || []);
-      const u = mapData(dataSets.unit || []);
+      const b = mapData(dataSets.building || [], 'building');
+      const e = mapData(dataSets.enemy || [], 'enemy');
+      const d = mapData(dataSets.diplomacy || [], 'diplomacy');
+      const l = mapData(dataSets.legacy || [], 'legacy');
+      const p = mapData(dataSets.prayer || [], 'prayer');
+      const r = mapData(dataSets.resource || [], 'resource');
+      const t = mapData(dataSets.tech || [], 'tech');
+      const u = mapData(dataSets.unit || [], 'unit');
     
       let included = [];
       parsedData = [].concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
@@ -485,6 +524,7 @@
     
     function graphVizHeader(input){
       const isNight = document.getElementById('chkNight').checked;
+      const layout = document.getElementById('layoutSelector').value;
       
       const lines = [];
       lines.push('digraph TM {');
@@ -492,26 +532,35 @@
       lines.push('  fontname="Helvetica,Arial,sans-serif"');
 	    lines.push('  node [fontname="Helvetica,Arial,sans-serif"]');
       lines.push('  edge [fontname="Helvetica,Arial,sans-serif"]');
-      lines.push(`  rankdir="${document.getElementById('ddlDirection').value}";`)
-      lines.push('  overlap=false;');
-      lines.push('  subgraph cluster_key {');
-      lines.push('    label="Key";');
-      lines.push('    style=dashed;');
-      lines.push('    fontsize=12;');
-      lines.push('    rank=min;');
-      lines.push('    rankdir=TB;');
-      lines.push('    key_special_resource [label="Special Resource" shape=house style=filled fillcolor="#ff5555"];');
-      lines.push('    key_building [label="Building" shape=ellipse style=filled fillcolor="#ffff55"];');
-      lines.push('    key_enemy [label="Enemy" shape=octagon style=filled fillcolor="#ffaa55"];');
-      lines.push('    key_diplomacy [label="Diplomacy" shape=octagon style=filled fillcolor="#aaff55"];');
-      lines.push('    key_legacy [label="Legacy" shape=invhouse style=filled fillcolor="#55ff55"];');
-      lines.push('    key_prayer [label="Prayer" shape=house style=filled fillcolor="#55ffaa"];');
-      lines.push('    key_spell [label="Spell" shape=house style=filled fillcolor="#55ffff"];');
-      lines.push('    key_resource [label="Resource" shape=house style=filled fillcolor="#55aaff"];');
-      lines.push('    key_tech [label="Tech" shape=box style=filled fillcolor="#7777ff"];');
-      lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
-      lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
-      lines.push('  }');
+
+      lines.push(`  layout=${layout}`)
+      if(layout === 'dot'){
+        lines.push(`  rankdir="${document.getElementById('ddlDirection').value}";`)
+      }
+      if(['dot', 'fdp', 'neato'].includes(layout)){
+        lines.push('  overlap=false;');
+        lines.push('  splines=true')
+      }
+      if(['dot', 'osage', 'patchwork'].includes(layout)){
+        lines.push('  subgraph cluster_key {');
+        lines.push('    label="Key";');
+        lines.push('    style=dashed;');
+        lines.push('    fontsize=12;');
+        lines.push('    rank=min;');
+        lines.push('    rankdir=TB;');
+        lines.push('    key_special_resource [label="Special Resource" shape=house style=filled fillcolor="#ff5555"];');
+        lines.push('    key_building [label="Building" shape=ellipse style=filled fillcolor="#ffff55"];');
+        lines.push('    key_enemy [label="Enemy" shape=octagon style=filled fillcolor="#ffaa55"];');
+        lines.push('    key_diplomacy [label="Diplomacy" shape=octagon style=filled fillcolor="#aaff55"];');
+        lines.push('    key_legacy [label="Legacy" shape=invhouse style=filled fillcolor="#55ff55"];');
+        lines.push('    key_prayer [label="Prayer" shape=house style=filled fillcolor="#55ffaa"];');
+        lines.push('    key_spell [label="Spell" shape=house style=filled fillcolor="#55ffff"];');
+        lines.push('    key_resource [label="Resource" shape=house style=filled fillcolor="#55aaff"];');
+        lines.push('    key_tech [label="Tech" shape=box style=filled fillcolor="#7777ff"];');
+        lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
+        lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
+        lines.push('  }');
+      }
       if(input.special?.size){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
@@ -599,7 +648,7 @@
           else if(rType === 'army') {types.unit.add(y.id);}
         })
         
-        return buildItem(x);
+        return buildItem(x, prop);
       }).flat().filter(x => x);
 
       if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
@@ -638,20 +687,28 @@
     }
     
     function hasCap(input){
-      const output = Array.isArray(input.gen) && input.gen.some(x => x.type === 'cap');
-
-      if(['exhibit_flame', 'commercial_monopolies', 'mind_shrine', 'harvest_shrine', 'statue_lurezia', 'statue_firio'].includes(input.id)){
-        console.log(input, output);
-        
-      }
-      return output;
+      return Array.isArray(input.gen) && input.gen.some(x => x.type === 'cap');
     }
     
-    function buildVizItemDep(input) {
+    function hasLukGen(input){
+      return Array.isArray(input.gen) && input.gen.some(x => x.id === 'luck');
+    }
+    function hasLukRes(input){
+      const isLuk = Array.isArray(input.res) && input.res.some(x => x.id === 'luck');
+      const isLukChild = Array.isArray(input.req) &&
+          input.req.some(x => {
+            const parent = parsedData.find(y => y.id === x.id);
+            return parent && Array.isArray(parent.res) && parent.res.some(x => x.id === 'luck');
+          });
+          
+      return isLuk || isLukChild;
+    }
+    
+    function buildVizItem(input, prop){
       const output = [];
       const isNight = document.getElementById('chkNight').checked;
 
-      input.req?.forEach(x => {
+      input[prop]?.forEach(x => {
           const label = x.value > 1 ? ` label = ${x.value}` : '';
           const color = `color="#${isNight?'a2a2a2':'000000'}"`;
 
@@ -659,33 +716,21 @@
       });
       return output;
     }
-    
-    function buildVizItemCap(input) {
-      const output = [];
-      const isNight = document.getElementById('chkNight').checked;
 
-      input.gen?.filter(x => x.type === 'cap').forEach(x => {
-          const label = x.value > 1 ? ` label = ${x.value}` : '';
-          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
-
-          output.push(`  ${x.id} -> ${input.id} [${color}${label}]`)
-      });
-      return output;
-    }
-    
     function buildGraphVizDep(){
       const data = consolidateData();
-      const {types, lines} = groupData(data, hasDep, buildVizItemDep, 'req');
+      const {types, lines} = groupData(data, hasDep, buildVizItem, 'req');
       const header = graphVizHeader(types);
 
       return header.concat(lines).join('\n');
     }
     
     function buildGraphVizCap(){
+      const isNight = document.getElementById('chkNight').checked;
+
       const data = consolidateData();
-      data
-      
-      const {types, lines} = groupData(data, hasCap, buildVizItemCap, 'gen');
+
+      const {types, lines} = groupData(data, hasCap, buildVizItem, 'gen');
 
       //find all the resources that can have the capacity increased.
       const caps = new Set(parsedData.filter(x => Array.isArray(x.gen) && x.gen.length > 0 && x.gen.some(x => x.type === 'cap')).map(x => x.gen).flat().filter(x => x.type === 'cap').map(x => x.id).sort())
@@ -694,11 +739,89 @@
       //add the resources in for funzies
       for(const x of caps){
         types.resource.add(x);
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
       }
       const header = graphVizHeader(types);
       
+
       return header.concat(lines).join('\n');
     }
+    
+    function buildGraphVizLuk(){
+      const data = consolidateData();
+      const resData = groupData(data, hasLukRes, buildVizItem, 'res');
+      const genData = groupData(data, hasLukGen, buildVizItem, 'gen');
+      const isNight = document.getElementById('chkNight').checked;
+
+      resData.types.resource.clear();
+      genData.types.resource.clear();
+      genData.types.cap.clear();
+      
+      const combinedTypes = {};
+      const allKeys = new Set([...Object.keys(resData.types), ...Object.keys(genData.types)]);
+    
+      for (const key of allKeys) {
+        const setA = resData.types[key] || new Set();
+        const setB = genData.types[key] || new Set();
+        combinedTypes[key] = new Set([...setA, ...setB]);
+      }
+      combinedTypes.resource.add('luck')
+
+      const lines = new Set();
+      
+      for(const key of Object.keys(resData.types)){
+        for(const id of resData.types[key]){
+          const datum = parsedData.find(x => x.id === id && x.res.some(y => y.id === 'luck'));
+          if(datum){
+            const value = datum.res.find(x => x.id === 'luck').value;
+            const label = value > 1 ? ` label = ${value}` : '';
+            const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+  
+            lines.add(`  luck -> ${id} [${color}${label}]`)
+          }
+          if(!datum){
+            const child = parsedData.find(x => x.id === id);
+            if(child.req.length !== 1){console.warn(`${id} req.length isn't 1, might need a refactor`);}
+            const req = child.req[0];
+            
+            const value = req.value;
+            const label = value > 1 ? ` label = ${value}` : '';
+            const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+  
+            lines.add(`  ${req.id} -> ${id} [${color}${label}]`)
+          }
+        }
+      }
+
+      for(const key of Object.keys(genData.types)){
+        for(const id of genData.types[key]){
+          const datum = parsedData.find(x => x.id === id && x.gen.some(y => y.id === 'luck'));
+
+          datum.req.forEach(x => {
+              const parent = parsedData.find(y => y.id === x.id);
+              combinedTypes[parent.type].add(parent.id);
+            
+              const label = x.value > 1 ? ` label = ${x.value}` : '';
+              const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+    
+              lines.add(`  ${x.id} -> ${id} [${color}${label}]`)
+          });
+
+          const value = datum.gen.find(x => x.id === 'luck').value;
+          const label = value > 1 ? ` label = ${value}` : '';
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+
+          lines.add(`  ${id} -> luck [${color}${label}]`)
+        }
+      }
+      
+      
+      lines.add('}');
+
+      const header = graphVizHeader(combinedTypes);
+      return header.concat([...lines]).join('\n');
+    }
+
 //END DATA PROCESSING REGION
 //START HTML UI REGION
     function toggleOutputs(hide){
@@ -828,6 +951,50 @@
       showDetails(findItems(clickedText));
     }
 
+    function svgPanBy(x, y){
+      const currentPan = panZoomInstance.getPan();
+      svgPan(currentPan.x + x, currentPan.y + y);
+    }
+
+    function svgPan_obd(x,y) {
+      const X = Math.min(0, x);
+      const Y = Math.min(0, y);
+    
+      panZoomInstance.pan({x: X, y: Y});
+      updatePanLoc();
+    }
+    
+    function svgPan(x, y) {
+      const svg = document.querySelector('#svgOutput svg');
+      if (!svg || !panZoomInstance) return;
+    
+      
+      const { width, height } = panZoomInstance.getSizes();
+      const container = svg.parentNode;
+      const zoom = panZoomInstance.getZoom();
+    
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+      
+      const scaledWidth = width * zoom;
+      const scaledHeight = height * zoom;
+    
+      // If content is smaller than container, center it
+      const minX = scaledWidth > containerWidth ? -scaledWidth + containerWidth : 0;
+      const minY = scaledHeight > containerHeight ? -scaledHeight + containerHeight : 0;
+    
+      const maxX = 0;
+      const maxY = 0;
+      
+      const clampedX = Math.max(minX, Math.min(maxX, x));
+      //const clampedX = Math.min(maxX, x);
+      const clampedY = Math.max(minY, Math.min(maxY, y));
+      //const clampedY = Math.min(maxY, y);
+    
+      panZoomInstance.pan({ x: clampedX, y: clampedY });
+      updatePanLoc();
+    }
+
     function panToNode(nodeId) {
       const svg = document.querySelector('#svgOutput svg');
       const node = svg.querySelector(`#${CSS.escape(nodeId)}`);
@@ -857,8 +1024,7 @@
       const X = Math.min(0, -nodeX + offsetX);
       const Y = Math.min(0, -nodeY + offsetY);
     
-      panZoomInstance.pan({x: X, y: Y});
-      updatePanLoc();
+      svgPan(X,Y);
     }
 
     function findNodesByText(text) {
@@ -909,7 +1075,7 @@
       if(newZoom > 2.05 || newZoom < .1){return;}
       
       panZoomInstance.zoom(newZoom);
-      panZoomInstance.pan({x: pan.x / oldZoom * newZoom, y: pan.y / oldZoom * newZoom});
+      svgPan(pan.x / oldZoom * newZoom, pan.y / oldZoom * newZoom);
 
       updateZoomIndicator(panZoomInstance.getZoom());
     }
@@ -918,7 +1084,7 @@
       const panZoomInstance = svgPanZoom(svg, {
         zoomEnabled: false,
         panEnabled: true,
-        controlIconsEnabled: true,
+        controlIconsEnabled: false,
         fit: true,
         center: true,
         minZoom: 0.1,
@@ -1036,9 +1202,8 @@
         case 'cap':
           gv = buildGraphVizCap();
           break;
-        case 'army':
-          alert('in progress');
-          //gv = buildGraphVizUnits();
+        case 'luk':
+          gv = buildGraphVizLuk();
           break;
         default:
           alert('Unknown mode selected.');
@@ -1099,13 +1264,7 @@
       }
     
       e.preventDefault(); // prevent page scroll
-      const currentPan = panZoomInstance.getPan();
-      panZoomInstance.pan({
-        x: Math.min(0, currentPan.x + dx),
-        y: Math.min(0, currentPan.y + dy)
-      });
-      
-      updatePanLoc();
+      svgPanBy(dx, dy);
     });
     
     document.getElementById('txtSearch').addEventListener('keydown', function (e) {
