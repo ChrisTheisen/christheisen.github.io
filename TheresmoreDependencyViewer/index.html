@@ -2,36 +2,21 @@
 <html lang="en">
 <head>
   <script>
-    //TODO: filter resources on capacity chart
-  
     //TODO: mobile clicking support
-    //TODO: allow import save and mark owned
-      //const gameData = JSON.parse(window.LZString.decompressFromBase64(saveString))
-      //owned buildings = gameData[2].buildings
-      //owned tech = gameData[2].techs
-      //owned enemies = gameData[2].enemies
-      //owned diplomacy = gameData[2].diplomacy
-      //owned resource = gameData[2].resources
-      //owned prayers = gameData[2].prayers
-      //owned legacy = gameData[5]
-      //owned achievemetns = gameData[3]
-      //active spells = gameData[2].spells
-
-
+    
   </script>
   <meta charset="UTF-8">
   <title>TDV</title>
   <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/viz.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/full.render.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
 
   <style>
     body {
       font-family: sans-serif;
     }
     textarea {
-      width: 100%;
-      height: 200px;
       font-family: monospace;
     }
     button {
@@ -114,13 +99,21 @@
       color: #555;
       font-size: 0.9em;
     }
-
+    .completed {
+      text-decoration: line-through;
+    }
 
   </style>
 </head>
 <body>
   <h2>Theresmore Dependency Viewer</h2>
   <div id='top'>
+    
+    <div id='goWrapper' style="float:right;position:fixed;right:10px;top:10px;display: flex; font-size: 28pt;">
+      <button id='GOTIME' onClick="GOTIME()">Generate Graph</button>
+    </div>
+
+
     <p>
       This uses a couple libraries to try to make sense of the complex dependencies in <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.<br/>
       Libraries used are:
@@ -130,7 +123,7 @@
       </ul>
     </p>
     <p>
-      You can use a pre-saved version from 2025-08-08 by clicking 'Generate' below or save and upload the current JS.
+      You can use a pre-saved version from 2025-08-08 by clicking 'Generate Graph' to the right or save and upload the current JS.
       Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
       Then upload the file here:
       <input type="file" id="fileInput" />
@@ -147,6 +140,7 @@
     </p>
   
     <hr/>
+    <h3>General chart settings</h3>
     <p>
       Select sections to include in graph.<br/>
       <small>
@@ -241,16 +235,23 @@
       <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
       <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
     </p>
-  
-    <hr/>
     
-    <button id='GOTIME' onClick="GOTIME()">Generate</button>
-    
-    <br/>
     <button id="CLEAR" style="display:none;" onClick="CLEAR()">Clear Outputs</button>
-    <textarea id="parsed" style="display:none;" placeholder="JSON will appear here..."></textarea>
-    <textarea id="graphviz" style="display:none;" placeholder="graphviz dot syntax will appear here, copy to the Graphviz viewer below..."></textarea>
-  
+    <div style="display: flex">
+      <textarea id="parsed" style="display:none;" rows="20" cols="100" placeholder="JSON will appear here..."></textarea>
+      <textarea id="graphviz" style="display:none;" rows="20" cols="100" placeholder="graphviz dot syntax will appear here, copy to the Graphviz viewer below..."></textarea>
+    </div>
+    <hr/>
+
+    <p>
+      <h3>Handle save data</h3>
+      <input type="checkbox" id="chkMarkComplete" />
+      <label for="chkMarkComplete">Mark Complete (this will cross off any nodes that match a completed item from the save data)</label>
+      <br/>
+      <textarea id='txtSaveData' rows="2" cols="100" placeholder="Paste save data here..."></textarea>
+    </p>
+
+
   </div>
   <div id='bottom' style="display:none;">
     <div id='redo' style="float:right;position:fixed;right:10px;top:10px;display: flex;">
@@ -299,6 +300,7 @@
 
   <script>
     const dataSets = {};
+    let completed = ['housing'];
     let parsedData = [];
     let parentsChildren = {children:{}, parents:{}};
     
@@ -446,6 +448,28 @@
       dataSets.achievement = dataSets.achievement.map(x => x.ach).flat();
       
     }
+    
+    function parseSaveData(){
+      if(!document.getElementById('chkMarkComplete').checked){
+        completed.length = 0;
+        return;
+      }
+      
+      const saveString = document.getElementById('txtSaveData').value;
+      const gameData = JSON.parse(window.LZString.decompressFromBase64(saveString));
+      
+      const b = gameData[2].buildings.map(x => x.id);
+      const t = gameData[2].techs.map(x => x.id);
+      const e = gameData[2].enemies.map(x => x.id);
+      const d = gameData[2].diplomacy.map(x => x.id);
+      const r = gameData[2].resources.map(x => x.id);
+      const p = gameData[2].prayers.map(x => x.id);
+      const l = gameData[5].map(x => x.id);
+      const a = gameData[3].map(x => x.id);
+      const s = gameData[2].spells;
+
+      completed = [].concat(b).concat(t).concat(e).concat(d).concat(r).concat(p).concat(l).concat(a).concat(s);
+    }
 //END EXTRACT DATA REGION
 //START DATA PRORCESSING REGION
     function mapData(data, defaultType) {
@@ -560,8 +584,15 @@
       return input;
     }
     
+    function mapNodeText(input){
+      if(input.includes('"')){return input;}
+      if(completed.includes(input.replaceAll('"',''))){
+        return `"${input}" [class="completed"]`;
+      }
+      return `"${input}"`;
+    }
+    
     function graphVizHeader(input){
-      console.log('HEADER', input);
       const isNight = document.getElementById('chkNight').checked;
       const layout = document.getElementById('layoutSelector').value;
       
@@ -604,57 +635,57 @@
       if(input.special?.size){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
-        lines.push(`    ${Array.from(input.special).map(x => `${x}`).join('; ')}`);
+        lines.push(`    ${Array.from(input.special).map(x => mapNodeText(x)).join('; ')}`);
       }
       if(input.enemy?.size){
         lines.push('  //enemy');
         lines.push('  node [shape=octagon style=filled fillcolor="#ffaa55"];');
-        lines.push(`    ${Array.from(input.enemy).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.enemy).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.building?.size){
         lines.push('  //building');
         lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
-        lines.push(`    ${Array.from(input.building).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.building).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.diplomacy?.size){
         lines.push('  //diplomacy');
         lines.push('  node [shape=octagon style=filled fillcolor="#aaff55"];');
-        lines.push(`    ${Array.from(input.diplomacy).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.diplomacy).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.legacy.size){
         lines.push('  //legacy');
         lines.push('  node [shape=invhouse style=filled fillcolor="#55ff55"];');
-        lines.push(`    ${Array.from(input.legacy).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.legacy).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.prayer?.size){
         lines.push('  //prayer');
         lines.push('  node [shape=house style=filled fillcolor="#55ffaa"];');
-        lines.push(`    ${Array.from(input.prayer).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.prayer).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.spell?.size){
         lines.push('  //spell');
         lines.push('  node [shape=house style=filled fillcolor="#55ffff"];');
-        lines.push(`    ${Array.from(input.spell).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.spell).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.resource?.size){
         lines.push('  //resource');
         lines.push('  node [shape=house style=filled fillcolor="#55aaff"];');
-        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.tech?.size){
         lines.push('  //tech');
         lines.push('  node [shape=box style=filled fillcolor="#7777ff"];');
-        lines.push(`    ${Array.from(input.tech).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.tech).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.unit?.size){
         lines.push('  //unit');
         lines.push('  node [shape=box style=filled fillcolor="#ff77ff"];');
-        lines.push(`    ${Array.from(input.unit).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.unit).map(x => mapNodeText(x)).join('; ')};`);
       }
       if(input.achievement?.size){
         lines.push('  //achievement');
         lines.push('  node [shape=invhouse style=filled fillcolor="#ff33ff"];');
-        lines.push(`    ${Array.from(input.achievement).map(x => `"${x}"`).join('; ')};`);
+        lines.push(`    ${Array.from(input.achievement).map(x => mapNodeText(x)).join('; ')};`);
       }
       lines.push('  //other (NG+)');
       lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
@@ -681,8 +712,7 @@
       };
       
       const nodes = input.filter(x => filter(x));
-      console.log('GROUP_0', nodes);
-      
+
       const ignoreTypes = ['modifier', 'population'];
 
       const output = nodes.map(x => {
@@ -1283,6 +1313,8 @@
       btn.disabled = true;
       btn.textContent = 'Generating...';
       
+      parseSaveData();
+      
       let gv = null;
       const selectedMode = document.querySelector('input[name="option"]:checked')?.value;
       switch (selectedMode) {
@@ -1305,12 +1337,12 @@
       
       parentsChildren = getEdgeMapFromDot(gv);
       output.value = gv;
-      
+
       setTimeout(() => {
         renderSVG(gv);
         initZoom();
         
-        btn.textContent = 'Generate';
+        btn.textContent = 'Generate Graph';
         btn.disabled = false;
         
         document.getElementById('top').style.display = 'none';
