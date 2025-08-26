@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
   <script>
+    //TODO: filter resources on capacity chart
+  
     //TODO: mobile clicking support
-    //TODO: luck buildings
-    //TODO: army boons
+    //TODO: allow import save and mark owned
+      //const gameData = JSON.parse(window.LZString.decompressFromBase64(saveString))
+      //owned buildings = gameData[2].buildings
+      //owned tech = gameData[2].techs
+      //owned enemies = gameData[2].enemies
+      //owned diplomacy = gameData[2].diplomacy
+      //owned resource = gameData[2].resources
+      //owned prayers = gameData[2].prayers
+      //owned legacy = gameData[5]
+      //owned achievemetns = gameData[3]
+      //active spells = gameData[2].spells
+
 
   </script>
   <meta charset="UTF-8">
@@ -123,9 +135,15 @@
       Then upload the file here:
       <input type="file" id="fileInput" />
     </p>
+    <h4>Notes:</h4>
     <p>
-      The nodes use the ids used in the code instead of the text on the UI buttons because that was easier and I'm lazy.
+      >> The nodes use the ids used in the code instead of the text on the UI buttons because that was easier and I'm lazy.
       In most cases it is pretty easy to figure out the related button.
+    </p>
+    <p>
+      >> There are some cases where an id is used more than once, not my fault blame the game. For example city_center is an id for both a building and an achievement.
+      I could make the graph builder smarter but that sounds hard and again, I'm lazy.<br/>
+      In these cases the dependency arrows are confused and likely have some recursive loop. Clicking on the text will show the details for all the records with that id.
     </p>
   
     <hr/>
@@ -182,7 +200,12 @@
           <span class="label-text">Lucky Stones</span>
           <span class="description">Shows how to gain lucky stones and how they can be spent.</span>
         </label>
-
+        
+        <label class="radio-item">
+          <input type="radio" id="rdoAch" name="option" value="ach" >
+          <span class="label-text">Achievements</span>
+          <span class="description">Shows what is needed for difference achievements and one level of dependencies.</span>
+        </label>
       </div>
     </p>
     
@@ -213,7 +236,7 @@
       <label for="chkNight">Night Mode (Dark background)</label>
       <br/>
       <input type="checkbox" id="chkLegacyResource" checked/>
-      <label for="chkLegacyResource">Show Legacy Resources (Coin, Gem, etc...)</label>
+      <label for="chkLegacyResource">Show Legacy Resources (Coin, Gem, etc...)(Only on Dependency chart)</label>
       <br/>
       <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
       <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
@@ -268,7 +291,7 @@
       <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
         <input id="txtSearch" style="width:97%; height: 30px;" placeholder="Search nodes here (shortcut: /)"/>
         <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodesByText(document.getElementById('txtSearch').value);">Search</button>
-        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text));"></select>
+        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text)); document.activeElement.blur(); "></select>
         <pre id="divDetails" style="width:100%; height:calc(95vh - 130px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
       </div>
     </div>
@@ -368,6 +391,10 @@
     
     const patterns = [
       {
+        label: 'achievement',
+        regex: /\{[^}]*?id\s*:\s*["']prestige["'][^}]*?ach\s*:\s*\[/g
+      },
+      {
         label: 'building',
         regex: /\{[^}]*?id\s*:\s*["']common_house["'][^}]*?cat\s*:\s*["']living_quarters["'][^}]*?\}/g
       },
@@ -415,6 +442,9 @@
           }
         }
       });
+      
+      dataSets.achievement = dataSets.achievement.map(x => x.ach).flat();
+      
     }
 //END EXTRACT DATA REGION
 //START DATA PRORCESSING REGION
@@ -451,6 +481,7 @@
     }
         
     function consolidateData() {
+      const a = mapData(dataSets.achievement || [], 'achievement');
       const b = mapData(dataSets.building || [], 'building');
       const e = mapData(dataSets.enemy || [], 'enemy');
       const d = mapData(dataSets.diplomacy || [], 'diplomacy');
@@ -461,7 +492,10 @@
       const u = mapData(dataSets.unit || [], 'unit');
     
       let included = [];
-      parsedData = [].concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
+      parsedData = [].concat(a).concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
+      if(document.querySelector('input[name="option"]:checked')?.value === 'ach'){
+        included = included.concat(a);
+      }
       if(document.getElementById('chkBuilding').checked){
         included = included.concat(b);
       }
@@ -527,6 +561,7 @@
     }
     
     function graphVizHeader(input){
+      console.log('HEADER', input);
       const isNight = document.getElementById('chkNight').checked;
       const layout = document.getElementById('layoutSelector').value;
       
@@ -562,58 +597,64 @@
         lines.push('    key_resource [label="Resource" shape=house style=filled fillcolor="#55aaff"];');
         lines.push('    key_tech [label="Tech" shape=box style=filled fillcolor="#7777ff"];');
         lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
+        lines.push('    key_achievement [label="Achievement" shape=invhouse style=filled fillcolor="#ff11ff"]')
         lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
         lines.push('  }');
       }
       if(input.special?.size){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
-        lines.push(`    ${Array.from(input.special).join(' ')}`);
-      }
-      if(input.building?.size){
-        lines.push('  //building');
-        lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
-        lines.push(`    ${Array.from(input.building).join('; ')};`);
+        lines.push(`    ${Array.from(input.special).map(x => `${x}`).join('; ')}`);
       }
       if(input.enemy?.size){
         lines.push('  //enemy');
         lines.push('  node [shape=octagon style=filled fillcolor="#ffaa55"];');
-        lines.push(`    ${Array.from(input.enemy).join('; ')};`);
+        lines.push(`    ${Array.from(input.enemy).map(x => `"${x}"`).join('; ')};`);
+      }
+      if(input.building?.size){
+        lines.push('  //building');
+        lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
+        lines.push(`    ${Array.from(input.building).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.diplomacy?.size){
         lines.push('  //diplomacy');
         lines.push('  node [shape=octagon style=filled fillcolor="#aaff55"];');
-        lines.push(`    ${Array.from(input.diplomacy).join('; ')};`);
+        lines.push(`    ${Array.from(input.diplomacy).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.legacy.size){
         lines.push('  //legacy');
         lines.push('  node [shape=invhouse style=filled fillcolor="#55ff55"];');
-        lines.push(`    ${Array.from(input.legacy).join('; ')};`);
+        lines.push(`    ${Array.from(input.legacy).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.prayer?.size){
         lines.push('  //prayer');
         lines.push('  node [shape=house style=filled fillcolor="#55ffaa"];');
-        lines.push(`    ${Array.from(input.prayer).join('; ')};`);
+        lines.push(`    ${Array.from(input.prayer).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.spell?.size){
         lines.push('  //spell');
         lines.push('  node [shape=house style=filled fillcolor="#55ffff"];');
-        lines.push(`    ${Array.from(input.spell).join('; ')};`);
+        lines.push(`    ${Array.from(input.spell).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.resource?.size){
         lines.push('  //resource');
         lines.push('  node [shape=house style=filled fillcolor="#55aaff"];');
-        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).join('; ')};`);
+        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.tech?.size){
         lines.push('  //tech');
         lines.push('  node [shape=box style=filled fillcolor="#7777ff"];');
-        lines.push(`    ${Array.from(input.tech).join('; ')};`);
+        lines.push(`    ${Array.from(input.tech).map(x => `"${x}"`).join('; ')};`);
       }
       if(input.unit?.size){
         lines.push('  //unit');
         lines.push('  node [shape=box style=filled fillcolor="#ff77ff"];');
-        lines.push(`    ${Array.from(input.unit).join('; ')};`);
+        lines.push(`    ${Array.from(input.unit).map(x => `"${x}"`).join('; ')};`);
+      }
+      if(input.achievement?.size){
+        lines.push('  //achievement');
+        lines.push('  node [shape=invhouse style=filled fillcolor="#ff33ff"];');
+        lines.push(`    ${Array.from(input.achievement).map(x => `"${x}"`).join('; ')};`);
       }
       lines.push('  //other (NG+)');
       lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
@@ -625,6 +666,7 @@
     function groupData(input, filter, buildItem, prop){
       const types = {
         special: new Set(),
+        achievement: new Set(),
         building: new Set(),
         enemy: new Set(),
         diplomacy: new Set(),
@@ -639,34 +681,42 @@
       };
       
       const nodes = input.filter(x => filter(x));
+      console.log('GROUP_0', nodes);
+      
+      const ignoreTypes = ['modifier', 'population'];
 
       const output = nodes.map(x => {
-        const type = getType(x.id);
-
+        const type = x.type || getType(x.id);
         if(types.hasOwnProperty(type)) { types[type].add(x.id); }
+        
+        let children = x[prop]?.filter(x => !ignoreTypes.includes(x.type));
+        if(document.querySelector('input[name="option"]:checked')?.value === 'cap'){
+          children = children.filter(x => x.type === 'cap');
+        }
 
-        x[prop]?.forEach(y => {
+        children.forEach(y => {
           const rType = y.type || getType(y.id);
           if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
           else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
           else if(rType === 'army') {types.unit.add(y.id);}
+          else{console.warn('MISSING GROUP TYPE:', x, prop, y);}
         })
         
-        return buildItem(x, prop);
+        return buildItem(x, children);
       }).flat().filter(x => x);
 
       if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
       if(output.some(x => x.includes('end_era_4_2'))){ output.push('  end_era_4_2 -> end_4'); }
       
-      if(document.getElementById('chkLegacyResource').checked){
-        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin;'); }
-        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom;'); }
-        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic;'); }
-        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift;'); }
+      if(document.getElementById('chkLegacyResource').checked && document.querySelector('input[name="option"]:checked')?.value === 'dep'){
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift'); }
         const gems = [];
-        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0;'); }
-        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1;'); }
-        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2;'); }
+        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2'); }
         if(gems.length > 0) { types.special.add(`   {node [label="gem"] ${gems.join(' ')}}`);}
         
         if(output.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
@@ -708,15 +758,22 @@
       return isLuk || isLukChild;
     }
     
-    function buildVizItem(input, prop){
+    function hasAch(input){
+      const isReq = dataSets.achievement.some(x => x.req?.some(y => y.type === input.type && y.id === input.id));
+      const isAch = input.type === 'achievement';
+      return isReq || isAch;
+      
+    }
+    
+    function buildVizItem(input, children){
       const output = [];
       const isNight = document.getElementById('chkNight').checked;
 
-      input[prop]?.forEach(x => {
+      children.forEach(x => {
           const label = x.value > 1 ? ` label = ${x.value}` : '';
           const color = `color="#${isNight?'a2a2a2':'000000'}"`;
 
-          output.push(`  ${x.id} -> ${input.id} [${color}${label}]`)
+          output.push(`  "${x.id}" -> "${input.id}" [${color}${label}]`)
       });
       return output;
     }
@@ -826,6 +883,15 @@
       return header.concat([...lines]).join('\n');
     }
 
+    function buildGraphVizAch(){
+      const data = consolidateData();
+      const {types, lines} = groupData(data, hasAch, buildVizItem, 'req');
+      console.log(data, types, lines);
+      
+      const header = graphVizHeader(types);
+
+      return header.concat(lines).join('\n');
+    }
 //END DATA PROCESSING REGION
 //START HTML UI REGION
     function toggleOutputs(hide){
@@ -891,7 +957,7 @@
       }
     }
     
-    function getEdgeMapFromDot(input) {
+    function getEdgeMapFromDot_old(input) {
       const output = { children: {}, parents: {} };
     
       // Match lines like: nodeA -> nodeB
@@ -909,6 +975,26 @@
         output.parents[child].push(parent);
       }
     
+      return output;
+    }
+    
+    function getEdgeMapFromDot(input){
+      const output = {children: {}, parents: {} };
+      
+      const edgeRegex = /^\s*"?(?<parent>[\w\d_]+)"?\s*->\s*"?(?<child>[\w\d_]+)"?\b/gm;
+      let match;
+      
+      while ((match = edgeRegex.exec(input)) !== null) {
+        const parent = match.groups.parent;
+        const child = match.groups.child;
+      
+        if (!output.children[parent]) output.children[parent] = [];
+        output.children[parent].push(child);
+      
+        if (!output.parents[child]) output.parents[child] = [];
+        output.parents[child].push(parent);
+      }
+      
       return output;
     }
     
@@ -1208,6 +1294,9 @@
           break;
         case 'luk':
           gv = buildGraphVizLuk();
+          break;
+        case 'ach':
+          gv = buildGraphVizAch();
           break;
         default:
           alert('Unknown mode selected.');
