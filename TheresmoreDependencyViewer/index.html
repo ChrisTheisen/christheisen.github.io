@@ -3,6 +3,8 @@
 <head>
   <script>
     //TODO: mobile clicking support
+    //TODO: identify correct type for duplicate ID
+    //TODO: delete instead of cross off completed items
     
   </script>
   <meta charset="UTF-8">
@@ -120,12 +122,13 @@
       <ul>
         <li><a href="https://www.npmjs.com/package/@viz-js/viz">Viz.js</a> - for generating the svg graph</li>
         <li><a href="https://www.npmjs.com/package/svg-pan-zoom">SVG pan-zoom</a> - for navigating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/lz-string">LZ-String</a> - for parsing the save data</li>
       </ul>
     </p>
     <p>
       You can use a pre-saved version from 2025-08-08 by clicking 'Generate Graph' to the right or save and upload the current JS.
       Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
-      Then upload the file here:
+      Then select the file here:
       <input type="file" id="fileInput" />
     </p>
     <h4>Notes:</h4>
@@ -223,7 +226,7 @@
         <option value="LR">Left to Right</option>
         <option value="RL">Right to Left</option>
       </select>
-      <span class="description">Only relevent for dot layout.</span>
+      <span class="description">Only relevent for dot Layout Engine.</span>
     </p>
     <p>
       <input type="checkbox" id="chkNight" onchange="document.body.classList.toggle('night-mode', this.checked)"/>
@@ -245,8 +248,32 @@
 
     <p>
       <h3>Handle save data</h3>
-      <input type="checkbox" id="chkMarkComplete" />
-      <label for="chkMarkComplete">Mark Complete (this will cross off any nodes that match a completed item from the save data)</label>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoNoneComplete" value="none" checked />
+          <span class="label-text">None</span>
+          <span class="description">(No effect will be applied to completed items)</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoMarkComplete" value="mark" />
+          <span class="label-text">Mark Complete</span>
+          <span class="description">(Cross off nodes that match completed items)</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoHideComplete" value="hide" />
+          <span class="label-text">Hide Complete</span>
+          <span class="description">(Hide nodes that match completed items)</span>
+        </label>
+      </div>
+      <div style="padding-left:30px;">
+        <input type="checkbox" id="chkPrune" />
+        <label for="chkPrune">Prune Strays</label>
+        <span class="description">(Also hides some shallow disconnected node trees)</span>
+        <span class="description">(Only relevent when 'Hide Complete' is selected)</span>
+      </div>
+
       <br/>
       <textarea id='txtSaveData' rows="2" cols="100" placeholder="Paste save data here..."></textarea>
     </p>
@@ -300,7 +327,7 @@
 
   <script>
     const dataSets = {};
-    let completed = ['housing'];
+    let completed = [];
     let parsedData = [];
     let parentsChildren = {children:{}, parents:{}};
     
@@ -450,11 +477,12 @@
     }
     
     function parseSaveData(){
-      if(!document.getElementById('chkMarkComplete').checked){
+      const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+      if (mode === 'none') {
         completed.length = 0;
         return;
       }
-      
+
       const saveString = document.getElementById('txtSaveData').value;
       const gameData = JSON.parse(window.LZString.decompressFromBase64(saveString));
       
@@ -469,6 +497,13 @@
       const s = gameData[2].spells;
 
       completed = [].concat(b).concat(t).concat(e).concat(d).concat(r).concat(p).concat(l).concat(a).concat(s);
+      
+      if(completed.includes('gem')){
+        completed.push('gem0');
+        completed.push('gem1');
+        completed.push('gem2');
+      }
+      
     }
 //END EXTRACT DATA REGION
 //START DATA PRORCESSING REGION
@@ -541,7 +576,7 @@
       if(document.getElementById('chkUnits').checked){
         included = included.concat(u);
       }
-    
+      
       document.getElementById('parsed').value = JSON.stringify(included, null, 2);
       return included;
     }
@@ -585,11 +620,23 @@
     }
     
     function mapNodeText(input){
+      const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+      if(mode === 'hide' && completed.includes(input)){
+        return null;
+      }
+      
       if(input.includes('"')){return input;}
       if(completed.includes(input.replaceAll('"',''))){
         return `"${input}" [class="completed"]`;
       }
       return `"${input}"`;
+    }
+    
+    function buildHeaderGroup(input){
+      const a = Array.from(input).map(x => mapNodeText(x)).filter(x => x);
+      if(a.length === 0){return null;}
+      
+      return `    ${a.join('; ')};`;
     }
     
     function graphVizHeader(input){
@@ -635,63 +682,99 @@
       if(input.special?.size){
         lines.push('  //special resource');
         lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
-        lines.push(`    ${Array.from(input.special).map(x => mapNodeText(x)).join('; ')}`);
+        lines.push(buildHeaderGroup(input.special));
       }
       if(input.enemy?.size){
         lines.push('  //enemy');
         lines.push('  node [shape=octagon style=filled fillcolor="#ffaa55"];');
-        lines.push(`    ${Array.from(input.enemy).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.enemy));
       }
       if(input.building?.size){
         lines.push('  //building');
         lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
-        lines.push(`    ${Array.from(input.building).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.building));
       }
       if(input.diplomacy?.size){
         lines.push('  //diplomacy');
         lines.push('  node [shape=octagon style=filled fillcolor="#aaff55"];');
-        lines.push(`    ${Array.from(input.diplomacy).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.diplomacy));
       }
       if(input.legacy.size){
         lines.push('  //legacy');
         lines.push('  node [shape=invhouse style=filled fillcolor="#55ff55"];');
-        lines.push(`    ${Array.from(input.legacy).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.legacy));
       }
       if(input.prayer?.size){
         lines.push('  //prayer');
         lines.push('  node [shape=house style=filled fillcolor="#55ffaa"];');
-        lines.push(`    ${Array.from(input.prayer).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.prayer));
       }
       if(input.spell?.size){
         lines.push('  //spell');
         lines.push('  node [shape=house style=filled fillcolor="#55ffff"];');
-        lines.push(`    ${Array.from(input.spell).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.spell));
       }
       if(input.resource?.size){
         lines.push('  //resource');
         lines.push('  node [shape=house style=filled fillcolor="#55aaff"];');
-        lines.push(`    ${Array.from(input.resource).concat(Array.from(input.cap)).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(Array.from(input.resource).concat(Array.from(input.cap))));
       }
       if(input.tech?.size){
         lines.push('  //tech');
         lines.push('  node [shape=box style=filled fillcolor="#7777ff"];');
-        lines.push(`    ${Array.from(input.tech).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.tech));
       }
       if(input.unit?.size){
         lines.push('  //unit');
         lines.push('  node [shape=box style=filled fillcolor="#ff77ff"];');
-        lines.push(`    ${Array.from(input.unit).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.unit));
       }
       if(input.achievement?.size){
         lines.push('  //achievement');
         lines.push('  node [shape=invhouse style=filled fillcolor="#ff33ff"];');
-        lines.push(`    ${Array.from(input.achievement).map(x => mapNodeText(x)).join('; ')};`);
+        lines.push(buildHeaderGroup(input.achievement));
       }
       lines.push('  //other (NG+)');
       lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
       lines.push('  ');
 
       return lines;
+    }
+    
+    function extraGroupedData(){
+      const output = [];
+      const isHide = document.querySelector('input[name="completeMode"]:checked')?.value === 'hide';
+      
+      if(!isHide || !completed.includes('end_4')){
+        if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
+        if(output.some(x => x.includes('end_era_4_2'))){ output.push('  end_era_4_2 -> end_4'); }
+      }
+      
+      if(document.getElementById('chkLegacyResource').checked && document.querySelector('input[name="option"]:checked')?.value === 'dep'){
+        
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift'); }
+        const gems = [];
+        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2'); }
+        if(gems.length > 0) { types.special.add(`   {node [label="gem"] ${gems.join(' ')}}`);}
+        
+        if(output.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
+        if(output.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
+        
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ output.push('  theresmore_richest_nation -> coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ output.push('  mausoleum_gods -> tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ output.push('  reactivate_portal -> relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ output.push('  titan_gift_t -> titan_gift'); }
+        if(output.some(x => x.includes('statue_virtue'))){ output.push('  statue_virtue -> gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ output.push('  fortified_citadel -> gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ output.push('  holy_site -> gem2'); }
+      }
+
+      return output;
     }
     
     function groupData(input, filter, buildItem, prop){
@@ -735,30 +818,9 @@
         return buildItem(x, children);
       }).flat().filter(x => x);
 
-      if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
-      if(output.some(x => x.includes('end_era_4_2'))){ output.push('  end_era_4_2 -> end_4'); }
-      
-      if(document.getElementById('chkLegacyResource').checked && document.querySelector('input[name="option"]:checked')?.value === 'dep'){
-        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin'); }
-        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom'); }
-        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic'); }
-        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift'); }
-        const gems = [];
-        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0'); }
-        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1'); }
-        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2'); }
-        if(gems.length > 0) { types.special.add(`   {node [label="gem"] ${gems.join(' ')}}`);}
-        
-        if(output.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
-        if(output.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
-        
-        if(output.some(x => x.includes('theresmore_richest_nation'))){ output.push('  theresmore_richest_nation -> coin'); }
-        if(output.some(x => x.includes('mausoleum_gods'))){ output.push('  mausoleum_gods -> tome_wisdom'); }
-        if(output.some(x => x.includes('reactivate_portal'))){ output.push('  reactivate_portal -> relic'); }
-        if(output.some(x => x.includes('titan_gift_t'))){ output.push('  titan_gift_t -> titan_gift'); }
-        if(output.some(x => x.includes('statue_virtue'))){ output.push('  statue_virtue -> gem0'); }
-        if(output.some(x => x.includes('fortified_citadel'))){ output.push('  fortified_citadel -> gem1'); }
-        if(output.some(x => x.includes('holy_site'))){ output.push('  holy_site -> gem2'); }
+      const extraNodes = extraGroupedData()
+      for(let node of extraNodes){
+        output.push(node);
       }
 
       output.push('}');
@@ -802,9 +864,98 @@
       children.forEach(x => {
           const label = x.value > 1 ? ` label = ${x.value}` : '';
           const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+          
+          const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+          if(mode === 'hide' && (completed.includes(input.id) || completed.includes(x.id))){
+            return null;
+          }
 
           output.push(`  "${x.id}" -> "${input.id}" [${color}${label}]`)
       });
+      return output;
+    }
+
+    function cleanGraphViz(dotContent){
+      const nodeDefRegex = /(?:\/\/[^\n]*\n)?\s*node\s*\[.*?\];\s*([\s\S]*?)(?=(?:\/\/|\w+\s*\[|\}))/g;
+      const edgeRegex = /"([^"]+)"\s*->\s*"([^"]+)"/g;
+    
+      const usedNodes = new Set();
+      let match;
+      
+      const pruned = pruneShallowNodes(dotContent);
+    
+      // Collect all nodes used in edges
+      while ((match = edgeRegex.exec(pruned)) !== null) {
+        usedNodes.add(match[1]);
+        usedNodes.add(match[2]);
+      }
+    
+      // Replace node blocks with filtered versions
+      const cleanedDot = pruned.replace(nodeDefRegex, (fullMatch, nodeBlock) => {
+        const nodeLines = nodeBlock
+          .split(";")
+          .map(line => line.trim())
+          .filter(Boolean);
+    
+        const keptNodes = nodeLines.filter(line => {
+          const nodeMatch = line.match(/"([^"]+)"/);
+          return nodeMatch && usedNodes.has(nodeMatch[1]);
+        });
+    
+        return fullMatch.replace(nodeBlock, keptNodes.join(";    ") + (keptNodes.length ? ";" : ""));
+      });
+      
+      return cleanedDot;
+      //return ;
+    }
+    function pruneShallowNodes(dotContent) {
+      const lines = dotContent.split('\n');
+      const output = [];
+      for(let line of lines){
+        if(line.includes('->')){
+          const parts = line.split(' ').filter(x => x);
+          const a = lines.filter(x => x.includes('->') && x.includes(parts[0]));
+          const b = lines.filter(x => x.includes('->') && x.includes(parts[2]));
+          if(a.length > 1 || b.length > 1){
+            output.push(line);
+          }
+        }
+        else{
+          output.push(line);
+        }
+      }
+      
+      return output.join('\n');
+    }
+
+    
+
+    function buildGraphViz(){
+      let output = null;
+      const selectedMode = document.querySelector('input[name="option"]:checked')?.value;
+      switch (selectedMode) {
+        case 'dep':
+          output = buildGraphVizDep();
+          break;
+        case 'cap':
+          output = buildGraphVizCap();
+          break;
+        case 'luk':
+          output = buildGraphVizLuk();
+          break;
+        case 'ach':
+          output = buildGraphVizAch();
+          break;
+        default:
+          alert('Unknown mode selected.');
+          return null;
+      }
+      
+      const isHide = document.querySelector('input[name="completeMode"]:checked')?.value === 'hide';
+      if(isHide && document.getElementById('chkPrune').checked){
+        output = cleanGraphViz(output);
+      }
+      
       return output;
     }
 
@@ -922,6 +1073,7 @@
 
       return header.concat(lines).join('\n');
     }
+    
 //END DATA PROCESSING REGION
 //START HTML UI REGION
     function toggleOutputs(hide){
@@ -1315,25 +1467,7 @@
       
       parseSaveData();
       
-      let gv = null;
-      const selectedMode = document.querySelector('input[name="option"]:checked')?.value;
-      switch (selectedMode) {
-        case 'dep':
-          gv = buildGraphVizDep();
-          break;
-        case 'cap':
-          gv = buildGraphVizCap();
-          break;
-        case 'luk':
-          gv = buildGraphVizLuk();
-          break;
-        case 'ach':
-          gv = buildGraphVizAch();
-          break;
-        default:
-          alert('Unknown mode selected.');
-          return;
-      }
+      let gv = buildGraphViz();
       
       parentsChildren = getEdgeMapFromDot(gv);
       output.value = gv;
