@@ -115,35 +115,9 @@
       <button id='GOTIME' onClick="GOTIME()">Generate Graph</button>
     </div>
 
-
-    <p>
-      This uses a couple libraries to try to make sense of the complex dependencies in <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.<br/>
-      Libraries used are:
-      <ul>
-        <li><a href="https://www.npmjs.com/package/@viz-js/viz">Viz.js</a> - for generating the svg graph</li>
-        <li><a href="https://www.npmjs.com/package/svg-pan-zoom">SVG pan-zoom</a> - for navigating the svg graph</li>
-        <li><a href="https://www.npmjs.com/package/lz-string">LZ-String</a> - for parsing the save data</li>
-      </ul>
-    </p>
-    <p>
-      You can use a pre-saved version from 2025-08-08 by clicking 'Generate Graph' to the right or save and upload the current JS.
-      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
-      Then select the file here:
-      <input type="file" id="fileInput" />
-    </p>
-    <h4>Notes:</h4>
-    <p>
-      >> The nodes use the ids used in the code instead of the text on the UI buttons because that was easier and I'm lazy.
-      In most cases it is pretty easy to figure out the related button.
-    </p>
-    <p>
-      >> There are some cases where an id is used more than once, not my fault blame the game. For example city_center is an id for both a building and an achievement.
-      I could make the graph builder smarter but that sounds hard and again, I'm lazy.<br/>
-      In these cases the dependency arrows are confused and likely have some recursive loop. Clicking on the text will show the details for all the records with that id.
-    </p>
   
     <hr/>
-    <h3>General chart settings</h3>
+    <h3>Selected Node Types</h3>
     <p>
       Select sections to include in graph.<br/>
       <small>
@@ -277,7 +251,38 @@
       <br/>
       <textarea id='txtSaveData' rows="2" cols="100" placeholder="Paste save data here..."></textarea>
     </p>
+    <hr/>
 
+    <h3>General Information:</h3>
+
+    <p>
+      Use as is; I'm not responsible for anything.
+    </p>
+    <p>
+      This uses a couple libraries to try to make sense of the complex dependencies in <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.<br/>
+      Libraries used are:
+      <ul>
+        <li><a href="https://www.npmjs.com/package/@viz-js/viz">Viz.js</a> - for generating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/svg-pan-zoom">SVG pan-zoom</a> - for navigating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/lz-string">LZ-String</a> - for parsing the save data</li>
+      </ul>
+    </p>
+    <p>
+      You can use a pre-saved version from 2025-08-08 by clicking 'Generate Graph' to the right or save and upload the current JS.
+      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
+      Then select the file here:
+      <input type="file" id="fileInput" />
+    </p>
+    <h4>Notes:</h4>
+    <p>
+      >> The nodes use the ids used in the code instead of the text on the UI buttons because that was easier and I'm lazy.
+      In most cases it is pretty easy to figure out the related button.
+    </p>
+    <p>
+      >> There are some cases where an id is used more than once, not my fault blame the game. For example city_center is an id for both a building and an achievement.
+      I could make the graph builder smarter but that sounds hard and again, I'm lazy.<br/>
+      In these cases the dependency arrows are confused and likely have some recursive loop. Clicking on the text will show the details for all the records with that id.
+    </p>
 
   </div>
   <div id='bottom' style="display:none;">
