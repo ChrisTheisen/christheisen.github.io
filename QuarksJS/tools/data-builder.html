@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuarksJS Data Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>QuarksJS Data Builder</h1>
+    <p>Tool for creating new items, recipes, and data entries for the QuarksJS game</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('items')">Items</button>
+            <button class="tab" onclick="showTab('recipes')">Recipes</button>
+            <button class="tab" onclick="showTab('data')">Data Groups</button>
+        </div>
+    <div class="container">
+        <div class="calculator">
+            <h3>Mass Calculator</h3>
+            <button type="button" class="btn btn-secondary" onclick="addCalculatorItem()">Add Item</button>
+            <button type="button" class="btn btn-secondary" onclick="calculateMass()">Calc Mass</button>
+
+            <pre id="calculatorOutput"></pre>
+            <div id="calculatorItems"></div>
+
+        </div>
+
+        <div class='tab-wrapper'>
+            <!-- Items Tab -->
+            <div id="items" class="tab-content active">
+                <h2>Create New Item</h2>
+                <form id="itemForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemId">Item ID:</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="itemId" placeholder="e.g., '7a'" maxlength="10" style="flex: 1;">
+                                <button type="button" class="btn btn-secondary" onclick="autoFillId('items')" style="padding: 8px 12px; font-size: 12px;">Auto</button>
+                            </div>
+                            <div class="help-text">Unique identifier (alphanumeric, keep short)</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemSymbol">Symbol:</label>
+                            <input type="text" id="itemSymbol" placeholder="e.g., 'H(2)O' or '[14]C'" maxlength="20">
+                            <div class="help-text">Chemical/visual symbol - use () for subscript, [] for superscript</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemName">Name:</label>
+                            <input type="text" id="itemName" placeholder="e.g., 'Water'" maxlength="50">
+                            <div class="help-text">Full name of the item</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemUnlocked">Initially Unlocked:</label>
+                            <select id="itemUnlocked">
+                                <option value="false">No (default)</option>
+                                <option value="true">Yes</option>
+                            </select>
+                            <div class="help-text">Whether item starts unlocked</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mass:</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="number" id="massValue" placeholder="1.0" step="any" min="0">
+                            </div>
+                            <div class="form-group">
+                                <select id="massUnit">
+                                    <option value="Da">Daltons (Da) - atomic mass units</option>
+                                    <option value="pg">Picograms (pg) - molecular scale</option>
+                                    <option value="g">Grams (g) - human scale objects</option>
+                                    <option value="Tg">Teragrams (Tg) - planetary scale</option>
+                                    <option value="Yg">Yottagrams (Yg) - stellar scale</option>
+                                    <option value="MO">Solar Mass (M☉) - stellar mass</option>
+                                    <option value="GM">Galactic Mass (GM) - galactic scale</option>
+                                    <option value="CM">Cosmic Mass (CM) - cosmic scale</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="help-text">Mass of the item in appropriate units</div>
+                    </div>
+
+                    <button type="button" class="btn" onclick="generateItem()">Generate Item</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearItemForm()">Clear Form</button>
+                </form>
+
+                <div id="itemOutput" class="output" style="display: none;"></div>
+            </div>
+
+            <!-- Recipes Tab -->
+            <div id="recipes" class="tab-content">
+                <h2>Create New Recipe</h2>
+                <form id="recipeForm">
+                    <div class="form-group">
+                        <label for="recipeId">Recipe ID:</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="recipeId" placeholder="e.g., 'r_7a'" maxlength="15" style="flex: 1;">
+                            <button type="button" class="btn btn-secondary" onclick="autoFillId('recipes')" style="padding: 8px 12px; font-size: 12px;">Auto</button>
+                        </div>
+                        <div class="help-text">Unique recipe identifier (use r_ prefix)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Input Items (what is consumed):</label>
+                        <div id="inputItems" class="recipe-items">
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addInputItem()">Add Input Item</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Output Items (what is produced):</label>
+                        <div id="outputItems" class="recipe-items">
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addOutputItem()">Add Output Item</button>
+                    </div>
+
+                    <button type="button" class="btn" onclick="generateRecipe()">Generate Recipe</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearRecipeForm()">Clear Form</button>
+                </form>
+
+                <div id="recipeOutput" class="output" style="display: none;"></div>
+            </div>
+
+            <!-- Data Groups Tab -->
+            <div id="data" class="tab-content">
+                <h2>Create New Data Group</h2>
+                <form id="dataForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataId">Group ID:</label>
+                            <div style="display: flex; gap: 5px;">
+                                <input type="text" id="dataId" placeholder="e.g., 'm_30'" maxlength="10" style="flex: 1;">
+                                <button type="button" class="btn btn-secondary" onclick="autoFillId('data')" style="padding: 8px 12px; font-size: 12px;">Auto</button>
+                            </div>
+                            <div class="help-text">Unique group identifier (use m_ prefix)</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataName">Group Name:</label>
+                            <input type="text" id="dataName" placeholder="e.g., 'New Materials'" maxlength="50">
+                            <div class="help-text">Display name for the group</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataUnlocked">Initially Unlocked:</label>
+                            <select id="dataUnlocked">
+                                <option value="false">No (default)</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataInfo">Info Text (optional):</label>
+                        <textarea id="dataInfo" rows="3" placeholder="Educational or gameplay information about this group..."></textarea>
+                        <div class="help-text">Array of info strings (separate multiple entries with |)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Child Items/Groups:</label>
+                        <div id="dataChildren" class="recipe-items">
+                            <div class="recipe-item">
+                                <select class="data-child-selector">
+                                    <option value="">Select item or group...</option>
+                                </select>
+                                <button type="button" class="btn btn-danger" onclick="removeRecipeItem(this)">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addDataChild()">Add Child</button>
+                    </div>
+
+                    <button type="button" class="btn" onclick="generateDataGroup()">Generate Data Group</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearDataForm()">Clear Form</button>
+                </form>
+
+                <div id="dataOutput" class="output" style="display: none;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Include QuarksJS source files directly -->
+    <script src="../src/amount.js"></script>
+    <script src="../src/items.js"></script>
+    <script src="../src/recipes.js"></script>
+    <script src="../src/data.js"></script>
+    <script src="builder.js"></script>
+    
+</body>
+</html>

@@ -1046,7 +1046,7 @@ const help = [
 		'https://www.rsc.org/periodic-table - Used for other atom information',
 		'https://webbook.nist.gov/chemistry/name-ser/ - Used for molecule symbols',
 		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/ - Used for learning about functional groups',
-		'https://chat.openai.com/ && https://gemini.google.com/app - Used for general questions; verified most responses with outside sources',
+		'Various "AI" LLM tools - Used for general questions; verified most responses with outside sources',
 		'|',
 		'If you have a suggestion of items you want added or concerns about accuracy you can email: grumdrig333@gmail.com',
 	]},

@@ -140,6 +140,7 @@ function Game(){
 		i: true,//show info
 		u: true,//show used-in warning
 		s: 100,//speed/max cycles to run on one update
+		e: 10,//enhancement scaling (0-100)
 		d: { //discover filters
 			l: 0,//stock limit
 			o: false,//filter unowned
@@ -159,7 +160,7 @@ function Game(){
 		},
 		n:{//number settings
 			b: 10,//base
-			s: 15,//significant digits to display
+			s: 15//significant digits to display
 		}
 	};
 	this.mm = [];
@@ -249,7 +250,9 @@ function buildUI(){
 	game.menu = new Menu(null, root, tabs);
 }
 
-function init(){
+function startGame(){
+
+	getUIElement('gameWrapper').classList.remove('hide');
 	game.clock.status = 'Loading Game Data';
 	game.clock.update();
 	game.generators = recipes.map(x => new Generator({id:x.id, i:x.i, o:x.o}));
@@ -301,6 +304,46 @@ function init(){
 	game.clock.start();
 	game.clock.toggleTabs();
 	game.intro();
+}
+
+function startWelcome(){
+	getUIElement('welcomeWrapper').classList.remove('hide');
+}
+
+function begin(){
+
+	
+	// Add animation class to trigger the effect
+	const btn = getUIElement('btnWelcome')
+	btn.classList.add('btnWelcome-animate');
+	setTimeout(() => {
+		setElementText(btn, '');
+	}, 1000);
+
+	const ww = getUIElement('welcomeWrapper');
+	ww.classList.add('welcomeWrapper-animate');
+
+	getUIElement('welcomeText').classList.add('hide');
+	
+	// After animation completes, hide welcome and show game
+	setTimeout(() => {
+		getUIElement('gameWrapper').classList.remove('hide');
+		startGame();
+	}, 2000);
+
+	setTimeout(() => {
+		ww.classList.add('hide');
+	}, 5000);
+
+}
+
+function init(){
+	if (localStorage.getItem("Q") === null) {
+		startWelcome();
+	}
+	else{
+		startGame();
+	}
 }
 const game = new Game();
 init();
