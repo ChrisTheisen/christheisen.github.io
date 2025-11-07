@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    //TODO: mobile clicking support
+    //TODO: identify correct type for duplicate ID
+    //TODO: delete instead of cross off completed items
+    
+  </script>
+  <meta charset="UTF-8">
+  <title>TDV</title>
+  <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/viz.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/viz.js@2.1.2/full.render.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    textarea {
+      font-family: monospace;
+    }
+    button {
+      padding: 0.5em 1em;
+      font-size: 1em;
+    }
+
+    body.night-mode {
+      background-color: black;
+      color: white;
+    }
+
+    body.night-mode input,
+    body.night-mode select,
+    body.night-mode button {
+      background-color: #0d0d0d;
+      color: #a2a2a2;
+      border: 1px solid #343;
+    }
+    
+    label {
+      margin-right: 20px;
+    }
+    input[type="checkbox"]{
+      margin-right: 0;
+    }
+    g g text{
+      cursor: pointer;
+    }
+    
+    #svgOutput svg{
+      overflow: visible !important;
+    }
+    
+    .foundNode{
+      animation: blinkHighlight .5s linear;
+    }
+    
+    @keyframes blinkHighlight {
+      0%   { stroke: #000000; stroke-width: 0px; }
+      20%   { stroke: #ff0000; stroke-width: 1px; }
+      40%   { stroke: #aaaa00; stroke-width: 2px; }
+      60%  { stroke: #00ff00; stroke-width: 3px; }
+      80%  { stroke: #00aaaa; stroke-width: 2px; }
+      100% { stroke: #0000ff; stroke-width: 1px; }
+    }
+    .focusNode{
+      stroke: #ff0000;
+      stroke-width: 3px;
+      filter: brightness(1.5);
+    }
+    .focusChildren{
+      stroke: #ff7700;
+      stroke-width: 3px;
+      filter: brightness(1.2);
+    }
+    .focusParents{
+      stroke: #ff0077;
+      stroke-width: 3px;
+      filter: brightness(1.2);
+    }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: sans-serif;
+    }
+    
+    .label-text {
+      font-weight: bold;
+    }
+    
+    .description {
+      color: #555;
+      font-size: 0.9em;
+    }
+    .completed {
+      text-decoration: line-through;
+    }
+
+  </style>
+</head>
+<body>
+  <h2>Theresmore Dependency Viewer</h2>
+  <div id='top'>
+    
+    <div id='goWrapper' style="float:right;position:fixed;right:10px;top:10px;display: flex; font-size: 28pt;">
+      <button id='GOTIME' onClick="GOTIME()">Generate Graph</button>
+    </div>
+
+  
+    <hr/>
+    <h3>Selected Node Types</h3>
+    <p>
+      Select sections to include in graph.<br/>
+      <small>
+        Note: required nodes to selected groups will be included.</br>
+        Example: if buildings are the only group selected then 'housing' will still be included because 'common_house' requires that tech.<br/>
+      </small>
+    </p>
+    
+    <p>
+      <input type="checkbox" id="chkBuilding" checked />
+      <label for="chkBuilding">building</label>
+      
+      <input type="checkbox" id="chkEnemy" checked />
+      <label for="chkEnemy">enemy</label>
+      
+      <input type="checkbox" id="chkDiplomacy" checked />
+      <label for="chkDiplomacy">diplomacy</label>
+    
+      <input type="checkbox" id="chkLegacy" />
+      <label for="chkLegacy">legacy</label>
+    
+      <input type="checkbox" id="chkPrayer" checked/>
+      <label for="chkPrayer">prayer</label>
+    
+      <input type="checkbox" id="chkResource" />
+      <label for="chkResource">resource</label>
+    
+      <input type="checkbox" id="chkTech" checked />
+      <label for="chkTech">tech</label>
+    
+      <input type="checkbox" id="chkUnits" />
+      <label for="chkUnits">units</label>
+    </p>
+
+    <p>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" id="rdoReq" name="option" value="dep" checked>
+          <span class="label-text">Dependency</span>
+          <span class="description">(Default) Shows which nodes are required to unlock progress.</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" id="rdoCap" name="option" value="cap" >
+          <span class="label-text">Capacity</span>
+          <span class="description">Only shows nodes that increase resource capacity.</span>
+        </label>
+        
+        <label class="radio-item">
+          <input type="radio" id="rdoLuck" name="option" value="luk" >
+          <span class="label-text">Lucky Stones</span>
+          <span class="description">Shows how to gain lucky stones and how they can be spent.</span>
+        </label>
+        
+        <label class="radio-item">
+          <input type="radio" id="rdoAch" name="option" value="ach" >
+          <span class="label-text">Achievements</span>
+          <span class="description">Shows what is needed for difference achievements and one level of dependencies.</span>
+        </label>
+      </div>
+    </p>
+    
+    <p>
+      <label for="layoutSelector">Layout engine:</label>
+      <select id="layoutSelector" name="layout">
+        <option value="dot">dot – Hierarchical (directed graphs)</option>
+        <option value="neato">neato – Spring model (undirected graphs)</option>
+        <option value="fdp">fdp – Force-directed placement</option>
+        <option value="twopi">twopi – Radial layout (concentric circles)</option>
+        <option value="circo">circo – Circular layout (cyclic/symmetric)</option>
+        <option value="osage">osage – Clustered layout (nested groups)</option>
+        <option value="patchwork">patchwork – Treemap-style layout</option>
+      </select>
+      <span class="description">I like dot, but feel free to try out others.</span>
+      <br/>
+      <label for="ddlDirection">Graph direction</label>
+      <select id="ddlDirection">
+        <option value="TB" selected>Top to Bottom</option>
+        <option value="BT">Bottom to Top</option>
+        <option value="LR">Left to Right</option>
+        <option value="RL">Right to Left</option>
+      </select>
+      <span class="description">Only relevent for dot Layout Engine.</span>
+    </p>
+    <p>
+      <input type="checkbox" id="chkNight" onchange="document.body.classList.toggle('night-mode', this.checked)"/>
+      <label for="chkNight">Night Mode (Dark background)</label>
+      <br/>
+      <input type="checkbox" id="chkLegacyResource" checked/>
+      <label for="chkLegacyResource">Show Legacy Resources (Coin, Gem, etc...)(Only on Dependency chart)</label>
+      <br/>
+      <input type="checkbox" id="chkToggleOutputs" checked onchange="toggleOutputs(this.checked)"/>
+      <label for="chkToggleOutputs">Hide JSON/Graphviz (Show for debugging)</label>
+    </p>
+    
+    <button id="CLEAR" style="display:none;" onClick="CLEAR()">Clear Outputs</button>
+    <div style="display: flex">
+      <textarea id="parsed" style="display:none;" rows="20" cols="100" placeholder="JSON will appear here..."></textarea>
+      <textarea id="graphviz" style="display:none;" rows="20" cols="100" placeholder="graphviz dot syntax will appear here, copy to the Graphviz viewer below..."></textarea>
+    </div>
+    <hr/>
+
+    <p>
+      <h3>Handle save data</h3>
+      <div class="radio-group">
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoNoneComplete" value="none" checked />
+          <span class="label-text">None</span>
+          <span class="description">(No effect will be applied to completed items)</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoMarkComplete" value="mark" />
+          <span class="label-text">Mark Complete</span>
+          <span class="description">(Cross off nodes that match completed items)</span>
+        </label>
+      
+        <label class="radio-item">
+          <input type="radio" name="completeMode" id="rdoHideComplete" value="hide" />
+          <span class="label-text">Hide Complete</span>
+          <span class="description">(Hide nodes that match completed items)</span>
+        </label>
+      </div>
+      <div style="padding-left:30px;">
+        <input type="checkbox" id="chkPrune" />
+        <label for="chkPrune">Prune Strays</label>
+        <span class="description">(Also hides some shallow disconnected node trees)</span>
+        <span class="description">(Only relevent when 'Hide Complete' is selected)</span>
+      </div>
+
+      <br/>
+      <textarea id='txtSaveData' rows="2" cols="100" placeholder="Paste save data here..."></textarea>
+    </p>
+    <hr/>
+
+    <h3>General Information:</h3>
+
+    <p>
+      Use as is; I'm not responsible for anything.
+    </p>
+    <p>
+      This uses a couple libraries to try to make sense of the complex dependencies in <a href="https://www.theresmoregame.com/play/#">TheresMore</a>.<br/>
+      Libraries used are:
+      <ul>
+        <li><a href="https://www.npmjs.com/package/@viz-js/viz">Viz.js</a> - for generating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/svg-pan-zoom">SVG pan-zoom</a> - for navigating the svg graph</li>
+        <li><a href="https://www.npmjs.com/package/lz-string">LZ-String</a> - for parsing the save data</li>
+      </ul>
+    </p>
+    <p>
+      You can use a pre-saved version from 2025-08-08 by clicking 'Generate Graph' to the right or save and upload the current JS.
+      Find/save the main.js from <a href="https://www.theresmoregame.com/play/#">TheresMore</a> <br/>
+      Then select the file here:
+      <input type="file" id="fileInput" />
+    </p>
+    <h4>Notes:</h4>
+    <p>
+      >> The nodes use the ids used in the code instead of the text on the UI buttons because that was easier and I'm lazy.
+      In most cases it is pretty easy to figure out the related button.
+    </p>
+    <p>
+      >> There are some cases where an id is used more than once, not my fault blame the game. For example city_center is an id for both a building and an achievement.
+      I could make the graph builder smarter but that sounds hard and again, I'm lazy.<br/>
+      In these cases the dependency arrows are confused and likely have some recursive loop. Clicking on the text will show the details for all the records with that id.
+    </p>
+
+  </div>
+  <div id='bottom' style="display:none;">
+    <div id='redo' style="float:right;position:fixed;right:10px;top:10px;display: flex;">
+      <div style="margin-right:30px;">
+        <button onclick="downloadSVG()">Download Chart</button>
+      </div>
+      <button onclick='redo()'>Chart Settings</button>
+    </div>
+    
+    <div style="width:100vw; display:flex" >
+      <div id="zoom-controls" style="position:absolute; bottom: 20px; left: 10px;display:flex; flex-direction:row; gap: 2px;">
+        <div id="zoomIndicator" style="margin:5px; font-family:sans-serif;display:flex; flex-direction:column; gap: 2px;">
+          <button style="width:30px; padding:0; margin:0;" onclick="adjustZoom(.1);">+</button>
+          <button style="width:30px; padding:0; margin:0;" onclick="resetZoom()">=</button>
+          <button style="width:30px; padding:0; margin:0;" onclick="adjustZoom(-.1)">−</button>
+          <span id="zoomValue">1.00</span>
+        </div>
+        
+        <div syle="display:flex; flex-direction:column; gap: 2px">
+          <div id="pan-controls" style="display: grid; grid-template-columns: 30px 30px 30px; grid-template-rows: 30px 30px 30px; gap: 2px;">
+            <div></div>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(0, 500)">↑</button>
+            <div></div>
+          
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(500, 0)">←</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="panToNode('node1')">⊙</button>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(-500, 0)">→</button>
+          
+            <div></div>
+            <button style="width:30px; padding:0; margin:0;" onclick="svgPanBy(0, -500)">↓</button>
+            <div></div>
+          </div>
+          <span id="curLocX"></span>x<span id="curLocY"></span>
+        </div>
+    </div>
+
+      <div id="svgOutput" style="width:75vw; height:calc(95vh - 30px); overflow:hidden; border:1px solid #ccc; margin:0;"></div>
+      <div id="divRight" style="width:23vw; height:calc(95vh - 30px); overflow:auto; border:1px solid #ccc; margin:0;">
+        <input id="txtSearch" style="width:97%; height: 30px;" placeholder="Search nodes here (shortcut: /)"/>
+        <button id="btnSearch" style="width:99%; height: 30px;" onclick="findNodesByText(document.getElementById('txtSearch').value);">Search</button>
+        <select id='nodeFinder' style="width:99%; height:30px" placeholder="Select node to pan" onchange="panToNode(this.value); showDetails(findItems(this.options[this.selectedIndex].text)); document.activeElement.blur(); "></select>
+        <pre id="divDetails" style="width:100%; height:calc(95vh - 130px); overflow:auto; border:1px solid #ccc; margin:0;"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dataSets = {};
+    let completed = [];
+    let parsedData = [];
+    let parentsChildren = {children:{}, parents:{}};
+    
+    //just a quick check here; looks like a few duplicate ids
+    function findDuplicateIds() {
+      const seen = new Map();
+      const duplicates = new Set();
+    
+      for (const obj of parsedData) {
+        const id = obj.id;
+        if (seen.has(id)) {
+          duplicates.add(id);
+        } else {
+          seen.set(id, true);
+        }
+      }
+    
+      return Array.from(duplicates);
+    }
+
+    
+//START EXTRACT THERESMORE DATA REGION
+    function extractArrays(content, regex) {
+      const matches = content.match(regex);
+      return matches || [];
+    }
+
+    function extractArrayAroundObject(content, regex) {
+      if(!regex) {return null;}
+      const objectMatch = regex.exec(content);
+      if (!objectMatch) {
+        console.warn(`No object found with regex ${regex}`);
+        return null;
+      }
+    
+      const startIndex = objectMatch.index;
+    
+      // Walk backward to find the opening bracket of the array
+      let arrayStart = startIndex;
+      while (arrayStart > 0 && content[arrayStart] !== '[') {
+        arrayStart--;
+      }
+    
+      // Walk forward to find the closing bracket of the array
+      let arrayEnd = arrayStart;
+      let bracketDepth = 0;
+      let inString = false;
+      let stringChar = '';
+      let escaped = false;
+    
+      for (let i = arrayStart; i < content.length; i++) {
+        const char = content[i];
+    
+        if (inString) {
+          if (escaped) {
+            escaped = false;
+          } else if (char === '\\') {
+            escaped = true;
+          } else if (char === stringChar) {
+            inString = false;
+          }
+          continue;
+        }
+    
+        if (char === '"' || char === "'") {
+          inString = true;
+          stringChar = char;
+          continue;
+        }
+    
+        if (char === '[') {
+          bracketDepth++;
+        } else if (char === ']') {
+          bracketDepth--;
+          if (bracketDepth === 0) {
+            arrayEnd = i + 1;
+            break;
+          }
+        }
+      }
+    
+      if (bracketDepth !== 0) {
+        console.warn('Failed to find complete array');
+        return null;
+      }
+    
+      const arrayText = content.slice(arrayStart, arrayEnd);
+      return arrayText;
+    }
+    
+    const patterns = [
+      {
+        label: 'achievement',
+        regex: /\{[^}]*?id\s*:\s*["']prestige["'][^}]*?ach\s*:\s*\[/g
+      },
+      {
+        label: 'building',
+        regex: /\{[^}]*?id\s*:\s*["']common_house["'][^}]*?cat\s*:\s*["']living_quarters["'][^}]*?\}/g
+      },
+      {
+        label: 'enemy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_burial_place["'][^}]*?army\s*:\s*\[/g
+      },
+      {
+        label: 'diplomacy',
+        regex: /\{[^}]*?id\s*:\s*["']nightdale_protectorate["'][^}]*?relationship\s*:\s*30[^}]*?\}/g
+      },
+      {
+        label: 'legacy',
+        regex: /\{[^}]*?id\s*:\s*["']ancient_treasury["'][^}]*?req\s*:\s*\[/g
+      },
+      {
+        label: 'prayer',
+        regex: /\{[^}]*?id\s*:\s*["']praise_gods["'][^}]*?type\s*:\s*["']prayer["'][^}]*?\}/g
+      },
+      {
+        label: 'resource',
+        regex: /\{[^}]*?id\s*:\s*["']research["'][^}]*?cap\s*:\s*500[^}]*?\}/g
+      },
+      {
+        label: 'tech',
+        regex: /\{[^}]*?id\s*:\s*["']trading_woods["'][^}]*?req\s*:\s*\[[\s\S]*?gen\s*:\s*\[[\s\S]*?\][^}]*?\}/g
+      },
+      {
+        label: 'unit',
+        regex: /\{[^}]*?id\s*:\s*["']settlement_defenses["'][^}]*?type\s*:\s*["']settlement["'][^}]*?\}/g
+      },
+    ];
+    function buildDataSets(content){
+      if(!content){
+        Object.keys(dataSets).forEach(key => delete dataSets[key]);
+      }
+      
+      patterns.forEach(({ label, regex }) => {
+        const arrayText = extractArrayAroundObject(content, regex);
+        if (arrayText) {
+          try {
+            dataSets[label] = eval(arrayText);
+          } catch (err) {
+            console.warn(`Failed to parse ${label}:`, err);
+          }
+        }
+      });
+      
+      dataSets.achievement = dataSets.achievement.map(x => x.ach).flat();
+      
+    }
+    
+    function parseSaveData(){
+      const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+      if (mode === 'none') {
+        completed.length = 0;
+        return;
+      }
+
+      const saveString = document.getElementById('txtSaveData').value;
+      const gameData = JSON.parse(window.LZString.decompressFromBase64(saveString));
+      
+      const b = gameData[2].buildings.map(x => x.id);
+      const t = gameData[2].techs.map(x => x.id);
+      const e = gameData[2].enemies.map(x => x.id);
+      const d = gameData[2].diplomacy.map(x => x.id);
+      const r = gameData[2].resources.map(x => x.id);
+      const p = gameData[2].prayers.map(x => x.id);
+      const l = gameData[5].map(x => x.id);
+      const a = gameData[3].map(x => x.id);
+      const s = gameData[2].spells;
+
+      completed = [].concat(b).concat(t).concat(e).concat(d).concat(r).concat(p).concat(l).concat(a).concat(s);
+      
+      if(completed.includes('gem')){
+        completed.push('gem0');
+        completed.push('gem1');
+        completed.push('gem2');
+      }
+      
+    }
+//END EXTRACT DATA REGION
+//START DATA PRORCESSING REGION
+    function mapData(data, defaultType) {
+      const output = data.map(item => {
+        // Copy only relevant properties
+        const { id, req, reqFound, type, gen } = item;
+        const temp = (req ||[]).concat(reqFound||[]);//combine to get a single req list
+        return {
+          id,
+          type: type || defaultType,
+          res: temp?.filter(r => r.type === "resource"),//get all the resources
+          req: temp?.filter(r => r.type !== "resource"),//get all the not resources
+          gen: gen?.filter(x => !["building", "tech"].includes(x.type))//Ignore the mutually exclusive building/tech
+          
+        };
+      });
+      return output;
+    }
+    
+    function findItems(input){
+      const matches = [];
+      
+      Object.values(dataSets).forEach(x => {
+        const match = x.filter(y => y.id === input);
+        if(match.length > 0){
+          matches.push(match);
+        }
+        
+      })
+      
+      const output = matches.flat();
+      return output;
+    }
+        
+    function consolidateData() {
+      const a = mapData(dataSets.achievement || [], 'achievement');
+      const b = mapData(dataSets.building || [], 'building');
+      const e = mapData(dataSets.enemy || [], 'enemy');
+      const d = mapData(dataSets.diplomacy || [], 'diplomacy');
+      const l = mapData(dataSets.legacy || [], 'legacy');
+      const p = mapData(dataSets.prayer || [], 'prayer');
+      const r = mapData(dataSets.resource || [], 'resource');
+      const t = mapData(dataSets.tech || [], 'tech');
+      const u = mapData(dataSets.unit || [], 'unit');
+    
+      let included = [];
+      parsedData = [].concat(a).concat(b).concat(e).concat(d).concat(l).concat(p).concat(r).concat(t).concat(u);
+      if(document.querySelector('input[name="option"]:checked')?.value === 'ach'){
+        included = included.concat(a);
+      }
+      if(document.getElementById('chkBuilding').checked){
+        included = included.concat(b);
+      }
+      if(document.getElementById('chkEnemy').checked){
+        included = included.concat(e);
+      }
+      if(document.getElementById('chkDiplomacy').checked){
+        included = included.concat(d);
+      }
+      if(document.getElementById('chkLegacy').checked){
+        included = included.concat(l);
+      }
+      if(document.getElementById('chkPrayer').checked){
+        included = included.concat(p);
+      }
+      if(document.getElementById('chkTech').checked){
+        included = included.concat(t);
+      }
+      if(document.getElementById('chkUnits').checked){
+        included = included.concat(u);
+      }
+      
+      document.getElementById('parsed').value = JSON.stringify(included, null, 2);
+      return included;
+    }
+
+    function getType(input){
+      if(dataSets.building.some(x => x.id === input)){
+        return 'building';
+      }
+      else if(dataSets.enemy.some(x => x.id === input)){
+        return 'enemy';
+      }
+      else if(dataSets.diplomacy.some(x => x.id === input)){
+        return 'diplomacy';
+      }
+      else if(dataSets.legacy.some(x => x.id === input)){
+        return 'legacy';
+      }
+      else if(dataSets.prayer.some(x => x.id === input)){
+        const x = dataSets.prayer.find(x => x.id === input);
+        return x.type;
+      }
+      else if(dataSets.resource.some(x => x.id === input)){
+        return 'resource';
+      }
+      else if(dataSets.tech.some(x => x.id === input)){
+        return 'tech';
+      }
+      else if(dataSets.unit.some(x => x.id === input)){
+        return 'unit';
+      }
+      return 'N/A';
+    }
+    
+    function formatNumber(input){
+      
+      if(isNaN(input)) { return input; }
+      
+      if(input % 1000999 === 0){return `${input/1000000}M`;}
+      if(input % 1000 === 0){return `${input/1000}K`;}
+      return input;
+    }
+    
+    function mapNodeText(input){
+      const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+      if(mode === 'hide' && completed.includes(input)){
+        return null;
+      }
+      
+      if(input.includes('"')){return input;}
+      if(completed.includes(input.replaceAll('"',''))){
+        return `"${input}" [class="completed"]`;
+      }
+      return `"${input}"`;
+    }
+    
+    function buildHeaderGroup(input){
+      const a = Array.from(input).map(x => mapNodeText(x)).filter(x => x);
+      if(a.length === 0){return null;}
+      
+      return `    ${a.join('; ')};`;
+    }
+    
+    function graphVizHeader(input){
+      const isNight = document.getElementById('chkNight').checked;
+      const layout = document.getElementById('layoutSelector').value;
+      
+      const lines = [];
+      lines.push('digraph TM {');
+	    lines.push(`  bgcolor="#${isNight?'0d0d0d':'ffffff'}"`);
+      lines.push('  fontname="Helvetica,Arial,sans-serif"');
+	    lines.push('  node [fontname="Helvetica,Arial,sans-serif"]');
+      lines.push('  edge [fontname="Helvetica,Arial,sans-serif"]');
+
+      lines.push(`  layout=${layout}`)
+      if(layout === 'dot'){
+        lines.push(`  rankdir="${document.getElementById('ddlDirection').value}";`)
+      }
+      if(['dot', 'fdp', 'neato'].includes(layout)){
+        lines.push('  overlap=false;');
+        lines.push('  splines=true')
+      }
+      if(['dot', 'osage', 'patchwork'].includes(layout)){
+        lines.push('  subgraph cluster_key {');
+        lines.push('    label="Key";');
+        lines.push('    style=dashed;');
+        lines.push('    fontsize=12;');
+        lines.push('    rank=min;');
+        lines.push('    rankdir=TB;');
+        lines.push('    key_special_resource [label="Special Resource" shape=house style=filled fillcolor="#ff5555"];');
+        lines.push('    key_building [label="Building" shape=ellipse style=filled fillcolor="#ffff55"];');
+        lines.push('    key_enemy [label="Enemy" shape=octagon style=filled fillcolor="#ffaa55"];');
+        lines.push('    key_diplomacy [label="Diplomacy" shape=octagon style=filled fillcolor="#aaff55"];');
+        lines.push('    key_legacy [label="Legacy" shape=invhouse style=filled fillcolor="#55ff55"];');
+        lines.push('    key_prayer [label="Prayer" shape=house style=filled fillcolor="#55ffaa"];');
+        lines.push('    key_spell [label="Spell" shape=house style=filled fillcolor="#55ffff"];');
+        lines.push('    key_resource [label="Resource" shape=house style=filled fillcolor="#55aaff"];');
+        lines.push('    key_tech [label="Tech" shape=box style=filled fillcolor="#7777ff"];');
+        lines.push('    key_unit [label="Unit" shape=box style=filled fillcolor="#ff77ff"];');
+        lines.push('    key_achievement [label="Achievement" shape=invhouse style=filled fillcolor="#ff11ff"]')
+        lines.push('    key_resets [label="Resets" shape=star style=filled fillcolor="#ff0000"];');
+        lines.push('  }');
+      }
+      if(input.special?.size){
+        lines.push('  //special resource');
+        lines.push('  node [shape=house style=filled fillcolor="#ff5555"];');
+        lines.push(buildHeaderGroup(input.special));
+      }
+      if(input.enemy?.size){
+        lines.push('  //enemy');
+        lines.push('  node [shape=octagon style=filled fillcolor="#ffaa55"];');
+        lines.push(buildHeaderGroup(input.enemy));
+      }
+      if(input.building?.size){
+        lines.push('  //building');
+        lines.push('  node [shape=ellipse style=filled fillcolor="#ffff55"];');
+        lines.push(buildHeaderGroup(input.building));
+      }
+      if(input.diplomacy?.size){
+        lines.push('  //diplomacy');
+        lines.push('  node [shape=octagon style=filled fillcolor="#aaff55"];');
+        lines.push(buildHeaderGroup(input.diplomacy));
+      }
+      if(input.legacy.size){
+        lines.push('  //legacy');
+        lines.push('  node [shape=invhouse style=filled fillcolor="#55ff55"];');
+        lines.push(buildHeaderGroup(input.legacy));
+      }
+      if(input.prayer?.size){
+        lines.push('  //prayer');
+        lines.push('  node [shape=house style=filled fillcolor="#55ffaa"];');
+        lines.push(buildHeaderGroup(input.prayer));
+      }
+      if(input.spell?.size){
+        lines.push('  //spell');
+        lines.push('  node [shape=house style=filled fillcolor="#55ffff"];');
+        lines.push(buildHeaderGroup(input.spell));
+      }
+      if(input.resource?.size){
+        lines.push('  //resource');
+        lines.push('  node [shape=house style=filled fillcolor="#55aaff"];');
+        lines.push(buildHeaderGroup(Array.from(input.resource).concat(Array.from(input.cap))));
+      }
+      if(input.tech?.size){
+        lines.push('  //tech');
+        lines.push('  node [shape=box style=filled fillcolor="#7777ff"];');
+        lines.push(buildHeaderGroup(input.tech));
+      }
+      if(input.unit?.size){
+        lines.push('  //unit');
+        lines.push('  node [shape=box style=filled fillcolor="#ff77ff"];');
+        lines.push(buildHeaderGroup(input.unit));
+      }
+      if(input.achievement?.size){
+        lines.push('  //achievement');
+        lines.push('  node [shape=invhouse style=filled fillcolor="#ff33ff"];');
+        lines.push(buildHeaderGroup(input.achievement));
+      }
+      lines.push('  //other (NG+)');
+      lines.push('  node [shape=star style=filled fillcolor="#ff0000"];');
+      lines.push('  ');
+
+      return lines;
+    }
+    
+    function extraGroupedData(){
+      const output = [];
+      const isHide = document.querySelector('input[name="completeMode"]:checked')?.value === 'hide';
+      
+      if(!isHide || !completed.includes('end_4')){
+        if(output.some(x => x.includes('end_era_4_1'))){ output.push('  end_era_4_1 -> end_4'); }
+        if(output.some(x => x.includes('end_era_4_2'))){ output.push('  end_era_4_2 -> end_4'); }
+      }
+      
+      if(document.getElementById('chkLegacyResource').checked && document.querySelector('input[name="option"]:checked')?.value === 'dep'){
+        
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ types.special.add('coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ types.special.add('tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ types.special.add('relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ types.special.add('titan_gift'); }
+        const gems = [];
+        if(output.some(x => x.includes('statue_virtue'))){ gems.push('gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ gems.push('gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ gems.push('gem2'); }
+        if(gems.length > 0) { types.special.add(`   {node [label="gem"] ${gems.join(' ')}}`);}
+        
+        if(output.some(x => x.includes('plenty_valley'))){ types.resource.add('food'); }
+        if(output.some(x => x.includes('commercial_monopolies'))){ types.resource.add('gold'); }
+        
+        if(output.some(x => x.includes('theresmore_richest_nation'))){ output.push('  theresmore_richest_nation -> coin'); }
+        if(output.some(x => x.includes('mausoleum_gods'))){ output.push('  mausoleum_gods -> tome_wisdom'); }
+        if(output.some(x => x.includes('reactivate_portal'))){ output.push('  reactivate_portal -> relic'); }
+        if(output.some(x => x.includes('titan_gift_t'))){ output.push('  titan_gift_t -> titan_gift'); }
+        if(output.some(x => x.includes('statue_virtue'))){ output.push('  statue_virtue -> gem0'); }
+        if(output.some(x => x.includes('fortified_citadel'))){ output.push('  fortified_citadel -> gem1'); }
+        if(output.some(x => x.includes('holy_site'))){ output.push('  holy_site -> gem2'); }
+      }
+
+      return output;
+    }
+    
+    function groupData(input, filter, buildItem, prop){
+      const types = {
+        special: new Set(),
+        achievement: new Set(),
+        building: new Set(),
+        enemy: new Set(),
+        diplomacy: new Set(),
+        legacy: new Set(),
+        prayer: new Set(),
+        spell: new Set(),
+        resource: new Set(),
+        cap: new Set(),
+        stat: new Set(),
+        tech: new Set(),
+        unit: new Set()
+      };
+      
+      const nodes = input.filter(x => filter(x));
+
+      const ignoreTypes = ['modifier', 'population'];
+
+      const output = nodes.map(x => {
+        const type = x.type || getType(x.id);
+        if(types.hasOwnProperty(type)) { types[type].add(x.id); }
+        
+        let children = x[prop]?.filter(x => !ignoreTypes.includes(x.type));
+        if(document.querySelector('input[name="option"]:checked')?.value === 'cap'){
+          children = children.filter(x => x.type === 'cap');
+        }
+
+        children.forEach(y => {
+          const rType = y.type || getType(y.id);
+          if(types.hasOwnProperty(rType)) { types[rType].add(y.id); }
+          else if(rType.startsWith('diplomacy')) {types.diplomacy.add(y.id);}
+          else if(rType === 'army') {types.unit.add(y.id);}
+          else{console.warn('MISSING GROUP TYPE:', x, prop, y);}
+        })
+        
+        return buildItem(x, children);
+      }).flat().filter(x => x);
+
+      const extraNodes = extraGroupedData()
+      for(let node of extraNodes){
+        output.push(node);
+      }
+
+      output.push('}');
+      
+      return {types:types, lines:output};
+    }
+    
+    function hasDep(input){
+        return input.req?.length || parsedData.some(x => x.req?.some(y => y.id === input.id));
+    }
+    
+    function hasCap(input){
+      return Array.isArray(input.gen) && input.gen.some(x => x.type === 'cap');
+    }
+    
+    function hasLukGen(input){
+      return Array.isArray(input.gen) && input.gen.some(x => x.id === 'luck');
+    }
+    function hasLukRes(input){
+      const isLuk = Array.isArray(input.res) && input.res.some(x => x.id === 'luck');
+      const isLukChild = Array.isArray(input.req) &&
+          input.req.some(x => {
+            const parent = parsedData.find(y => y.id === x.id);
+            return parent && Array.isArray(parent.res) && parent.res.some(x => x.id === 'luck');
+          });
+          
+      return isLuk || isLukChild;
+    }
+    
+    function hasAch(input){
+      const isReq = dataSets.achievement.some(x => x.req?.some(y => y.type === input.type && y.id === input.id));
+      const isAch = input.type === 'achievement';
+      return isReq || isAch;
+      
+    }
+    
+    function buildVizItem(input, children){
+      const output = [];
+      const isNight = document.getElementById('chkNight').checked;
+
+      children.forEach(x => {
+          const label = x.value > 1 ? ` label = ${x.value}` : '';
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+          
+          const mode = document.querySelector('input[name="completeMode"]:checked')?.value;
+          if(mode === 'hide' && (completed.includes(input.id) || completed.includes(x.id))){
+            return null;
+          }
+
+          output.push(`  "${x.id}" -> "${input.id}" [${color}${label}]`)
+      });
+      return output;
+    }
+
+    function cleanGraphViz(dotContent){
+      const nodeDefRegex = /(?:\/\/[^\n]*\n)?\s*node\s*\[.*?\];\s*([\s\S]*?)(?=(?:\/\/|\w+\s*\[|\}))/g;
+      const edgeRegex = /"([^"]+)"\s*->\s*"([^"]+)"/g;
+    
+      const usedNodes = new Set();
+      let match;
+      
+      const pruned = pruneShallowNodes(dotContent);
+    
+      // Collect all nodes used in edges
+      while ((match = edgeRegex.exec(pruned)) !== null) {
+        usedNodes.add(match[1]);
+        usedNodes.add(match[2]);
+      }
+    
+      // Replace node blocks with filtered versions
+      const cleanedDot = pruned.replace(nodeDefRegex, (fullMatch, nodeBlock) => {
+        const nodeLines = nodeBlock
+          .split(";")
+          .map(line => line.trim())
+          .filter(Boolean);
+    
+        const keptNodes = nodeLines.filter(line => {
+          const nodeMatch = line.match(/"([^"]+)"/);
+          return nodeMatch && usedNodes.has(nodeMatch[1]);
+        });
+    
+        return fullMatch.replace(nodeBlock, keptNodes.join(";    ") + (keptNodes.length ? ";" : ""));
+      });
+      
+      return cleanedDot;
+      //return ;
+    }
+    function pruneShallowNodes(dotContent) {
+      const lines = dotContent.split('\n');
+      const output = [];
+      for(let line of lines){
+        if(line.includes('->')){
+          const parts = line.split(' ').filter(x => x);
+          const a = lines.filter(x => x.includes('->') && x.includes(parts[0]));
+          const b = lines.filter(x => x.includes('->') && x.includes(parts[2]));
+          if(a.length > 1 || b.length > 1){
+            output.push(line);
+          }
+        }
+        else{
+          output.push(line);
+        }
+      }
+      
+      return output.join('\n');
+    }
+
+    
+
+    function buildGraphViz(){
+      let output = null;
+      const selectedMode = document.querySelector('input[name="option"]:checked')?.value;
+      switch (selectedMode) {
+        case 'dep':
+          output = buildGraphVizDep();
+          break;
+        case 'cap':
+          output = buildGraphVizCap();
+          break;
+        case 'luk':
+          output = buildGraphVizLuk();
+          break;
+        case 'ach':
+          output = buildGraphVizAch();
+          break;
+        default:
+          alert('Unknown mode selected.');
+          return null;
+      }
+      
+      const isHide = document.querySelector('input[name="completeMode"]:checked')?.value === 'hide';
+      if(isHide && document.getElementById('chkPrune').checked){
+        output = cleanGraphViz(output);
+      }
+      
+      return output;
+    }
+
+    function buildGraphVizDep(){
+      const data = consolidateData();
+      const {types, lines} = groupData(data, hasDep, buildVizItem, 'req');
+      const header = graphVizHeader(types);
+
+      return header.concat(lines).join('\n');
+    }
+    
+    function buildGraphVizCap(){
+      const isNight = document.getElementById('chkNight').checked;
+
+      const data = consolidateData();
+
+      const {types, lines} = groupData(data, hasCap, buildVizItem, 'gen');
+
+      //find all the resources that can have the capacity increased.
+      const caps = new Set(parsedData.filter(x => Array.isArray(x.gen) && x.gen.length > 0 && x.gen.some(x => x.type === 'cap')).map(x => x.gen).flat().filter(x => x.type === 'cap').map(x => x.id).sort())
+      
+      types.resource.clear();
+      //add the resources in for funzies
+      for(const x of caps){
+        types.resource.add(x);
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+      }
+      const header = graphVizHeader(types);
+      
+
+      return header.concat(lines).join('\n');
+    }
+    
+    function buildGraphVizLuk(){
+      const data = consolidateData();
+      const resData = groupData(data, hasLukRes, buildVizItem, 'res');
+      const genData = groupData(data, hasLukGen, buildVizItem, 'gen');
+      const isNight = document.getElementById('chkNight').checked;
+
+      resData.types.resource.clear();
+      genData.types.resource.clear();
+      genData.types.cap.clear();
+      
+      const combinedTypes = {};
+      const allKeys = new Set([...Object.keys(resData.types), ...Object.keys(genData.types)]);
+    
+      for (const key of allKeys) {
+        const setA = resData.types[key] || new Set();
+        const setB = genData.types[key] || new Set();
+        combinedTypes[key] = new Set([...setA, ...setB]);
+      }
+      combinedTypes.resource.add('luck')
+
+      const lines = new Set();
+      
+      for(const key of Object.keys(resData.types)){
+        for(const id of resData.types[key]){
+          const datum = parsedData.find(x => x.id === id && x.res.some(y => y.id === 'luck'));
+          if(datum){
+            const value = datum.res.find(x => x.id === 'luck').value;
+            const label = value > 1 ? ` label = ${value}` : '';
+            const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+  
+            lines.add(`  luck -> ${id} [${color}${label}]`)
+          }
+          if(!datum){
+            const child = parsedData.find(x => x.id === id);
+            if(child.req.length !== 1){console.warn(`${id} req.length isn't 1, might need a refactor`);}
+            const req = child.req[0];
+            
+            const value = req.value;
+            const label = value > 1 ? ` label = ${value}` : '';
+            const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+  
+            lines.add(`  ${req.id} -> ${id} [${color}${label}]`)
+          }
+        }
+      }
+
+      for(const key of Object.keys(genData.types)){
+        for(const id of genData.types[key]){
+          const datum = parsedData.find(x => x.id === id && x.gen.some(y => y.id === 'luck'));
+
+          datum.req.forEach(x => {
+              const parent = parsedData.find(y => y.id === x.id);
+              combinedTypes[parent.type].add(parent.id);
+            
+              const label = x.value > 1 ? ` label = ${x.value}` : '';
+              const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+    
+              lines.add(`  ${x.id} -> ${id} [${color}${label}]`)
+          });
+
+          const value = datum.gen.find(x => x.id === 'luck').value;
+          const label = value > 1 ? ` label = ${value}` : '';
+          const color = `color="#${isNight?'a2a2a2':'000000'}"`;
+
+          lines.add(`  ${id} -> luck [${color}${label}]`)
+        }
+      }
+      
+      
+      lines.add('}');
+
+      const header = graphVizHeader(combinedTypes);
+      return header.concat([...lines]).join('\n');
+    }
+
+    function buildGraphVizAch(){
+      const data = consolidateData();
+      const {types, lines} = groupData(data, hasAch, buildVizItem, 'req');
+      console.log(data, types, lines);
+      
+      const header = graphVizHeader(types);
+
+      return header.concat(lines).join('\n');
+    }
+    
+//END DATA PROCESSING REGION
+//START HTML UI REGION
+    function toggleOutputs(hide){
+      document.getElementById('CLEAR').style.display = hide ? 'none' : 'block';
+      document.getElementById('parsed').style.display = hide ? 'none' : 'block';
+      document.getElementById('graphviz').style.display = hide ? 'none' : 'block';
+    }
+    
+    function removeClass(input){
+      document.getElementById('svgOutput').querySelector('svg').querySelectorAll(`.${input}`).forEach(n => n.classList.remove(input));
+    }
+    
+    function showDetails(input){
+      const div = document.getElementById('divDetails');
+      div.textContent = JSON.stringify(input, null, 2);
+      setTimeout(() => removeClass('foundNode'), 500);
+    }
+    
+    function updateZoomIndicator(zoom) {
+      const zoomDisplay = document.getElementById('zoomValue');
+      if (zoomDisplay) {
+        zoomDisplay.textContent = zoom.toFixed(2);
+      }
+    }
+    
+    function updatePanLoc(){
+      const loc = panZoomInstance.getPan();
+      
+      document.getElementById('curLocX').textContent = (loc.x * -1).toFixed(2);
+      document.getElementById('curLocY').textContent = (loc.y * -1).toFixed(2);
+    }
+    
+    function redo(){
+        document.getElementById('top').style.display = 'block';
+        document.getElementById('bottom').style.display = 'none';
+    }
+    
+    function CLEAR(){
+      document.getElementById("parsed").value = '';
+      document.getElementById("graphviz").value = '';
+    }
+//END HTML UI REGION
+//START SVG INTERACTION REGION
+    function findNodeByText(text) {
+      const svg = document.querySelector('#svgOutput svg');
+      const texts = svg.querySelectorAll('text');
+    
+      for (const t of texts) {
+        const b = t.textContent.trim();
+        
+        if (text === b) {
+          return t.closest('g');
+        }
+      }
+
+    }
+    
+    function highlightNode(node, className) {
+      if (node) {
+        const nodeGroup = node.closest('g.node');
+        const shape = nodeGroup.querySelector('polygon, ellipse');
+        if (shape) shape.classList.add(className);
+      }
+    }
+    
+    function getEdgeMapFromDot_old(input) {
+      const output = { children: {}, parents: {} };
+    
+      // Match lines like: nodeA -> nodeB
+      const edgeRegex = /^\s*([\w\d_]+)\s*->\s*([\w\d_]+)\b/gm;
+      let match;
+    
+      while ((match = edgeRegex.exec(input)) !== null) {
+        const parent = match[1];
+        const child = match[2];
+    
+        if (!output.children[parent]) output.children[parent] = [];
+        output.children[parent].push(child);
+    
+        if (!output.parents[child]) output.parents[child] = [];
+        output.parents[child].push(parent);
+      }
+    
+      return output;
+    }
+    
+    function getEdgeMapFromDot(input){
+      const output = {children: {}, parents: {} };
+      
+      const edgeRegex = /^\s*"?(?<parent>[\w\d_]+)"?\s*->\s*"?(?<child>[\w\d_]+)"?\b/gm;
+      let match;
+      
+      while ((match = edgeRegex.exec(input)) !== null) {
+        const parent = match.groups.parent;
+        const child = match.groups.child;
+      
+        if (!output.children[parent]) output.children[parent] = [];
+        output.children[parent].push(child);
+      
+        if (!output.parents[child]) output.parents[child] = [];
+        output.parents[child].push(parent);
+      }
+      
+      return output;
+    }
+    
+    function focusChildren(input) {
+      const children = parentsChildren.children[input];
+      if(!Array.isArray(children)){return;}
+      for(const child of children){
+        highlightNode(findNodeByText(child), 'focusChildren');
+      }
+
+    }
+    
+    function focusParents(input) {
+      const parents = parentsChildren.parents[input];
+      if(!Array.isArray(parents)){return;}
+      for(const parent of parents){
+        highlightNode(findNodeByText(parent), 'focusParents');
+      }
+    }
+    
+    function clearHighlights() {
+      ['focusNode', 'focusChildren', 'focusParents'].forEach(x => {
+        document.querySelectorAll('.' + x).forEach(el => el.classList.remove(x));
+      });
+    }
+
+    function focusNode(target){
+      //if the closest ancestor with an ID is graph0 don't do this.
+      let ancestorId = target.id;
+      let node = target;
+      while(!ancestorId && node.parentNode){
+        node = node.parentNode;
+        ancestorId = node.id;
+      }
+      if(ancestorId === 'graph0'){return;}
+
+      
+      clearHighlights();
+      highlightNode(target, 'focusNode');
+      focusChildren(target.textContent);
+      focusParents(target.textContent);
+      
+      const clickedText = target.textContent.trim();
+      showDetails(findItems(clickedText));
+    }
+
+    function svgPanBy(x, y){
+      const currentPan = panZoomInstance.getPan();
+      svgPan(currentPan.x + x, currentPan.y + y);
+    }
+
+    function svgPan_obd(x,y) {
+      const X = Math.min(0, x);
+      const Y = Math.min(0, y);
+    
+      panZoomInstance.pan({x: X, y: Y});
+      updatePanLoc();
+    }
+    
+    function svgPan(x, y) {
+      const svg = document.querySelector('#svgOutput svg');
+      if (!svg || !panZoomInstance) return;
+    
+      
+      const { width, height } = panZoomInstance.getSizes();
+      const container = svg.parentNode;
+      const zoom = panZoomInstance.getZoom();
+    
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+      
+      const scaledWidth = width * zoom;
+      const scaledHeight = height * zoom;
+    
+      // If content is smaller than container, center it
+      const minX = scaledWidth > containerWidth ? -scaledWidth + containerWidth : 0;
+      const minY = scaledHeight > containerHeight ? -scaledHeight + containerHeight : 0;
+    
+      const maxX = 0;
+      const maxY = 0;
+      
+      const clampedX = Math.max(minX, Math.min(maxX, x));
+      //const clampedX = Math.min(maxX, x);
+      const clampedY = Math.max(minY, Math.min(maxY, y));
+      //const clampedY = Math.min(maxY, y);
+    
+      panZoomInstance.pan({ x: clampedX, y: clampedY });
+      updatePanLoc();
+    }
+
+    function panToNode(nodeId) {
+      const svg = document.querySelector('#svgOutput svg');
+      const node = svg.querySelector(`#${CSS.escape(nodeId)}`);
+      if (!node) {
+        console.warn(`Node "${nodeId}" not found.`);
+        return;
+      }
+
+      removeClass('foundNode');
+      node.classList.add('foundNode');
+      setTimeout(() => {
+        node.classList.remove('foundNode');
+      }, 1000);
+      focusNode(node.getElementsByTagName('text')[0]);
+      
+
+      const viewport = panZoomInstance.getSizes();
+      const bbox = node.getBBox();
+      const ctm = node.getCTM();
+
+      const nodeY = ctm.d * (bbox.y + viewport.viewBox.height);
+      const nodeX = ctm.a * bbox.x;
+      
+      const offsetX = (svg.parentNode.clientWidth / 2) - (bbox.width / 2);
+      const offsetY = (svg.parentNode.clientHeight / 3) - (bbox.height / 2);
+      
+      const X = Math.min(0, -nodeX + offsetX);
+      const Y = Math.min(0, -nodeY + offsetY);
+    
+      svgPan(X,Y);
+    }
+
+    function findNodesByText(text) {
+      const svg = document.querySelector('#svgOutput svg');
+      const texts = svg.querySelectorAll('text');
+    
+      const matches = [];
+      const a = text.trim().toLowerCase().replaceAll(' ', '_');
+      for (const t of texts) {
+        const b = t.textContent.trim().toLowerCase();
+        
+        if (a.includes(b) || b.includes(a)) {
+          matches.push(t.closest('g'));
+        }
+      }
+    
+      const select = document.getElementById('nodeFinder');
+      select.innerHTML = ''; // Clear previous options
+      const option = document.createElement('option');
+      
+      option.textContent = "<- Select Node ->";
+      select.appendChild(option);
+
+      
+      matches.map(x => ({id: x.id, value: x.getElementsByTagName('text')[0].textContent}))
+          .sort((a,b) => a.value.localeCompare(b.value)).forEach(x => {
+        const option = document.createElement('option');
+        
+        option.value = x.id;
+        option.textContent = x.value;
+        select.appendChild(option);
+      });
+          
+      return matches;
+    }
+    
+    function resetZoom() {
+      panZoomInstance.reset();
+      panZoomInstance.fit();
+      panZoomInstance.center();
+      updateZoomIndicator(panZoomInstance.getZoom());
+    }
+
+    function adjustZoom(delta) {
+      const pan = panZoomInstance.getPan();
+      const oldZoom = panZoomInstance.getZoom();
+      const newZoom = oldZoom + delta;
+      if(newZoom > 2.05 || newZoom < .1){return;}
+      
+      panZoomInstance.zoom(newZoom);
+      svgPan(pan.x / oldZoom * newZoom, pan.y / oldZoom * newZoom);
+
+      updateZoomIndicator(panZoomInstance.getZoom());
+    }
+  
+    function setupZoom(svg) {
+      const panZoomInstance = svgPanZoom(svg, {
+        zoomEnabled: false,
+        panEnabled: true,
+        controlIconsEnabled: false,
+        fit: true,
+        center: true,
+        minZoom: 0.1,
+        maxZoom: 2,
+        zoomScaleSensitivity: 0.2,
+        beforeZoom: function(oldZoom, newZoom) {
+          updateZoomIndicator(newZoom);
+        }
+      });
+    
+      // Initial value
+      updateZoomIndicator(panZoomInstance.getZoom());
+      
+
+      if (window.panZoomInstance) {
+        window.panZoomInstance.destroy();
+      }
+      
+      window.panZoomInstance = panZoomInstance;
+    }
+    
+    function initZoom(){
+      const observer = new MutationObserver(() => {
+        const svg = document.querySelector('#svgOutput svg');
+        if (svg) {
+          setupZoom(svg);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.getElementById('svgOutput'), { childList: true });
+    }
+    
+    function downloadSVG() {
+      const svg = document.querySelector('#svgOutput svg');
+      if (!svg) return;
+      const serializer = new XMLSerializer();
+      const source = serializer.serializeToString(svg);
+      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'TM dependency graph.svg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+//END SVG INTERACTION REGION
+//START BUILD SVG REGION
+    function renderSVG(input){
+      const viz = new Viz();
+      const svgContainer = document.getElementById('svgOutput');
+      svgContainer.replaceChildren();
+  
+      viz.renderSVGElement(input)
+        .then(function(element) {
+          document.getElementById("svgOutput").appendChild(element);
+          
+          const svg = svgContainer.querySelector('svg');
+          
+          if (!svg) {
+            console.warn('Could not find SVG node.');
+            return;
+          }
+        
+          svg.addEventListener('click', (e) => {
+              focusNode(e.target);
+              document.getElementById('nodeFinder').selectedIndex = 0;
+            
+            });
+          
+          svg.addEventListener('mouseup', updatePanLoc);
+        })
+      .catch(function(error) {
+        console.error("Viz.js error:", error);
+      });
+      
+    }
+//END BUILD SVG REGION
+//START INIT/GOTIME REGION
+    function loadDefault(){
+      fetch('./default.txt')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load default.txt: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(content => {
+        buildDataSets(content);
+        //GOTIME();
+      })
+      .catch(error => {
+        console.error('Error loading default file:', error);
+      });
+    }
+    loadDefault();
+    
+    function GOTIME(){
+      const output = document.getElementById("graphviz");
+      output.value = '';
+
+      if(Object.keys(dataSets).length === 0){
+        alert('No Data. Select a file and check some section checkboxes.');
+        return;
+      }
+      const btn = document.getElementById('GOTIME');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+      
+      parseSaveData();
+      
+      let gv = buildGraphViz();
+      
+      parentsChildren = getEdgeMapFromDot(gv);
+      output.value = gv;
+
+      setTimeout(() => {
+        renderSVG(gv);
+        initZoom();
+        
+        btn.textContent = 'Generate Graph';
+        btn.disabled = false;
+        
+        document.getElementById('top').style.display = 'none';
+        document.getElementById('bottom').style.display = 'block';
+        setTimeout(() => {
+          const housing = findNodeByText('housing')?.id;
+          
+          if(housing){
+            panToNode(housing);
+          }
+          else{
+            panToNode('node1');
+            removeClass('foundNode');
+            removeClass('focusNode');
+            removeClass('focusChildren');
+            removeClass('focusParents');
+          }
+        }, 10)
+        
+      }, 10)
+
+    }
+//END INIT/GOTIME REGION
+//START EVENT LISTENER REGION
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => buildDataSets(e.target.result);
+      reader.readAsText(file);
+    });
+        
+    document.addEventListener('keydown', (e) => {
+      const active = document.activeElement;
+      const isTyping = (
+        active.tagName === 'INPUT' ||
+        active.tagName === 'TEXTAREA' ||
+        active.tagName === 'SELECT' ||
+        active.isContentEditable
+      );
+      
+      if (isTyping) return; // Skip pan logic if user is interacting with a form field
+      
+      const panStep = e.ctrlKey ? 1000 : 100; // pixels per key press
+
+      let dx = 0, dy = 0;
+      switch (e.key) {
+        case 'ArrowUp':    dy = panStep; break;
+        case 'ArrowDown':  dy = -panStep; break;
+        case 'ArrowLeft':  dx = panStep; break;
+        case 'ArrowRight': dx = -panStep; break;
+        default: return; // ignore other keys
+      }
+    
+      e.preventDefault(); // prevent page scroll
+      svgPanBy(dx, dy);
+    });
+    
+    document.getElementById('txtSearch').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // Optional: prevent form submission or page reload
+        findNodesByText(this.value);
+        document.getElementById('nodeFinder').focus();
+      }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      // Trigger on `/` key, but ignore if already typing in an input or textarea
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const active = document.activeElement;
+        const isTyping = active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable;
+    
+        if (!isTyping) {
+          e.preventDefault(); // Prevent typing the slash
+          document.getElementById('txtSearch')?.focus();
+        }
+      }
+    });
+
+//END EVENT LISTENER REGION
+  </script>
+</body>
+</html>

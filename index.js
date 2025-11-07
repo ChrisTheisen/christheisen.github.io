@@ -1,3 +1,7 @@
+//no excuse time to fight through the pollutants, time to leave your bubble, face the sun and try to do this. are you just another obstacle? . . . or the next step in the movement?
+//In good times and in bad times this too shall pass.
+//Every facet, every department of your mind, is to be programmed by you. And unless you assume your rightful responsibility, and begin to program your own mind, the world will program it for you.
+
 function setActive(input){
   const a = document.getElementsByClassName('content');
   Array.from(a).forEach(x => x.classList.toggle('hide', true));
