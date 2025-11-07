@@ -143,6 +143,11 @@ function toggleSetting(input){
 	        s[z] = c[z].valueAsNumber??15;
 			break;
 		}
+		case'e':{
+            c[z].value = enforceLimits(0,100,c[z].value);
+	        s[z] = c[z].valueAsNumber??10;
+			break;
+		}
 	}
 }
 
@@ -207,6 +212,9 @@ function resetSettings(){
 	game.settings.i = true;
 	game.settings.u = true;
 	game.settings.s = 100;
+	game.settings.n.b = 10;
+	game.settings.n.s = 15;
+	game.settings.e = 10;
 	game.settings.d.o = false;
 	game.settings.d.s = null;
 	game.settings.m.c = false;
@@ -252,6 +260,7 @@ function load() {
 	game.settings.s = data.s?.s ?? 100;
     game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
     game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 15;
+    game.settings.e = enforceLimits(0,100,data.s?.e) ?? 10;
 	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
@@ -341,6 +350,7 @@ function save() {
 	data.s.mz = game.settings.m.z?1:0;
 	data.s.nb = game.settings?.n?.b??10;
 	data.s.ns = game.settings?.n?.s??6;
+	data.s.e = game.settings?.e??10;
 	
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.

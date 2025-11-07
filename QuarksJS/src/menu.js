@@ -477,6 +477,12 @@ Menu.prototype.renderSettings = function(parent){
 	});
 	game.settings.content.s.n.s.value = game.settings.n.s;
 	
+	const ne = createUIElement({parent:parent, cssClasses:['settingsRow']});
+	game.settings.content.s.e = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ne, textContent:'Enhancement Scaling: '}),
+		title:'Enhancement scaling', onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:100, value:10}
+	});
+	game.settings.content.s.e.value = game.settings.e;
+	
 	createUIElement({type: 'hr', parent: parent});
 
 	const l = createUIElement({parent: parent, cssClasses:['settingsRow','pointer'], onclick:()=>{save(); this.route();}})

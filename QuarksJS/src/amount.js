@@ -121,7 +121,7 @@ Amount.prototype.update = function(){
 	this.content.wMO?.classList.toggle('hide', !this.MO);
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
-	
+
 	setElementText(this.content.Da, formatNumberFromSettings(this.Da.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3})));
 	setElementText(this.content.pg, formatNumberFromSettings(this.pg));
 	setElementText(this.content.g,  formatNumberFromSettings(this.g));
@@ -201,7 +201,7 @@ Amount.prototype.convert = function(){
 	}
 }
 
-Amount.prototype.add = function(input){
+Amount.prototype.add = function(input, update=true){
 	this.Da += input.Da;
 	this.pg += input.pg;
 	this.g += input.g;
@@ -211,6 +211,7 @@ Amount.prototype.add = function(input){
 	this.GM += input.GM;
 	this.CM += input.CM;
 	
+	if(!update){return this;}
 	this.update();
 	return this;
 }
@@ -227,7 +228,7 @@ Amount.prototype.subtract = function(input){
 	this.update();
 	return this;
 }
-Amount.prototype.scale = function(input){
+Amount.prototype.scale = function(input, update=true){
 	this.Da = Math.floor(1000 * this.Da * input) / 1000;
 	this.pg *= input;
 	this.g *= input;
@@ -237,6 +238,7 @@ Amount.prototype.scale = function(input){
 	this.GM *= input;
 	this.CM *= input;
 	
+	if(!update){return this;}
 	this.update();
 	return this;
 }
