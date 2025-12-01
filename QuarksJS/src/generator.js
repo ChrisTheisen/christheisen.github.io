@@ -217,7 +217,7 @@ Generator.prototype.autoUpgrade = function(){
 	if(this.a && this.canUpgrade() >= 2){ this.upgrade(); }
 }
 Generator.prototype.generateAmount = function() {
-	//wtf is this nonsense; could probably be cleaner
+	//gets the maximum amount that can be generated based on amount owned, recipe cost in a or b, generator flow setpoint.
 	const values = [
 		...this.i.map(x => x.a===0?Number.POSITIVE_INFINITY:x.inv.a/x.a),
 		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
