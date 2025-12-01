@@ -75,12 +75,13 @@ Enhancements.prototype.setPowers = function(){
 Enhancements.prototype.setPowerTGB = function(){
 	const tm = this.totalGenerated.magnitude();
 	const pct = this.totalGenerated[tm.s]/tm.c;
-	const baseBonus = tm.emb + (pct * (tm.emr - tm.emb));
+	const es = game.settings.e / 10;
+	const baseBonus = (tm.emb + (pct * (tm.emr - tm.emb))) ** es;
 	
 	//console.log(tm, baseBonus);
 
 	for(let i=0;i<this.powerTGB.length; i++){
-		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 24));
+		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 4));
 	}
 }
 

@@ -18,14 +18,14 @@
 const MAX_INVENTORY = 2**50;
 
 const MassUnits = {
-	Da:{i: 0, s:'Da',n:'Dalton',		c:602217364335,		emb:1,emr:8},
-	pg:{i: 1, s:'pg',n:'Picogram',		c:1000000000000,	emb:8,emr:16},
-	g: {i: 2, s:'g', n:'Gram',			c:1000000000000,	emb:16,emr:32},
-	Tg:{i: 3, s:'Tg',n:'Teragram',		c:1000000000000,	emb:48,emr:64},
-	Yg:{i: 4, s:'Yg',n:'Yattogram',		c:1988000000,		emb:144,emr:128},
-	MO:{i: 5, s:'M☉',n:'Solar Mass',	c:1000000000000,	emb:432,emr:256},
-	GM:{i: 6, s:'GM',n:'Galactic Mass',	c:1000000000000,	emb:1296,emr:512},
-	CM:{i: 7, s:'CM',n:'Cosmic Mass',	c:Number.MAX_VALUE,	emb:3888,emr:1024}
+	Da:{i: 0, s:'Da',n:'Dalton',		c:602217364335,		emb:1,emr:4},
+	pg:{i: 1, s:'pg',n:'Picogram',		c:1000000000000,	emb:4,emr:16},
+	g: {i: 2, s:'g', n:'Gram',			c:1000000000000,	emb:16,emr:64},
+	Tg:{i: 3, s:'Tg',n:'Teragram',		c:1000000000000,	emb:64,emr:256},
+	Yg:{i: 4, s:'Yg',n:'Yattogram',		c:1988000000,		emb:256,emr:1024},
+	MO:{i: 5, s:'M☉',n:'Solar Mass',	c:1000000000000,	emb:1024,emr:4096},
+	GM:{i: 6, s:'GM',n:'Galactic Mass',	c:1000000000000,	emb:4096,emr:16384},
+	CM:{i: 7, s:'CM',n:'Cosmic Mass',	c:Number.MAX_VALUE,	emb:16384,emr:65536}
 }
 
 function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})){
