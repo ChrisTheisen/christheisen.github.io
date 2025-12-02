@@ -5,12 +5,13 @@ function countSignificantDigits(input) {
     let foundNonZero = false;
 
     for (const char of numberStr) {
-        if (char === '.' || char === ';') { continue; }
+        //don't count negative, decimal or ;
+        if (char === '.' || char === '-') { continue; }
         if (!foundNonZero && char !== '0') {
             foundNonZero = true;
             significantDigits++;
         } 
-        else {
+        else if (foundNonZero){
             significantDigits++;
         }
     }
@@ -60,8 +61,8 @@ function toSigFigsFraction(input, sigFigs, decimal){
 
 function toSigFigsInt(input, sigFigs, grouper){
     const int = input.slice(0,sigFigs).replace(/(.)(?=(.{3})+$)/g, `$1${grouper}`);
-    const frac = null;
-    const shift = input.length - int.length;
+    //const shift = input.length - int.length;
+    const shift = input.length - sigFigs;
 
     const output = {b:`${int}`, s:shift};
     return output;
@@ -112,31 +113,30 @@ function toDozenal(input){
 }
 function toBase64(input, sigFigs=15){
     const digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
-    let result = '';
     let frac = input % 1;
 
+    const parts = [];
     while (true) {
         //use a bitwise mask to mod64 and prepend char
-        result = digits[input & 0x3f] + result;
-        input >>>= 6;// unsigned /64 and floor
+        parts.push(digits[input & 0x3f]);
+        input >>>= 6;
         if(input===0){break;}//more efficient than in the while for some reason
     }
 
     if(frac > 0){
-        result += '.';
+        parts.push('.');
         for(let i=0;i< sigFigs && frac>0;i++){
             frac *= 64;
-            result += digits[Math.floor(frac)];
+            parts.push(digits[Math.floor(frac)]);
             frac %= 1;
         }
     }
-
-    return result;
+    return parts.reverse().join('');
 }
 
 function toBase(input, base, sigFigs){
     if(base === 12){return toDozenal(Number(input));}
-    if(base === 64){return toBase64(Number(input, sigFigs));}
+    if(base === 64){return toBase64(Number(input), sigFigs);}
     if(base < 2 || base > 36) { throw new RangeError("base must be between 2 and 36"); }
     return input.toString(base).toUpperCase();
 }
@@ -153,8 +153,8 @@ function formatNumber(input, base, sigFigs){
     return `${result.b} <<${result.s}`;
 }
 
-function formatNumberFromSettings(input){
-    const base = game.settings.n.b;
-    const sigFigs = game.settings.n.s;
+function formatNumberFromSettings(input, settings = {b: 10, s: 15}){
+    const base = settings.b ?? 10;
+    const sigFigs = settings.s ?? 15;
     return formatNumber(input.toString(), base, sigFigs);
 }

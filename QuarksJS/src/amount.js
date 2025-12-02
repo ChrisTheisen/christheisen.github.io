@@ -165,12 +165,14 @@ Amount.prototype.convert = function(){
 	const units = Object.entries(MassUnits).map(u => ({key:u[0], value:u[1]}));
 
 	// Convert fractional parts down
-	for (let i = 1; i < units.length - 1; i++) {
+	for (let i = 0; i < units.length - 1; i++) {
 		const smaller = Object.values(units).find(u => u.value.i === i);
 		const larger = Object.values(units).find(u => u.value.i === i + 1);
-		const fractional = this[smaller.key] % 1;
-		this[larger.key] += fractional * smaller.value.c;
-		this[smaller.key] = Math.floor(this[smaller.key]);
+		const fractional = this[larger.key] % 1;
+		if(fractional > 0){
+			this[smaller.key] += fractional * smaller.value.c;
+			this[larger.key] = Math.floor(this[larger.key]);
+		}
 	}
 	this.pg = Math.floor(this.pg);
 
@@ -185,16 +187,11 @@ Amount.prototype.convert = function(){
 		}
 	}
 
-	//TODO: handle negative values
-	if(this.toBigInt() < 0){
-		console.warn('Negative amount', this);
-		return;
-	}
-
+	//Convert down when negative
 	for (let i = 0; i < units.length - 1; i++) {
 		const smaller = Object.values(units).find(u => u.value.i === i);
 		const larger = Object.values(units).find(u => u.value.i === i + 1);
-		while(this[smaller.key] < 0) {
+		while(this[smaller.key] < 0 && this[larger.key] !== 0) {
 			this[larger.key]--;
 			this[smaller.key] += smaller.value.c;
 		}
@@ -273,7 +270,33 @@ Amount.prototype.estDivide = function(input){
 	}
 }
 
-Amount.prototype.toBigInt = function(input){
+Amount.prototype.isNegative = function(){
+	if(this.CM < 0){return true;}
+	if(this.CM > 0){return false;}
+
+	if(this.GM < 0){return true;}
+	if(this.GM > 0){return false;}
+
+	if(this.MO < 0){return true;}
+	if(this.MO > 0){return false;}
+
+	if(this.Yg < 0){return true;}
+	if(this.Yg > 0){return false;}
+
+	if(this.Tg < 0){return true;}
+	if(this.Tg > 0){return false;}
+
+	if(this.g < 0){return true;}
+	if(this.g > 0){return false;}
+
+	if(this.pg < 0){return true;}
+	if(this.pg > 0){return false;}
+
+	if(this.Da < 0){return true;}
+	return false;
+}
+
+Amount.prototype.toBigInt = function(){
 	let output = BigInt(Math.floor(this.CM));
 	
 	output *= BigInt(MassUnits.GM.c);
