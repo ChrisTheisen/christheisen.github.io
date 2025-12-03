@@ -1,0 +1,39 @@
+
+body{
+    background-color: lightcyan;
+    font-family: sans-serif;
+}
+
+.right{
+    float:right;
+    line-height: 30px;
+    width: 35px;
+}
+
+.alarms{
+    margin: auto;
+    width: 50%;
+}
+
+.alarm{
+    background-color: white;
+}
+
+.soon{
+    color: red;
+}
+
+.past{
+    color: lightgrey;
+}
+
+.center{
+    margin:auto;
+    width: 25%;
+}
+
+.fatness{
+    margin:auto;
+    font-size:48pt;
+    width: 500px;
+}
