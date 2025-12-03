@@ -16,7 +16,8 @@ body{
 }
 
 .alarm{
-    background-color: white;
+    border: solid 1px lightgrey;
+    text-align: center;
 }
 
 .soon{
@@ -36,4 +37,10 @@ body{
     margin:auto;
     font-size:48pt;
     width: 500px;
+}
+
+.footer{
+    position: fixed;
+    bottom: 5px;
+    color: lightgrey;
 }
