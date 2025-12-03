@@ -23,10 +23,10 @@ TODO:
 
     -Don't need to create "Total Mass" element; every cycle
 
-	Number Settings
+	Number Settings: formatNumberFromSettings(input, game.settings.n)
 		Base
 			-Find all numbers (modify fixed text?)
-				-Help(in Data)
+				-Help(in Data) - just ignore these
 					-Create
 						-Generator examples
 						-Unlock item's used in
@@ -59,11 +59,6 @@ TODO:
 	Setting for 'catchup speed'?
 		-Default = 100
 		-Effects game.js line 64
-
-Balance/playtest Enhance
-	-Total Mass Bonus
-		-scale based on item mass magnitude
-
 
 
 cotton 90% cellulose

@@ -42,8 +42,9 @@ Inventory.prototype.renderManage = function(parent){
 	});
 }
 
-Inventory.prototype.update = function(){
-	Object.values(this.children).forEach(child => child.update());
+//in some cases we don't update the UI; foce ensures the UI will update.
+Inventory.prototype.update = function(force = false){
+	Object.values(this.children).forEach(child => child.update(force));
 }
 
 function InventoryItem(input){
@@ -455,7 +456,7 @@ InventoryItem.prototype.isDisplayed = function(){
 	return game.menu.isDisplayed(this.f.id);
 }
 
-InventoryItem.prototype.update = function(){
+InventoryItem.prototype.update = function(force = false){
 	//update the UI elements that exist for this inventory item
 	const isUnlocked = this.isUnlocked();
 	
@@ -522,10 +523,14 @@ InventoryItem.prototype.update = function(){
 			const f7 = game.settings.m.y && demand < created;
 			const f8 = game.settings.m.z && demand < used;
 
+			if(!force){
+				return;
+			}
+
 			const hide = f0||f1||f2||f3||f4||f5||f6||f7||f8;
 			this.content.m?.classList.toggle('hide', hide);
 			if(hide){return;}
-			
+
 			if(getUIElement("manageModal").open && this.f.id === game.manageModalItem){
 				this.g.forEach(x => x.update());
 				this.i.forEach(x => x.update());

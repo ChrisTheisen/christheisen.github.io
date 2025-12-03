@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>DayTimer</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+        <h1>Day Timer</h1>
+        <p>Select the time and an alarm will sound and page will blink.</p>
+        <hr/>
+        <div id='inputs' class='center'>
+            <input type="time" id="time" value="10:00" required/>
+            <input id="label" required/>
+            <button id='addTimer' onclick="addTimer()">+</button>
+
+        </div>
+        <hr/>
+        <div id='currentTime' class='fatness'>
+            <span id='hr'></span>
+            :
+            <span id='min'></span>
+            :
+            <span id='sec'></span>
+            .
+            <span id='ms'></span>
+        </div>
+        <hr/>
+        <div id='alarms' class='alarms'></div>
+		<script src="timer.js"></script>
+	</body>
+</html>

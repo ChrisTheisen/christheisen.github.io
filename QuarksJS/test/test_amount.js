@@ -65,22 +65,34 @@ testCase('Unit Conversion Up', () => {
 testCase('Unit Conversion Down', () => {
     const amount = new Amount({ Da: -1 });
     amount.convert();
-    if (amount.Da !== MassUnits.Da.c - 1 || amount.pg !== -1) {
+    if (amount.Da !== -1 || amount.pg !== 0) {
         const error = new Error('Unit conversion down failed');
-        error.expected = `Da: ${MassUnits.Da.c - 1}, pg: -1`;
+        error.expected = `Da: -1, pg: 0`;
         error.received = `Da: ${amount.Da}, pg: ${amount.pg}`;
         throw error;
     }
 });
 
-testCase('Fractional Conversion', () => {
-    const amount = new Amount({ Da: 1.5 });
+testCase('Unit Conversion Down', () => {
+    const amount = new Amount({ Da: -1, pg: 2 });
     amount.convert();
-    const expectedPg = Math.floor(0.5 * MassUnits.Da.c);
-    if (amount.Da !== 1 || Math.floor(amount.pg) !== expectedPg) {
+    if (amount.Da !== MassUnits.Da.c - 1 || amount.pg !== 1) {
+        const error = new Error('Unit conversion down failed');
+        error.expected = `Da: ${MassUnits.Da.c - 1}, pg: 1`;
+        error.received = `Da: ${amount.Da}, pg: ${amount.pg}`;
+        throw error;
+    }
+});
+
+
+testCase('Fractional Conversion', () => {
+    const amount = new Amount({ pg: 1.5 });
+    amount.convert();
+    const expectedDa = 0.5 * MassUnits.Da.c;
+    if (amount.Da !== expectedDa || amount.pg !== 1) {
         const error = new Error('Fractional conversion failed');
-        error.expected = `Da: 1, pg: ${expectedPg}`;
-        error.received = `Da: ${amount.Da}, pg: ${Math.floor(amount.pg)}`;
+        error.expected = `Da: ${expectedDa}, pg: 1`;
+        error.received = `Da: ${amount.Da}, pg: ${amount.pg}`;
         throw error;
     }
 });

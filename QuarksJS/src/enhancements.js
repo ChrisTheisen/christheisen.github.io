@@ -81,7 +81,7 @@ Enhancements.prototype.setPowerTGB = function(){
 	//console.log(tm, baseBonus);
 
 	for(let i=0;i<this.powerTGB.length; i++){
-		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 4));
+		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 8));
 	}
 }
 
@@ -183,9 +183,9 @@ Enhancements.prototype.render = function(parent){
 	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowD = createUIElement({parent: wrapper, cssClasses:['row']});
 	
-	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Multiplies all generator output while keeping input the same.', onclick:() => this.buyG() });
-	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Multiply the output from button clicks while keeping input the same.', onclick:() => this.buyM() });
-	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell', 'help'], textContent:'++', title:'Reduce generator upgrade cost.', onclick:() => this.buyD() });
+	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Multiplies all generator output while keeping input the same.', onclick:() => this.buyG() });
+	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Multiply the output from button clicks while keeping input the same.', onclick:() => this.buyM() });
+	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Reduce generator upgrade cost.', onclick:() => this.buyD() });
 	
 	this.content.g.l = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.m.l = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[Level]' });
