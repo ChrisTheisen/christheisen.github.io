@@ -7,6 +7,7 @@ const min = document.getElementById('min');
 const sec = document.getElementById('sec');
 const ms = document.getElementById('ms');
 let d = new Date();
+const beepContext = new AudioContext();
 
 const songlector = document.getElementById('song');
 for(let i=0;i<Songs.length;i++){
@@ -42,7 +43,6 @@ class Timer{
             console.log('Remove:', this)
             this.div.remove();
             const index = timers.findIndex(x => x.label === this.label && x.time === this.time)
-            stopper();
             delTimer(index)}
         );
         this.div.title = 'SONG: '+this.song.n;
@@ -92,20 +92,13 @@ class Timer{
         }
 
         if(this.isNow()){
-            console.log('GO TIME!');
             this.isSonging = true;
             beeper(this.song);
         }
     }
-
-
 }
 
 function beeper(song) {
-    const beepContext = new AudioContext();
-    const gainA = new GainNode(beepContext);
-    const gainB = new GainNode(beepContext);
-
     //need the same length
     while(song.g.length < song.c.length){song.g.push(1);}
     while(song.g.length > song.c.length){song.g.pop();}
@@ -127,17 +120,15 @@ function beeper(song) {
         beep.connect(gain);
 
         x.forEach(y => {
-            beep.frequency.setValueAtTime(y.f, next);
+            const G = song.g[i] * (y.g ?? 1);//default to channel gain.
+            const F = y.f ?? C4;//default to middle C.
+            gain.gain.setValueAtTime(G, next);
+            beep.frequency.setValueAtTime(F, next);
             next += y.t;
         });
         beep.start();
         beep.stop(next);
     };
-}
-
-function stopper(){
-    audio.pause();
-    audio.currentTime = 0;
 }
 
 function addTimer() {
