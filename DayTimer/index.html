@@ -5,6 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>DayTimer</title>
 		<link rel="stylesheet" href="style.css">
+		<script src="notes.js"></script>
+		<script src="songs.js"></script>
 	</head>
 	<body>
         <h1>Day Timer</h1>
@@ -13,6 +15,7 @@
         <div id='inputs' class='center'>
             <input type="time" id="time" value="10:00" required/>
             <input id="label" required/>
+            <select id='song'></select>
             <button id='addTimer' onclick="addTimer()">+</button>
 
         </div>

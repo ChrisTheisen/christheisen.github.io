@@ -32,12 +32,14 @@ body{
 .center{
     margin:auto;
     width: 25%;
+    white-space: nowrap;
 }
 
 .fatness{
     margin:auto;
     font-size:48pt;
     width: 500px;
+    white-space: nowrap;
 }
 
 .footer{
