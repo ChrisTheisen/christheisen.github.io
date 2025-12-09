@@ -76,6 +76,12 @@ class Timer{
         const nowish = d - this.createdAt;
         const progress = nowish / duration;
 
+        const s = Math.floor(this.until() / 1000);
+        const HH = Math.floor(s / 3600).toString().padStart(2,'0');
+        const mm = Math.floor((s%3600)/ 60).toString().padStart(2,'0');
+        const SS = (s%60).toString().padStart(2,'0');
+        this.div.title = `Song: ${this.song.n} \u000dUntil: ${HH}:${mm}:${SS}`;
+
         // Update background color progress
         const progressPercent = Math.min(Math.max(progress * 100, 0), 100);
         this.div.style.background = `linear-gradient(to right, lightskyblue ${progressPercent}%, transparent ${progressPercent}%)`;
