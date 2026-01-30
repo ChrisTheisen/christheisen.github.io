@@ -1,7 +1,10 @@
-
 body{
     background-color: lightcyan;
     font-family: sans-serif;
+}
+
+h1{
+    text-align: center;
 }
 
 .right{
@@ -14,12 +17,12 @@ body{
 .alarms{
     margin: auto;
     width: 50%;
-    min-height: 45px;
 }
 
 .alarm{
     border: solid 1px lightgrey;
     text-align: center;
+    min-height: 45px;
 }
 
 .soon{
