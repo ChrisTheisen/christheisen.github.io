@@ -287,34 +287,30 @@ Enhancements.prototype.update = function(){
 	const cm = this.costM();
 	const cd = this.costD();
 
-	const pg = this.powerG[0].toFixed(5);
-	const pm = this.powerM.toFixed(5);
-	const pd = this.powerD.toFixed(5);
-
-	setElementText(this.content?.d?.a, cd.a);
+	setElementText(this.content?.d?.a, formatNumberFromSettings(cd.a));
 	this.content?.d?.b.classList.toggle('disabled', cd.inv.a < cd.a);
-	setElementText(this.content?.d?.h, Math.floor(cd.inv.a));
-	setElementText(this.content?.d?.l, this.d);
+	setElementText(this.content?.d?.h, formatNumberFromSettings(Math.floor(cd.inv.a)));
+	setElementText(this.content?.d?.l, formatNumberFromSettings(this.d));
 	setElementText(this.content?.d?.n, cd.inv.f.n);	
-	setElementText(this.content?.d?.p, pd);
+	setElementText(this.content?.d?.p, formatNumberFromSettings(this.powerD));
 
-	setElementText(this.content?.g?.a, cg.a);
+	setElementText(this.content?.g?.a, formatNumberFromSettings(cg.a));
 	this.content?.g?.b.classList.toggle('disabled', cg.inv.a < cg.a);
-	setElementText(this.content?.g?.h, Math.floor(cg.inv.a));
-	setElementText(this.content?.g?.l, this.g);
+	setElementText(this.content?.g?.h, formatNumberFromSettings(Math.floor(cg.inv.a)));
+	setElementText(this.content?.g?.l, formatNumberFromSettings(this.g));
 	setElementText(this.content?.g?.n, cg.inv.f.n);	
-	setElementText(this.content?.g?.p, pg);
+	setElementText(this.content?.g?.p, formatNumberFromSettings(this.powerG[0]));
 	
-	setElementText(this.content?.m?.a, cm.a);
+	setElementText(this.content?.m?.a, formatNumberFromSettings(cm.a));
 	this.content?.m?.b.classList.toggle('disabled', cm.inv.a < cm.a);
-	setElementText(this.content?.m?.h, Math.floor(cm.inv.a));
-	setElementText(this.content?.m?.l, this.m);
+	setElementText(this.content?.m?.h, formatNumberFromSettings(Math.floor(cm.inv.a)));
+	setElementText(this.content?.m?.l, formatNumberFromSettings(this.m));
 	setElementText(this.content?.m?.n, cm.inv.f.n);
-	setElementText(this.content?.m?.p, pm);
+	setElementText(this.content?.m?.p, formatNumberFromSettings(this.powerM));
 	
 	for(let i=0;i<this.powerTGB.length;i++){
-		setElementText(this.content?.t[`b${i}`], this.powerTGB[i].toFixed(8));
-		setElementText(this.content?.t[`g${i}`], (this.powerTGB[i] * this.powerG[i]).toFixed(8));
-		setElementText(this.content?.t[`m${i}`], (this.powerTGB[i] * this.powerG[i]* this.powerM).toFixed(8));
+		setElementText(this.content?.t[`b${i}`], formatNumberFromSettings(this.powerTGB[i]));
+		setElementText(this.content?.t[`g${i}`], formatNumberFromSettings(this.powerTGB[i] * this.powerG[i]));
+		setElementText(this.content?.t[`m${i}`], formatNumberFromSettings(this.powerTGB[i] * this.powerG[i] * this.powerM));
 	}
 }

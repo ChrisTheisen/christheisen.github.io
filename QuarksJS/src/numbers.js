@@ -143,6 +143,7 @@ function toBase(input, base, sigFigs){
 
 function formatNumber(input, base, sigFigs){
     if(isNaN(Number(input)) || !input || input > Number.MAX_SAFE_INTEGER){return 'N/A';}
+    input = Number(input);
     if(Number(input) === 0){return '0';}
 
     const str = base === 10 ? input.toString() : toBase(input, base);
@@ -153,8 +154,8 @@ function formatNumber(input, base, sigFigs){
     return `${result.b} <<${result.s}`;
 }
 
-function formatNumberFromSettings(input, settings = {b: 10, s: 15}){
-    const base = settings.b ?? 10;
-    const sigFigs = settings.s ?? 15;
+function formatNumberFromSettings(input){
+    const base = game?.settings?.n?.b ?? 10;
+    const sigFigs = game?.settings?.n?.s ?? 15;
     return formatNumber(input.toString(), base, sigFigs);
 }
