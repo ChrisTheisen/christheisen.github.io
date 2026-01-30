@@ -237,7 +237,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 		parent:c1, style:{width:'90%'},
 		onchange:(event)=>{ 
 			this.v.a = parseInt(event.target.value);
-			setElementText(this.content.av, this.v.a);
+			setElementText(this.content.av, formatNumberFromSettings(this.v.a));
 			this.v.b.scale(0).add(this.f.m).scale(this.v.a);
 		}
 	});
@@ -256,7 +256,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 			this.b.update();
 			this.v.b.update();
 			this.content.au.value = 0;
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
+			this.content.a.forEach(x => setElementText(x, formatNumberFromSettings(Math.floor(this.a))));
 		}
 	});
 	
@@ -267,7 +267,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 		parent:c1, style:{width:'90%'},
 		onchange:(event)=>{ 
 			this.w.a = parseInt(event.target.value);
-			setElementText(this.content.ax, this.w.a);
+			setElementText(this.content.ax, formatNumberFromSettings(this.w.a));
 			this.w.b.scale(0).add(this.f.m).scale(this.w.a);
 		}
 	});
@@ -286,7 +286,7 @@ InventoryItem.prototype.renderBulkStorage = function(parent){
 			this.b.update();
 			this.w.b.update();
 			this.content.aw.value = 0;
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
+			this.content.a.forEach(x => setElementText(x, formatNumberFromSettings(Math.floor(this.a))));
 		}
 	});
 	
@@ -391,8 +391,10 @@ InventoryItem.prototype.renderManageModal = function(){
 			dr.forEach(x => {
 				x.row.classList.toggle('hide', enforceLimit.checked && x.g.f <= value);
 			});
+			setElementText(limitLabel, formatNumberFromSettings(value));
 		}
 	});
+	const limitLabel = createUIElement({type:'span', parent:fWrapper, title:'Base converted flow', textContent:formatNumberFromSettings(0) });
 
 	
 	if(this.i.length){
@@ -414,10 +416,12 @@ InventoryItem.prototype.renderManageModal = function(){
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:igr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
-			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:igr}),
+			x.content.f = createUIElement({type:'input', parent:createUIElement({type:'td', parent:igr}),
 				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
-				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
+				attr:{type:'number'}, onchange:(e) => { x.setFlow(e.target.value); setElementText(x.content.fl, formatNumberFromSettings(x.f)); }});
 			x.content.f.value = x.f;
+
+			x.content.fl = createUIElement({ type:'span', parent:createUIElement({type:'td', parent:igr}), title:'Base converted flow', textContent:formatNumberFromSettings(x.f) });
 		});
 	}
 	
@@ -440,10 +444,12 @@ InventoryItem.prototype.renderManageModal = function(){
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:ogr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
-			x.content.f = createUIElement({type:'input', parent:createUIElement({typs:'td', parent:ogr}),
+			x.content.f = createUIElement({type:'input', parent:createUIElement({type:'td', parent:ogr}),
 				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
-				attr:{type:'number'}, onchange:(e) => x.setFlow(e.target.value)});
+				attr:{type:'number'}, onchange:(e) => { x.setFlow(e.target.value); setElementText(x.content.fl, formatNumberFromSettings(x.f)); }});
 			x.content.f.value = x.f;
+
+			x.content.fl = createUIElement({ type:'span', parent:createUIElement({type:'td', parent:ogr}), title:'Base converted flow', textContent:formatNumberFromSettings(x.f) });
 		});
 	}
 	
@@ -463,7 +469,7 @@ InventoryItem.prototype.update = function(force = false){
 	switch(game.menu.current){
 		case 'M_0': {//Create
 			//These can be used in component sections of other elements
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a).toLocaleString()));
+			this.content.a.forEach(x => setElementText(x, formatNumberFromSettings(Math.floor(this.a))));
 			if(!this.isDisplayed() || !isUnlocked){return;}
 
 			this.g.forEach(x => x.update());
@@ -487,8 +493,9 @@ InventoryItem.prototype.update = function(force = false){
 			this.v.a = parseInt(this.content.au.value);
 			this.w.a = parseInt(this.content.aw.value);
 			
-			setElementText(this.content.av, this.v.a);
-			setElementText(this.content.ax, this.w.a);
+			//Bulk storage transfer amount labels
+			setElementText(this.content.av, formatNumberFromSettings(this.v.a));
+			setElementText(this.content.ax, formatNumberFromSettings(this.w.a));
 			this.b.update();
 			this.v.b.update();
 			this.w.b.update();
@@ -536,10 +543,10 @@ InventoryItem.prototype.update = function(force = false){
 				this.i.forEach(x => x.update());
 			}
 
-			this.content.a.forEach(x => setElementText(x, Math.floor(this.a)));
-			setElementText(this.content.z, demand);
-			setElementText(this.content.n, Math.floor(created));
-			setElementText(this.content.q, used);
+			this.content.a.forEach(x => setElementText(x, formatNumberFromSettings(Math.floor(this.a))));
+			setElementText(this.content.z, formatNumberFromSettings(demand));
+			setElementText(this.content.n, formatNumberFromSettings(Math.floor(created)));
+			setElementText(this.content.q, formatNumberFromSettings(used));
 
 			break;
 		}

@@ -6,7 +6,7 @@ function Generator({id, i=[], o=[]}){
 
 	this.a = false;//auto upgrade
 	this.f = 0;//flow
-	this.l = 0;
+	this.l = 0;//level
 
 	this.content = {
 		a:null,//auto-upgrade
@@ -14,6 +14,7 @@ function Generator({id, i=[], o=[]}){
 		c:null,//upgrade cost display
 		e:null,//enabled
 		f:null,//flow: create, manage
+		fl:null,//flow label for converting base
 		i:{},//inputs highlight when cannot afford
 		l:null,//level display
 		m:null,//max flow display
@@ -102,7 +103,8 @@ Generator.prototype.render0 = function(parent){
 	this.renderOutput(createUIElement({parent: parent, cssClasses:['cell', 'nowrap']}));
 	
 	//flow
-	this.content.f = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}),
+	const flowParent = createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}});
+	this.content.f = createUIElement({type:'input', parent:flowParent,
 		cssClasses:['flow', 'help', 'genFlow'], title:'Target Flow is the desired amount of this item to generate every tick.', 
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
 	this.content.f.onkeyup = (e) => { 
@@ -113,6 +115,8 @@ Generator.prototype.render0 = function(parent){
 		this.setFlow(value); 
 	}
 	this.content.f.value = this.f;
+
+	this.content.fl = createUIElement({type:'span', parent:flowParent, title:'Base converted flow' });
 }
 Generator.prototype.render1 = function(parent){
 	//upgrade
@@ -154,16 +158,24 @@ Generator.prototype.update = function(){
 		this.content.b.disabled=!canCreate; 
 		this.content.b.classList.toggle('disabled', !canCreate);
 	}
-	setElementText(this.content.c, uc);
+	setElementText(this.content.c, formatNumberFromSettings(uc));
 	if(this.content.e){this.content.e.checked = this.e;}
 	if(this.content.f){
 		this.content.f.disabled = this.l === 0;;
 	}
-	setElementText(this.content.l, this.l);
-	setElementText(this.content.m, mf);
+	setElementText(this.content.l, formatNumberFromSettings(this.l));
+	setElementText(this.content.m, formatNumberFromSettings(mf));
 	if(this.content.u){
 		this.content.u.disabled = !canUpgrade;
 		this.content.u.classList.toggle('disabled', !canUpgrade);
+	}
+
+	if(game?.settings?.n?.b == 10){//hide flow label if base 10.
+		this.content.fl?.classList.add('hide');
+	}
+	else{
+		this.content.fl?.classList.remove('hide');
+		setElementText(this.content.fl, formatNumberFromSettings(this.f));
 	}
 }
 

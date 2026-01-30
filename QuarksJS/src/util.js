@@ -59,17 +59,28 @@ function addUIEventListener(element, func, event='click'){
 	element.addEventListener(event, func);
 }
 
-function makeToast(input){
+function makeToast(input, duration=30){
 	const maxToast = Math.max(-1,...Array.from(document.getElementsByClassName('toast')).map(x => Number(x.id.replace('TOAST_',''))))+1;
 	const id = `TOAST_${maxToast}`;
 
-	const output = createUIElement({id: id, parent:getUIElement('toaster'), cssClasses:['toast'], title:'Click to dismiss',
-		onclick:()=>removeUIElement(id)});
-	formatItemSymbols({s:input}, output);
+	const tWrapper = createUIElement({id: id, parent:getUIElement('toaster'), cssClasses:['toast'], title:'Click to dismiss',
+		onclick:()=>{
+			removeUIElement(id)
+			clearInterval(toasterval);
+		}
+	});
+	createUIElement({textContent:'X', parent:createUIElement({parent:tWrapper, cssClasses:['wrapperX']}), cssClasses:['toastX']});
+	formatItemSymbols({s:input}, createUIElement({parent:tWrapper, cssClasses:['toastContent']}));
 
-	setTimeout(()=>removeUIElement(id),30000);
+	const progress = createUIElement({type: 'progress', parent: tWrapper, attr: {max: 100, value:0}});
+	const toasterval = setInterval(()=>{progress.value = progress.value+1;}, (duration/100*1000))
+
+	setTimeout(()=>{
+		removeUIElement(id)
+		clearInterval(toasterval);
+	},duration*1000);
 	
-	return output;
+	return tWrapper;
 }
 
 function isUnlocked(input){
@@ -485,15 +496,17 @@ function doIDCheck(){
 	checkMenuIDs();
 }
 
-async function copyText(input, success='Copy Success', failure='Copy Failed'){
+async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 	console.log(input);
 	try{
 		await navigator.clipboard.writeText(input)
-		    .then(() => {makeToast(success);})
-            .catch(() => {console.error('catch1'); makeToast(failure)})
+		    .then(() => {makeToast(success, 5);})
+            .catch((x) => {
+				console.error(`Failed Copy [0]: ${x}`);
+				makeToast(failure, 10)})
 	}
     catch(error) {
-		console.error(error);
-		makeToast(failure); 
+		console.error(`Failed Copy [1]: ${error}`);
+		makeToast(failure, 10);
 	}
 }

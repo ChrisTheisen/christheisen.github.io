@@ -15,46 +15,18 @@ Bugs:
 
 	adjust TGB
 
+	manage modal closes when click on scrollbar
+
+	mass display for quarks and leptons
+
 TODO:
 	-About: Change email: github@christheisen.com.
 	-Update github website
 
-    -progress bar timer on toast	
+	Look into <sup> instead of >> or <<
+
 
     -Don't need to create "Total Mass" element; every cycle
-
-	Number Settings: formatNumberFromSettings(input, game.settings.n)
-		Base
-			-Find all numbers (modify fixed text?)
-				-Help(in Data) - just ignore these
-					-Create
-						-Generator examples
-						-Unlock item's used in
-					-Discover
-						-Get Recipe timer
-						-Discover tab unlock
-					-Enhance
-						-Enhance tab Unlock
-					-Settings
-						-Numpad hotkey (consider changeing this to a Numpad 1)
-				-Enhance
-					-Upgrades
-					-When mass is over ...
-					-TMB table
-				-Manage
-					-table
-				-Discover
-					-Filter limit input?
-				-Create
-					-Mass
-					-Inventory
-					-Bulk Storage Amount
-					-Deposit/Withdraw amounts
-					-Generator input/output
-					-Flow setpoint input?
-					-Max flow
-					-bonus information can contain numbers
-		Sig Figs
 
 	Setting for 'catchup speed'?
 		-Default = 100

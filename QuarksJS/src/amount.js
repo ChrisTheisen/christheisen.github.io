@@ -122,7 +122,10 @@ Amount.prototype.update = function(){
 	this.content.wGM?.classList.toggle('hide', !this.GM);
 	this.content.wCM?.classList.toggle('hide', !this.CM);
 
-	setElementText(this.content.Da, formatNumberFromSettings(this.Da.toLocaleString(undefined, {minimumFractionDigits:3, maximumFractionDigits:3})));
+	//Amount.Da is special, gets 3 decimal point precision
+	//Rest just do the formatNumber, shouldn't have a lot of . in any other amount.
+	const rgx = /[\d\w,]*\.?[\d\w]{0,3}/.exec(formatNumberFromSettings(this.Da))[0];
+	setElementText(this.content.Da, rgx);
 	setElementText(this.content.pg, formatNumberFromSettings(this.pg));
 	setElementText(this.content.g,  formatNumberFromSettings(this.g));
 	setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));

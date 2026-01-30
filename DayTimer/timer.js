@@ -137,6 +137,10 @@ function beeper(song) {
     };
 }
 
+function play(){
+    beeper(Songs[songlector.value]);
+}
+
 function addTimer() {
     timers.push(new Timer(input.value, label.value, songlector.value));
 }
