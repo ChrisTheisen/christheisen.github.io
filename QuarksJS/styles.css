@@ -344,15 +344,6 @@ hr {
 	line-height:20px;
 }
 
-.amountInlineWrapper{
-	display:flex;
-	padding:0;
-}
-
-.amountInline{
-	margin:0 2px;
-}
-
 .bonusWrapper{
 	border-top: 1px solid var(--bg1);
 	padding-top:25px;

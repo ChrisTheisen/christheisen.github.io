@@ -40,9 +40,9 @@ Generator.prototype.renderInputItem = function(parent, input){
 	
 	if(!input.b.isZero()){
 		const aw = createUIElement({parent:cw, cssClasses:['flex']});
-		input.inv.b.render(createUIElement({parent:aw}), true);
+		createUIElement({parent:aw, textContent: input.inv.b.toString());
 		createUIElement({parent:aw, textContent:'/', cssClasses:[] });
-		input.b.render(createUIElement({parent:aw}), true);
+		createUIElement({parent:aw, textContent: input.b.toString());
 		input.b.update();//initial toggle visibility
 	}
 	this.content.i[input.inv.f.id] = cw;

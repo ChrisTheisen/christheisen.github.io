@@ -129,8 +129,8 @@ InventoryItem.prototype.renderCreate = function(parent){
 	createUIElement({type:'span', parent: s, textContent:'Symbol:'})
 	formatItemSymbols(this.f, createUIElement({parent:s}));
 	const m = createUIElement({parent: info, cssClasses:['nowrap','flex','itemInfo']});
-	createUIElement({type:'span', parent: m, textContent:'Mass:'})
-	this.f.m.render(createUIElement({parent:m}), true);
+	createUIElement({type:'span', parent: m, textContent:'Mass:'});
+	createUIElement({parent:m, textContent: this.f.m.toString()});
 	
 	if(!this.isUnlocked()){
 		createUIElement({type:'button', parent: createUIElement({parent: parent, cssClasses:['block', 'center']}), 

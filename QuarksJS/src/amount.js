@@ -39,6 +39,7 @@ function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})
 	this.CM = CM;
 	
 	this.content = {
+		s:null,//toString output element
 		e:null,
 		w:null,
 		wDa:null,
@@ -59,9 +60,9 @@ function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})
 		CM:null
 	}
 }
-Amount.prototype.render = function(parent, isInline = false){
-	const cssW = isInline ? ['amountWrapper', 'cell', 'amountInlineWrapper'] : ['amountWrapper'];
-	const cssU = isInline ? ['amountUnit', 'amountInline'] : ['amountUnit'];
+Amount.prototype.render = function(parent){
+	const cssW = ['amountWrapper'];
+	const cssU = ['amountUnit'];
 	
 	const w = createUIElement({parent:parent, cssClasses:cssW});
 	this.content.e = createUIElement({parent:w, textContent:'None', cssClasses:cssU});

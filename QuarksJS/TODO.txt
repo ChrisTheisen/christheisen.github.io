@@ -15,6 +15,10 @@ Bugs:
 TODO:
 	adjust TGB?
 
+	update the render.toString locations on update.
+
+	unload elements when not visible so not updating?
+		-Just check for extra updates where not needed.
 
 
 cotton 90% cellulose

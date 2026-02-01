@@ -99,10 +99,6 @@ GameClock.prototype.update = function(input = 1){
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	game.enhancements.totalGenerated = TM;
 	
-	//const tms = createUIElement({});
-	//game.enhancements.totalGenerated.render(tms, true);
-	//getUIElement('totalMass').replaceChildren(tms);
-
 	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
