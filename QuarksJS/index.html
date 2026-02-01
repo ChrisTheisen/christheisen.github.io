@@ -23,14 +23,16 @@
 				<p>I tried to keep this game acurrate to reality without getting too complex.
 				The settings can significanly adjust the difficulty and amount of time required for creating larger items.</p>
 			</div>
-			<button id='btnWelcome' class='btnWelcome' onClick='begin();'>In the beginning...</button>
+			<div class='beginWrapper'>
+				<button id='btnWelcome' class='btnWelcome' onClick='begin();'>In the beginning...</button>
+			</div>
 		</div>
 		<div id='gameWrapper' class='hide'>
 			<div id="clockWrapper" class="clockWrapper"></div>
 			<div id='toaster' class='toaster'></div>
 			<nav id='nav' class='nav'></nav>
 			<main id='divRoot' class='root'></main>
-			<dialog id='manageModal' class='mamageModal' onmousedown='event.target==this && this.close()'>
+			<dialog id='manageModal' class='manageModal' closedby='any'>
 				<form id='manageModalForm' method='dialog' class='mamageModalWrapper'></form>
 			</dialog>
 			<footer class='foot'>

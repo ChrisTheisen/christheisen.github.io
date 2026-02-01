@@ -12,6 +12,7 @@ function GameClock(){
 	this.duration = 0;//time since last update
 	this.lastUpdate = 0;//time of last tick
 	this.intervalID = 0;//loop intervalID
+	this.tml = null;//total mass label dom element
 	
 	this.status = 'Loading Game Data';
 	this.content = {p:null, s:null, t:null};
@@ -98,9 +99,11 @@ GameClock.prototype.update = function(input = 1){
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	game.enhancements.totalGenerated = TM;
 	
-	const tms = createUIElement({});
-	game.enhancements.totalGenerated.render(tms, true);
-	getUIElement('totalMass').replaceChildren(tms);
+	//const tms = createUIElement({});
+	//game.enhancements.totalGenerated.render(tms, true);
+	//getUIElement('totalMass').replaceChildren(tms);
+
+	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
 	//show progress bar when a generator is over level 0.
@@ -293,6 +296,8 @@ function startGame(){
 	else{
 		game.generators.filter(x => x.i.length === 0).forEach(x => x.o.forEach(y => y.inv.unlock()));
 	}
+
+	game.clock.tml = getUIElement('totalMass');
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();

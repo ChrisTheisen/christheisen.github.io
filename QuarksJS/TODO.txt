@@ -9,28 +9,12 @@ New Items:
 
 Bugs: 
 	manage tab doesn't account for output/input.b; only does output/input.a
-	Green help border with empty text on items and groups
 
-	manage table updating with 0s when non-live update
-
-	adjust TGB
-
-	manage modal closes when click on scrollbar
-
-	mass display for quarks and leptons
+	mass display for quarks and leptons is wrong
 
 TODO:
-	-About: Change email: github@christheisen.com.
-	-Update github website
+	adjust TGB?
 
-	Look into <sup> instead of >> or <<
-
-
-    -Don't need to create "Total Mass" element; every cycle
-
-	Setting for 'catchup speed'?
-		-Default = 100
-		-Effects game.js line 64
 
 
 cotton 90% cellulose

@@ -1051,10 +1051,10 @@ const help = [
 		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/ - Used for learning about functional groups',
 		'Various "AI" LLM tools - Used for general questions; verified most responses with outside sources',
 		'|',
-		'If you have a suggestion of items you want added or concerns about accuracy you can email: grumdrig333@gmail.com',
+		'If you have a suggestion of items you want added or concerns about accuracy you can email: github@christheisen.com',
 	]},
 	{t:'About', c:[
 		'This game was initially started as a way to learn mutraction but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
-		'If you have a suggestion or concerns you can email: grumdrig333@gmail.com',
+		'If you have a suggestion or concerns you can email: github@christheisen.com',
 	]},
 ]
