@@ -122,33 +122,41 @@ Amount.prototype.toString = function(){
 	if(this.pg){output.push(`${formatNumberFromSettings(this.pg)} ${MassUnits.pg.s}`);}
 	if(this.Da){output.push(`${formatNumberFromSettings(this.Da)} ${MassUnits.Da.s}`);}
 
+	if(output.length === 0){return '0 Da';}
+
 	return output.join(' ');
 }
 
 Amount.prototype.update = function(){
 	this.convert();
 	
-	this.content.e?.classList.toggle('hide', !this.isZero());
-	this.content.wDa?.classList.toggle('hide', !this.Da);
-	this.content.wpg?.classList.toggle('hide', !this.pg);
-	this.content.wg?.classList.toggle('hide', !this.g);
-	this.content.wTg?.classList.toggle('hide', !this.Tg);
-	this.content.wYg?.classList.toggle('hide', !this.Yg);
-	this.content.wMO?.classList.toggle('hide', !this.MO);
-	this.content.wGM?.classList.toggle('hide', !this.GM);
-	this.content.wCM?.classList.toggle('hide', !this.CM);
+	if(this.content.w){
+		this.content.e?.classList.toggle('hide', !this.isZero());
+		this.content.wDa?.classList.toggle('hide', !this.Da);
+		this.content.wpg?.classList.toggle('hide', !this.pg);
+		this.content.wg?.classList.toggle('hide', !this.g);
+		this.content.wTg?.classList.toggle('hide', !this.Tg);
+		this.content.wYg?.classList.toggle('hide', !this.Yg);
+		this.content.wMO?.classList.toggle('hide', !this.MO);
+		this.content.wGM?.classList.toggle('hide', !this.GM);
+		this.content.wCM?.classList.toggle('hide', !this.CM);
 
-	//Amount.Da is special, gets 3 decimal point precision
-	//Rest just do the formatNumber, shouldn't have a lot of . in any other amount.
-	const rgx = /[\d\w,]*\.?[\d\w]{0,3}/.exec(formatNumberFromSettings(this.Da))[0];
-	setElementText(this.content.Da, rgx);
-	setElementText(this.content.pg, formatNumberFromSettings(this.pg));
-	setElementText(this.content.g,  formatNumberFromSettings(this.g));
-	setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));
-	setElementText(this.content.Yg, formatNumberFromSettings(this.Yg));
-	setElementText(this.content.MO, formatNumberFromSettings(this.MO));
-	setElementText(this.content.GM, formatNumberFromSettings(this.GM));
-	setElementText(this.content.CM, formatNumberFromSettings(this.CM));
+		//Amount.Da is special, gets 3 decimal point precision
+		//Rest just do the formatNumber, shouldn't have a lot of . in any other amount.
+		const rgx = /[\d\w,]*\.?[\d\w]{0,3}/.exec(formatNumberFromSettings(this.Da))[0];
+		setElementText(this.content.Da, rgx);
+		setElementText(this.content.pg, formatNumberFromSettings(this.pg));
+		setElementText(this.content.g,  formatNumberFromSettings(this.g));
+		setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));
+		setElementText(this.content.Yg, formatNumberFromSettings(this.Yg));
+		setElementText(this.content.MO, formatNumberFromSettings(this.MO));
+		setElementText(this.content.GM, formatNumberFromSettings(this.GM));
+		setElementText(this.content.CM, formatNumberFromSettings(this.CM));
+	}
+
+	if(this.content.s){
+		setElementText(this.content.s, this.toString());
+	}
 }
 Amount.prototype.isZero = function(){
 	return !this.Da && !this.pg && !this.g && !this.Tg && !this.Yg && !this.MO && !this.GM && !this.CM;

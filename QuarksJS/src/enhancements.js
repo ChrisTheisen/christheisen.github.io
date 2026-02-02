@@ -223,8 +223,6 @@ Enhancements.prototype.render = function(parent){
 	createUIElement({parent: bonusWrapper, textContent: 'Total Mass Bonus: '});
 	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'The Total Mass Bonus (TMB) increases all generator outputs.'});
 	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'TMB starts with a small bonus when the total mass is over 65536 Da and increases with greater total mass.'});
-	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'Enhancements have a reduced effect on larger items.'});
-	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'The table below displays the different bonuses for items of different magnitudes.'});
 
 	const tgbWrapper = createUIElement({parent: bonusWrapper, cssClasses:['table', 'center']})
 	const wrapperTGBHead = createUIElement({parent: tgbWrapper, cssClasses:['row']})
@@ -239,10 +237,10 @@ Enhancements.prototype.render = function(parent){
 	const wrapper6 = createUIElement({parent: tgbWrapper, cssClasses:['row', mag<6?'hide':null]})
 	const wrapper7 = createUIElement({parent: tgbWrapper, cssClasses:['row', mag<7?'hide':null]})
 
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell'], textContent: 'Item Magnitude'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell'], textContent: 'TMB'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Auto Bonus', title: 'Total multiplier bonus when the item is auto generated every cycle.'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Generate (->) button is clicked.'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Item Magnitude', title:'Larger item magnitudes recieve a smaller bonus.'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'TMB', title:'Global bonus that is applied on top of the above enhancements.'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Generator Bonus', title: 'Total multiplier bonus for the item generator (TMB x Gen. Output).'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Generate (->) button is clicked (TMB x Manual Output)).'})
 
 	createUIElement({parent: wrapper0, textContent: MassUnits.Da.n, cssClasses:['cell']})
 	createUIElement({parent: wrapper1, textContent: MassUnits.pg.n, cssClasses:['cell']})

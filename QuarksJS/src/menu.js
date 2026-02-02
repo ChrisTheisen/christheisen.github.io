@@ -321,7 +321,9 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
-			this.route();//update Discover
+			const newBags = createUIElement({parent:w, cssClasses:['cell', 'discoverLeft']});
+			game.inventory.renderDiscover(newBags);
+			bags.replaceWith(newBags);
 		}});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
@@ -466,20 +468,20 @@ Menu.prototype.renderSettings = function(parent){
         {i:5,n:'Quinary'},{i:6,n:'Senary'},{i:7,n:'Septenary'},{i:8,n:'Octal'},
         {i:9,n:'Nonary'},{i:10,n:'Decimal'},{i:12,n:'Dozenal'},{i:16,n:'Hexadecimal'},
         {i:32,n:'Base32'},{i:64,n:'Base64'}];
-	game.settings.content.s.n.b = createUIElement({type:'select', parent:createUIElement({type:'label', parent:nb, textContent:'Number Base: ', title:'Doesn\'t effect hardcoded help values or number inputs.'}),
-		title:'Number base', onchange:() => toggleSetting('nb')});
+	game.settings.content.s.n.b = createUIElement({type:'select', parent:createUIElement({type:'label', parent:nb, textContent:'Number Base: '}),
+		title:'Doesn\'t effect hardcoded help values or number inputs.', cssClasses:['help'], onchange:() => toggleSetting('nb')});
 	nbOptions.forEach((x) => { createUIElement({type:'option', parent:game.settings.content.s.n.b, attr:{value:x.i, label:x.n}}); }); 
 	game.settings.content.s.n.b.value = game.settings.n.b;
 
 	const ns = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.s.n.s = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ns, textContent:'Significant Digits: ', title:'Doesn\'t effect hardcoded help values  or number inputs.'}),
-		title:'Significant digits', onchange:() => toggleSetting('ns'), attr:{type:'number', min:3, max:15, value:15}
+	game.settings.content.s.n.s = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ns, textContent:'Significant Digits: '}),
+		title:'Doesn\'t effect hardcoded help values or number inputs.', cssClasses:['help'], onchange:() => toggleSetting('ns'), attr:{type:'number', min:3, max:15, value:15}
 	});
 	game.settings.content.s.n.s.value = game.settings.n.s;
 	
 	const ne = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	game.settings.content.s.e = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ne, textContent:'Enhancement Scaling: '}),
-		title:'Enhancement scaling', onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:100, value:10}
+		title:'Larger number = larger TMB. Read the Enhance tab or Help tab for more information.', cssClasses:['help'], onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:1000, value:10}
 	});
 	game.settings.content.s.e.value = game.settings.e;
 	

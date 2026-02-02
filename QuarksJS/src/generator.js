@@ -40,10 +40,9 @@ Generator.prototype.renderInputItem = function(parent, input){
 	
 	if(!input.b.isZero()){
 		const aw = createUIElement({parent:cw, cssClasses:['flex']});
-		createUIElement({parent:aw, textContent: input.inv.b.toString());
-		createUIElement({parent:aw, textContent:'/', cssClasses:[] });
-		createUIElement({parent:aw, textContent: input.b.toString());
-		input.b.update();//initial toggle visibility
+		input.inv.b.content.s = createUIElement({parent:aw, textContent: input.inv.b.toString()});
+		createUIElement({parent:aw, textContent:' / ', cssClasses:[] });
+		input.b.content.s = createUIElement({parent:aw, textContent: input.b.toString()});
 	}
 	this.content.i[input.inv.f.id] = cw;
 }

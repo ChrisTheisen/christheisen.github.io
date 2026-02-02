@@ -10,16 +10,8 @@ New Items:
 Bugs: 
 	manage tab doesn't account for output/input.b; only does output/input.a
 
-	mass display for quarks and leptons is wrong
-
 TODO:
 	adjust TGB?
-
-	update the render.toString locations on update.
-
-	unload elements when not visible so not updating?
-		-Just check for extra updates where not needed.
-
 
 cotton 90% cellulose
 
