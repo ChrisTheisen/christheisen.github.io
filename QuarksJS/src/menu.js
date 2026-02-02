@@ -481,7 +481,7 @@ Menu.prototype.renderSettings = function(parent){
 	
 	const ne = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	game.settings.content.s.e = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ne, textContent:'Enhancement Scaling: '}),
-		title:'Larger number = larger TMB. Read the Enhance tab or Help tab for more information.', cssClasses:['help'], onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:1000, value:10}
+		title:'Larger number = larger TMB. Read the Enhance tab or Help tab for more information.', cssClasses:['help'], onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:1024, value:12}
 	});
 	game.settings.content.s.e.value = game.settings.e;
 	

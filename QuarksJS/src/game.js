@@ -139,7 +139,7 @@ function Game(){
 		i: true,//show info
 		u: true,//show used-in warning
 		s: 100,//speed/max cycles to run on one update
-		e: 10,//enhancement scaling (0-100)
+		e: 12,//enhancement scaling (0-100)
 		d: { //discover filters
 			l: 0,//stock limit
 			o: false,//filter unowned
