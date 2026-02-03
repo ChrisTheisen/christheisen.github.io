@@ -15,16 +15,18 @@ Bugs:
 			-and save to ActualUsed
 		-Generator increaseOutput (Line 263)
 			-Something similar
+	-OR-
 		-On Generator initialize calculate b to a conversion ratio per flow
 			-Simplify calculation
+
+TODO:
+	Manage tab UI cleanup
 		-Update manage columns Created -> Supply
 		-Checkbox to toggle 'Owned' column
 		-Chekcbox to toggle 'Used' column
 		-Checkbox to toggle 'Demand' column
 		-Checkbox to toggle 'Supply' column
 		-Collapseable the filters
-
-TODO:
 
 cotton 90% cellulose
 
