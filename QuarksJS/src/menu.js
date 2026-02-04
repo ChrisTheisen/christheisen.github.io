@@ -428,12 +428,19 @@ Menu.prototype.renderEnhance = function(parent){
 
 Menu.prototype.renderHelp = function(parent){
 	help.forEach(x => {
+
 		const topic = createUIElement({parent:parent, cssClasses:['helpTopic'], textContent:x.t});
 		const content = createUIElement({parent:parent, cssClasses:['helpContent', 'hide']});
 		addUIEventListener(topic, () => content.classList.toggle('hide'));
 		
+		let i = 0;
 		x.c.forEach(y => {
-			createUIElement({parent:content, cssClasses:['helpDiv'], textContent:y});
+			const css = [];
+			if(y.length === 0){css.push('helpDivEmpty'); i=0;}
+			else if(i++%2===0){css.push('helpDiv');}
+			else{css.push('helpDivAlternate');}
+
+			createUIElement({parent:content, cssClasses:css, textContent:y});
 		});
 	});
 }

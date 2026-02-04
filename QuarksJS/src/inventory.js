@@ -33,7 +33,7 @@ Inventory.prototype.renderManage = function(parent){
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Item', style:{width:'10%', textAlign:'left'}});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Created', title:'Actual amount created in last cycle', cssClasses:['help']});
+	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Supply', title:'Actual amount created in last cycle', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	

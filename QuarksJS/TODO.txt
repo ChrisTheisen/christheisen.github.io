@@ -8,25 +8,14 @@ New Items:
 	3) Add to group in data.js
 
 Bugs: 
-	manage tab doesn't account for output/input.b; only does output/input.a
-		-Generator decreaseInput (linen 239)
-			-Either something like (scale b to a): x.a * this.f + x.b.scale(this.f).estDivide(x.inv.f.m)
-			-or (scale a to b): x.inv.f.m.scale(x.a * this.f).add(x.b.sacle(this.f);
-			-and save to ActualUsed
-		-Generator increaseOutput (Line 263)
-			-Something similar
-	-OR-
-		-On Generator initialize calculate b to a conversion ratio per flow
-			-Simplify calculation
 
 TODO:
 	Manage tab UI cleanup
-		-Update manage columns Created -> Supply
+		-Collapseable the filters
 		-Checkbox to toggle 'Owned' column
 		-Chekcbox to toggle 'Used' column
 		-Checkbox to toggle 'Demand' column
 		-Checkbox to toggle 'Supply' column
-		-Collapseable the filters
 
 cotton 90% cellulose
 

@@ -1,8 +1,24 @@
 function Generator({id, i=[], o=[]}){
 	this.e = true;//enabled
 	this.id = id;
-	this.i = i.map(x => ({a:x.a ?? 0, b:x.b ?? new Amount(), inv:game.inventory.getInvByFlavor(x.f)}));
-	this.o = o.map(x => ({a:x.a ?? 0, b:x.b ?? new Amount(), inv:game.inventory.getInvByFlavor(x.f)}));
+	this.i = i.map(x => {
+		const inv = game.inventory.getInvByFlavor(x.f);
+		return 	{
+			a:x.a ?? 0,
+			b:x.b ?? new Amount(),
+			inv:game.inventory.getInvByFlavor(x.f),
+			btoa: x.b?.divide(inv.f.m) ?? 0//Used to calculate total supply or demand for Mange filters
+		}
+	});
+	this.o = o.map(x => {
+		const inv = game.inventory.getInvByFlavor(x.f);
+		return {
+			a:x.a ?? 0,
+			b:x.b ?? new Amount(),
+			inv:inv,
+			btoa: x.b?.divide(inv.f.m) ?? 0//Used to calculate total supply or demand for Mange filters
+		}
+	});
 
 	this.a = false;//auto upgrade
 	this.f = 0;//flow
@@ -245,6 +261,8 @@ Generator.prototype.decreaseInput = function(amount){
 		}
 		
 		if(!x.b.isZero()){
+			ActualUsed[x.inv.f.id] = (ActualUsed[x.inv.f.id]??0) + x.btoa * amount;
+			Demand[x.inv.f.id] = (Demand[x.inv.f.id]??0) + x.btoa * (this.f??0);
 			x.inv.b.subtract(x.b.scale(amount));
 		}
 		

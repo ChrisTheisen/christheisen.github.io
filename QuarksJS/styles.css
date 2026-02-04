@@ -264,9 +264,22 @@ hr {
 	margin-right:13%;
 }
 .helpDiv{
-	margin-bottom:5px;
-	border-left: solid 1px #111;
+	margin:5px;
 }
+
+.helpDivAlternate{
+	background-color: var(--bg4);
+	margin: 2px 0;
+	padding: 3px 5px;
+}
+
+.helpDivEmpty{
+	min-height: 10px;
+	background: linear-gradient(0turn, var(--bg4), var(--bg1), var(--bg4));
+	width:100%;
+	margin: 10px 0;
+}
+
 
 .settingsRow{
 	text-align:left;

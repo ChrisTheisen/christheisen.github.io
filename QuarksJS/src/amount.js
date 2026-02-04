@@ -367,9 +367,7 @@ Amount.prototype.fromBigInt = function(input){
 Amount.prototype.divide = function(input){
 	const a = this.toBigInt();
 	const b = input.toBigInt();
-	const result = a/b;
-	this.fromBigInt(result);
-	return this;
+	return Number(a/b);
 }
 
 // Export for testing
