@@ -339,12 +339,92 @@ Menu.prototype.renderDiscover = function(parent){
 }
 
 Menu.prototype.renderManage = async function(parent){
-	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center'], style:{display:'table'}});
 
-	const f0 = createUIElement({parent:filter, cssClasses:['row', 'center']});
-	const f1 = createUIElement({parent:filter, cssClasses:['row', 'center']});
-	const f2 = createUIElement({parent:filter, cssClasses:['row', 'center']});
-	const fa = createUIElement({parent:filter, cssClasses:['row', 'center']});
+
+	const collapser = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']}),
+			cssClasses:['smallButton', 'filterCollapseButton'], textContent:'v',
+			onclick:()=>{
+				if(Array.from(filterTable.classList).includes('hide')){
+					setElementText(collapser, 'v');
+					filterTable.classList.remove('hide');
+					filterColumns.classList.remove('hide');
+				}
+				else{
+					setElementText(collapser, '^');
+					filterTable.classList.add('hide');
+					filterColumns.classList.add('hide');
+				}
+			}
+	});
+	const filterWrapper = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
+	const tableWrapper = createUIElement({parent:parent, cssClasses:['manage', 'center']});
+
+	const filterColumns = createUIElement({parent:filterWrapper, cssClasses:['center']});
+	const filterTable = createUIElement({parent:filterWrapper, cssClasses:['center']});
+	const f0 = createUIElement({parent:filterTable, cssClasses:['row', 'center']});
+	const f1 = createUIElement({parent:filterTable, cssClasses:['row', 'center']});
+	const f2 = createUIElement({parent:filterTable, cssClasses:['row', 'center']});
+	const fa = createUIElement({parent:filterTable, cssClasses:['row', 'center']});
+	const fc = createUIElement({parent:filterColumns, cssClasses:['row', 'center']});
+
+	const wc0 = createUIElement({parent:fc, cssClasses:['filterChk']});
+	game.settings.content.m.so = createUIElement({type:'input',
+		parent:createUIElement({type:'label', parent:wc0, textContent:'Show Owned'}),
+			title:'Toggle Owned', attr:{type:'checkbox'}, onclick:(e) => {
+				game.settings.m.so = !game.settings.m.so;
+				while(tableWrapper.firstChild){
+					tableWrapper.removeChild(tableWrapper.firstChild);
+				}
+				game.inventory.renderManage(tableWrapper);
+				game.inventory.update(true);
+			}
+	});
+	game.settings.content.m.so.checked = game.settings.m.so;
+
+	const wc1 = createUIElement({parent:fc, cssClasses:['filterChk']});
+	game.settings.content.m.sd = createUIElement({type:'input',
+		parent:createUIElement({type:'label', parent:wc1, textContent:'Show Demand'}),
+			title:'Toggle Owned', attr:{type:'checkbox'}, onclick:(e) => {
+				game.settings.m.sd = !game.settings.m.sd;
+				while(tableWrapper.firstChild){
+					tableWrapper.removeChild(tableWrapper.firstChild);
+				}
+				game.inventory.renderManage(tableWrapper);
+				game.inventory.update(true);
+			}
+	});
+	game.settings.content.m.sd.checked = game.settings.m.sd;
+
+	const wc2 = createUIElement({parent:fc, cssClasses:['filterChk']});
+	game.settings.content.m.ss = createUIElement({type:'input',
+		parent:createUIElement({type:'label', parent:wc2, textContent:'Show Supply'}),
+			title:'Toggle Owned', attr:{type:'checkbox'}, onclick:(e) => {
+				game.settings.m.ss = !game.settings.m.ss;
+				while(tableWrapper.firstChild){
+					tableWrapper.removeChild(tableWrapper.firstChild);
+				}
+				game.inventory.renderManage(tableWrapper);
+				game.inventory.update(true);
+			}
+	});
+	game.settings.content.m.ss.checked = game.settings.m.ss;
+
+	const wc3 = createUIElement({parent:fc, cssClasses:['filterChk']});
+	game.settings.content.m.su = createUIElement({type:'input',
+		parent:createUIElement({type:'label', parent:wc3, textContent:'Show Used'}),
+			title:'Toggle Owned', attr:{type:'checkbox'}, onclick:(e) => {
+				game.settings.m.su = !game.settings.m.su;
+				while(tableWrapper.firstChild){
+					tableWrapper.removeChild(tableWrapper.firstChild);
+				}
+				game.inventory.renderManage(tableWrapper);
+				game.inventory.update(true);
+			}
+	});
+	game.settings.content.m.su.checked = game.settings.m.su;
+
+
+
 
 	const wa0 = createUIElement({parent:fa, cssClasses:['filterChk']});
 	game.settings.content.m.a = createUIElement({type:'input', parent:createUIElement({type:'label', parent:wa0, textContent:'Live-Update'}), 
@@ -418,7 +498,7 @@ Menu.prototype.renderManage = async function(parent){
 	});
 	game.settings.content.m.z.checked = game.settings.m.z;
 
-	await game.inventory.renderManage(createUIElement({parent:parent, cssClasses:['manage', 'center']}));
+	await game.inventory.renderManage(tableWrapper);
 	game.inventory.update(true);
 }
 

@@ -285,6 +285,11 @@ function load() {
 	game.settings.m.x = data.s?.mx ?? false;
 	game.settings.m.y = data.s?.my ?? false;
 	game.settings.m.z = data.s?.mz ?? false;
+	game.settings.m.so = data.s?.mso ?? false;
+	game.settings.m.sd = data.s?.msd ?? false;
+	game.settings.m.ss = data.s?.mss ?? false;
+	game.settings.m.su = data.s?.msu ?? false;
+
 
 	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
@@ -359,6 +364,10 @@ function save() {
 	data.s.mx = game.settings.m.x?1:0;
 	data.s.my = game.settings.m.y?1:0;
 	data.s.mz = game.settings.m.z?1:0;
+	data.s.mso = game.settings.m.so?1:0;
+	data.s.msd = game.settings.m.sd?1:0;
+	data.s.mss = game.settings.m.ss?1:0;
+	data.s.msu = game.settings.m.su?1:0;
 	data.s.nb = game.settings?.n?.b??10;
 	data.s.ns = game.settings?.n?.s??6;
 	data.s.e = game.settings?.e??10;

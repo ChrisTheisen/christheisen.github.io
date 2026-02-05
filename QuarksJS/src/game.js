@@ -79,7 +79,7 @@ GameClock.prototype.update = function(input = 1){
 		case 'M_2'://manage
 		{
 			if(game.settings.m.a){ 
-				game.inventory.update();
+				game.inventory.update(true);
 			}
 			break;
 		}
@@ -152,10 +152,14 @@ function Game(){
 			l: false,//hide created < used
 			n: false,//hide used === 0
 			t: false,//hide used < demand
-			u: false, //hide used < created
+			u: false,//hide used < created
 			x: false,//hide demand === 0
 			y: false,//hide demand < created
-			z: false //hide demand < used
+			z: false,//hide demand < used
+			so:true,//owned
+			sd:true,//demand
+			ss:true,//supply
+			su:true,//used
 		},
 		n:{//number settings
 			b: 10,//base

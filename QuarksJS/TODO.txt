@@ -10,12 +10,6 @@ New Items:
 Bugs: 
 
 TODO:
-	Manage tab UI cleanup
-		-Collapseable the filters
-		-Checkbox to toggle 'Owned' column
-		-Chekcbox to toggle 'Used' column
-		-Checkbox to toggle 'Demand' column
-		-Checkbox to toggle 'Supply' column
 
 cotton 90% cellulose
 

@@ -31,10 +31,19 @@ Inventory.prototype.renderManage = function(parent){
 	const t = createUIElement({type:'table', parent: parent, style:{margin:'auto', borderCollapse:'collapse'}});
 	const h = createUIElement({type:'tr', parent: t});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Item', style:{width:'10%', textAlign:'left'}});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Supply', title:'Actual amount created in last cycle', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
+	console.log(game.settings.m);
+	if(game.settings.m.so){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned, does not include bulk storage.', cssClasses:['help']});
+	}
+	if(game.settings.m.sd){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
+	}
+	if(game.settings.m.ss){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Supply', title:'Actual amount created in last cycle', cssClasses:['help']});
+	}
+	if(game.settings.m.su){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
+	}
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	
 	Object.values(this.children).filter(x => x.f.u).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
@@ -352,11 +361,18 @@ InventoryItem.prototype.renderManage = function(parent){
 	formatItemSymbols(this.f, createUIElement({type:'td', parent:n, cssClasses:['nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px', lineHeight:'3'}}));
 	//formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}}));
 	
-	this.content.a.push(createUIElement({type:'td', parent:row, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
-	
-	this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
-	this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
-	this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	if(game.settings.m.so){
+		this.content.a.push(createUIElement({type:'td', parent:row, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
+	}
+	if(game.settings.m.sd){
+		this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
+	if(game.settings.m.ss){
+		this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
+	if(game.settings.m.su){
+		this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
 	
 	const expander = createUIElement({type:'button', parent:createUIElement({type:'td', parent:row}), 
 		cssClasses:['expandHeader'], textContent:'≡', title:'Expand Details',
@@ -547,6 +563,7 @@ InventoryItem.prototype.update = function(force = false){
 			setElementText(this.content.z, formatNumberFromSettings(demand));
 			setElementText(this.content.n, formatNumberFromSettings(Math.floor(created)));
 			setElementText(this.content.q, formatNumberFromSettings(used));
+
 
 			break;
 		}

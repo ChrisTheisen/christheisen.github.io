@@ -312,9 +312,13 @@ hr {
 	margin:5px;
 }
 
+.filterCollapseButton{
+}
+
 .filterWrapper{
 	border-bottom:solid 1px var(--bg1);
 	font-size:14px;
+	display: table;
 }
 
 .filterChk{
@@ -619,6 +623,10 @@ hr {
 		height: 5vmin;
 		aspect-ratio: 1 / 1;
 	}
+}
+
+.flip{
+	filter: invert(1);
 }
 
 .hide{
