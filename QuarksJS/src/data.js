@@ -913,14 +913,15 @@ const help = [
 		'The Spacebar pauses the game'
 	]},
 	{t:'What should I do now?', c:[
-		'There isn\'t a way to win this game. I\'m trying to appeal to people who want continuous growth; never-ending creation out of nothing: no resets, no prestiges, just pure unadulterated creation.',
+		'There isn\'t a way to win this game. Just never-ending creation out of nothing: no resets, no prestiges, just getting more.',
 		'',
 		'Some things to work towards:',
-		'* Upgrade Transmuter levels',
+		'* Upgrade Transmuter levels (See Create below for more information)',
+		'* Discover more recipes (See Discover below for more information)',
 		'* Higher Enhancement bonus (See Enhance below for more information)',
 		'* Larger Total Mass (See lower right corner)',
 		'* Try to break the game with too much bigness',
-		'* Creating larger and larger items (see if you can create a train, planet, or cosmos)',
+		'* Creating larger and larger items (see if you can create a train, planet, or galaxy)',
 		'',
 		'If the game is progressing too slowly check the settings.',
 		'If this game no longer interests you then go do something else.'
