@@ -324,6 +324,7 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
+			this.route();//update Discover
 		}});
 	createInfoElement({parent: scan, title: 'After adding items to the Matter Mutator click the "Scan" button to search for any recipes that match the added items.'});
 	
@@ -340,6 +341,7 @@ Menu.prototype.renderDiscover = function(parent){
 }
 
 Menu.prototype.renderManage = async function(parent){
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center'], style:{display:'table'}});
 
 
 	const collapser = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['filterWrapperManage', 'center']}),

@@ -568,7 +568,6 @@ InventoryItem.prototype.update = function(force = false){
 			setElementText(this.content.n, formatNumberFromSettings(Math.floor(created)));
 			setElementText(this.content.q, formatNumberFromSettings(used));
 
-
 			break;
 		}
 	}
