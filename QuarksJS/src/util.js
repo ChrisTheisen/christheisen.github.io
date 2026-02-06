@@ -168,7 +168,7 @@ function toggleSetting(input){
 function getDiscoverHint(hout, btnHint, hadd){
 	const d = game.menu.children.M_1.content;
 	
-	setElementText(game.dContent.hout, generateDiscoverHint()); 
+	setElementText(game.dContent.hout, buildDiscoverHint());
 	game.dContent.btnHint.classList.add('hide');  
 	game.dContent.hadd.classList.remove('hide');
 	game.dinterval = setTimeout(() => {
@@ -182,10 +182,10 @@ function getDiscoverHint(hout, btnHint, hadd){
 	}, 30000);
 }
 
-function generateDiscoverHint(){
+function buildDiscoverHint(){
 	//locked items that have all components unlocked
-	const lockedGenerators = game.generators.filter(x => x.o.some(o => !o.inv.f.u));
-	const canUnlock = lockedGenerators.filter(x => x.i.every(z => z.inv.f.u));
+	const lockedTransmuters = game.transmuters.filter(x => x.o.some(o => !o.inv.f.u));
+	const canUnlock = lockedTransmuters.filter(x => x.i.every(z => z.inv.f.u));
 	if(!canUnlock.length){return ' None left, try again later.';}
 
 	const index = Math.floor(Math.random() * canUnlock.length);
@@ -197,8 +197,8 @@ function findLockedFlavorsByComponents(input){
 	const output = [];
 	if(!input?.length){return output;}
 	
-	const lockedGenerators = game.generators.filter(x => x.o.some(o => !o.inv.f.u));
-	lockedGenerators.forEach(x => {
+	const lockedTransmuters = game.transmuters.filter(x => x.o.some(o => !o.inv.f.u));
+	lockedTransmuters.forEach(x => {
 		if(arraysOverlap(x.i.map(x => x.inv.f), input)){
 			output.push(x);
 		}
@@ -325,7 +325,7 @@ function load() {
 	});
 	
 	Object.entries(data.g).forEach(([key, value], index) => {
-		const g = game.generators.find(x => x.id === key);
+		const g = game.transmuters.find(x => x.id === key);
 		if(!g){return;}
 		
 		g.l = value.l ?? 0;
@@ -394,7 +394,7 @@ function save() {
 		if(value.q){ data.i[n].q = value.q; }
 		if(value.f.u){ data.i[n].u = value.f.u?1:0; }
 	});
-	game.generators.forEach(x => {
+	game.transmuters.forEach(x => {
 		if(x.e && !x.a && !x.f && !x.l){ return; }
 		
 		data.g[x.id] = {};
@@ -478,7 +478,7 @@ function checkItemIDs(){
 
 function checkRecipeIDs(){
 	console.log("RECIPE CHECK");
-	checkIDs(game.generators, 'r_');
+	checkIDs(game.transmuters, 'r_');
 }
 
 function checkMenuIDs(){

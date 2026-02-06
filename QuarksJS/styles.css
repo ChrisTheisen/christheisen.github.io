@@ -236,7 +236,7 @@ hr {
 	border: solid 1px var(--c3);	
 }
 
-.generator{
+.transmuter{
 	display: block;
 }
 
@@ -476,7 +476,7 @@ hr {
 	background-color:#000;
 }
 .hintAnimate{
-	animation: hintColor 5s infinite linear;
+	animation: hintColor 8s infinite linear;
 }
 @keyframes hintColor {
 	0% {
@@ -588,7 +588,7 @@ hr {
 }
 
 .btnWelcome-animate {
-	animation: btnWelcomeTransition 5s forwards;
+	animation: btnWelcomeTransition 3s forwards;
 	pointer-events: none;
 	margin: auto;
 	z-index: 0;

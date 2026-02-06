@@ -1,4 +1,4 @@
-function Generator({id, i=[], o=[]}){
+function Transmuter({id, i=[], o=[]}){
 	this.e = true;//enabled
 	this.id = id;
 	this.i = i.map(x => {
@@ -26,7 +26,7 @@ function Generator({id, i=[], o=[]}){
 
 	this.content = {
 		a:null,//auto-upgrade
-		b:null,//manual generate button
+		b:null,//manual transmute button
 		c:null,//upgrade cost display
 		e:null,//enabled
 		f:null,//flow: create, manage
@@ -37,7 +37,7 @@ function Generator({id, i=[], o=[]}){
 		u:null//upgrade button
 	}
 }
-Generator.prototype.renderInputItem = function(parent, input){
+Transmuter.prototype.renderInputItem = function(parent, input){
 	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell']}), 
 		cssClasses:['circleButton', 'goto'], textContent:'»', title:'Goto Item',
 		onclick:() => game.menu.gotoNode(input.inv.f.id)});
@@ -62,9 +62,9 @@ Generator.prototype.renderInputItem = function(parent, input){
 	}
 	this.content.i[input.inv.f.id] = cw;
 }
-Generator.prototype.renderInput = function(parent, input){
+Transmuter.prototype.renderInput = function(parent, input){
 	if(this.i.length === 0){
-		createUIElement({parent:parent, cssClasses:['cell'], textContent:'None (Free)'});
+		createUIElement({parent:parent, cssClasses:['cell'], textContent:'Mysterious Vibrations (Free)'});
 		return;
 	}
 
@@ -74,7 +74,7 @@ Generator.prototype.renderInput = function(parent, input){
 		this.renderInputItem(row, x);
 	});
 }
-Generator.prototype.renderOutput = function(parent){
+Transmuter.prototype.renderOutput = function(parent){
 	this.o.forEach(x => {
 		const row = createUIElement({parent: parent, cssClasses:['row']});
 		
@@ -87,7 +87,7 @@ Generator.prototype.renderOutput = function(parent){
 	});
 }
 
-Generator.prototype.render = function(parent){
+Transmuter.prototype.render = function(parent){
 	this.content.i = {};
 	//enabled checkbox
 	const r0 = createUIElement({parent:parent, cssClasses:['row']});
@@ -102,24 +102,24 @@ Generator.prototype.render = function(parent){
 	this.render1(r1);
 	this.update();
 }
-Generator.prototype.render0 = function(parent){
+Transmuter.prototype.render0 = function(parent){
 	this.content.e = createUIElement({type:'input', parent:createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{verticalAlign:'middle'}}),
-		title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => this.e = !this.e});
+		title:'Transmuter Enabled', attr:{type:'checkbox'}, onclick:() => this.e = !this.e});
 	
 	//components
 	this.renderInput(parent);
 
 	//manual button
 	this.content.b = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
-		cssClasses:['circleButton', 'cell', 'genButton'], textContent:'->', title:'Manual Generate',
-		onclick:() => this.generateClick()});
+		cssClasses:['circleButton', 'cell', 'genButton'], textContent:'->', title:'Manual Transmute',
+		onclick:() => this.transmuteClick()});
 
 	//output
 	this.renderOutput(createUIElement({parent: parent, cssClasses:['cell', 'nowrap']}));
 	
 	//flow
 	const flowParent = createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}});
-	createInfoElement({title:'Target Flow is the desired amount of this item to generate every tick before enhancement bonuses.', parent: flowParent});
+	createInfoElement({title:'Target Flow is the desired amount of this item to transmute every tick before enhancement bonuses.', parent: flowParent});
 	this.content.f = createUIElement({type:'input', parent:flowParent,
 		cssClasses:['flow', 'genFlow'],
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
@@ -134,10 +134,10 @@ Generator.prototype.render0 = function(parent){
 
 	this.content.fl = createUIElement({type:'span', parent:flowParent, title:'Base converted flow' });
 }
-Generator.prototype.render1 = function(parent){
+Transmuter.prototype.render1 = function(parent){
 	//upgrade
 	this.content.u = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}}), 
-		cssClasses:['circleButton', 'cell', 'genLevel'], textContent:'++', title:'Upgrade Generator', onclick:() => this.upgrade()});
+		cssClasses:['circleButton', 'cell', 'genLevel'], textContent:'++', title:'Upgrade Transmuter', onclick:() => this.upgrade()});
 
 	//const w0 = createUIElement({parent:parent, cssClasses:['cell', 'nowrap']});;
 	//upgrade cost
@@ -155,7 +155,7 @@ Generator.prototype.render1 = function(parent){
 	const aw = createUIElement({type:'label', parent:parent, cssClasses:['cell', 'nowrap'], textContent:'Auto-Upgrade: '});
 	this.content.a = createUIElement({type:'input', parent:aw,
 		attr:{type:'checkbox'}, onclick:() => this.a = !this.a});
-	createInfoElement({parent: aw, title: 'Automatically upgrade this generator when this inventory contains at least double the cost. This helps avoid other generators having insufficient input.'});
+	createInfoElement({parent: aw, title: 'Automatically upgrade this transmuter when this inventory contains at least double the cost. This helps avoid other transmuters having insufficient input.'});
 
 	//Max Flow 
 	const mw = createUIElement({parent:parent, cssClasses:['cell', 'nowrap', 'pointer'], title:'Click to set flow to maximum', onclick:() => this.setFlow(this.maxFlow())});
@@ -163,7 +163,7 @@ Generator.prototype.render1 = function(parent){
 	this.content.m = createUIElement({type:'span', parent:mw, textContent:'-'});
 }
 
-Generator.prototype.update = function(){
+Transmuter.prototype.update = function(){
 	
 	const uc = this.upgradeCost();
 	const mf = this.maxFlow();
@@ -196,7 +196,7 @@ Generator.prototype.update = function(){
 	}
 }
 
-Generator.prototype.canCreate = function(){
+Transmuter.prototype.canCreate = function(){
 	if(game.settings.c){return true;}
 	let output = true;
 	this.i.forEach(x => {
@@ -207,26 +207,26 @@ Generator.prototype.canCreate = function(){
 	
 	return output;
 }
-Generator.prototype.canUpgrade = function(){
+Transmuter.prototype.canUpgrade = function(){
 	const cost = this.upgradeCost();
 	const temp = this.o.map(x => Math.floor(x.inv.a / cost));
 	return Math.min(...temp);
 }
-Generator.prototype.maxFlow = function(){
+Transmuter.prototype.maxFlow = function(){
 	if(this.l===0){return 0;}
 	const a = this.l**4;
 	const b = this.l**2;
 	const c = this.l;
 	return Math.floor(a+b+c-2);
 }
-Generator.prototype.upgradeCost = function(){
+Transmuter.prototype.upgradeCost = function(){
 	const s = game.enhancements.powerD;
 	const a = s*this.l**5;
 	const b = s*this.l**3;
 	const c = s*this.l;
 	return Math.ceil((a+b+c+1)/this.o.length);
 }
-Generator.prototype.upgrade = function(){
+Transmuter.prototype.upgrade = function(){
 	const cost = this.upgradeCost();
 	if(this.i.some(x => x.inv.a < cost)){return;}
 
@@ -242,11 +242,11 @@ Generator.prototype.upgrade = function(){
 	
 	this.update();
 }
-Generator.prototype.autoUpgrade = function(){
+Transmuter.prototype.autoUpgrade = function(){
 	if(this.a && this.canUpgrade() >= 2){ this.upgrade(); }
 }
-Generator.prototype.generateAmount = function() {
-	//gets the maximum amount that can be generated based on amount owned, recipe cost in a or b, generator flow setpoint.
+Transmuter.prototype.transmuteAmount = function() {
+	//gets the maximum amount that can be transmuted based on amount owned, recipe cost in a or b, transmuter flow setpoint.
 	const values = [
 		...this.i.map(x => x.a===0?Number.POSITIVE_INFINITY:x.inv.a/x.a),
 		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
@@ -255,7 +255,7 @@ Generator.prototype.generateAmount = function() {
 
 	return Math.floor(Math.min(...values));
 }
-Generator.prototype.decreaseInput = function(amount){
+Transmuter.prototype.decreaseInput = function(amount){
 	this.i.forEach(x => {
 		if(x.a){
 			ActualUsed[x.inv.f.id] = (ActualUsed[x.inv.f.id]??0) + x.a * amount;
@@ -274,7 +274,7 @@ Generator.prototype.decreaseInput = function(amount){
 		}
 	});
 }
-Generator.prototype.increaseOutput = function(amount, isManual){
+Transmuter.prototype.increaseOutput = function(amount, isManual){
 	this.o.forEach(x => {
 		const xm = x.inv.m.i;
 		const tgb = game.enhancements.powerTGB[xm];
@@ -306,19 +306,19 @@ Generator.prototype.increaseOutput = function(amount, isManual){
 		}
 	});
 }
-Generator.prototype.generate = function(){
+Transmuter.prototype.transmute = function(){
 	if(!this.e || !this.f){return;}
 	
 	if(game.settings.c){//if cheater then just create setpoint
 		this.increaseOutput(this.s, false);
 	}
 	else{
-		const amount = this.generateAmount();
+		const amount = this.transmuteAmount();
 		this.decreaseInput(amount);
 		this.increaseOutput(amount, false);
 	}
 }
-Generator.prototype.generateClick = function(){
+Transmuter.prototype.transmuteClick = function(){
 
 	if(game.settings.c){//if cheater then just create setpoint
 		this.increaseOutput(1, true);
@@ -331,7 +331,7 @@ Generator.prototype.generateClick = function(){
 	this.update();
 }
 
-Generator.prototype.setFlow = function(input){
+Transmuter.prototype.setFlow = function(input){
 	const max = this.maxFlow();
 	const value = Math.min(input??0, max);
 	this.f = Math.max(0,value);

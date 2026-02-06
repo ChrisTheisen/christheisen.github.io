@@ -65,11 +65,11 @@ GameClock.prototype.update = function(input = 1){
 	input = Math.min(game.settings.s, input);
 	while(--input > 0){
 		this.duration -= this.updateRate;
-		//do generates
+		//do transmutes
 		ActualUsed = {};
 		ActualCreated = {};
 		Demand = {};
-		game.generators.forEach(x => {x.autoUpgrade(); x.generate();});
+		game.transmuters.forEach(x => {x.autoUpgrade(); x.transmute();});
 	}
 	this.toggleTabs();
 	
@@ -97,25 +97,25 @@ GameClock.prototype.update = function(input = 1){
 	}
 	
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
-	game.enhancements.totalGenerated = TM;
+	game.enhancements.totalTransmuted = TM;
 	
 	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
-	//show progress bar when a generator is over level 0.
-	const showProgress = game.generators.some(x => x.l > 0);
+	//show progress bar when a transmuter is over level 0.
+	const showProgress = game.transmuters.some(x => x.l > 0);
 	game.clock.content.p.classList.toggle('hide', !showProgress);
 	
-	//can discover when a generator is over level 3.
-	const canDiscover = game.generators.some(x => x.l > 3);
+	//can discover when a transmuter is over level 3.
+	const canDiscover = game.transmuters.some(x => x.l > 3);
 	game.menu.children.M_1.b.classList.toggle('hide', !canDiscover);
 	
-	//can manage when a generator for an item with components is over level 1.
-	const canManage = game.generators.some(x => x.l > 1 && x.i.length > 0);
+	//can manage when a transmuter for an item with components is over level 1.
+	const canManage = game.transmuters.some(x => x.l > 1 && x.i.length > 0);
 	game.menu.children.M_2.b.classList.toggle('hide', !canManage);
 	
-	//can enhance when a generator for an item with components is over level 7.
-	const canEnhance = game.generators.some(x => x.l > 7 && x.i.length > 0);
+	//can enhance when a transmuter for an item with components is over level 7.
+	const canEnhance = game.transmuters.some(x => x.l > 7 && x.i.length > 0);
 	game.menu.children.M_3.b.classList.toggle('hide', !canEnhance);
 }
 
@@ -123,7 +123,7 @@ function Game(){
 	this.clock = new GameClock();
 	this.enhancements = new Enhancements();
 	this.inventory = new Inventory();
-	this.generators = [];
+	this.transmuters = [];
 	this.discoverHint = [];
 	this.dContent = {};
 	this.menu = new Menu();
@@ -177,8 +177,8 @@ Game.prototype.intro = function(){
 		return;
 	}//far enough to no more hints
 
-	const upg = game.generators.find(x => x.o.some(y => y.inv.f.s === 'u'));
-	const downg = game.generators.find(x => x.o.some(y => y.inv.f.s === 'd'));
+	const upg = game.transmuters.find(x => x.o.some(y => y.inv.f.s === 'u'));
+	const downg = game.transmuters.find(x => x.o.some(y => y.inv.f.s === 'd'));
 
 	const shouldCreate = (upg.l < 4 || downg.l < 4);
 	this.menu.children.M_0.b.classList.toggle('hintAnimate', shouldCreate && game.menu.current !== 'M_0');
@@ -199,11 +199,11 @@ Game.prototype.intro = function(){
 	const shouldUpDo = shouldUp && this.menu.children.M_0.children.M_a.children.m_0.current === '0';
 	const shouldUpCreate = shouldUpDo && !upg.canUpgrade();
 	upg.content.b?.classList.toggle('hintAnimate', shouldUpCreate);
-	if(shouldUpCreate){ setElementText(hintZone, 'Create some Up Quarks by manually running the generator with the (->) button.'); }
+	if(shouldUpCreate){ setElementText(hintZone, 'Create some Up Quarks by manually running the transmuter with the (->) button.'); }
 	
-	const shouldUpGenerate = shouldUpDo && upg.canUpgrade();
-	upg.content.u?.classList.toggle('hintAnimate', shouldUpGenerate);
-	if(shouldUpGenerate){ setElementText(hintZone, 'Upgrade the Up Quark Generator with the (++) button.'); }
+	const shouldUpTransmute = shouldUpDo && upg.canUpgrade();
+	upg.content.u?.classList.toggle('hintAnimate', shouldUpTransmute);
+	if(shouldUpTransmute){ setElementText(hintZone, 'Upgrade the Up Quark Transmuter with the (++) button.'); }
 
 	const shouldDown = shouldQuark && upg.l > 3 && downg.l < 4;
 	this.menu.children.M_0.children.M_a.children.m_0.children['1'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.M_0.children.M_a.children.m_0.current !== '1');
@@ -214,9 +214,9 @@ Game.prototype.intro = function(){
 	downg.content.b?.classList.toggle('hintAnimate', shouldDownCreate);
 	if(shouldDownCreate){ setElementText(hintZone, 'Create some Down Quarks.'); }
 	
-	const shouldDownGenerate = shouldDownDo && downg.canUpgrade();
-	downg.content.u?.classList.toggle('hintAnimate', shouldDownGenerate);
-	if(shouldDownGenerate){ setElementText(hintZone, 'Upgrade the Down Quark Generator.'); }
+	const shouldDownTransmute = shouldDownDo && downg.canUpgrade();
+	downg.content.u?.classList.toggle('hintAnimate', shouldDownTransmute);
+	if(shouldDownTransmute){ setElementText(hintZone, 'Upgrade the Down Quark Transmuter.'); }
 	
 	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['4'].isUnlocked() && !gic['5'].isUnlocked()) ||
 		(gic['4'].isUnlocked() && game.menu.current !== 'M_1' && !gic['4'].isDisplayed());
@@ -258,28 +258,28 @@ function startGame(){
 	getUIElement('gameWrapper').classList.remove('hide');
 	game.clock.status = 'Loading Game Data';
 	game.clock.update();
-	game.generators = recipes.map(x => new Generator({id:x.id, i:x.i, o:x.o}));
+	game.transmuters = recipes.map(x => new Transmuter({id:x.id, i:x.i, o:x.o}));
 	buildMaps(itemsMenu, null);
-	Object.values(game.inventory.children).forEach(x => x.mapGenerators());
+	Object.values(game.inventory.children).forEach(x => x.mapTransmuters());
 	
 	game.clock.status = 'Initializing UI';
 	game.clock.update();
 	buildUI();
 
 	const max_item = Object.values(items).map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
-	const max_gen = game.generators.map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
+	const max_gen = game.transmuters.map(x => x.id).sort((a,b) => sortID(a,b,-1))[0];
 	setElementText(getUIElement('version'), `${max_item}.${max_gen}`);
 
 	game.clock.status = 'Checking Game Data';
 	//Item exists but no recipe
 	Object.values(items).forEach(i => {
-		if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.id)))
-		{console.warn("MISSING GENERATOR: ", i.id, i.n);}
+		if(!game.transmuters.some(x => x.o.some(o => o.inv.f.id === i.id)))
+		{console.warn("MISSING TRANSMUTER: ", i.id, i.n);}
 	});
-	//No generator exists to output another input.
-	game.generators.forEach(g => {
+	//No transmuter exists to output another input.
+	game.transmuters.forEach(g => {
 		g.i.forEach(i => {
-			if(!game.generators.some(x => x.o.some(o => o.inv.f.id === i.inv.f.id)))
+			if(!game.transmuters.some(x => x.o.some(o => o.inv.f.id === i.inv.f.id)))
 			{console.warn("MISSING INPUT: ", i.inv.f.id, i.inv.f.n);}
 		})
 	});
@@ -294,7 +294,7 @@ function startGame(){
 		load();
 	}
 	else{
-		game.generators.filter(x => x.i.length === 0).forEach(x => x.o.forEach(y => y.inv.unlock()));
+		game.transmuters.filter(x => x.i.length === 0).forEach(x => x.o.forEach(y => y.inv.unlock()));
 	}
 
 	game.clock.tml = getUIElement('totalMass');
@@ -323,7 +323,7 @@ function begin(){
 	btn.classList.add('btnWelcome-animate');
 	setTimeout(() => {
 		setElementText(btn, '');
-	}, 1000);
+	}, 700);
 
 	const ww = getUIElement('welcomeWrapper');
 	ww.classList.add('welcomeWrapper-animate');
@@ -338,7 +338,7 @@ function begin(){
 
 	setTimeout(() => {
 		ww.classList.add('hide');
-	}, 5000);
+	}, 3000);
 
 }
 
