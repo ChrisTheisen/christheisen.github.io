@@ -36,7 +36,7 @@ Inventory.prototype.renderManage = function(parent){
 		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned, does not include bulk storage.', cssClasses:['help']});
 	}
 	if(game.settings.m.sd){
-		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on transmuter flow setpoints', cssClasses:['help']});
 	}
 	if(game.settings.m.ss){
 		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Supply', title:'Actual amount created in last cycle', cssClasses:['help']});
@@ -60,8 +60,8 @@ function InventoryItem(input){
 	this.a = 0;//amout
 	this.b = new Amount();//bulk storage
 	this.f = input;//flavor
-	this.g = [];//generators that output this item
-	this.i = [];//generators that input this item
+	this.g = [];//transmuters that output this item
+	this.i = [];//transmuters that input this item
 	this.m = input.m.magnitude();//item mass magnitude
 	this.q = false;//show used in
 
@@ -75,7 +75,7 @@ function InventoryItem(input){
 		d:null, //discover add buttons (for disabled)
 		dg:null, //discover GOTO button (for tutorial)
 		f:null, //manage sum flow
-		g:[], //generators
+		g:[], //transmuters
 		i:null, //inventory
 		m:null, //manage parent row(for hiding locked/filtered)
 		n:null, //actual-created label
@@ -94,9 +94,9 @@ function InventoryItem(input){
 	};
 }
 
-InventoryItem.prototype.mapGenerators = function(){
-	this.g = game.generators.filter(x => x.o.some(o => o.inv.f.id === this.f.id));
-	this.i = game.generators.filter(x => x.i.some(i => i.inv.f.id === this.f.id));
+InventoryItem.prototype.mapTransmuters = function(){
+	this.g = game.transmuters.filter(x => x.o.some(o => o.inv.f.id === this.f.id));
+	this.i = game.transmuters.filter(x => x.i.some(i => i.inv.f.id === this.f.id));
 }
 InventoryItem.prototype.calculateDemand = function(){
 	let output = 0;
@@ -202,7 +202,7 @@ InventoryItem.prototype.renderCreate0 = function(parent){
 
 }
 InventoryItem.prototype.renderCreate1 = function(parent){
-	createUIElement({parent:parent, cssClasses:['title'], textContent:'Generators'});
+	createUIElement({parent:parent, cssClasses:['title'], textContent:'Transmuter'});
 	const w = createUIElement({parent:parent, cssClasses:['center', 'table']});
 	const r0 = createUIElement({parent:w, cssClasses:['row']});
 	createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], style:{width:'5%'}});
@@ -233,7 +233,7 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	this.content.r = results;
 }
 InventoryItem.prototype.renderBulkStorage = function(parent){
-	createInfoElement({parent:parent, title:'Excess items will be stored in Bulk Storage. Some generators can take Bulk Mass as in input.'}).style.float = 'left';
+	createInfoElement({parent:parent, title:'Excess items will be stored in Bulk Storage. Some transmuters can take Bulk Mass as in input.'}).style.float = 'left';
 	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage'});
 
 	this.v.a = 0;
@@ -420,7 +420,7 @@ InventoryItem.prototype.renderManageModal = function(){
 	
 	if(this.i.length){
 
-		createUIElement({type:'h4', parent:parent, textContent:`Generators with ${this.f.n} as an input:`});
+		createUIElement({type:'h4', parent:parent, textContent:`Transmuters with ${this.f.n} as an input:`});
 		const it = createUIElement({type:'table', parent:parent, style:{width:'100%'}});
 		
 		this.i.forEach(x => {
@@ -432,13 +432,13 @@ InventoryItem.prototype.renderManageModal = function(){
 			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join(', ');
 			
 			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:igr}),
-				title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
+				title:'Transmuter Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
 
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:igr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
 			x.content.f = createUIElement({type:'input', parent:createUIElement({type:'td', parent:igr}),
-				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to transmute every tick.',
 				attr:{type:'number'}, onchange:(e) => { x.setFlow(e.target.value); setElementText(x.content.fl, formatNumberFromSettings(x.f)); }});
 			x.content.f.value = x.f;
 
@@ -448,7 +448,7 @@ InventoryItem.prototype.renderManageModal = function(){
 	
 	if(this.g.length){
 
-		createUIElement({type:'h4', parent:parent, textContent:`Generators with ${this.f.n} as an output:`});
+		createUIElement({type:'h4', parent:parent, textContent:`Transmuters with ${this.f.n} as an output:`});
 		const ot = createUIElement({type:'table', parent:parent, style:{width:'100%'}});
 		
 		this.g.forEach(x => {
@@ -460,13 +460,13 @@ InventoryItem.prototype.renderManageModal = function(){
 			const outn = x.o.map(x => `${x.inv.f.n}:${x.a?x.a:''}`).join();
 			
 			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:ogr}),
-				title:'Generator Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
+				title:'Transmuter Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
 			
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:ogr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
 			x.content.f = createUIElement({type:'input', parent:createUIElement({type:'td', parent:ogr}),
-				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+				cssClasses:['flow', 'help'], title:'Target Flow is the desired amount of this item to transmute every tick.',
 				attr:{type:'number'}, onchange:(e) => { x.setFlow(e.target.value); setElementText(x.content.fl, formatNumberFromSettings(x.f)); }});
 			x.content.f.value = x.f;
 
@@ -567,7 +567,6 @@ InventoryItem.prototype.update = function(force = false){
 			setElementText(this.content.z, formatNumberFromSettings(demand));
 			setElementText(this.content.n, formatNumberFromSettings(Math.floor(created)));
 			setElementText(this.content.q, formatNumberFromSettings(used));
-
 
 			break;
 		}

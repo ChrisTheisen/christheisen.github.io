@@ -1,9 +1,9 @@
 function Enhancements(){
-	this.d = 0;//generator discount
-	this.g = 0;//generator booster
+	this.d = 0;//transmuter discount
+	this.g = 0;//transmuter booster
 	this.m = 0;//manual click booster
 	
-	this.totalGenerated = new Amount();
+	this.totalTransmuted = new Amount();
 
 	this.powerD = 0;
 	this.powerG = Array(Object.keys(MassUnits).length).fill(1);
@@ -19,7 +19,7 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
-		g: {//generator bonus
+		g: {//transmuter bonus
 			a: null,//amount
 			b: null,//button
 			h: null,//have
@@ -35,7 +35,7 @@ function Enhancements(){
 			n: null,//name
 			p: null//power
 		},
-		t: {//total mass generated
+		t: {//total mass transmuted
 			b0: null,//bonus
 			b1: null,//bonus
 			b2: null,//bonus
@@ -73,8 +73,8 @@ Enhancements.prototype.setPowers = function(){
 };
 
 Enhancements.prototype.setPowerTGB = function(){
-	const tm = this.totalGenerated.magnitude();
-	const pct = this.totalGenerated[tm.s]/tm.c;
+	const tm = this.totalTransmuted.magnitude();
+	const pct = this.totalTransmuted[tm.s]/tm.c;
 	const es = game.settings.e / 10;
 	const base = (tm.emb + (pct * (tm.emr - tm.emb))) ** es;
 	
@@ -196,11 +196,11 @@ Enhancements.prototype.render = function(parent){
 	this.content.m.l = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.d.l = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[Level]' });
 
-	createInfoElement({parent:rowG, title:'Multiply all generator output while keeping input the same.'});
+	createInfoElement({parent:rowG, title:'Multiply all transmuter output while keeping input the same.'});
 	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output'});
 	createInfoElement({parent:rowM, title:'Multiply the output when the (->) button is clicked while keeping the input the same.'});
 	createUIElement({parent:rowM, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Manual Output'});
-	createInfoElement({parent:rowD, title:'Reduce generator upgrade cost.'});
+	createInfoElement({parent:rowD, title:'Reduce transmuter upgrade cost.'});
 	createUIElement({parent:rowD, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Cost'});
 
 	this.content.g.p = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Power]' });
@@ -229,12 +229,12 @@ Enhancements.prototype.render = function(parent){
 	
 	const bonusWrapper = createUIElement({parent: parent, cssClasses:['center', 'bonusWrapper']});
 	createUIElement({parent: bonusWrapper, textContent: 'Total Mass Bonus: '});
-	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'The Total Mass Bonus (TMB) increases all generator outputs.'});
+	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'The Total Mass Bonus (TMB) increases all transmuter outputs.'});
 	createUIElement({type:'p', parent: bonusWrapper, cssClasses:['info'], textContent: 'TMB starts with a small bonus when the total mass is over 65536 Da and increases with greater total mass.'});
 
 	const tgbWrapper = createUIElement({parent: bonusWrapper, cssClasses:['table', 'center']})
 	const wrapperTGBHead = createUIElement({parent: tgbWrapper, cssClasses:['row']})
-	const mag = this.totalGenerated.magnitude().i;
+	const mag = this.totalTransmuted.magnitude().i;
 
 	const wrapper0 = createUIElement({parent: tgbWrapper, cssClasses:['row']})
 	const wrapper1 = createUIElement({parent: tgbWrapper, cssClasses:['row', mag<1?'hide':null]})
@@ -247,8 +247,8 @@ Enhancements.prototype.render = function(parent){
 
 	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Item Magnitude', title:'Larger item magnitudes recieve a smaller bonus.'})
 	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'TMB', title:'Global bonus that is applied on top of the above enhancements.'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Generator Bonus', title: 'Total multiplier bonus for the item generator (TMB x Gen. Output).'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Generate (->) button is clicked (TMB x Manual Output)).'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Transmuter Bonus', title: 'Total multiplier bonus for the item transmuter (TMB x Gen. Output).'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Transmute (->) button is clicked (TMB x Manual Output)).'})
 
 	createUIElement({parent: wrapper0, textContent: MassUnits.Da.n, cssClasses:['cell']})
 	createUIElement({parent: wrapper1, textContent: MassUnits.pg.n, cssClasses:['cell']})

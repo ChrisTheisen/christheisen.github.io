@@ -57,7 +57,7 @@ Menu.prototype.route = function(addHistory = true){
 			break;
 		}
 		case 'M_2': {
-			game.generators.forEach(x => x.content.f = null);
+			game.transmuters.forEach(x => x.content.f = null);
 			this.renderManage(div);
 			break;
 		}
@@ -75,7 +75,7 @@ Menu.prototype.route = function(addHistory = true){
 		}
 		default:{
 			if(AllFlavors[this.current]){
-				game.generators.forEach(x => x.content.f = null);
+				game.transmuters.forEach(x => x.content.f = null);
 				//if it has mass it is a creatable item
 				AllFlavors[this.current].renderCreate(div);
 			}
@@ -324,6 +324,7 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
+			this.route();//update Discover
 		}});
 	createInfoElement({parent: scan, title: 'After adding items to the Matter Mutator click the "Scan" button to search for any recipes that match the added items.'});
 	
@@ -340,6 +341,7 @@ Menu.prototype.renderDiscover = function(parent){
 }
 
 Menu.prototype.renderManage = async function(parent){
+	const filter = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center'], style:{display:'table'}});
 
 
 	const collapser = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['filterWrapperManage', 'center']}),
@@ -550,7 +552,7 @@ Menu.prototype.renderSettings = function(parent){
 		title:'Cheater Mode', attr:{type:'checkbox'},
 		onclick:() => toggleSetting('c')});
 	game.settings.content.s.c.checked = game.settings.c;
-	createInfoElement({parent: c, title: 'When this is enabled generators no longer use items when generating items.'});
+	createInfoElement({parent: c, title: 'When this is enabled transmuters no longer use items when transmuting items.'});
 
 	const nb = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	const nbOptions = [{i:2,n:'Binary'},{i:3,n:'Ternary'},{i:4,n:'Quaternary'},
