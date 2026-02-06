@@ -324,7 +324,6 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
-			this.route();//update Discover
 		}});
 	createInfoElement({parent: scan, title: 'After adding items to the Matter Mutator click the "Scan" button to search for any recipes that match the added items.'});
 	
@@ -621,3 +620,4 @@ Menu.prototype.renderSettings = function(parent){
 	});
 
 }
+
