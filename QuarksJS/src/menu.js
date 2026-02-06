@@ -252,11 +252,12 @@ Menu.prototype.updateResults = function(input){
 	});
 	
 	game.dContent.mm.replaceChildren(...newTable);
+	game.inventory.update();
 }
 
 Menu.prototype.renderDiscover = function(parent){
 
-	const top = createUIElement({parent:parent, cssClasses:['center', 'filterWrapper', 'flex'] });
+	const top = createUIElement({parent:parent, cssClasses:['center', 'filterWrapperDiscover', 'flex'] });
 
 	const filter = createUIElement({parent:top});
 	const f0 = createUIElement({parent:filter});
@@ -276,7 +277,7 @@ Menu.prototype.renderDiscover = function(parent){
 			game.inventory.update();
 		}});
 	game.settings.content.d.o.checked = game.settings.d.o;
-	game.settings.content.d.l = createUIElement({type:'input', parent:f1, attr:{type:'number', min:0, max:1000000000000}, style:{width:'50px'},
+	game.settings.content.d.l = createUIElement({type:'input', parent:f1, attr:{type:'number', min:0, max:1000000000000, value:1}, style:{width:'50px'},
 		onchange: (e) => { 
 			game.settings.d.l = e.target.value;
 			game.inventory.update();
@@ -287,6 +288,7 @@ Menu.prototype.renderDiscover = function(parent){
 	game.dContent.btnHint = createUIElement({type:'button', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
 		onclick:()=> getDiscoverHint()
 		});
+	createInfoElement({parent: hint, title:'Click "Get Recipe" to try to populate the Matter Mutator with items for a discoverable recipe.'});
 	const houtText = game.discoverHint.map(x => x.f.n).join();
 	game.dContent.hout = createUIElement({type:'span',parent:hint,textContent:houtText});
 	game.dContent.hadd = createUIElement({type:'button', textContent:'+>', parent:hint, cssClasses:game.dinterval?['circleButton']:['circleButton','hide'], style:{marginLeft:'15px'},
@@ -301,7 +303,8 @@ Menu.prototype.renderDiscover = function(parent){
 		}});
 	
 
-	game.dContent.btnScan = createUIElement({type:'button', textContent:'Scan', parent:top,
+	const scan = createUIElement({parent:top});
+	game.dContent.btnScan = createUIElement({type:'button', textContent:'Scan', parent:scan,
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.mm.map(x => x.f));
 			game.mm.length = 0;
@@ -321,14 +324,12 @@ Menu.prototype.renderDiscover = function(parent){
 			});
 			
 			this.updateResults(unlocked);
-			const newBags = createUIElement({parent:w, cssClasses:['cell', 'discoverLeft']});
-			game.inventory.renderDiscover(newBags);
-			bags.replaceWith(newBags);
 		}});
+	createInfoElement({parent: scan, title: 'After adding items to the Matter Mutator click the "Scan" button to search for any recipes that match the added items.'});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	const bags = createUIElement({parent:w, cssClasses:['cell', 'discoverLeft']});
+	const bags = createUIElement({parent:w, id:'discovery_bags', cssClasses:['cell', 'discoverLeft']});
 	game.inventory.renderDiscover(bags);
 	
 	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
@@ -341,7 +342,7 @@ Menu.prototype.renderDiscover = function(parent){
 Menu.prototype.renderManage = async function(parent){
 
 
-	const collapser = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']}),
+	const collapser = createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['filterWrapperManage', 'center']}),
 			cssClasses:['smallButton', 'filterCollapseButton'], textContent:'v',
 			onclick:()=>{
 				if(Array.from(filterTable.classList).includes('hide')){
@@ -356,7 +357,7 @@ Menu.prototype.renderManage = async function(parent){
 				}
 			}
 	});
-	const filterWrapper = createUIElement({parent:parent, cssClasses:['filterWrapper', 'center']});
+	const filterWrapper = createUIElement({parent:parent, cssClasses:['filterWrapperManage', 'center']});
 	const tableWrapper = createUIElement({parent:parent, cssClasses:['manage', 'center']});
 
 	const filterColumns = createUIElement({parent:filterWrapper, cssClasses:['center']});
@@ -545,10 +546,11 @@ Menu.prototype.renderSettings = function(parent){
 	game.settings.content.s.u.checked = game.settings.u;
 
 	const c = createUIElement({parent:parent, cssClasses:['settingsRow']});
-	game.settings.content.s.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Mode (creating items has no cost)'}), 
+	game.settings.content.s.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:c, textContent:'Cheater Mode'}),
 		title:'Cheater Mode', attr:{type:'checkbox'},
 		onclick:() => toggleSetting('c')});
 	game.settings.content.s.c.checked = game.settings.c;
+	createInfoElement({parent: c, title: 'When this is enabled generators no longer use items when generating items.'});
 
 	const nb = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	const nbOptions = [{i:2,n:'Binary'},{i:3,n:'Ternary'},{i:4,n:'Quaternary'},
@@ -556,20 +558,23 @@ Menu.prototype.renderSettings = function(parent){
         {i:9,n:'Nonary'},{i:10,n:'Decimal'},{i:12,n:'Dozenal'},{i:16,n:'Hexadecimal'},
         {i:32,n:'Base32'},{i:64,n:'Base64'}];
 	game.settings.content.s.n.b = createUIElement({type:'select', parent:createUIElement({type:'label', parent:nb, textContent:'Number Base: '}),
-		title:'Doesn\'t effect hardcoded help values or number inputs.', cssClasses:['help'], onchange:() => toggleSetting('nb')});
+		onchange:() => toggleSetting('nb')});
+	createInfoElement({parent:nb, title: 'The default is Decimal also known as base ten, meaning there are ten unique symbols (0,1,2,3,4,5,6,7,8,9). Computers use binary but some early prototypes used ternary. Some people prefer dozenal. Doesn\'t effect hardcoded help values or number inputs.'});
 	nbOptions.forEach((x) => { createUIElement({type:'option', parent:game.settings.content.s.n.b, attr:{value:x.i, label:x.n}}); }); 
 	game.settings.content.s.n.b.value = game.settings.n.b;
 
 	const ns = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	game.settings.content.s.n.s = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ns, textContent:'Significant Digits: '}),
-		title:'Doesn\'t effect hardcoded help values or number inputs.', cssClasses:['help'], onchange:() => toggleSetting('ns'), attr:{type:'number', min:3, max:15, value:15}
+		onchange:() => toggleSetting('ns'), attr:{type:'number', min:3, max:15, value:6}
 	});
+	createInfoElement({parent:ns, title:'Doesn\'t effect hardcoded help values or number inputs.'});
 	game.settings.content.s.n.s.value = game.settings.n.s;
 	
 	const ne = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	game.settings.content.s.e = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ne, textContent:'Enhancement Scaling: '}),
-		title:'Larger number = larger TMB. Read the Enhance tab or Help tab for more information.', cssClasses:['help'], onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:1024, value:12}
+		onchange:() => toggleSetting('e'), attr:{type:'number', min:0, max:1024, value:12}
 	});
+	createInfoElement({parent:ne, title:'Larger number = larger TMB. Check Help > Enhance for more details. Check the Enhance tab for the current bonus.' });
 	game.settings.content.s.e.value = game.settings.e;
 	
 	createUIElement({type: 'hr', parent: parent});
@@ -610,7 +615,7 @@ Menu.prototype.renderSettings = function(parent){
 
 	const z = createUIElement({parent:parent, cssClasses:['settingsRow']});
 	createUIElement({type:'button', parent:z, textContent:'HARD RESET', 
-		style:{marginLeft:'15px'}, onclick:() => { if(window.confirm("Confirm: clear save data and reset game?")){hardReset();} }
+		style:{marginLeft:'15px', backgroundColor:'red', fontWeight:'bold'}, onclick:() => { if(window.confirm("Confirm: clear save data and reset game?")){hardReset();} }
 	});
 
 }

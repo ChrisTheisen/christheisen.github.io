@@ -119,8 +119,9 @@ Generator.prototype.render0 = function(parent){
 	
 	//flow
 	const flowParent = createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}});
+	createInfoElement({title:'Target Flow is the desired amount of this item to generate every tick before enhancement bonuses.', parent: flowParent});
 	this.content.f = createUIElement({type:'input', parent:flowParent,
-		cssClasses:['flow', 'help', 'genFlow'], title:'Target Flow is the desired amount of this item to generate every tick.', 
+		cssClasses:['flow', 'genFlow'],
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
 	this.content.f.onkeyup = (e) => { 
 		const max = this.maxFlow();
@@ -151,9 +152,10 @@ Generator.prototype.render1 = function(parent){
 	this.content.l = createUIElement({type:'span', parent:lw, textContent:'-'});
  	
 	//auto upgrade
-	const aw = createUIElement({type:'label', parent:parent, cssClasses:['cell', 'nowrap', 'help'], textContent:'Auto-Upgrade: ', title:'Upgrade Generator when inventory > 2x cost'});
-	this.content.a = createUIElement({type:'input', parent:aw, 
+	const aw = createUIElement({type:'label', parent:parent, cssClasses:['cell', 'nowrap'], textContent:'Auto-Upgrade: '});
+	this.content.a = createUIElement({type:'input', parent:aw,
 		attr:{type:'checkbox'}, onclick:() => this.a = !this.a});
+	createInfoElement({parent: aw, title: 'Automatically upgrade this generator when this inventory contains at least double the cost. This helps avoid other generators having insufficient input.'});
 
 	//Max Flow 
 	const mw = createUIElement({parent:parent, cssClasses:['cell', 'nowrap', 'pointer'], title:'Click to set flow to maximum', onclick:() => this.setFlow(this.maxFlow())});
@@ -250,6 +252,7 @@ Generator.prototype.generateAmount = function() {
 		...this.i.map(x => x.b.isZero()?Number.POSITIVE_INFINITY:x.inv.b.estDivide(x.b)),
 		this.f
 	].filter(x => typeof x === 'number');
+
 	return Math.floor(Math.min(...values));
 }
 Generator.prototype.decreaseInput = function(amount){
@@ -271,13 +274,15 @@ Generator.prototype.decreaseInput = function(amount){
 		}
 	});
 }
-Generator.prototype.increaseOutput = function(amount){
+Generator.prototype.increaseOutput = function(amount, isManual){
 	this.o.forEach(x => {
 		const xm = x.inv.m.i;
 		const tgb = game.enhancements.powerTGB[xm];
 		const pg = game.enhancements.powerG[xm];
-		
-		const temp = amount * pg * tgb;
+		const pm = isManual ? game.enhancements.powerM[xm] : 1;
+
+		const temp = amount * pm * pg * tgb;
+
 		ActualCreated[x.inv.f.id] = temp;
 		
 		if(x.a){
@@ -305,24 +310,24 @@ Generator.prototype.generate = function(){
 	if(!this.e || !this.f){return;}
 	
 	if(game.settings.c){//if cheater then just create setpoint
-		this.increaseOutput(this.s);
-		return;
+		this.increaseOutput(this.s, false);
 	}
-	
-	const amount = this.generateAmount();
-	this.decreaseInput(amount);
-	this.increaseOutput(amount);
+	else{
+		const amount = this.generateAmount();
+		this.decreaseInput(amount);
+		this.increaseOutput(amount, false);
+	}
 }
 Generator.prototype.generateClick = function(){
-	const amount = game.enhancements.powerM;
+
 	if(game.settings.c){//if cheater then just create setpoint
-		this.increaseOutput(amount);
+		this.increaseOutput(1, true);
 		return;
 	}
 	if(!this.canCreate()){return;}
 
 	this.decreaseInput(1);
-	this.increaseOutput(amount);
+	this.increaseOutput(1, true);
 	this.update();
 }
 

@@ -139,7 +139,7 @@ function Game(){
 		i: true,//show info
 		u: true,//show used-in warning
 		s: 100,//speed/max cycles to run on one update
-		e: 12,//enhancement scaling (0-100)
+		e: 4,//enhancement scaling (0-1024)
 		d: { //discover filters
 			l: 0,//stock limit
 			o: false,//filter unowned
@@ -163,7 +163,7 @@ function Game(){
 		},
 		n:{//number settings
 			b: 10,//base
-			s: 15//significant digits to display
+			s: 6//significant digits to display
 		}
 	};
 	this.mm = [];

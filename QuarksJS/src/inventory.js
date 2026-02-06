@@ -142,7 +142,8 @@ InventoryItem.prototype.renderCreate = function(parent){
 	createUIElement({parent:m, textContent: this.f.m.toString()});
 	
 	if(!this.isUnlocked()){
-		createUIElement({type:'button', parent: createUIElement({parent: parent, cssClasses:['block', 'center']}), 
+		const row = createUIElement({parent: parent, cssClasses:['block', 'center']});
+		createUIElement({type:'button', parent: row,
 		cssClasses:['itemInfo'] , textContent:'Discover This Item',
 			onclick:()=>{
 				game.mm.length = 0;
@@ -175,6 +176,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 				game.menu.updateMM();
 			}
 		});
+		createInfoElement({ title: 'Click "Discover This Item" to add all input items to the Matter Mutator. Then click "Scan" to discover this and any related items.', parent: row});
 		return;
 	}
 	
@@ -186,14 +188,16 @@ InventoryItem.prototype.renderCreate = function(parent){
 }
 InventoryItem.prototype.renderCreate0 = function(parent){
 	
-	this.content.i = createUIElement({parent: parent, style:{width:'50%', paddingRight:'10px'}})
-	createUIElement({parent:this.content.i, cssClasses:['title'], textContent:'Inventory', title:`Maximum capacity is ${MAX_INVENTORY.toLocaleString()}`});
+	this.content.i = createUIElement({parent: parent, style:{width:'34%', paddingRight:'10px'}})
+	const headRow = createUIElement({parent:this.content.i});
+	createInfoElement({parent:headRow, title:`Maximum capacity is ${MAX_INVENTORY.toLocaleString()}`}).style.float = 'left';
+	createUIElement({parent:headRow, cssClasses:['title'], textContent:'Inventory'});
 	
 	const row = createUIElement({parent:this.content.i});
 	
-	this.content.a.push(createUIElement({parent:row, textContent:Math.floor(this.a), style:{fontSize:'36px'}}));
+	this.content.a.push(createUIElement({parent:row, textContent:Math.floor(this.a), style:{fontSize:'24px'}}));
 	
-	this.content.bs = createUIElement({parent:parent, cssClasses:['bLeft'], style:{width:'50%'}});
+	this.content.bs = createUIElement({parent:parent, cssClasses:['bLeft'], style:{width:'66%'}});
 	this.renderBulkStorage(this.content.bs);
 
 }
@@ -229,7 +233,8 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	this.content.r = results;
 }
 InventoryItem.prototype.renderBulkStorage = function(parent){
-	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage', title:'Store items in bulk to avoid overflowing Inventory.'});
+	createInfoElement({parent:parent, title:'Excess items will be stored in Bulk Storage. Some generators can take Bulk Mass as in input.'}).style.float = 'left';
+	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage'});
 
 	this.v.a = 0;
 	this.v.b.scale(0);
@@ -493,7 +498,6 @@ InventoryItem.prototype.update = function(force = false){
 			const hideBS = this.a < 1048576 && this.b.isZero();
 			this.content.bs?.classList.toggle('hide', hideBS)
 			this.content.i.style.width = hideBS ? '100%' : '50%';
-			this.content.i.style.lineHeight = hideBS ? '1' : '3';
 			
 			const hideUsedIn = this.q || !game.settings.u;
 			this.content.r?.classList.toggle('hide', !hideUsedIn);//used in wrapper

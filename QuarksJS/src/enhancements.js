@@ -7,7 +7,7 @@ function Enhancements(){
 
 	this.powerD = 0;
 	this.powerG = Array(Object.keys(MassUnits).length).fill(1);
-	this.powerM = 1;
+	this.powerM = Array(Object.keys(MassUnits).length).fill(1);
 	this.powerTGB = Array(Object.keys(MassUnits).length).fill(1);
 	
 	this.content = {
@@ -76,12 +76,12 @@ Enhancements.prototype.setPowerTGB = function(){
 	const tm = this.totalGenerated.magnitude();
 	const pct = this.totalGenerated[tm.s]/tm.c;
 	const es = game.settings.e / 10;
-	const baseBonus = (tm.emb + (pct * (tm.emr - tm.emb))) ** es;
+	const base = (tm.emb + (pct * (tm.emr - tm.emb))) ** es;
 	
 	//console.log(tm, baseBonus);
 
 	for(let i=0;i<this.powerTGB.length; i++){
-		this.powerTGB[i] = Math.max(1, baseBonus / ((i+1) ** 8));
+		this.powerTGB[i] = Math.max(1, base / ((i+1) ** 8));
 	}
 }
 
@@ -105,7 +105,7 @@ Enhancements.prototype.buyD = function(){
 	this.update();
 }
 Enhancements.prototype.setPowerD = function(){
-	this.powerD = .9995**this.d;
+	this.powerD = .9999**this.d;
 }
 Enhancements.prototype.gotoD = function(){
 	game.menu.gotoNode(this.costD().inv.f.id);
@@ -130,10 +130,10 @@ Enhancements.prototype.buyG = function(){
 	this.update();
 }
 Enhancements.prototype.setPowerG = function(){
-	let base = 1+(.01 * this.g**2);
+	let base = 1+(.01 * this.g**1.5);
 	
 	for(let i=0;i<this.powerG.length; i++){
-		this.powerG[i] = Math.max(1, base / ((i+1) ** 2));
+		this.powerG[i] = Math.max(1, base / ((i+1) ** 4));
 	}
 }
 Enhancements.prototype.gotoG = function(){
@@ -159,7 +159,11 @@ Enhancements.prototype.buyM = function(){
 	this.update();
 }
 Enhancements.prototype.setPowerM = function(){
-	this.powerM = 1+(8 * this.m);
+	let base = 1+(.02 * this.g**2);
+
+	for(let i=0;i<this.powerG.length; i++){
+		this.powerM[i] = Math.max(1, base / ((i+1) ** 2));
+	}
 }
 Enhancements.prototype.gotoM = function(){
 	game.menu.gotoNode(this.costM().inv.f.id);
@@ -171,6 +175,7 @@ Enhancements.prototype.render = function(parent){
 	const head = createUIElement({parent: wrapper, cssClasses:['row']});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'(++)', title:'Upgrade this enhancement'});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'Lvl', title:'Current Level'});
+	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:''});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'Type', title:'Enhancement Type'});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'Power', title:'Power of this enhancement'});
 	createUIElement({parent:head, cssClasses:['cell', 'help'], textContent:'', title:'Goto Item'});
@@ -183,17 +188,20 @@ Enhancements.prototype.render = function(parent){
 	const rowG = createUIElement({parent: wrapper, cssClasses:['row']});
 	const rowD = createUIElement({parent: wrapper, cssClasses:['row']});
 	
-	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Multiplies all generator output while keeping input the same.', onclick:() => this.buyG() });
-	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Multiply the output from button clicks while keeping input the same.', onclick:() => this.buyM() });
-	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell'], textContent:'++', title:'Reduce generator upgrade cost.', onclick:() => this.buyD() });
+	this.content.g.b = createUIElement({type:'button', parent:rowG, cssClasses:['circleButton', 'cell'], textContent:'++', onclick:() => this.buyG() });
+	this.content.m.b = createUIElement({type:'button', parent:rowM, cssClasses:['circleButton', 'cell'], textContent:'++', onclick:() => this.buyM() });
+	this.content.d.b = createUIElement({type:'button', parent:rowD, cssClasses:['circleButton', 'cell'], textContent:'++', onclick:() => this.buyD() });
 	
 	this.content.g.l = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.m.l = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[Level]' });
 	this.content.d.l = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[Level]' });
 
-	createUIElement({parent:rowG, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Output', title:'Multiply all generator output while keeping input the same.'});
-	createUIElement({parent:rowM, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Manual Output', title:'Multiply the output when the (->) button is clicked while keeping the input the same.'});
-	createUIElement({parent:rowD, cssClasses:['cell', 'help'], style:{textAlign:'left'}, textContent:'Gen. Cost', title:'Reduce generator upgrade cost.'});
+	createInfoElement({parent:rowG, title:'Multiply all generator output while keeping input the same.'});
+	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output'});
+	createInfoElement({parent:rowM, title:'Multiply the output when the (->) button is clicked while keeping the input the same.'});
+	createUIElement({parent:rowM, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Manual Output'});
+	createInfoElement({parent:rowD, title:'Reduce generator upgrade cost.'});
+	createUIElement({parent:rowD, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Cost'});
 
 	this.content.g.p = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Power]' });
 	this.content.m.p = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[Power]' });
@@ -304,11 +312,11 @@ Enhancements.prototype.update = function(){
 	setElementText(this.content?.m?.h, formatNumberFromSettings(Math.floor(cm.inv.a)));
 	setElementText(this.content?.m?.l, formatNumberFromSettings(this.m));
 	setElementText(this.content?.m?.n, cm.inv.f.n);
-	setElementText(this.content?.m?.p, formatNumberFromSettings(this.powerM));
+	setElementText(this.content?.m?.p, formatNumberFromSettings(this.powerM[0]));
 	
 	for(let i=0;i<this.powerTGB.length;i++){
 		setElementText(this.content?.t[`b${i}`], formatNumberFromSettings(this.powerTGB[i]));
 		setElementText(this.content?.t[`g${i}`], formatNumberFromSettings(this.powerTGB[i] * this.powerG[i]));
-		setElementText(this.content?.t[`m${i}`], formatNumberFromSettings(this.powerTGB[i] * this.powerG[i] * this.powerM));
+		setElementText(this.content?.t[`m${i}`], formatNumberFromSettings(this.powerTGB[i] * this.powerG[i] * this.powerM[i]));
 	}
 }
