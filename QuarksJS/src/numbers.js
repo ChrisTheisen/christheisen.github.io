@@ -118,7 +118,7 @@ function toBase64(input, sigFigs=15){
     const parts = [];
     while (true) {
         //use a bitwise mask to mod64 and prepend char
-        parts.push(digits[input & 0x3f]);
+        parts.push(digits[input & 63]);
         input >>>= 6;
         if(input===0){break;}//more efficient than in the while for some reason
     }
@@ -142,7 +142,8 @@ function toBase(input, base, sigFigs){
 }
 
 function formatNumber(input, base, sigFigs){
-    if(isNaN(Number(input)) || !input || input > Number.MAX_SAFE_INTEGER){return 'N/A';}
+    if(isNaN(Number(input)) || !input || input > Number.MAX_VALUE){return 'N/A';}
+
     input = Number(input);
     if(Number(input) === 0){return '0';}
 

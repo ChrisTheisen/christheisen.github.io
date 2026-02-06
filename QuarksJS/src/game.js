@@ -12,6 +12,7 @@ function GameClock(){
 	this.duration = 0;//time since last update
 	this.lastUpdate = 0;//time of last tick
 	this.intervalID = 0;//loop intervalID
+	this.tml = null;//total mass label dom element
 	
 	this.status = 'Loading Game Data';
 	this.content = {p:null, s:null, t:null};
@@ -78,7 +79,7 @@ GameClock.prototype.update = function(input = 1){
 		case 'M_2'://manage
 		{
 			if(game.settings.m.a){ 
-				game.inventory.update();
+				game.inventory.update(true);
 			}
 			break;
 		}
@@ -98,9 +99,7 @@ GameClock.prototype.update = function(input = 1){
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	game.enhancements.totalGenerated = TM;
 	
-	const tms = createUIElement({});
-	game.enhancements.totalGenerated.render(tms, true);
-	getUIElement('totalMass').replaceChildren(tms);
+	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
 	//show progress bar when a generator is over level 0.
@@ -140,7 +139,7 @@ function Game(){
 		i: true,//show info
 		u: true,//show used-in warning
 		s: 100,//speed/max cycles to run on one update
-		e: 10,//enhancement scaling (0-100)
+		e: 4,//enhancement scaling (0-1024)
 		d: { //discover filters
 			l: 0,//stock limit
 			o: false,//filter unowned
@@ -153,14 +152,18 @@ function Game(){
 			l: false,//hide created < used
 			n: false,//hide used === 0
 			t: false,//hide used < demand
-			u: false, //hide used < created
+			u: false,//hide used < created
 			x: false,//hide demand === 0
 			y: false,//hide demand < created
-			z: false //hide demand < used
+			z: false,//hide demand < used
+			so:true,//owned
+			sd:true,//demand
+			ss:true,//supply
+			su:true,//used
 		},
 		n:{//number settings
 			b: 10,//base
-			s: 15//significant digits to display
+			s: 6//significant digits to display
 		}
 	};
 	this.mm = [];
@@ -293,6 +296,8 @@ function startGame(){
 	else{
 		game.generators.filter(x => x.i.length === 0).forEach(x => x.o.forEach(y => y.inv.unlock()));
 	}
+
+	game.clock.tml = getUIElement('totalMass');
 	
 	game.clock.status = 'Starting Game';
 	game.inventory.update();

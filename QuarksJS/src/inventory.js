@@ -31,10 +31,19 @@ Inventory.prototype.renderManage = function(parent){
 	const t = createUIElement({type:'table', parent: parent, style:{margin:'auto', borderCollapse:'collapse'}});
 	const h = createUIElement({type:'tr', parent: t});
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Item', style:{width:'10%', textAlign:'left'}});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Created', title:'Actual amount created in last cycle', cssClasses:['help']});
-	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
+	console.log(game.settings.m);
+	if(game.settings.m.so){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Owned', title:'The number of this item owned, does not include bulk storage.', cssClasses:['help']});
+	}
+	if(game.settings.m.sd){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Demand', title:'Demand based on generator flow setpoints', cssClasses:['help']});
+	}
+	if(game.settings.m.ss){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Supply', title:'Actual amount created in last cycle', cssClasses:['help']});
+	}
+	if(game.settings.m.su){
+		createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'Used', title:'Actual amount used in last cycle', cssClasses:['help']});
+	}
 	createUIElement({type:'th', parent:h, attr:{scope:'col'}, textContent:'', style:{width:'5%'}});
 	
 	Object.values(this.children).filter(x => x.f.u).sort((a,b) => a.f.m.compare(b.f.m)).forEach(x => {
@@ -129,11 +138,12 @@ InventoryItem.prototype.renderCreate = function(parent){
 	createUIElement({type:'span', parent: s, textContent:'Symbol:'})
 	formatItemSymbols(this.f, createUIElement({parent:s}));
 	const m = createUIElement({parent: info, cssClasses:['nowrap','flex','itemInfo']});
-	createUIElement({type:'span', parent: m, textContent:'Mass:'})
-	this.f.m.render(createUIElement({parent:m}), true);
+	createUIElement({type:'span', parent: m, textContent:'Mass:'});
+	createUIElement({parent:m, textContent: this.f.m.toString()});
 	
 	if(!this.isUnlocked()){
-		createUIElement({type:'button', parent: createUIElement({parent: parent, cssClasses:['block', 'center']}), 
+		const row = createUIElement({parent: parent, cssClasses:['block', 'center']});
+		createUIElement({type:'button', parent: row,
 		cssClasses:['itemInfo'] , textContent:'Discover This Item',
 			onclick:()=>{
 				game.mm.length = 0;
@@ -166,6 +176,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 				game.menu.updateMM();
 			}
 		});
+		createInfoElement({ title: 'Click "Discover This Item" to add all input items to the Matter Mutator. Then click "Scan" to discover this and any related items.', parent: row});
 		return;
 	}
 	
@@ -177,14 +188,16 @@ InventoryItem.prototype.renderCreate = function(parent){
 }
 InventoryItem.prototype.renderCreate0 = function(parent){
 	
-	this.content.i = createUIElement({parent: parent, style:{width:'50%', paddingRight:'10px'}})
-	createUIElement({parent:this.content.i, cssClasses:['title'], textContent:'Inventory', title:`Maximum capacity is ${MAX_INVENTORY.toLocaleString()}`});
+	this.content.i = createUIElement({parent: parent, style:{width:'34%', paddingRight:'10px'}})
+	const headRow = createUIElement({parent:this.content.i});
+	createInfoElement({parent:headRow, title:`Maximum capacity is ${MAX_INVENTORY.toLocaleString()}`}).style.float = 'left';
+	createUIElement({parent:headRow, cssClasses:['title'], textContent:'Inventory'});
 	
 	const row = createUIElement({parent:this.content.i});
 	
-	this.content.a.push(createUIElement({parent:row, textContent:Math.floor(this.a), style:{fontSize:'36px'}}));
+	this.content.a.push(createUIElement({parent:row, textContent:Math.floor(this.a), style:{fontSize:'24px'}}));
 	
-	this.content.bs = createUIElement({parent:parent, cssClasses:['bLeft'], style:{width:'50%'}});
+	this.content.bs = createUIElement({parent:parent, cssClasses:['bLeft'], style:{width:'66%'}});
 	this.renderBulkStorage(this.content.bs);
 
 }
@@ -220,7 +233,8 @@ InventoryItem.prototype.renderCreate2 = function(parent){
 	this.content.r = results;
 }
 InventoryItem.prototype.renderBulkStorage = function(parent){
-	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage', title:'Store items in bulk to avoid overflowing Inventory.'});
+	createInfoElement({parent:parent, title:'Excess items will be stored in Bulk Storage. Some generators can take Bulk Mass as in input.'}).style.float = 'left';
+	createUIElement({parent:parent, cssClasses:['title'], textContent:'Bulk Storage'});
 
 	this.v.a = 0;
 	this.v.b.scale(0);
@@ -352,11 +366,18 @@ InventoryItem.prototype.renderManage = function(parent){
 	formatItemSymbols(this.f, createUIElement({type:'td', parent:n, cssClasses:['nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px', lineHeight:'3'}}));
 	//formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowY:'clip', fontSize:'14px'}}));
 	
-	this.content.a.push(createUIElement({type:'td', parent:row, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
-	
-	this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
-	this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
-	this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	if(game.settings.m.so){
+		this.content.a.push(createUIElement({type:'td', parent:row, textContent:this.a, style:{textAlign:'center', fontSize:'14px'}}));
+	}
+	if(game.settings.m.sd){
+		this.content.z = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
+	if(game.settings.m.ss){
+		this.content.n = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
+	if(game.settings.m.su){
+		this.content.q = createUIElement({type:'td', parent:row, textContent:'-', style:{textAlign:'center', fontSize:'14px'}});
+	}
 	
 	const expander = createUIElement({type:'button', parent:createUIElement({type:'td', parent:row}), 
 		cssClasses:['expandHeader'], textContent:'≡', title:'Expand Details',
@@ -477,7 +498,6 @@ InventoryItem.prototype.update = function(force = false){
 			const hideBS = this.a < 1048576 && this.b.isZero();
 			this.content.bs?.classList.toggle('hide', hideBS)
 			this.content.i.style.width = hideBS ? '100%' : '50%';
-			this.content.i.style.lineHeight = hideBS ? '1' : '3';
 			
 			const hideUsedIn = this.q || !game.settings.u;
 			this.content.r?.classList.toggle('hide', !hideUsedIn);//used in wrapper
@@ -547,6 +567,7 @@ InventoryItem.prototype.update = function(force = false){
 			setElementText(this.content.z, formatNumberFromSettings(demand));
 			setElementText(this.content.n, formatNumberFromSettings(Math.floor(created)));
 			setElementText(this.content.q, formatNumberFromSettings(used));
+
 
 			break;
 		}

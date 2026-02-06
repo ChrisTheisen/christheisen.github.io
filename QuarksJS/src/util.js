@@ -52,6 +52,9 @@ function createUIElement({type='div', id=null, parent=null, cssClasses=[], style
 	
 	return e;
 }
+function createInfoElement({title=null, parent=null}){
+	return createUIElement({type: 'span', parent: parent, title:title, cssClasses:['help', 'i'], textContent:'i' });
+}
 
 function addUIEventListener(element, func, event='click'){
 	if(element === null || func === null){ return; }
@@ -151,7 +154,7 @@ function toggleSetting(input){
 		}
 		case'ns':{
             c[z].value = enforceLimits(3,15,c[z].value);
-	        s[z] = c[z].valueAsNumber??15;
+	        s[z] = c[z].valueAsNumber??6;
 			break;
 		}
 		case'e':{
@@ -224,7 +227,7 @@ function resetSettings(){
 	game.settings.u = true;
 	game.settings.s = 100;
 	game.settings.n.b = 10;
-	game.settings.n.s = 15;
+	game.settings.n.s = 6;
 	game.settings.e = 10;
 	game.settings.d.o = false;
 	game.settings.d.s = null;
@@ -270,8 +273,8 @@ function load() {
 	game.settings.u = data.s?.u ?? true;
 	game.settings.s = data.s?.s ?? 100;
     game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
-    game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 15;
-    game.settings.e = enforceLimits(0,100,data.s?.e) ?? 10;
+    game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 6;
+    game.settings.e = enforceLimits(0,1024,data.s?.e) ?? 4;
 	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
@@ -285,6 +288,11 @@ function load() {
 	game.settings.m.x = data.s?.mx ?? false;
 	game.settings.m.y = data.s?.my ?? false;
 	game.settings.m.z = data.s?.mz ?? false;
+	game.settings.m.so = data.s?.mso ?? false;
+	game.settings.m.sd = data.s?.msd ?? false;
+	game.settings.m.ss = data.s?.mss ?? false;
+	game.settings.m.su = data.s?.msu ?? false;
+
 
 	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
@@ -348,7 +356,7 @@ function save() {
 	data.s.dl = game.settings.d.l??0;
 	data.s.do = game.settings.d.o?1:0;
     data.s.nb = game.settings.n.b??10;
-    data.s.ns = game.settings.n.s??15;
+    data.s.ns = game.settings.n.s??6;
 	data.s.ma = game.settings.m.a?1:0;
 	data.s.mc = game.settings.m.c?1:0;
 	data.s.mm = game.settings.m.m?1:0;
@@ -359,6 +367,10 @@ function save() {
 	data.s.mx = game.settings.m.x?1:0;
 	data.s.my = game.settings.m.y?1:0;
 	data.s.mz = game.settings.m.z?1:0;
+	data.s.mso = game.settings.m.so?1:0;
+	data.s.msd = game.settings.m.sd?1:0;
+	data.s.mss = game.settings.m.ss?1:0;
+	data.s.msu = game.settings.m.su?1:0;
 	data.s.nb = game.settings?.n?.b??10;
 	data.s.ns = game.settings?.n?.s??6;
 	data.s.e = game.settings?.e??10;

@@ -39,6 +39,7 @@ function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})
 	this.CM = CM;
 	
 	this.content = {
+		s:null,//toString output element
 		e:null,
 		w:null,
 		wDa:null,
@@ -59,9 +60,9 @@ function Amount({Da=0, pg=0, g=0, Tg=0, Yg=0, MO=0, GM=0, CM=0} = new Amount({})
 		CM:null
 	}
 }
-Amount.prototype.render = function(parent, isInline = false){
-	const cssW = isInline ? ['amountWrapper', 'cell', 'amountInlineWrapper'] : ['amountWrapper'];
-	const cssU = isInline ? ['amountUnit', 'amountInline'] : ['amountUnit'];
+Amount.prototype.render = function(parent){
+	const cssW = ['amountWrapper'];
+	const cssU = ['amountUnit'];
 	
 	const w = createUIElement({parent:parent, cssClasses:cssW});
 	this.content.e = createUIElement({parent:w, textContent:'None', cssClasses:cssU});
@@ -109,30 +110,53 @@ Amount.prototype.render = function(parent, isInline = false){
 	this.content.wCM = wCM;
 	this.update();
 }
+Amount.prototype.toString = function(){
+	let output = [];
+
+	if(this.CM){output.push(`${formatNumberFromSettings(this.CM)} ${MassUnits.CM.s}`);}
+	if(this.GM){output.push(`${formatNumberFromSettings(this.GM)} ${MassUnits.GM.s}`);}
+	if(this.MO){output.push(`${formatNumberFromSettings(this.MO)} ${MassUnits.MO.s}`);}
+	if(this.Yg){output.push(`${formatNumberFromSettings(this.Yg)} ${MassUnits.Yg.s}`);}
+	if(this.Tg){output.push(`${formatNumberFromSettings(this.Tg)} ${MassUnits.Tg.s}`);}
+	if(this.g){output.push(`${formatNumberFromSettings(this.g)} ${MassUnits.g.s}`);}
+	if(this.pg){output.push(`${formatNumberFromSettings(this.pg)} ${MassUnits.pg.s}`);}
+	if(this.Da){output.push(`${formatNumberFromSettings(this.Da)} ${MassUnits.Da.s}`);}
+
+	if(output.length === 0){return '0 Da';}
+
+	return output.join(' ');
+}
+
 Amount.prototype.update = function(){
 	this.convert();
 	
-	this.content.e?.classList.toggle('hide', !this.isZero());
-	this.content.wDa?.classList.toggle('hide', !this.Da);
-	this.content.wpg?.classList.toggle('hide', !this.pg);
-	this.content.wg?.classList.toggle('hide', !this.g);
-	this.content.wTg?.classList.toggle('hide', !this.Tg);
-	this.content.wYg?.classList.toggle('hide', !this.Yg);
-	this.content.wMO?.classList.toggle('hide', !this.MO);
-	this.content.wGM?.classList.toggle('hide', !this.GM);
-	this.content.wCM?.classList.toggle('hide', !this.CM);
+	if(this.content.w){
+		this.content.e?.classList.toggle('hide', !this.isZero());
+		this.content.wDa?.classList.toggle('hide', !this.Da);
+		this.content.wpg?.classList.toggle('hide', !this.pg);
+		this.content.wg?.classList.toggle('hide', !this.g);
+		this.content.wTg?.classList.toggle('hide', !this.Tg);
+		this.content.wYg?.classList.toggle('hide', !this.Yg);
+		this.content.wMO?.classList.toggle('hide', !this.MO);
+		this.content.wGM?.classList.toggle('hide', !this.GM);
+		this.content.wCM?.classList.toggle('hide', !this.CM);
 
-	//Amount.Da is special, gets 3 decimal point precision
-	//Rest just do the formatNumber, shouldn't have a lot of . in any other amount.
-	const rgx = /[\d\w,]*\.?[\d\w]{0,3}/.exec(formatNumberFromSettings(this.Da))[0];
-	setElementText(this.content.Da, rgx);
-	setElementText(this.content.pg, formatNumberFromSettings(this.pg));
-	setElementText(this.content.g,  formatNumberFromSettings(this.g));
-	setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));
-	setElementText(this.content.Yg, formatNumberFromSettings(this.Yg));
-	setElementText(this.content.MO, formatNumberFromSettings(this.MO));
-	setElementText(this.content.GM, formatNumberFromSettings(this.GM));
-	setElementText(this.content.CM, formatNumberFromSettings(this.CM));
+		//Amount.Da is special, gets 3 decimal point precision
+		//Rest just do the formatNumber, shouldn't have a lot of . in any other amount.
+		const rgx = /[\d\w,]*\.?[\d\w]{0,3}/.exec(formatNumberFromSettings(this.Da))[0];
+		setElementText(this.content.Da, rgx);
+		setElementText(this.content.pg, formatNumberFromSettings(this.pg));
+		setElementText(this.content.g,  formatNumberFromSettings(this.g));
+		setElementText(this.content.Tg, formatNumberFromSettings(this.Tg));
+		setElementText(this.content.Yg, formatNumberFromSettings(this.Yg));
+		setElementText(this.content.MO, formatNumberFromSettings(this.MO));
+		setElementText(this.content.GM, formatNumberFromSettings(this.GM));
+		setElementText(this.content.CM, formatNumberFromSettings(this.CM));
+	}
+
+	if(this.content.s){
+		setElementText(this.content.s, this.toString());
+	}
 }
 Amount.prototype.isZero = function(){
 	return !this.Da && !this.pg && !this.g && !this.Tg && !this.Yg && !this.MO && !this.GM && !this.CM;
@@ -164,41 +188,39 @@ Amount.prototype.clone = function(){
 }
 
 Amount.prototype.convert = function(){
-	//TODO: cleanup to not use this[unit.s] as this is not the correct way to access the properties
-	const units = Object.entries(MassUnits).map(u => ({key:u[0], value:u[1]}));
-
-	// Convert fractional parts down
-	for (let i = 0; i < units.length - 1; i++) {
-		const smaller = Object.values(units).find(u => u.value.i === i);
-		const larger = Object.values(units).find(u => u.value.i === i + 1);
-		const fractional = this[larger.key] % 1;
-		if(fractional > 0){
-			this[smaller.key] += fractional * smaller.value.c;
-			this[larger.key] = Math.floor(this[larger.key]);
-		}
-	}
+	//Convert fractional of units to lower amount and floor units larger than Da
+	this.GM += (this.CM % 1) * MassUnits.GM.c
+	this.CM = Math.floor(this.CM);
+	this.MO += (this.GM % 1) * MassUnits.MO.c
+	this.GM = Math.floor(this.GM);
+	this.Yg += (this.MO % 1) * MassUnits.Yg.c
+	this.MO = Math.floor(this.MO);
+	this.Tg += (this.Yg % 1) * MassUnits.Tg.c
+	this.Yg = Math.floor(this.Yg);
+	this.g += (this.Tg % 1) * MassUnits.g.c
+	this.Tg = Math.floor(this.Tg);
+	this.pg += (this.g % 1) * MassUnits.pg.c
+	this.g = Math.floor(this.g);
+	this.Da += (this.pg % 1) * MassUnits.Da.c
 	this.pg = Math.floor(this.pg);
 
-	// Convert up when exceeding unit capacity (in reverse order)
-	for (let i = units.length - 2; i >= 0; i--) {
-		const smaller = Object.values(units).find(u => u.value.i === i);
-		const larger = Object.values(units).find(u => u.value.i === i + 1);
-		if (this[smaller.key] > smaller.value.c) {
-			const carry = Math.floor(this[smaller.key] / smaller.value.c);
-			this[larger.key] += carry;
-			this[smaller.key] %= smaller.value.c;
-		}
-	}
+	//If enough of a unit exists convert up.
+	if(this.Da > MassUnits.Da.c){ this.pg += Math.floor(this.Da/MassUnits.Da.c); this.Da = this.Da%MassUnits.Da.c; }
+	if(this.pg > MassUnits.pg.c){ this.g += Math.floor(this.pg/MassUnits.pg.c); this.pg = this.pg%MassUnits.pg.c; }
+	if(this.g > MassUnits.g.c){ this.Tg += Math.floor(this.g/MassUnits.g.c); this.g = this.g%MassUnits.g.c; }
+	if(this.Tg > MassUnits.Tg.c){ this.Yg += Math.floor(this.Tg/MassUnits.Tg.c); this.Tg = this.Tg%MassUnits.Tg.c; }
+	if(this.Yg > MassUnits.Yg.c){ this.MO += Math.floor(this.Yg/MassUnits.Yg.c); this.Yg = this.Yg%MassUnits.Yg.c; }
+	if(this.MO > MassUnits.MO.c){ this.GM += Math.floor(this.MO/MassUnits.MO.c); this.MO = this.MO%MassUnits.MO.c; }
+	if(this.GM > MassUnits.GM.c){ this.CM += Math.floor(this.GM/MassUnits.GM.c); this.GM = this.GM%MassUnits.GM.c; }
 
-	//Convert down when negative
-	for (let i = 0; i < units.length - 1; i++) {
-		const smaller = Object.values(units).find(u => u.value.i === i);
-		const larger = Object.values(units).find(u => u.value.i === i + 1);
-		while(this[smaller.key] < 0 && this[larger.key] !== 0) {
-			this[larger.key]--;
-			this[smaller.key] += smaller.value.c;
-		}
-	}
+	//If there is a negative in a unit convert down.
+	if(this.Da < 0){ const temp = -Math.floor(this.Da/MassUnits.Da.c); this.pg -= temp; this.Da += temp * MassUnits.Da.c; }
+	if(this.pg < 0){ const temp = -Math.floor(this.pg/MassUnits.pg.c); this.g -= temp; this.pg += temp * MassUnits.pg.c; }
+	if(this.g < 0){ const temp = -Math.floor(this.g/MassUnits.g.c); this.Tg -= temp; this.g += temp * MassUnits.g.c; }
+	if(this.Tg < 0){ const temp = -Math.floor(this.Tg/MassUnits.Tg.c); this.Yg -= temp; this.Tg += temp * MassUnits.Tg.c; }
+	if(this.Yg < 0){ const temp = -Math.floor(this.Yg/MassUnits.Yg.c); this.MO -= temp; this.Yg += temp * MassUnits.Yg.c; }
+	if(this.MO < 0){ const temp = -Math.floor(this.MO/MassUnits.MO.c); this.GM -= temp; this.MO += temp * MassUnits.MO.c; }
+	if(this.GM < 0){ const temp = -Math.floor(this.GM/MassUnits.GM.c); this.CM -= temp; this.GM += temp * MassUnits.GM.c; }
 }
 
 Amount.prototype.add = function(input, update=true){
@@ -345,9 +367,7 @@ Amount.prototype.fromBigInt = function(input){
 Amount.prototype.divide = function(input){
 	const a = this.toBigInt();
 	const b = input.toBigInt();
-	const result = a/b;
-	this.fromBigInt(result);
-	return this;
+	return Number(a/b);
 }
 
 // Export for testing

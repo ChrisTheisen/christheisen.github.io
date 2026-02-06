@@ -63,7 +63,7 @@ hr {
 	opacity: .5;
 }
 
-.mamageModal {
+.manageModal {
 	background-color: var(--bg0);
 	color: var(--c1);
 }
@@ -264,9 +264,22 @@ hr {
 	margin-right:13%;
 }
 .helpDiv{
-	margin-bottom:5px;
-	border-left: solid 1px #111;
+	margin:5px;
 }
+
+.helpDivAlternate{
+	background-color: var(--bg4);
+	margin: 2px 0;
+	padding: 3px 5px;
+}
+
+.helpDivEmpty{
+	min-height: 10px;
+	background: linear-gradient(0turn, var(--bg4), var(--bg1), var(--bg4));
+	width:100%;
+	margin: 10px 0;
+}
+
 
 .settingsRow{
 	text-align:left;
@@ -299,9 +312,18 @@ hr {
 	margin:5px;
 }
 
-.filterWrapper{
+.filterCollapseButton{
+}
+
+.filterWrapperDiscover{
 	border-bottom:solid 1px var(--bg1);
 	font-size:14px;
+}
+
+.filterWrapperManage{
+	border-bottom:solid 1px var(--bg1);
+	font-size:14px;
+	display: table;
 }
 
 .filterChk{
@@ -342,15 +364,6 @@ hr {
 .amountUnit{
 	margin: 0 5px;
 	line-height:20px;
-}
-
-.amountInlineWrapper{
-	display:flex;
-	padding:0;
-}
-
-.amountInline{
-	margin:0 2px;
 }
 
 .bonusWrapper{
@@ -404,6 +417,13 @@ hr {
 
 .help{
 	cursor:help;
+}
+
+.i{
+	border:solid 1px var(--c4);
+	border-radius: 50%;
+	padding: 2px 6px;
+	color:var(--c4);
 }
 
 .pointer{
@@ -549,13 +569,20 @@ hr {
 	padding: 0;
 }
 
-.btnWelcome{
+.beginWrapper{
 	position: fixed;
-	left: 50%;
-	top: 50%;
+	display: flex;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	align-items: center;
+	justify-content: center;
+}
+
+.btnWelcome{
 	width: 200px;
 	height: 120px;
-	margin-left: -100px;
 	border: none;
 	padding: 0;
 }
@@ -573,17 +600,15 @@ hr {
 	0% {
 		transform: scale(1);
 		background-color: var(--bg1);
-		color: var(--c1)
+		color: var(--c1);
 		width: 200px;
 		height: 120px;
-		margin-left: -100px;
 	}
 	20%{
 		background-color: #FFFFFF;
 		color: #FFFFFF;
 		width: 4vmin;
 		height: 4vmin;
-		margin-left: 2vmin;
 		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 	}
