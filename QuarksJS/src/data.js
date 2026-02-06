@@ -1008,7 +1008,7 @@ const help = [
 		'You can add the transmuter recipe inputs to the Matter Mutator with the (+>) button in the [Get Recipe] area if available.',
 		'It will randomly choose a recipe for an item that is currently locked and you have all of the inputs unlocked.',
 		'',
-		'The Discover tab is unlocked when a transmuter is over level 3.'
+		'The Discover tab is unlocked when any transmuter is level 4+.'
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your transmuters. It displays the input and output of each transmuter and the amount created and used during the last update.',
@@ -1029,7 +1029,7 @@ const help = [
 		'> NOTE: Some transmuters have bulk mass as an input. The Demand and Used standardizes the inputs to be the equivalent amount of items.',
 		'Example: Mild Steel can be made with 12 Da of Carbon and 5,600 Da of Iron, this is equivilent to 1 Carbon atom and 100 Iron atoms.',
 		'',
-		'The Manage tab is unlocked when a transmuter for an item with input items is level 2+.'
+		'The Manage tab is unlocked when a transmuter for an item with input items (not a quark, lepton, or gauge boson) is level 2+.'
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to significantly break conservation of mass by multiplying transmuter outputs.',
