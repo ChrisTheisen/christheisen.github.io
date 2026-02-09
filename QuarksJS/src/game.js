@@ -225,11 +225,11 @@ Game.prototype.intro = function(){
 	
 	const shouldAddUp = shouldDiscover && this.menu.current === 'M_1' && !this.mm.some(x => x.f.id === '0');
 	gic['0'].content.d?.classList?.toggle('hintAnimate', shouldAddUp);
-	if(shouldAddUp){ setElementText(hintZone, 'Add an Up Quark to the Matter Mutator with the (+>) button.'); }
+	if(shouldAddUp){ setElementText(hintZone, 'Add an Up Quark to the Object Scanner with the (+>) button.'); }
 
 	const shouldAddDown = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '0') && !this.mm.some(x => x.f.id === '1');
 	gic['1'].content.d?.classList.toggle('hintAnimate', shouldAddDown);
-	if(shouldAddDown){ setElementText(hintZone, 'Add a Down Quark to the Matter Mutator.'); }
+	if(shouldAddDown){ setElementText(hintZone, 'Add a Down Quark to the Object Scanner.'); }
 	
 	const shouldScan = shouldDiscover && this.menu.current === 'M_1' && this.mm.some(x => x.f.id === '0') && this.mm.some(x => x.f.id === '1') && !gic['4'].f.u;
 	game.dContent.btnScan?.classList.toggle('hintAnimate', shouldScan);

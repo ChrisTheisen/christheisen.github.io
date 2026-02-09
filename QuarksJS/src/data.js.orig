@@ -885,9 +885,15 @@ const itemsMenu = [
 //base tabs
 const tabs = [
 	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
+<<<<<<< HEAD
 	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Object Scanner. Click a (--) button to remove an item from the Object Scanner. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Object Scanner. Scanning items does not destroy them.'},
 	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item flow. This table is one of the few places that will only update when "Refresh Table" is clicked.'},
 	{id:'M_3', n:'Enhance', u:false, info:['Transmuter Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase transmuter output and reduce transmuter upgrade cost. They do not change the set-point limits or transmuter levels.'},
+=======
+	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Object Scanner. Click a (--) button to remove an item from the Object Scanner. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Object Scanner. Scanning items does not destroy them.'},
+	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item flow. This table is one of the few places that will only update when "Refresh Table" is clicked.'},
+	{id:'M_3', n:'Enhance', u:false, info:['Generator Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase generator output and reduce generator upgrade cost. They do not change the set-point limits or generator levels.'}, 
+>>>>>>> main
 	{id:'M_4', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
 	{id:'M_5', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -913,7 +919,11 @@ const help = [
 		'The Spacebar pauses the game'
 	]},
 	{t:'What should I do now?', c:[
+<<<<<<< HEAD
 		'There isn\'t a way to win this game. I\'m trying to appeal to people who want continuous growth; never-ending creation out of nothing: no resets, no prestiges, just pure unadulterated creation.',
+=======
+		'There isn\'t a way to win this game. I\'m trying to appeal to people who want continuous growth; never-ending creation out of nothing: no resets, no prestiges, just pure unadulterated item generation.',
+>>>>>>> main
 		'',
 		'Some things to work towards:',
 		'* Higher Enhancement bonus',
@@ -921,7 +931,11 @@ const help = [
 		'* Try to break the game with too much bigness',
 		'* Creating larger and larger items (see if you can create a train, planet, or cosmos)',
 		'',
+<<<<<<< HEAD
 		'If the game is progressing too slowly check the settings.',
+=======
+		'If the game is progressing too slowly check the settings, they can significantly increase the rate things are generated.',
+>>>>>>> main
 		'If this game no longer interests you then go do something else.'
 	]},
 	{t:'Hotkeys', c:[
@@ -933,9 +947,15 @@ const help = [
 		'Note: hotkeys are disabled when an input element has focus.',
 		'',
 		'Create',
+<<<<<<< HEAD
 		'0: Manually transmute all recipes with sufficient input resources.',
 		'1: Upgrade all transmuters with sufficient resources.',
 		'2: Focus Flow input on the first transmuter that is above level 0.',
+=======
+		'0: Manually generate all recipes with sufficient input resources.',
+		'1: Upgrade all generators with sufficient resources.',
+		'2: Focus Flow input on the first generator that is above level 0.',
+>>>>>>> main
 		'',
 		'Discover',
 		'Enter: focus search input',
@@ -957,11 +977,19 @@ const help = [
 		'',
 		'Enhance',
 		'1: Buy upgrade for Manual Output',
+<<<<<<< HEAD
 		'2: Buy upgrade for Transmuter Output',
 		'3: Buy upgrade for Transmuter Cost',
 		'ALT+1: Goto item to upgrade Manual Output',
 		'ALT+2: Goto item to upgrade Transmuter Output',
 		'ALT+3: Goto item to upgrade Transmuter Cost',
+=======
+		'2: Buy upgrade for Generator Output',
+		'3: Buy upgrade for Generator Cost',
+		'ALT+1: Goto item to upgrade Manual Output',
+		'ALT+2: Goto item to upgrade Generator Output',
+		'ALT+3: Goto item to upgrade Generator Cost',
+>>>>>>> main
 		'',
 		'Settings',
 		'1: Toggle Introduction Hints with a green border',
@@ -981,6 +1009,7 @@ const help = [
 		'Bulk storage storage is where surplus inventory is stored and is used in some transmuters.',
 		'Bulk storage is available on items that have an inventory > 1048576 (2^20).',
 		'',
+<<<<<<< HEAD
 		'Transmuters transmute (->) button will manually run the transmuter.',
 		'Transmuter level (++) button will upgrade transmuters; this will increase the maximum flow.',
 		'Note: transmuters with multiple outputs will use all outputs to upgrade the transmuter.',
@@ -990,15 +1019,31 @@ const help = [
 		'',
 		'Auto-upgrade will automatically upgrade a transmuter when it has at least double the cost in inventory. This is to avoid limiting other transmuter\'s production.',
 		'An item\'s "Used In" list is available for items when it has a transmuter level over 2.',
+=======
+		'Generator generate (->) button will manually run the generator.', 
+		'Generator level (++) button will upgrade generators that will automatically create items every cycle.', 
+		'Note: generators with multiple outputs will use all outputs to upgrade the generator.',
+		'',
+		'The Generator will automatically create items based on the generator Flow. It will only create items if you have the required components.',
+		'For example if you have 10 Up Quarks, 10 Down Quarks, and have a Proton Flow set to 7 (Protons each need 2 Up Quarks and 1 Down Quark) the Proton generator is limited by Up Quarks and will make 5 Protons.',
+		'',
+		'Auto-upgrade will automatically upgrade a generator when it has at least double the cost in inventory. This is to avoid limiting other generator\'s production.',
+		'An item\'s "Used In" list is available for items when it has a generator level over 2.',
+>>>>>>> main
 	]},
 	{t:'Discover', c:[
 		'The Discover tab is a fun way to gain access to new items.',
 		'',
+<<<<<<< HEAD
 		'Add items to the Object Scanner box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
+=======
+		'Add items to the Object Scanner box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
+>>>>>>> main
 		'There are many items that exist, this game has some and may be expanded in the future.',
 		'',
 		'There is no penalty for scanning items that do not match a recipe.',
 		'You need at least one item in inventory to Scan it. You do not need multiple of any item even if the recipe takes more than one.',
+<<<<<<< HEAD
 		'Example: The H2O transmuter requires two Hydrogens and one Oxygen to create but you only need to have one of each item in order to discover H2O',
 		'',
 		'If you are stuck or want a recipe hint you can click the "Get Recipe" button',
@@ -1010,6 +1055,19 @@ const help = [
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your transmuters. It displays the input and output of each transmuter and the amount created and used during the last update.',
+=======
+		'Example: The H2O generator requires two Hydrogens and one Oxygen to create but you only need to have one of each item in order to discover H2O',
+		'',
+		'If you are stuck or want a recipe hint you can click the "Get Recipe" button',
+		'You can [Get Recipe] approximately every 30 seconds. After about a 30 seconds the recipe will clear and the button will be available again.',
+		'You can add the generated recipe inputs to the Object Scanner with the (+>) button in the [Get Recipe] area if available.',
+		'It will randomly choose a recipe for an item that is currently locked and you have all of the inputs unlocked.',
+		'',
+		'The Discover tab is unlocked when a generator is over level 3.'
+	]},
+	{t:'Manage', c:[
+		'The Manage tab is where you can manage your generators. It displays the input and output of each generator and the amount created and used during the last update.',
+>>>>>>> main
 		'',
 		'The checkbox filters can show and hide items to check specific conditions.',
 		'',
@@ -1019,6 +1077,7 @@ const help = [
 		'The table columns describe the supply and demand of each item.',
 		'Item : is the symbol of the item. Hover to see the full name.',
 		'Owned : is the amount of the items you currently have in your inventory.',
+<<<<<<< HEAD
 		'Demand : is the demand based on all enabled transmuter flow.',
 		'Supply : is the actual amount created in the last cycle.',
 		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading transmuters.',
@@ -1028,11 +1087,23 @@ const help = [
 		'Example: Mild Steel can be made with 12 Da of Carbon and 5,600 Da of Iron, this is equivilent to 1 Carbon atom and 100 Iron atoms.',
 		'',
 		'The Manage tab is unlocked when a transmuter for an item with input items is level 2+.'
+=======
+		'Demand : is the demand based on all enabled generator flow.',
+		'Supply : is the actual amount created in the last cycle.',
+		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading generators.',
+		'[≡] : this button will expand a row to view all generators related to an item',
+		'',
+		'> NOTE: Some generators have bulk mass as an input. The Demand and Used standardizes the inputs to be the equivalent amount of items.',
+		'Example: Mild Steel can be made with 12 Da of Carbon and 5,600 Da of Iron, this is equivilent to 1 Carbon atom and 100 Iron atoms.',
+		'',
+		'The Manage tab is unlocked when a generator for an item with components (not a quark or lepton) is over level 1.'
+>>>>>>> main
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to significantly break conservation of mass by multiplying transmuter outputs.',
 		'This does not change the flow limits. It multiplies the created amount by the effect power.',
 		'',
+<<<<<<< HEAD
 		'Manual Output : Multiplies a transmuter output when manually run with the (->) button.',
 		'Gen. Output : Increases all transmuter output, this multiplies both manually run and automatic.',
 		'Gen. Cost : Multiplies transmuter upgrade costs. This value is less than 1 so a higher level reduces the cost.',
@@ -1042,6 +1113,17 @@ const help = [
 		'Total Mass Bonus (TMB) : This increases output based on the total mass of your inventory. Higher total mass gives a larger bonus.',
 		'',
 		'The Enhance tab is unlocked when a transmuter for an item with input components (not a quark, lepton, or gauge boson) is level 8+.'
+=======
+		'Manual Output : Multiplies a generator output when manually run with the (->) button.',
+		'Gen. Output : Increases all generator output, this multiplies both manually run and automatic.',
+		'Gen. Cost : Multiplies generator upgrade costs.',
+		'',
+		'Enhancement costs are generated programmatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can affect the enhancement costs.',
+		'',
+		'Total Mass Bonus (TMB) : This increases output based on the total mass of your inventory. Higher total mass gives a larger bonus.',
+		'',
+		'The Enhance tab is unlocked when a generator for an item with components (not a quark, lepton, or gauge boson) is over level 7.'
+>>>>>>> main
 	]},
 	{t:'Settings', c:[
 		'Settings can affect the difficulty and functionality of the game.',
@@ -1061,14 +1143,22 @@ const help = [
 		'https://www.rsc.org/periodic-table - Used for other atom information',
 		'https://webbook.nist.gov/chemistry/name-ser/ - Used for molecule symbols',
 		'https://www.masterorganicchemistry.com/2010/10/06/functional-groups-organic-chemistry/ - Used for learning about functional groups',
+<<<<<<< HEAD
+=======
+		'Various "AI" LLM tools - Used for general questions; verified most responses with outside sources',
+>>>>>>> main
 		'',
 		'If you have a suggestion of items you want added or concerns about accuracy you can email: github@christheisen.com',
 	]},
 	{t:'About', c:[
+<<<<<<< HEAD
 		'I don\'t have a background in physics, chemistry, or astronomy so some of the information might be incorrect.',
 		'I included notes in many items that I found interesting in an attempt to make this game educational as well as fun.',
 		'I tried to keep this game acurrate to reality without getting too complex.',
 		'',
+=======
+		'This game was initially started as a way to learn mutraction but I encountered some memory leaks. These leaks have since been resolved. I might go back and retry making the UI in mutraction.',
+>>>>>>> main
 		'If you have a suggestion or concerns you can email: github@christheisen.com',
 	]},
 ]

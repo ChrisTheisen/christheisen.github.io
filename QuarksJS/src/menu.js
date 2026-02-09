@@ -220,7 +220,7 @@ Menu.prototype.updateMM = function(){
 	ff.forEach(x => {
 		const item = createUIElement({cssClasses:['mmItem', 'nowrap', 'row']});
 		
-		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Matter Mutator',
+		createUIElement({type:'button', parent: item, cssClasses:['circleButton', 'del', 'cell'], textContent:'--', title:'Remove From Object Scanner',
 			onclick:() => {
 				for(let i=0;i<game.mm.length;i++){
 					if(game.mm[i].f.id === x.id){
@@ -288,7 +288,7 @@ Menu.prototype.renderDiscover = function(parent){
 	game.dContent.btnHint = createUIElement({type:'button', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
 		onclick:()=> getDiscoverHint()
 		});
-	createInfoElement({parent: hint, title:'Click "Get Recipe" to try to populate the Matter Mutator with items for a discoverable recipe.'});
+	createInfoElement({parent: hint, title:'Click "Get Recipe" to try to populate the Object Scanner with items for a discoverable recipe.'});
 	const houtText = game.discoverHint.map(x => x.f.n).join();
 	game.dContent.hout = createUIElement({type:'span',parent:hint,textContent:houtText});
 	game.dContent.hadd = createUIElement({type:'button', textContent:'+>', parent:hint, cssClasses:game.dinterval?['circleButton']:['circleButton','hide'], style:{marginLeft:'15px'},
@@ -296,7 +296,7 @@ Menu.prototype.renderDiscover = function(parent){
 			game.mm.length = 0;
 			game.discoverHint.forEach(x=>{
 				if(game.mm.includes(x)){return;}
-				if(x.a<1) { makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Matter Mutator. You must have at least one in inventory.`);}
+				if(x.a<1) { makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Object Scanner. You must have at least one in inventory.`);}
 				else{ game.mm.push(x); }
 			})
 			game.menu.updateMM();
@@ -326,7 +326,7 @@ Menu.prototype.renderDiscover = function(parent){
 			this.updateResults(unlocked);
 			this.route();//update Discover
 		}});
-	createInfoElement({parent: scan, title: 'After adding items to the Matter Mutator click the "Scan" button to search for any recipes that match the added items.'});
+	createInfoElement({parent: scan, title: 'After adding items to the Object Scanner click the "Scan" button to search for any recipes that match the added items.'});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
@@ -334,7 +334,7 @@ Menu.prototype.renderDiscover = function(parent){
 	game.inventory.renderDiscover(bags);
 	
 	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
-	createUIElement({type:'h3', parent:matterMutator, textContent:'Matter Mutator'});
+	createUIElement({type:'h3', parent:matterMutator, textContent:'Object Scanner'});
 	game.dContent.mm = createUIElement({parent: matterMutator, cssClasses:['matterMutator']});
 
 	this.updateMM();
