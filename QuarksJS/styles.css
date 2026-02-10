@@ -585,6 +585,7 @@ hr {
 	height: 120px;
 	border: none;
 	padding: 0;
+	cursor: pointer;
 }
 
 .btnWelcome-animate {

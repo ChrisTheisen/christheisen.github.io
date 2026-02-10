@@ -913,13 +913,15 @@ const help = [
 		'The Spacebar pauses the game'
 	]},
 	{t:'What should I do now?', c:[
-		'There isn\'t a way to win this game. I\'m trying to appeal to people who want continuous growth; never-ending creation out of nothing: no resets, no prestiges, just pure unadulterated creation.',
+		'There isn\'t a way to win this game. Just never-ending creation out of nothing: no resets, no prestiges, just getting more.',
 		'',
 		'Some things to work towards:',
-		'* Higher Enhancement bonus',
-		'* Larger Total Mass Bonus',
+		'* Upgrade Transmuter levels (See Create below for more information)',
+		'* Discover more recipes (See Discover below for more information)',
+		'* Higher Enhancement bonus (See Enhance below for more information)',
+		'* Larger Total Mass (See lower right corner)',
 		'* Try to break the game with too much bigness',
-		'* Creating larger and larger items (see if you can create a train, planet, or cosmos)',
+		'* Creating larger and larger items (see if you can create a train, planet, or galaxy)',
 		'',
 		'If the game is progressing too slowly check the settings.',
 		'If this game no longer interests you then go do something else.'
@@ -981,14 +983,15 @@ const help = [
 		'Bulk storage storage is where surplus inventory is stored and is used in some transmuters.',
 		'Bulk storage is available on items that have an inventory > 1048576 (2^20).',
 		'',
-		'Transmuters transmute (->) button will manually run the transmuter.',
+		'A Transmuter\'s transmute (->) button will manually run the transmuter.',
 		'Transmuter level (++) button will upgrade transmuters; this will increase the maximum flow.',
 		'Note: transmuters with multiple outputs will use all outputs to upgrade the transmuter.',
 		'',
 		'The Transmuter will automatically create items based on the Transmuter Flow. It will only create items if you have the required components.',
-		'For example if you have 10 Up Quarks, 10 Down Quarks, and have a Proton Flow set to 7 (Protons each need 2 Up Quarks and 1 Down Quark) the Proton transmuter is limited by Up Quarks and will make 5 Protons.',
+		'Example: You have 10 Up Quarks, 10 Down Quarks and set the Proton Transmuter Flow to 7. Since Protons each need 2 Up Quarks and 1 Down Quark the Proton transmuter is limited by Up Quarks and will make 5 Protons.',
 		'',
-		'Auto-upgrade will automatically upgrade a transmuter when it has at least double the cost in inventory. This is to avoid limiting other transmuter\'s production.',
+		'The Auto-upgrade checkbox will automatically upgrade a transmuter when enabled. It will only upgrade when you have at least double the cost in inventory. This is to avoid limiting other transmuter\'s production.',
+		'You can manually upgrade a transmuter with less than double the cost in inventory with the (++) button.',
 		'An item\'s "Used In" list is available for items when it has a transmuter level over 2.',
 	]},
 	{t:'Discover', c:[
@@ -1003,10 +1006,10 @@ const help = [
 		'',
 		'If you are stuck or want a recipe hint you can click the "Get Recipe" button',
 		'You can [Get Recipe] approximately every 30 seconds. After about a 30 seconds the recipe will clear and the button will be available again.',
-		'You can add the transmuter recipe inputs to the Object Scanner with the (+>) button in the [Get Recipe] area if available.',
+		'You can add all the recipe items you own to the Matter Mutator with the (+>) button next to the recipe.',
 		'It will randomly choose a recipe for an item that is currently locked and you have all of the inputs unlocked.',
 		'',
-		'The Discover tab is unlocked when a transmuter is over level 3.'
+		'The Discover tab is unlocked when any transmuter is level 4+.'
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your transmuters. It displays the input and output of each transmuter and the amount created and used during the last update.',
@@ -1024,10 +1027,10 @@ const help = [
 		'Used : is the actual amount used in creating other items last cycle. This does not include items used in upgrading transmuters.',
 		'[≡] : this button will expand a row to view all transmuters related to an item',
 		'',
-		'> NOTE: Some transmuters have bulk mass as an input. The Demand and Used standardizes the inputs to be the equivalent amount of items.',
+		'> NOTE: Some transmuters have bulk mass as an input. The Demand, Supply, and Used standardizes the inputs to be the equivalent amount of items.',
 		'Example: Mild Steel can be made with 12 Da of Carbon and 5,600 Da of Iron, this is equivilent to 1 Carbon atom and 100 Iron atoms.',
 		'',
-		'The Manage tab is unlocked when a transmuter for an item with input items is level 2+.'
+		'The Manage tab is unlocked when a transmuter with input items (not a quark, lepton, or gauge boson) is level 2+.'
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to significantly break conservation of mass by multiplying transmuter outputs.',
@@ -1041,7 +1044,7 @@ const help = [
 		'',
 		'Total Mass Bonus (TMB) : This increases output based on the total mass of your inventory. Higher total mass gives a larger bonus.',
 		'',
-		'The Enhance tab is unlocked when a transmuter for an item with input components (not a quark, lepton, or gauge boson) is level 8+.'
+		'The Enhance tab is unlocked when a transmuter with input items (not a quark, lepton, or gauge boson) is level 8+.'
 	]},
 	{t:'Settings', c:[
 		'Settings can affect the difficulty and functionality of the game.',
@@ -1065,8 +1068,8 @@ const help = [
 		'If you have a suggestion of items you want added or concerns about accuracy you can email: github@christheisen.com',
 	]},
 	{t:'About', c:[
-		'I don\'t have a background in physics, chemistry, or astronomy so some of the information might be incorrect.',
-		'I included notes in many items that I found interesting in an attempt to make this game educational as well as fun.',
+		'I don\'t have a background in physics, chemistry, or astronomy so some of the information might be incorrect; I did my best.',
+		'I included notes in many items that I found interesting when learning about it in an attempt to make this game educational as well as fun.',
 		'I tried to keep this game acurrate to reality without getting too complex.',
 		'',
 		'If you have a suggestion or concerns you can email: github@christheisen.com',

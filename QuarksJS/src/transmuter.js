@@ -64,7 +64,7 @@ Transmuter.prototype.renderInputItem = function(parent, input){
 }
 Transmuter.prototype.renderInput = function(parent, input){
 	if(this.i.length === 0){
-		createUIElement({parent:parent, cssClasses:['cell'], textContent:'Mysterious Vibrations (Free)'});
+		createUIElement({parent:parent, cssClasses:['cell'], textContent:'Quantum Vibrations (Free)'});
 		return;
 	}
 
@@ -340,3 +340,4 @@ Transmuter.prototype.setFlow = function(input){
 		this.content.f.value = this.f;
 	}
 }
+
