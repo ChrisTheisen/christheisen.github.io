@@ -168,7 +168,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 				uc.i.map(x => x.inv).forEach(x => {
 					if(game.mm.includes(x)){return;}
 					if(x.a<1) { 
-						makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Matter Mutator. You must have at least one in inventory.`);
+						makeToast(`Unable to add ${x.f.n} {${x.f.s}} to the Object Scanner. You must have at least one in inventory.`);
 					}
 					else{ game.mm.push(x); }
 				});
@@ -176,7 +176,7 @@ InventoryItem.prototype.renderCreate = function(parent){
 				game.menu.updateMM();
 			}
 		});
-		createInfoElement({ title: 'Click "Discover This Item" to add all input items to the Matter Mutator. Then click "Scan" to discover this and any related items.', parent: row});
+		createInfoElement({ title: 'Click "Discover This Item" to add all input items to the Object Scanner. Then click "Scan" to discover this and any related items.', parent: row});
 		return;
 	}
 	
@@ -323,7 +323,7 @@ InventoryItem.prototype.renderDiscover = function(parent){
 	formatItemSymbols(this.f, createUIElement({parent:parent, cssClasses:['cell', 'nowrap'], style:{textAlign:'left', overflowX:'clip', fontSize:'14px'}}));
 	
 	const add = createUIElement({type:'button', parent: createUIElement({parent:parent, style:{width:'10%'}}), 
-		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Matter Mutator',
+		cssClasses:['circleButton', 'cell', 'add'], textContent:'+>', title:'Add To Object Scanner',
 		onclick:() => { 
 			if(game.mm.includes(this)){return;}
 			if(this.a < 1){ return;}

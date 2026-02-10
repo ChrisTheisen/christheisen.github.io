@@ -885,7 +885,7 @@ const itemsMenu = [
 //base tabs
 const tabs = [
 	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
-	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Matter Mutator. Click a (--) button to remove an item from the Matter Mutator. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Matter Mutator. Scanning items does not destroy them.'},
+	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Object Scanner. Click a (--) button to remove an item from the Object Scanner. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Object Scanner. Scanning items does not destroy them.'},
 	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item flow. This table is one of the few places that will only update when "Refresh Table" is clicked.'},
 	{id:'M_3', n:'Enhance', u:false, info:['Transmuter Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase transmuter output and reduce transmuter upgrade cost. They do not change the set-point limits or transmuter levels.'},
 	{id:'M_4', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
@@ -902,7 +902,7 @@ const help = [
 		'(») Goto buttons will go to the item referenced. It will goto the item even if it is still locked through the normal menu.',
 		'(->) Transmute buttons will manually run the item transmuter.',
 		'(++) Upgrade buttons will upgrade the transmuter or enhancement.',
-		'(+>) Add buttons will add an item to the Matter Mutator in the Discover tab.',
+		'(+>) Add buttons will add an item to the Object Scanner in the Discover tab.',
 		'',
 		'Misc:',
 		'Some items can be found in multiple places, it is the same item just included in multiple places for convenience.',
@@ -944,7 +944,7 @@ const help = [
 		'1: Toggle Hide below limit.',
 		'2: Focus limit input',
 		'3: Get Recipe Hint',
-		'4: Add hint to Matter Mutator',
+		'4: Add hint to Object Scanner',
 		'',
 		'Manage',
 		'1: Toggle Hide Created = 0',
@@ -997,7 +997,7 @@ const help = [
 	{t:'Discover', c:[
 		'The Discover tab is a fun way to gain access to new items.',
 		'',
-		'Add items to the Matter Mutator box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
+		'Add items to the Object Scanner box and scan the items. If it has the items for a recipe that exists in the data file you will unlock the item.',
 		'There are many items that exist, this game has some and may be expanded in the future.',
 		'',
 		'There is no penalty for scanning items that do not match a recipe.',
