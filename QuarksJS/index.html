@@ -23,7 +23,10 @@
 				<button id='btnWelcome' class='btnWelcome' onClick='begin();'>In the beginning...</button>
 			</div>
 		</div>
-		<div id='gameWrapper' class='hide'>
+		<div id='gameWrapper' class='hide gameWrapper'>
+			<div id='contextHelpWrapper' class='contextHelpWrapper'>
+				<button id='contextHelp' class='contextHelp' onClick='showContextHelp()'>?</button>
+			</div>
 			<div id="clockWrapper" class="clockWrapper"></div>
 			<div id='toaster' class='toaster'></div>
 			<nav id='nav' class='nav'></nav>
@@ -40,10 +43,16 @@
 				</div>
 			</footer>
 		</div>
+		<div id='contextHelpArea' class='hide contextHelpArea'>
+			<button onClick="hideContextHelp()" style='position:fixed; right: 10px; top: 35px;'>X</button>
+			<div id="contextHelpContents">
+			</div>
+		</div>
 		<script src="src/transmuter.js"></script>
 		<script src="src/inventory.js"></script>
 		<script src="src/enhancements.js"></script>
 		<script src="src/menu.js"></script>
+		<script src="src/contextHelp.js"></script>
 		<script src="src/game.js"></script>
 	</body>
 </html>

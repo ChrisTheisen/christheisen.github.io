@@ -10,6 +10,21 @@ New Items:
 Bugs: 
 
 TODO:
+	Story Mode???
+		-Advances on Object Scanner Upgrade
+		-Advances on total mass magnitude
+		Upgradable Object Scanner
+			-Able to add/scan items of higher magnitude
+		setting
+			-Being graduating needs to do a final project of creating a universe
+			-Scientists discovered ability to create and transmutate matter
+
+	Saved target flow loadouts?
+		-in manage tab
+		-in left side menu (similar to context help)
+			-Unlocks after
+
+
 
 cotton 90% cellulose
 

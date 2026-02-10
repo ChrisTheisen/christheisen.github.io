@@ -37,6 +37,7 @@ function Menu(parent, parentDiv, input, id, name, b){
 }
 
 Menu.prototype.route = function(addHistory = true){
+	hideContextHelp();
 	const root = getUIElement('divRoot');
 	const div = createUIElement({});
 	let replaceDiv = true;
@@ -179,6 +180,8 @@ Menu.prototype.update = function(){
 	if(!this.children){return;}
 	Object.values(this.children).forEach(x => {
 		x.b.classList.remove('selected');
+		x.b.classList.remove('menuFocus');
+
 		x.d.classList.add('hide');
 	});
 	if(!this.current){return;}
@@ -245,13 +248,14 @@ Menu.prototype.isDisplayed = function(input){
 }
 
 Menu.prototype.updateResults = function(input){
-	const newTable = [];
+	while(game.dContent.mm.firstChild){game.dContent.mm.firstChild.remove();}
+
+	createUIElement({type: 'h4', parent: game.dContent.mm, textContent: input.shift() });
 
 	input.forEach(x => {
-		newTable.push(createUIElement({textContent:x}));
+		createUIElement({parent: game.dContent.mm, textContent:x});
 	});
 	
-	game.dContent.mm.replaceChildren(...newTable);
 	game.inventory.update();
 }
 
@@ -323,6 +327,8 @@ Menu.prototype.renderDiscover = function(parent){
 				})
 			});
 			
+			if(unlocked.length === 1){ unlocked.unshift('New Item Discovered:'); }
+			else{ unlocked.unshift('New Items Discovered:'); }
 			this.updateResults(unlocked);
 		}});
 	createInfoElement({parent: scan, title: 'After adding items to the Object Scanner click the "Scan" button to search for any recipes that match the added items.'});
@@ -508,22 +514,32 @@ Menu.prototype.renderEnhance = function(parent){
 	game.enhancements.render(parent);
 }
 
+function renderHelpTopic(parent, x, showAll = false){
+	const topic = createUIElement({parent:parent, cssClasses:['helpTopic'], textContent:x.t});
+	const content = createUIElement({parent:parent, cssClasses:['helpContent', 'hide']});
+	if(showAll){
+		topic.classList.remove('helpTopic');
+		topic.classList.add('contextTopic');
+		content.classList.remove('hide');
+	}
+	else{
+		addUIEventListener(topic, () => content.classList.toggle('hide'));
+	}
+
+	let i = 0;
+	x.c.forEach(y => {
+		const css = [];
+		if(y.length === 0){css.push('helpDivEmpty'); i=0;}
+		else if(i++%2===0){css.push('helpDiv');}
+		else{css.push('helpDivAlternate');}
+
+		createUIElement({parent:content, cssClasses:css, textContent:y});
+	});
+}
+
 Menu.prototype.renderHelp = function(parent){
 	help.forEach(x => {
-
-		const topic = createUIElement({parent:parent, cssClasses:['helpTopic'], textContent:x.t});
-		const content = createUIElement({parent:parent, cssClasses:['helpContent', 'hide']});
-		addUIEventListener(topic, () => content.classList.toggle('hide'));
-		
-		let i = 0;
-		x.c.forEach(y => {
-			const css = [];
-			if(y.length === 0){css.push('helpDivEmpty'); i=0;}
-			else if(i++%2===0){css.push('helpDiv');}
-			else{css.push('helpDivAlternate');}
-
-			createUIElement({parent:content, cssClasses:css, textContent:y});
-		});
+		renderHelpTopic(parent, x);
 	});
 }
 
@@ -568,7 +584,7 @@ Menu.prototype.renderSettings = function(parent){
 	game.settings.content.s.n.s = createUIElement({type:'input', parent:createUIElement({type:'label', parent:ns, textContent:'Significant Digits: '}),
 		onchange:() => toggleSetting('ns'), attr:{type:'number', min:3, max:15, value:6}
 	});
-	createInfoElement({parent:ns, title:'Doesn\'t effect hardcoded help values or number inputs.'});
+	createInfoElement({parent:ns, title:'Adjusts how many digits to display for each number. Doesn\'t effect hardcoded help values or number inputs.'});
 	game.settings.content.s.n.s.value = game.settings.n.s;
 	
 	const ne = createUIElement({parent:parent, cssClasses:['settingsRow']});
