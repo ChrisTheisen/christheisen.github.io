@@ -292,7 +292,7 @@ Menu.prototype.renderDiscover = function(parent){
 	game.dContent.btnHint = createUIElement({type:'button', textContent:'Get Recipe', parent:hint, cssClasses:game.dinterval?['hide']:[], style:{marginLeft:'15px'},
 		onclick:()=> getDiscoverHint()
 		});
-	createInfoElement({parent: hint, title:'Click "Get Recipe" to try to populate the Object Scanner with items for a discoverable recipe.'});
+	createInfoElement({parent: hint, title:'Click "Get Recipe" to search for a discoverable recipe. Click the (+>) button to try to populate the Object Scanner.'});
 	const houtText = game.discoverHint.map(x => x.f.n).join();
 	game.dContent.hout = createUIElement({type:'span',parent:hint,textContent:houtText});
 	game.dContent.hadd = createUIElement({type:'button', textContent:'+>', parent:hint, cssClasses:game.dinterval?['circleButton']:['circleButton','hide'], style:{marginLeft:'15px'},
@@ -311,14 +311,16 @@ Menu.prototype.renderDiscover = function(parent){
 	game.dContent.btnScan = createUIElement({type:'button', textContent:'Scan', parent:scan,
 		onclick:()=>{
 			const results = findLockedFlavorsByComponents(game.mm.map(x => x.f));
+			const scannable = results.filter(x => x.o.every(y => y.inv.m.i <= game.osl))
+
 			game.mm.length = 0;
-			if(!results.length){
+			if(!scannable.length){
 				this.updateResults(['No new items discovered']);
 				return;
 			}
 
 			const unlocked = [];
-			results.forEach(x => {
+			scannable.forEach(x => {
 				x.o.forEach(o => {
 					o.inv.unlock();
 					if(!isUnlocked(o.inv.f.n) && !unlocked.some(x => x === o.inv.f.n)){
@@ -331,17 +333,50 @@ Menu.prototype.renderDiscover = function(parent){
 			else{ unlocked.unshift('New Items Discovered:'); }
 			this.updateResults(unlocked);
 		}});
-	createInfoElement({parent: scan, title: 'After adding items to the Object Scanner click the "Scan" button to search for any recipes that match the added items.'});
+	const scannerMagnitude = Object.values(MassUnits).find(x => x.i === game.osl);
+	createInfoElement({parent: scan, title: `After adding items to the Object Scanner click the "Scan" button to search for any recipes that match the added items. It will currently find transmutation recipes with outputs of magnitude ${scannerMagnitude.n} or less.`});
 	
 	const w = createUIElement({parent:parent, cssClasses:['discover', 'center']});
 
-	const bags = createUIElement({parent:w, id:'discovery_bags', cssClasses:['cell', 'discoverLeft']});
+	const bags = createUIElement({parent:w, id:'discovery_bags', cssClasses:['discoverCol', 'discoverLeft']});
 	game.inventory.renderDiscover(bags);
 	
-	const matterMutator = createUIElement({parent: w, cssClasses:['cell', 'discoverRight']});
-	createUIElement({type:'h3', parent:matterMutator, textContent:'Object Scanner'});
-	game.dContent.mm = createUIElement({parent: matterMutator, cssClasses:['matterMutator']});
+	const mi = Object.values(game.inventory.children).filter(x => x.m.i === game.osl).sort((a,b) => a.f.m.compare(b.f.m));
+	if(mi.length > 0){
+		const oslWrapper = createUIElement({parent: w, cssClasses:['discoverCol']});
+		const inner = createUIElement({parent: oslWrapper, cssClasses:['osl']});
+		const lightest = mi[0];
+		const heaviest = mi[mi.length -1];
 
+		createUIElement({type:'h4', parent:inner, textContent:'Upgrade Scanner'});
+
+		const tr = createUIElement({parent: inner, style:['row']});
+		const lr = createUIElement({parent: inner, style:['row']});
+		const hr = createUIElement({parent: inner, style:['row']});
+
+		createUIElement({parent:tr, cssClasses:['cell'], style:{width:'50px'}})
+
+		const ow = createUIElement({parent:tr, cssClasses:['cell']})
+		createUIElement({type:'span', parent:ow, textContent:'Qty', cssClasses:['cell'], style:{width:'50px'}});
+		createUIElement({type:'span', parent:ow, textContent:'Item', cssClasses:['cell']});
+
+		lightest.renderObjectScannerUpgrade(lr, oslCostLight);
+		heaviest.renderObjectScannerUpgrade(hr, oslCostHeavy);
+
+		game.dContent.osl = createUIElement({type: 'button', parent:inner, textContent:'++', cssClasses:['circleButton', 'disabled']});
+		game.dContent.osl.addEventListener('click', (e) => {
+			console.log(lightest, heaviest);
+			if(canUpgradeObjectScanner()){
+				lightest.a -= oslCostLight;
+				heaviest.a -= oslCostHeavy;
+				game.osl++;
+			}
+		});
+	}
+
+	const objectScanner = createUIElement({parent: w, cssClasses:['discoverCol', 'discoverRight']});
+	createUIElement({type:'h3', parent:objectScanner, textContent:`Object Scanner (Level: ${game.osl})`});
+	game.dContent.mm = createUIElement({parent: objectScanner, cssClasses:['objectScanner']});
 	this.updateMM();
 }
 
@@ -431,9 +466,6 @@ Menu.prototype.renderManage = async function(parent){
 	});
 	game.settings.content.m.su.checked = game.settings.m.su;
 
-
-
-
 	const wa0 = createUIElement({parent:fa, cssClasses:['filterChk']});
 	game.settings.content.m.a = createUIElement({type:'input', parent:createUIElement({type:'label', parent:wa0, textContent:'Live-Update'}), 
 		title:'Live-Update', attr:{type:'checkbox'},
@@ -447,22 +479,22 @@ Menu.prototype.renderManage = async function(parent){
 	});
 	
 	const w00 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	game.settings.content.m.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Created = 0'}), 
-		title:'Hide Created = 0', attr:{type:'checkbox'},
+	game.settings.content.m.c = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w00, textContent:'Hide Supply = 0'}),
+		title:'Hide Supply = 0', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.c = !game.settings.m.c; game.inventory.update(); }
 	});
 	game.settings.content.m.c.checked = game.settings.m.c;
 	
 	const w01 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	game.settings.content.m.m = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Created < Demand'}), 
-		title:'Hide Created < Setpoint', attr:{type:'checkbox'},
+	game.settings.content.m.m = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w01, textContent:'Hide Supply < Demand'}),
+		title:'Hide Supply < Setpoint', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.m = !game.settings.m.m; game.inventory.update(); }
 	});
 	game.settings.content.m.m.checked = game.settings.m.m;
 	
 	const w02 = createUIElement({parent:f0, cssClasses:['filterChk']});
-	game.settings.content.m.l = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w02, textContent:'Hide Created < Used'}), 
-		title:'Hide Created < Used', attr:{type:'checkbox'},
+	game.settings.content.m.l = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w02, textContent:'Hide Supply < Used'}),
+		title:'Hide Supply < Used', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.l = !game.settings.m.l; game.inventory.update(); }
 	});
 	game.settings.content.m.l.checked = game.settings.m.l;
@@ -481,8 +513,8 @@ Menu.prototype.renderManage = async function(parent){
 	});
 	game.settings.content.m.t.checked = game.settings.m.t;
 	const w12 = createUIElement({parent:f1, cssClasses:['filterChk']});
-	game.settings.content.m.u = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Created'}), 
-		title:'Hide Used < Created', attr:{type:'checkbox'},
+	game.settings.content.m.u = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w12, textContent:'Hide Used < Supply'}),
+		title:'Hide Used < Supply', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.u = !game.settings.m.u; game.inventory.update(); }
 	});
 	game.settings.content.m.u.checked = game.settings.m.u;
@@ -494,14 +526,14 @@ Menu.prototype.renderManage = async function(parent){
 	})
 	game.settings.content.m.x.checked = game.settings.m.x;
 	const w21 = createUIElement({parent:f2, cssClasses:['filterChk']});
-	game.settings.content.m.y = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w21, textContent:'Hide Demand < Created'}), 
+	game.settings.content.m.y = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w21, textContent:'Hide Demand < Supply'}),
 		title:'Hide Used < Demand', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.y = !game.settings.m.y; game.inventory.update(); }
 	});
 	game.settings.content.m.y.checked = game.settings.m.y;
 	const w22 = createUIElement({parent:f2, cssClasses:['filterChk']});
 	game.settings.content.m.z = createUIElement({type:'input', parent:createUIElement({type:'label', parent:w22, textContent:'Hide Demand < Used'}), 
-		title:'Hide Used < Created', attr:{type:'checkbox'},
+		title:'Hide Used < Supply', attr:{type:'checkbox'},
 		onclick:(e) => { game.settings.m.z = !game.settings.m.z; game.inventory.update(); }
 	});
 	game.settings.content.m.z.checked = game.settings.m.z;

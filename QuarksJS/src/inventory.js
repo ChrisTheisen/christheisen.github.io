@@ -353,6 +353,15 @@ InventoryItem.prototype.renderUsedIn = function(parent){
 	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'40%', textAlign:'left'}})
 	formatItemSymbols(this.f, createUIElement({type:'span', parent:ow, cssClasses:['cell']}));
 }
+InventoryItem.prototype.renderObjectScannerUpgrade = function (parent, qty){
+	createUIElement({type:'button', parent:createUIElement({parent:parent, cssClasses:['cell'], style:{width:'50px'}}),
+					cssClasses:['circleButton', 'cell', 'goto'], textContent:'»', title:'Goto Item',
+					onclick:() => game.menu.gotoNode(this.f.id)});
+
+	const ow = createUIElement({parent:parent, cssClasses:['cell'], style:{width:'calc(100%-50px)', textAlign:'left'}})
+	createUIElement({type:'span', parent:ow, textContent:`${formatNumberFromSettings(qty)}`, cssClasses:['cell'], style:{width:'50px'}});
+	formatItemSymbols(this.f, createUIElement({type:'span', parent:ow, cssClasses:['cell']}));
+}
 InventoryItem.prototype.renderManage = function(parent){
 	if(!this.isUnlocked()){return;}
 	
@@ -435,6 +444,7 @@ InventoryItem.prototype.renderManageModal = function(){
 			
 			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:igr}),
 				title:'Transmuter Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
+			x.content.e.checked = x.e;
 
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:igr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:igr, textContent:'->'});
@@ -463,7 +473,8 @@ InventoryItem.prototype.renderManageModal = function(){
 			
 			x.content.e = createUIElement({type:'input', parent:createUIElement({type:'td', parent:ogr}),
 				title:'Transmuter Enabled', attr:{type:'checkbox'}, onclick:() => x.e = !x.e});
-			
+			x.content.e.checked = x.e;
+
 			formatItemSymbols({s:ins, n:inn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));
 			createUIElement({type:'td', parent:ogr, textContent:'->'});
 			formatItemSymbols({s:outs, n:outn}, createUIElement({type:'td', parent:ogr, style:{width:'30%'}}));

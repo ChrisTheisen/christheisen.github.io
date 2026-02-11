@@ -367,16 +367,34 @@ hr {
 .discover{
 	max-height: calc(100vh - 290px);
 	overflow-y:auto;
+	display:table;
 }
 
 .discoverLeft{
-	float:left;
 	margin-left:10px;
+	width: 300px;
 }
 
 .discoverRight{
-	float:right;
 	margin-right:10px;
+	width: 300px;
+}
+
+.objectScanner{
+	width:40%;
+	min-height:200px;
+	min-width:300px;
+	max-height: calc(100vh - 400px);
+	overflow-y:auto;
+}
+
+.osl{
+	border: solid 1px var(--c4);
+}
+
+.discoverCol{
+	display:table-cell;
+	min-width: 300px;
 }
 
 .amountWrapper{
@@ -409,14 +427,6 @@ hr {
 
 .componentAmount{
 	display:inline;
-}
-
-.matterMutator{
-	width:40%;
-	min-height:200px;
-	min-width:300px;
-	max-height: calc(100vh - 400px);
-	overflow-y:auto;
 }
 
 .discoverContainer{

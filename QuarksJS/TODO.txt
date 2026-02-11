@@ -8,25 +8,28 @@ New Items:
 	3) Add to group in data.js
 
 Bugs: 
+	Manage Modal checkboxes aren't the enable/disable working?
 
 TODO:
 X	Move Settings and Help to M_8 and M_9
-0	Story tab is M_7
-0		-Unlocks with any generator level 4+
-0	Change tutorial
-0		-Discover with any generator level 2+
+X	Story tab is M_7
+X		-Unlocks with any generator level 4+
+X	Change tutorial
+X		-Discover with any generator level 2+
+X		-Add initial story to Welcome
+X		Upgradable Object Scanner
+X			-save/load scanner level
+X			-Update object scanner to scan items lower than or equal magnitude of level
+X			Put in new section on Discover tab
+X			cost? 10x of lightest && 1x of heaviest of current magnitude
+X			Can upgrade (update CSS)
+X			Do upgrade - util.js functions?
 
-
-	Story Mode? YES!
+1	Story:
 1		-When chapter is unlocked save date || total mass || cycle count || unlock order?.
 1			-display in unlocked order
-0		-Add initial story to Welcome
 1		-Advances on Object Scanner Upgrade
-1			Put in new section on Discover tab
-1			cost? 10x of lightest && 1x of heaviest of current magnitude
 1		-Advances on total mass magnitude
-0		Upgradable Object Scanner
-0			-Able to add/scan items of higher magnitude
 2		plot
 2			-Being graduating needs to do a final project of creating a universe
 2			-Track cycles with cheater mode enabled
@@ -34,9 +37,6 @@ X	Move Settings and Help to M_8 and M_9
 2			-Allow multiple response selections for player
 2				-can change at retroactivly; not permanent (no prestige/just single play through)
 2				-responses available tree based on previous responses
-1		Add settings:
-1			-Name
-1			-Rival Name
 
 
 	Saved target flow loadouts?

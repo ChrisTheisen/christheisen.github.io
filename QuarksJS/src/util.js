@@ -165,6 +165,16 @@ function toggleSetting(input){
 	}
 }
 
+function canUpgradeObjectScanner(){
+	const mi = Object.values(game.inventory.children).filter(x => x.m.i === game.osl).sort((a,b) => a.f.m.compare(b.f.m));
+	if(mi.length === 0){return false;}
+
+	const lightest = mi[0];
+	const heaviest = mi[mi.length -1];
+
+	return lightest.a > oslCostLight && heaviest.a > oslCostHeavy
+}
+
 function getDiscoverHint(hout, btnHint, hadd){
 	const d = game.menu.children.M_1.content;
 	
@@ -267,6 +277,8 @@ function load() {
 
 	const data = JSON.parse(temp);
 	
+	game.osl = data.osl ?? 0;
+
 	game.settings.c = data.s?.c ?? false;
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
@@ -348,6 +360,7 @@ function save() {
 		c:Date.now()
 	};
 	
+	data.osl = game.osl ?? 0;
 	data.s.c = game.settings.c?1:0;
 	data.s.h = game.settings.h?1:0;
 	data.s.i = game.settings.i?1:0;

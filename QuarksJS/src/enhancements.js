@@ -247,8 +247,8 @@ Enhancements.prototype.render = function(parent){
 
 	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Item Magnitude', title:'Larger item magnitudes recieve a smaller bonus.'})
 	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'TMB', title:'Global bonus that is applied on top of the above enhancements.'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Transmuter Bonus', title: 'Total multiplier bonus for the item transmuter (TMB x Gen. Output).'})
-	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Transmute (->) button is clicked (TMB x Manual Output)).'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Transmuter Bonus', title: 'Total multiplier bonus for the item transmuter (TMB x Trans. Bonus).'})
+	createUIElement({parent: wrapperTGBHead, cssClasses:['cell', 'headerCell', 'help'], textContent: 'Manual Bonus', title: 'Total multiplier bonus when the Transmute (->) button is clicked (TMB x Trans. Bonus x Manual Bonus).'})
 
 	createUIElement({parent: wrapper0, textContent: MassUnits.Da.n, cssClasses:['cell']})
 	createUIElement({parent: wrapper1, textContent: MassUnits.pg.n, cssClasses:['cell']})
