@@ -3,8 +3,9 @@
 	--bg1: #003288;
 	--bg2: #550000;
 	--bg3: #6500FF;
-	--bg4: #0032883D;
+	--bg4: #00328877;
 	--bg5: #222222;
+	--bg6: #091233;
 	--c0: #FFFFFF;
 	--c1: #AAAAAA;
 	--c2: #555555;
@@ -61,6 +62,31 @@ hr {
 ::backdrop {
 	background-color: var(--bg5);
 	opacity: .5;
+}
+
+.gameWrapper{
+	max-width: 1200px;
+	margin: auto;
+}
+
+.contextHelpArea{
+	background-color: var(--bg6);
+	border: solid 2px var(--c4);
+	width: calc(50% - 500px);
+	min-width: 400px;
+	height: calc(100vh - 50px);
+	margin-top:25px;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 50;
+	overflow-y: auto;
+}
+
+.contextTopic{
+	font-size: 24pt;
+	font-weight: bold;
+
 }
 
 .manageModal {
@@ -424,6 +450,8 @@ hr {
 	border-radius: 50%;
 	padding: 2px 6px;
 	color:var(--c4);
+	font-family: monospace;
+	font-weight: normal;
 }
 
 .pointer{
@@ -464,6 +492,25 @@ hr {
 }
 .toastX{
 
+}
+
+.contextHelpWrapper{
+	width: 40px;
+	height: 40px;
+	transform: rotate(45deg);
+	background-color: var(--bg1);
+	position: fixed;
+	right: 50px;
+	top: 35px;
+}
+.contextHelp{
+	transform: rotate(-45deg);
+	background:transparent;
+	border: 0;
+	width: 42px;
+	height: 42px;
+	text-align: center;
+	margin: 0;
 }
 
 .hint{

@@ -50,7 +50,7 @@ Transmuter.prototype.renderInputItem = function(parent, input){
 
 	if(input.a){
 		const own = createUIElement({parent:cw, textContent:input.inv.a, cssClasses:['componentAmount']});
-		createUIElement({parent:cw, textContent:` / ${input.a}`, cssClasses:['componentAmount']});
+		createUIElement({parent:cw, textContent:` / ${formatNumberFromSettings(input.a)}`, cssClasses:['componentAmount']});
 		input.inv.content.a.push(own);
 	}
 	
@@ -119,7 +119,7 @@ Transmuter.prototype.render0 = function(parent){
 	
 	//flow
 	const flowParent = createUIElement({parent:parent, cssClasses:['cell'], style:{verticalAlign:'middle'}});
-	createInfoElement({title:'Target Flow is the desired amount of this item to transmute every tick before enhancement bonuses.', parent: flowParent});
+	//createInfoElement({title:'Target Flow is the desired amount of this item to transmute every tick before enhancement bonuses.', parent: flowParent});
 	this.content.f = createUIElement({type:'input', parent:flowParent,
 		cssClasses:['flow', 'genFlow'],
 		attr:{type:'number'}, onchange:(e) => this.setFlow(e.target.value)});
