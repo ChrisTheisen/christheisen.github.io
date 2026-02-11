@@ -66,11 +66,11 @@ Menu.prototype.route = function(addHistory = true){
 			this.renderEnhance(div);
 			break;
 		}
-		case 'M_4': {
+		case 'M_8': {
 			this.renderSettings(div);
 			break;
 		}
-		case 'M_5': {
+		case 'M_9': {
 			this.renderHelp(div);
 			break;
 		}
@@ -211,7 +211,7 @@ Menu.prototype.update = function(){
 			game.enhancements.update();
 			break;
 		}
-		case 'M_4':{
+		case 'M_8':{
 			
 		}
 	}

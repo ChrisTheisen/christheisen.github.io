@@ -888,8 +888,8 @@ const tabs = [
 	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Object Scanner. Click a (--) button to remove an item from the Object Scanner. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Object Scanner. Scanning items does not destroy them.'},
 	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item flow. This table is one of the few places that will only update when "Refresh Table" is clicked.'},
 	{id:'M_3', n:'Enhance', u:false, info:['Transmuter Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase transmuter output and reduce transmuter upgrade cost. They do not change the set-point limits or transmuter levels.'},
-	{id:'M_4', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'}, 
-	{id:'M_5', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
+	{id:'M_8', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'},
+	{id:'M_9', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
 
 const help = [

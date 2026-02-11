@@ -409,7 +409,7 @@ onkeydown = (e) => {
 					b.forEach(x => x.click());
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][0]?.click();
 					break;
 				}
@@ -437,11 +437,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyM();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('h');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][1]?.click();
 					break;
 				}
@@ -473,11 +473,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyG();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('i');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][2]?.click();
 					break;
 				}
@@ -498,11 +498,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyD();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('u');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][3]?.click();
 					break;
 				}
@@ -519,11 +519,11 @@ onkeydown = (e) => {
 					toggleSetting('mn');
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('c');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][4]?.click();
 					break;
 				}
@@ -536,12 +536,12 @@ onkeydown = (e) => {
 					toggleSetting('mt');
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					save();
 					game.menu.route();
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][5]?.click();
 					break;
 				}
@@ -554,7 +554,7 @@ onkeydown = (e) => {
 					toggleSetting('mu');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][6]?.click();
 					break;
 				}
@@ -566,7 +566,7 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('mx');
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][7]?.click();
 					break;
 				}
@@ -578,11 +578,11 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('my');
 				}
-				case 'M_4':{
+				case 'M_8':{
 					resetSettings();
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][8]?.click();
 					break;
 				}
@@ -594,7 +594,7 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('mz');
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][9]?.click();
 					break;
 				}
