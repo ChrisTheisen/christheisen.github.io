@@ -209,7 +209,9 @@ InventoryItem.prototype.renderCreate1 = function(parent){
 	createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], textContent:'Input', style:{width:'50%'}});
 	createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], textContent:'->', style:{width:'10%'}});
 	createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], textContent:'Output', style:{width:'35%'}});
-	createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], textContent:'Flow', style:{width:'35%'}});
+	const flowParent = createUIElement({parent:r0, cssClasses:['subtitle', 'cell'], textContent:'Target Flow ', style:{width:'35%'}});
+	createInfoElement({title:'Target Flow is the desired amount of this item to transmute every cycle before enhancement bonuses. If insufficient input items are available the target flow might not be achieved. Click on the Max Flow value below to set that value as the target flow.', parent: flowParent});
+
 	
 	this.g.forEach(x => x.render(w));
 }
