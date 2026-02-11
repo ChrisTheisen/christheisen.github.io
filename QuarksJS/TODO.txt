@@ -10,6 +10,32 @@ New Items:
 Bugs: 
 
 TODO:
+	Move Settings and Help to M_8 and M_9
+	Story tab is M_7
+
+	Story Mode? YES
+		-Advances on Object Scanner Upgrade
+			Put in new section on Discover tab
+		-Advances on total mass magnitude
+		Upgradable Object Scanner
+			-Able to add/scan items of higher magnitude
+		setting
+			-Being graduating needs to do a final project of creating a universe
+			-Track cycles with cheater mode enabled
+				-Final story effected; something like: "Rival: 'I bet you cheated to beat me'" || "You: 'And I didn't even cheat!'"
+			-Allow multiple response selections for player
+				-can change at retroactivly; not permanent (no prestige/just single play through)
+				-responses available tree based on previous responses
+		Add settings:
+			-Name
+			-Rival Name
+
+
+	Saved target flow loadouts?
+		-in manage tab
+		-new tab?
+		-in left side menu (similar to context help)
+			-Unlocks after
 
 cotton 90% cellulose
 
