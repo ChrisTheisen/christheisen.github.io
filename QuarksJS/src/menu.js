@@ -14,7 +14,7 @@ function Menu(parent, parentDiv, input, id, name, b){
 	input?.forEach(x => {
 		this.children[x.id||x.n] = {};
 		const btnClass = x.u ? [] : ['hide']
-		const div = createUIElement({parent:c, cssClasses:['hide', 'content']});
+		const div = createUIElement({parent:c, id:`${x.id}__Content`, cssClasses:['hide', 'content']});
 		const btn = createUIElement({type:'button', parent:m, textContent:x.n, cssClasses:btnClass, 
 			onclick:()=>{
 				this.current=this.current!==x.id?x.id:null; 
@@ -64,6 +64,10 @@ Menu.prototype.route = function(addHistory = true){
 		}
 		case 'M_3':{
 			this.renderEnhance(div);
+			break;
+		}
+		case 'M_7':{
+			renderStory();
 			break;
 		}
 		case 'M_8': {
@@ -342,11 +346,11 @@ Menu.prototype.renderDiscover = function(parent){
 	game.inventory.renderDiscover(bags);
 	
 	const mi = Object.values(game.inventory.children).filter(x => x.m.i === game.osl).sort((a,b) => a.f.m.compare(b.f.m));
-	if(mi.length > 0){
+	const lightest = mi[0];
+	const heaviest = mi[mi.length -1];
+	if(mi.length > 0 && heaviest.f.u){
 		const oslWrapper = createUIElement({parent: w, cssClasses:['discoverCol']});
 		const inner = createUIElement({parent: oslWrapper, cssClasses:['osl']});
-		const lightest = mi[0];
-		const heaviest = mi[mi.length -1];
 
 		createUIElement({type:'h4', parent:inner, textContent:'Upgrade Scanner'});
 

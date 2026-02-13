@@ -8,25 +8,11 @@ New Items:
 	3) Add to group in data.js
 
 Bugs: 
-	Manage Modal checkboxes aren't the enable/disable working?
 
 TODO:
-X	Move Settings and Help to M_8 and M_9
-X	Story tab is M_7
-X		-Unlocks with any generator level 4+
-X	Change tutorial
-X		-Discover with any generator level 2+
-X		-Add initial story to Welcome
-X		Upgradable Object Scanner
-X			-save/load scanner level
-X			-Update object scanner to scan items lower than or equal magnitude of level
-X			Put in new section on Discover tab
-X			cost? 10x of lightest && 1x of heaviest of current magnitude
-X			Can upgrade (update CSS)
-X			Do upgrade - util.js functions?
 
 1	Story:
-1		-When chapter is unlocked save date || total mass || cycle count || unlock order?.
+1		-When chapter is unlocked save unlock order.
 1			-display in unlocked order
 1		-Advances on Object Scanner Upgrade
 1		-Advances on total mass magnitude

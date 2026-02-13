@@ -266,6 +266,10 @@ hr {
 	display: block;
 }
 
+.chapter{
+	border-left: solid 1px var(--c4);
+}
+
 .nowrap{
 	white-space:nowrap;
 }

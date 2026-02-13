@@ -123,8 +123,8 @@ GameClock.prototype.toggleTabs = function(){
 	const canEnhance = game.transmuters.some(x => x.l > 7 && x.i.length > 0);
 	game.menu.children.M_3.b.classList.toggle('hide', !canEnhance);
 
-	//can discover when a transmuter is over level 3.
-	const canStory = game.transmuters.some(x => x.l > 3);
+	//can story when a transmuter for an item with components is over level 3.
+	const canStory = game.transmuters.some(x => x.l > 3 && x.i.length > 0);
 	game.menu.children.M_7.b.classList.toggle('hide', !canStory);
 }
 
@@ -134,6 +134,7 @@ function Game(){
 	this.inventory = new Inventory();
 	this.transmuters = [];
 	this.discoverHint = [];
+	this.story = ['INIT'];
 	this.dContent = {};
 	this.menu = new Menu();
 	this.h = true;

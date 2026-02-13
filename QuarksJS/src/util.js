@@ -278,7 +278,7 @@ function load() {
 	const data = JSON.parse(temp);
 	
 	game.osl = data.osl ?? 0;
-
+	game.story = data.story?.split(';') ?? 'INIT';
 	game.settings.c = data.s?.c ?? false;
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
@@ -361,6 +361,7 @@ function save() {
 	};
 	
 	data.osl = game.osl ?? 0;
+	//data.story = game.story?.join(';') ?? 'INIT';
 	data.s.c = game.settings.c?1:0;
 	data.s.h = game.settings.h?1:0;
 	data.s.i = game.settings.i?1:0;
@@ -387,7 +388,8 @@ function save() {
 	data.s.nb = game.settings?.n?.b??10;
 	data.s.ns = game.settings?.n?.s??6;
 	data.s.e = game.settings?.e??10;
-	
+	data.story = game.story?.join(';') ?? 'INIT';
+
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
 		if(!value.a && !value.q && !value.f.u){
@@ -417,7 +419,7 @@ function save() {
 		if(x.f){data.g[x.id].f = x.f;}
 	});
 	
-	const temp = JSON.stringify(data).replaceAll('"','');
+	const temp = JSON.stringify(data);//.replaceAll('"','');
 	localStorage.setItem('Q', temp);
 }
 
