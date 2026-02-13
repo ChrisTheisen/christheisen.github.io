@@ -104,6 +104,7 @@ GameClock.prototype.update = function(input = 1){
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	game.enhancements.totalTransmuted = TM;
 	
+	storyUnlock();
 	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
@@ -115,16 +116,16 @@ GameClock.prototype.toggleTabs = function(){
 	const canDiscover = game.transmuters.some(x => x.l > 1);
 	game.menu.children.M_1.b.classList.toggle('hide', !canDiscover);
 	
-	//can manage when a transmuter for an item with components is over level 1.
-	const canManage = game.transmuters.some(x => x.l > 1 && x.i.length > 0);
+	//can manage when a transmuter for an item with components is over level 3.
+	const canManage = game.transmuters.some(x => x.l > 3 && x.i.length > 0);
 	game.menu.children.M_2.b.classList.toggle('hide', !canManage);
 
 	//can enhance when a transmuter for an item with components is over level 7.
 	const canEnhance = game.transmuters.some(x => x.l > 7 && x.i.length > 0);
 	game.menu.children.M_3.b.classList.toggle('hide', !canEnhance);
 
-	//can story when a transmuter for an item with components is over level 3.
-	const canStory = game.transmuters.some(x => x.l > 3 && x.i.length > 0);
+	//can story when a transmuter for an item with components is over level 1.
+	const canStory = game.transmuters.some(x => x.l > 1 && x.i.length > 0);
 	game.menu.children.M_7.b.classList.toggle('hide', !canStory);
 }
 

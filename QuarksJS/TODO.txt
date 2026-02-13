@@ -8,6 +8,7 @@ New Items:
 	3) Add to group in data.js
 
 Bugs: 
+	Save/Load of green border introduction setting doesn't work.
 
 TODO:
 

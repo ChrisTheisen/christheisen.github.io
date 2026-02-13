@@ -1053,7 +1053,7 @@ const help = [
 		'> NOTE: Some transmuters have bulk mass as an input. The Demand, Supply, and Used standardizes the inputs to be the equivalent amount of items.',
 		'Example: Mild Steel can be made with 12 Da of Carbon and 5,600 Da of Iron, this is equivilent to 1 Carbon atom and 100 Iron atoms.',
 		'',
-		'The Manage tab is unlocked when a transmuter with input items (not a quark, lepton, or gauge boson) is level 2+.'
+		'The Manage tab is unlocked when a transmuter with input items (not a quark, lepton, or gauge boson) is level 4+.'
 	]},
 	{t:'Enhance', c:[
 		'This tab allows you to significantly break conservation of mass by multiplying transmuter outputs.',
