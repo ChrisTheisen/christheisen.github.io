@@ -269,10 +269,10 @@ function load() {
 		let temp = localStorage.getItem('Q');
 
 		temp = 'INVALID JSON!;'[]{}l;';
-		
 		if(!temp){return;}
 		
 		if(!temp.includes('"')){
+			alert('Repairing data "');
 			temp = temp.replaceAll('{', '{"');
 			temp = temp.replaceAll(',', ',"');
 			temp = temp.replaceAll(':', '":');
@@ -545,6 +545,7 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
 
 
 
