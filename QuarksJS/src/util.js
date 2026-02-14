@@ -265,9 +265,8 @@ function enforceLimits(a, b, value){
 }
 
 function load() {
+	let temp = localStorage.getItem('Q');
 	try{
-		let temp = localStorage.getItem('Q');
-
 		temp = 'INVALID JSON!;[]{::::::}l;';
 		if(!temp){return;}
 		
@@ -545,6 +544,7 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
 
 
 
