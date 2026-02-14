@@ -29,8 +29,10 @@ GameClock.prototype.tick = function(){
 	const p = this.duration / this.updateRate;
 	this.content.p.style.width = `${Math.min(100 * p, 100)}%`;
 	
-	if(game.h){	game.intro(); }
+	if(game.h){game.intro();}
 	if(this.duration < this.updateRate){ return; }
+	if(game.settings.c){game.cc++;}
+
 	this.update(p);
 }
 GameClock.prototype.stop = function(){
@@ -139,6 +141,7 @@ function Game(){
 	this.dContent = {};
 	this.menu = new Menu();
 	this.h = true;
+	this.cc = 0;//cheater cycles
 	this.dinterval = null;
 	this.bx = 1;
 	this.by = 1;

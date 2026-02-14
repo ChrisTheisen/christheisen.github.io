@@ -12,11 +12,11 @@ Bugs:
 
 TODO:
 
-1	Story:
-1		-When chapter is unlocked save unlock order.
-1			-display in unlocked order
-1		-Advances on Object Scanner Upgrade
-1		-Advances on total mass magnitude
+X	Story:
+X		-When chapter is unlocked save unlock order.
+X			-display in unlocked order
+X		-Advances story criteria
+X		Collapsable chapters by name
 2		plot
 2			-Being graduating needs to do a final project of creating a universe
 2			-Track cycles with cheater mode enabled

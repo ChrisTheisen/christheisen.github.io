@@ -267,7 +267,6 @@ hr {
 }
 
 .chapter{
-	border-left: solid 1px var(--c4);
 	line-height: 2;
 	width: 600px;
 	margin: auto;
