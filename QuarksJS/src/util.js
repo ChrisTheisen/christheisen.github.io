@@ -265,17 +265,17 @@ function enforceLimits(a, b, value){
 }
 
 function load() {
-	let temp = localStorage.getItem('Q');
-	if(!temp){return;}
-	
-	if(!temp.includes('"')){
-		temp = temp.replaceAll('{', '{"');
-		temp = temp.replaceAll(',', ',"');
-		temp = temp.replaceAll(':', '":');
-		temp = temp.replaceAll('{"}', '{}');
-	}
-
 	try{
+		let temp = localStorage.getItem('Q');
+		if(!temp){return;}
+		
+		if(!temp.includes('"')){
+			temp = temp.replaceAll('{', '{"');
+			temp = temp.replaceAll(',', ',"');
+			temp = temp.replaceAll(':', '":');
+			temp = temp.replaceAll('{"}', '{}');
+		}
+
 		const data = JSON.parse(temp);
 		
 		game.osl = data.osl ?? 0;
@@ -310,6 +310,38 @@ function load() {
 		game.enhancements.d = data.e?.d ?? 0;
 		game.enhancements.g = data.e?.g ?? 0;
 		game.enhancements.m = data.e?.m ?? 0;
+
+		Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
+		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
+		
+		const a = Date.now() - data.c;
+		game.clock.duration = a;
+		Object.entries(data.i).forEach(([key, value], index) => {
+			const inv = Object.values(game.inventory.children).find(x => x.f.id === key);
+			if(!inv){return;}
+		
+			inv.a = value?.a ?? 0;
+			inv.b = new Amount();
+			for([k,v] of Object.entries(value?.b ?? {})){
+				if(typeof v !== 'number'){continue;}
+				inv.b[k] = v;
+			}
+			
+			inv.q = value?.q ?? false;
+			if(value.u){
+				inv.unlock();
+			}
+		});
+		
+		Object.entries(data.g).forEach(([key, value], index) => {
+			const g = game.transmuters.find(x => x.id === key);
+			if(!g){return;}
+			
+			g.l = value.l ?? 0;
+			g.e = !!value.e;
+			g.a = !!value.a;
+			g.f = value.f ?? 0;
+		});
 	} catch(error) {
 		const failedSave = `FAILED_${new Date().getTime()}`;
 		if(window.confirm(`Error loading data:${error}. Do you want to reset data? This failed save will be kept in localStorage as ${failedSave}.`)){
@@ -318,38 +350,6 @@ function load() {
 		}
 		return;
 	}
-
-	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
-	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
-	
-	const a = Date.now() - data.c;
-	game.clock.duration = a;
-	Object.entries(data.i).forEach(([key, value], index) => {
-		const inv = Object.values(game.inventory.children).find(x => x.f.id === key);
-		if(!inv){return;}
-	
-		inv.a = value?.a ?? 0;
-		inv.b = new Amount();
-		for([k,v] of Object.entries(value?.b ?? {})){
-			if(typeof v !== 'number'){continue;}
-			inv.b[k] = v;
-		}
-		
-		inv.q = value?.q ?? false;
-		if(value.u){
-			inv.unlock();
-		}
-	});
-	
-	Object.entries(data.g).forEach(([key, value], index) => {
-		const g = game.transmuters.find(x => x.id === key);
-		if(!g){return;}
-		
-		g.l = value.l ?? 0;
-		g.e = !!value.e;
-		g.a = !!value.a;
-		g.f = value.f ?? 0;
-	});
 }
 
 function save() {
@@ -542,4 +542,5 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
 
