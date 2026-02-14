@@ -275,40 +275,49 @@ function load() {
 		temp = temp.replaceAll('{"}', '{}');
 	}
 
-	const data = JSON.parse(temp);
+	try{
+		const data = JSON.parse(temp);
+		
+		game.osl = data.osl ?? 0;
+		game.story = data.story?.split(';') ?? 'INIT';
+		game.cc = data.cc ?? 0;
+		game.settings.c = data.s?.c ?? false;
+		game.settings.h = data.s?.h ?? false;
+		game.settings.i = data.s?.i ?? true;
+		game.settings.u = data.s?.u ?? true;
+		game.settings.s = data.s?.s ?? 100;
+		game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
+		game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 6;
+		game.settings.e = enforceLimits(0,1024,data.s?.e) ?? 4;
+		game.settings.d.l = data.s?.dl ?? 0;
+		game.settings.d.o = data.s?.do ?? false;
+		game.settings.d.s = data.s?.ds ?? null;
+		game.settings.m.a = data.s?.ma ?? false;
+		game.settings.m.c = data.s?.mc ?? false;
+		game.settings.m.m = data.s?.mm ?? false;
+		game.settings.m.l = data.s?.ml ?? false;
+		game.settings.m.n = data.s?.mn ?? false;
+		game.settings.m.t = data.s?.mt ?? false;
+		game.settings.m.u = data.s?.mu ?? false;
+		game.settings.m.x = data.s?.mx ?? false;
+		game.settings.m.y = data.s?.my ?? false;
+		game.settings.m.z = data.s?.mz ?? false;
+		game.settings.m.so = data.s?.mso ?? false;
+		game.settings.m.sd = data.s?.msd ?? false;
+		game.settings.m.ss = data.s?.mss ?? false;
+		game.settings.m.su = data.s?.msu ?? false;
 	
-	game.osl = data.osl ?? 0;
-	game.story = data.story?.split(';') ?? 'INIT';
-	game.cc = data.cc ?? 0;
-	game.settings.c = data.s?.c ?? false;
-	game.settings.h = data.s?.h ?? false;
-	game.settings.i = data.s?.i ?? true;
-	game.settings.u = data.s?.u ?? true;
-	game.settings.s = data.s?.s ?? 100;
-	game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
-	game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 6;
-	game.settings.e = enforceLimits(0,1024,data.s?.e) ?? 4;
-	game.settings.d.l = data.s?.dl ?? 0;
-	game.settings.d.o = data.s?.do ?? false;
-	game.settings.d.s = data.s?.ds ?? null;
-	game.settings.m.a = data.s?.ma ?? false;
-	game.settings.m.c = data.s?.mc ?? false;
-	game.settings.m.m = data.s?.mm ?? false;
-	game.settings.m.l = data.s?.ml ?? false;
-	game.settings.m.n = data.s?.mn ?? false;
-	game.settings.m.t = data.s?.mt ?? false;
-	game.settings.m.u = data.s?.mu ?? false;
-	game.settings.m.x = data.s?.mx ?? false;
-	game.settings.m.y = data.s?.my ?? false;
-	game.settings.m.z = data.s?.mz ?? false;
-	game.settings.m.so = data.s?.mso ?? false;
-	game.settings.m.sd = data.s?.msd ?? false;
-	game.settings.m.ss = data.s?.mss ?? false;
-	game.settings.m.su = data.s?.msu ?? false;
-
-	game.enhancements.d = data.e?.d ?? 0;
-	game.enhancements.g = data.e?.g ?? 0;
-	game.enhancements.m = data.e?.m ?? 0;
+		game.enhancements.d = data.e?.d ?? 0;
+		game.enhancements.g = data.e?.g ?? 0;
+		game.enhancements.m = data.e?.m ?? 0;
+	} catch(error) {
+		const failedSave = `FAILED_${new Date().getTime()}`;
+		if(window.confirm(`Error loading data:${error}. Do you want to reset data? This failed save will be kept in localStorage as ${failedSave}.`)){
+			localStorage.setItem(failedSave, temp);
+			hardReset();
+		}
+		return;
+	}
 
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
 	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
@@ -533,3 +542,4 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
