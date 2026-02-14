@@ -257,7 +257,7 @@ Game.prototype.intro = function(){
 	if(shouldProtonGo){ setElementText(hintZone, 'Use the (») Goto Item button to jump to the Proton you just discovered.'); }
 	
 	if(shouldProton && game.inventory.children['4'].isDisplayed()){
-		setElementText(hintZone, 'Create a Proton to complete the tutorial.');
+		setElementText(hintZone, 'Transmute some Quarks into a Proton to complete the tutorial.');
 		hintZone.classList.toggle('hintAnimate', true);
 	}
 	
@@ -634,4 +634,5 @@ onkeydown = (e) => {
 		default:{}
 	}
 };
+
 
