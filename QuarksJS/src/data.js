@@ -932,10 +932,20 @@ const help = [
 		'5 <<3 shifts 5 to the left 3 places resulting in 5,000',
 		'5 >>3 shifts 5 to the right 3 places resulting in 0.0005',
 	]},
-	{t:'What should I do now?', c:[
+	{t:'FAQ', c:[
+		'I Can\'t seem to generate any of a certain item',
+		'Check on your resource flow/management. Look at what transmuters require that item and how many you are transmuting every cycle.',
+		'You can temporarily turn off or adjust the flow of a transmuter to balance the inputs and outputs.',
+		'Look at the "Auto-Upgrade" checkbox on the transmuter for the item you need more of or the transmuters that use that item as an input.',
+		'You can also temporarily check "Ceater Mode" in the settings if you need a minute to get your transmuters balanced. This will continue to produce output items from transmuters but will no longer consume the inputs.',
+		'Example: I can\'t generate any Up Quarks! Look at Proton and Neutron flow, every Proton requires 2 Up Quarks. Turn off the transmuter or limit the flow to get enough Up Quarks to upgrade the Up Quark transmuter.',
+		'',
+		'I checked the "Auto-Upgrade" checkbox but the transmuter isn\'t upgrading.',
+		'The transmuter will only auto-upgrade when you have more than double the cost of upgrading in inventory. This was done to avoid effecting other transmuter inputs.',
+		'',
+		'What should I do now?',
 		'Keep making more base level items. Keep transmuting them into larger items.',
 		'This game has no resets, no prestiges, just more bigger items.',
-		'',
 		'Some things to work towards:',
 		'* Upgrade Transmuter levels (See Create below for more information)',
 		'* Discover more recipes (See Discover below for more information)',
@@ -944,7 +954,8 @@ const help = [
 		'* Try to break the game with too much bigness',
 		'* Creating larger and larger items (see if you can create a train, planet, or galaxy)',
 		'',
-		'If the game is progressing too slowly check the settings.',
+		'This game it too slow or boring.',
+		'If the game is progressing too slowly check the settings, you can increase the transmuter outputs with the enhancement scaling or check the "Cheater Mode" option.',
 		'If this game no longer interests you then go do something else.'
 	]},
 	{t:'Hotkeys', c:[
