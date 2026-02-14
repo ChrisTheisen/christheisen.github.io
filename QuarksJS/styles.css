@@ -39,6 +39,14 @@ button{
 	margin:10vw;
 }
 
+.welcomeTitle{
+	font-size: 4em;
+    position: fixed;
+    width: 50vw;
+    left: 25vw;
+    top: calc(50vh - 200px);
+}
+
 .welcomeText{
 	position: fixed;
     top: calc(50vh + 100px);
