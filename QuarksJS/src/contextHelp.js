@@ -32,10 +32,10 @@ function getHelpContents(){
         case 'M_3': {//Enhance
             return help.find(x => x.t === 'Enhance');
         }
-        case 'M_4': {//Settings
+        case 'M_8': {//Settings
             return help.find(x => x.t === 'Settings');
         }
-        case 'M_5': {//Help
+        case 'M_9': {//Help
             const helpHelp = {t:'Help', c:[]};
             helpHelp.c.push('This is the Help tab.');
             helpHelp.c.push('');

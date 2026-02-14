@@ -96,7 +96,7 @@ function isUnlocked(input){
 
 function unlock(input){
 	if(!input){return;}
-	
+
 	input.u = true;
 	input.menu?.forEach(x => x.children[input.id].b.classList.remove('hide'));
 
@@ -130,39 +130,49 @@ function toggleSetting(input){
 	a.forEach(x => {s = s[x]; c = c[x];});
 
 	switch(input){
-        case'u':
+		case'u':
 		case'c': { 
-	        s[z] = !s[z];
-	        c[z].checked = s[z];    
-            break; 
-        }
+			s[z] = !s[z];
+			c[z].checked = s[z];
+			break;
+		}
 		case'h':{ 
-	        s[z] = !s[z];
-	        c[z].checked = s[z];    
+			s[z] = !s[z];
+			c[z].checked = s[z];
 			Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !s[z]));
 			break; 
 		}
 		case'i':{ 
-	        s[z] = !s[z];
-	        c[z].checked = s[z];    
+			s[z] = !s[z];
+			c[z].checked = s[z];
 			Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !s[z]) );
 			break; 
 		}
 		case'nb':{
-	        s[z] = Number(c[z].value)??10;
+			s[z] = Number(c[z].value)??10;
 			break;
 		}
 		case'ns':{
-            c[z].value = enforceLimits(3,15,c[z].value);
-	        s[z] = c[z].valueAsNumber??6;
+			c[z].value = enforceLimits(3,15,c[z].value);
+			s[z] = c[z].valueAsNumber??6;
 			break;
 		}
 		case'e':{
-            c[z].value = enforceLimits(0,100,c[z].value);
-	        s[z] = c[z].valueAsNumber??10;
+			c[z].value = enforceLimits(0,100,c[z].value);
+			s[z] = c[z].valueAsNumber??10;
 			break;
 		}
 	}
+}
+
+function canUpgradeObjectScanner(){
+	const mi = Object.values(game.inventory.children).filter(x => x.m.i === game.osl).sort((a,b) => a.f.m.compare(b.f.m));
+	if(mi.length === 0){return false;}
+
+	const lightest = mi[0];
+	const heaviest = mi[mi.length -1];
+
+	return lightest.a > oslCostLight && heaviest.a > oslCostHeavy
 }
 
 function getDiscoverHint(hout, btnHint, hadd){
@@ -248,10 +258,10 @@ function loadSaveData(){
 }
 
 function enforceLimits(a, b, value){
-    if(!value){return null;}
-    if(a===b){return a;}//if a===b that is the only valid value
-    if(a>b){a=a+b;b=a-b;a=a-b;}//if a>b swap values.
-    return Math.max(Math.min(value, b), a);
+	if(!value){return null;}
+	if(a===b){return a;}//if a===b that is the only valid value
+	if(a>b){a=a+b;b=a-b;a=a-b;}//if a>b swap values.
+	return Math.max(Math.min(value, b), a);
 }
 
 function load() {
@@ -267,14 +277,17 @@ function load() {
 
 	const data = JSON.parse(temp);
 	
+	game.osl = data.osl ?? 0;
+	game.story = data.story?.split(';') ?? 'INIT';
+	game.cc = data.cc ?? 0;
 	game.settings.c = data.s?.c ?? false;
 	game.settings.h = data.s?.h ?? false;
 	game.settings.i = data.s?.i ?? true;
 	game.settings.u = data.s?.u ?? true;
 	game.settings.s = data.s?.s ?? 100;
-    game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
-    game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 6;
-    game.settings.e = enforceLimits(0,1024,data.s?.e) ?? 4;
+	game.settings.n.b = data.s?.nb === 64 ? 64 : enforceLimits(2,36,data.s?.nb) ?? 10;//64 is a special case.
+	game.settings.n.s = enforceLimits(3,15,data.s?.ns) ?? 6;
+	game.settings.e = enforceLimits(0,1024,data.s?.e) ?? 4;
 	game.settings.d.l = data.s?.dl ?? 0;
 	game.settings.d.o = data.s?.do ?? false;
 	game.settings.d.s = data.s?.ds ?? null;
@@ -293,17 +306,12 @@ function load() {
 	game.settings.m.ss = data.s?.mss ?? false;
 	game.settings.m.su = data.s?.msu ?? false;
 
-
 	game.enhancements.d = data.e?.d ?? 0;
 	game.enhancements.g = data.e?.g ?? 0;
 	game.enhancements.m = data.e?.m ?? 0;
 
 	Array.from(document.getElementsByClassName('info')).forEach(x => x.classList.toggle('hide', !game.settings.i) );
-	//hide green border tips
-	if(Object.keys(data.i).length > 5 || !game.settings.h){
-		game.settings.h = false;
-		Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.add('hide'));
-	}
+	Array.from(document.getElementsByClassName('tutorial')).forEach(x => x.classList.toggle('hide', !game.settings.h));
 	
 	const a = Date.now() - data.c;
 	game.clock.duration = a;
@@ -348,6 +356,7 @@ function save() {
 		c:Date.now()
 	};
 	
+	data.osl = game.osl ?? 0;
 	data.s.c = game.settings.c?1:0;
 	data.s.h = game.settings.h?1:0;
 	data.s.i = game.settings.i?1:0;
@@ -355,8 +364,8 @@ function save() {
 	data.s.s = game.settings.s??100;
 	data.s.dl = game.settings.d.l??0;
 	data.s.do = game.settings.d.o?1:0;
-    data.s.nb = game.settings.n.b??10;
-    data.s.ns = game.settings.n.s??6;
+	data.s.nb = game.settings.n.b??10;
+	data.s.ns = game.settings.n.s??6;
 	data.s.ma = game.settings.m.a?1:0;
 	data.s.mc = game.settings.m.c?1:0;
 	data.s.mm = game.settings.m.m?1:0;
@@ -374,7 +383,9 @@ function save() {
 	data.s.nb = game.settings?.n?.b??10;
 	data.s.ns = game.settings?.n?.s??6;
 	data.s.e = game.settings?.e??10;
-	
+	data.cc = game.cc ?? 0;
+	data.story = game.story?.join(';') ?? 'INIT';
+
 	Object.entries(game.inventory.children).forEach(([key, value], index) => {
 		//has default values, don't save.
 		if(!value.a && !value.q && !value.f.u){
@@ -404,7 +415,7 @@ function save() {
 		if(x.f){data.g[x.id].f = x.f;}
 	});
 	
-	const temp = JSON.stringify(data).replaceAll('"','');
+	const temp = JSON.stringify(data);//.replaceAll('"','');
 	localStorage.setItem('Q', temp);
 }
 

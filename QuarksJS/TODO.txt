@@ -8,23 +8,29 @@ New Items:
 	3) Add to group in data.js
 
 Bugs: 
+	Save/Load of green border introduction setting doesn't work.
 
 TODO:
-	Story Mode???
-		-Advances on Object Scanner Upgrade
-		-Advances on total mass magnitude
-		Upgradable Object Scanner
-			-Able to add/scan items of higher magnitude
-		setting
-			-Being graduating needs to do a final project of creating a universe
-			-Scientists discovered ability to create and transmutate matter
+
+X	Story:
+X		-When chapter is unlocked save unlock order.
+X			-display in unlocked order
+X		-Advances story criteria
+X		Collapsable chapters by name
+2		plot
+2			-Being graduating needs to do a final project of creating a universe
+2			-Track cycles with cheater mode enabled
+2				-Final story effected; something like: "Rival: 'I bet you cheated to beat me'" || "You: 'And I didn't even cheat!'"
+2			-Allow multiple response selections for player
+2				-can change at retroactivly; not permanent (no prestige/just single play through)
+2				-responses available tree based on previous responses
+
 
 	Saved target flow loadouts?
 		-in manage tab
+		-new tab?
 		-in left side menu (similar to context help)
 			-Unlocks after
-
-
 
 cotton 90% cellulose
 

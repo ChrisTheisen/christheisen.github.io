@@ -29,8 +29,10 @@ GameClock.prototype.tick = function(){
 	const p = this.duration / this.updateRate;
 	this.content.p.style.width = `${Math.min(100 * p, 100)}%`;
 	
-	if(game.h){	game.intro(); }
+	if(game.h){game.intro();}
 	if(this.duration < this.updateRate){ return; }
+	if(game.settings.c){game.cc++;}
+
 	this.update(p);
 }
 GameClock.prototype.stop = function(){
@@ -75,7 +77,12 @@ GameClock.prototype.update = function(input = 1){
 	
 	switch(game.menu.current){
 		case 'M_0'://create
-		case 'M_1'://discover
+		case 'M_1':{//discover
+			if(game.dContent.osl){
+				const cu = canUpgradeObjectScanner();
+				game.dContent.osl.classList.toggle('disabled', !cu);
+			}
+		}
 		case 'M_2'://manage
 		{
 			if(game.settings.m.a){ 
@@ -99,6 +106,7 @@ GameClock.prototype.update = function(input = 1){
 	const TM = Object.values(game.inventory.children).reduce((a,c) => a.add(c.totalMass()), new Amount());
 	game.enhancements.totalTransmuted = TM;
 	
+	storyUnlock();
 	setElementText(this.tml, TM.toString());
 }
 GameClock.prototype.toggleTabs = function(){
@@ -106,17 +114,21 @@ GameClock.prototype.toggleTabs = function(){
 	const showProgress = game.transmuters.some(x => x.l > 0);
 	game.clock.content.p.classList.toggle('hide', !showProgress);
 	
-	//can discover when a transmuter is over level 3.
-	const canDiscover = game.transmuters.some(x => x.l > 3);
+	//can discover when a transmuter is over level 1.
+	const canDiscover = game.transmuters.some(x => x.l > 1);
 	game.menu.children.M_1.b.classList.toggle('hide', !canDiscover);
 	
-	//can manage when a transmuter for an item with components is over level 1.
-	const canManage = game.transmuters.some(x => x.l > 1 && x.i.length > 0);
+	//can manage when a transmuter for an item with components is over level 3.
+	const canManage = game.transmuters.some(x => x.l > 3 && x.i.length > 0);
 	game.menu.children.M_2.b.classList.toggle('hide', !canManage);
-	
+
 	//can enhance when a transmuter for an item with components is over level 7.
 	const canEnhance = game.transmuters.some(x => x.l > 7 && x.i.length > 0);
 	game.menu.children.M_3.b.classList.toggle('hide', !canEnhance);
+
+	//can story when a transmuter for an item with components is over level 1.
+	const canStory = game.transmuters.some(x => x.l > 1 && x.i.length > 0);
+	game.menu.children.M_7.b.classList.toggle('hide', !canStory);
 }
 
 function Game(){
@@ -125,12 +137,15 @@ function Game(){
 	this.inventory = new Inventory();
 	this.transmuters = [];
 	this.discoverHint = [];
+	this.story = ['INIT'];
 	this.dContent = {};
 	this.menu = new Menu();
 	this.h = true;
+	this.cc = 0;//cheater cycles
 	this.dinterval = null;
 	this.bx = 1;
 	this.by = 1;
+	this.osl = 0;//Object Scanner Level
 	this.manageModalItem = null;
 	this.settings = {
 		content: {d:{},m:{},s:{n:{}}},
@@ -141,7 +156,7 @@ function Game(){
 		s: 100,//speed/max cycles to run on one update
 		e: 4,//enhancement scaling (0-1024)
 		d: { //discover filters
-			l: 0,//stock limit
+			l: 1,//stock limit
 			o: false,//filter unowned
 			s: null//filter search
 		},
@@ -179,22 +194,23 @@ Game.prototype.intro = function(){
 
 	const upg = game.transmuters.find(x => x.o.some(y => y.inv.f.s === 'u'));
 	const downg = game.transmuters.find(x => x.o.some(y => y.inv.f.s === 'd'));
+	const qglt = 2; //quark generator level threshold.
 
-	const shouldCreate = (upg.l < 4 || downg.l < 4);
+	const shouldCreate = (upg.l < qglt || downg.l < qglt);
 	this.menu.children.M_0.b.classList.toggle('hintAnimate', shouldCreate && game.menu.current !== 'M_0');
 	
 	const hintZone = getUIElement('hint');
-	hintZone.classList.toggle('hintAnimate', !(upg.l >= 4 && downg.l >= 4 || game.menu.current == 'M_0'));
+	hintZone.classList.toggle('hintAnimate', !(upg.l >= qglt && downg.l >= qglt || game.menu.current == 'M_0'));
 
 	const shouldSubatomic = shouldCreate && this.menu.current === 'M_0';
 	this.menu.children.M_0.children.M_a.b.classList.toggle('hintAnimate', shouldSubatomic && this.menu.children.M_0.current !== 'M_a');
 
 	const shouldQuark = shouldSubatomic && this.menu.children.M_0.current === 'M_a';
-	this.menu.children.M_0.children.M_a.children.m_0.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.M_0.children.M_a.current !== 'm_0' && (upg.l < 4 || downg.l < 4));
+	this.menu.children.M_0.children.M_a.children.m_0.b.classList.toggle('hintAnimate', shouldQuark && this.menu.children.M_0.children.M_a.current !== 'm_0' && (upg.l < qglt || downg.l < qglt));
 	if(shouldCreate || shouldSubatomic || shouldQuark){ setElementText(hintZone, 'Click the rainbow elements to get started.'); }
 
-	const shouldUp = shouldQuark && upg.l < 4  && this.menu.children.M_0.children.M_a.current === 'm_0';
-	this.menu.children.M_0.children.M_a.children.m_0.children['0'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < 4 && this.menu.children.M_0.children.M_a.children.m_0.current !== '0');
+	const shouldUp = shouldQuark && upg.l < qglt  && this.menu.children.M_0.children.M_a.current === 'm_0';
+	this.menu.children.M_0.children.M_a.children.m_0.children['0'].b?.classList.toggle('hintAnimate', shouldUp && upg.l < qglt && this.menu.children.M_0.children.M_a.children.m_0.current !== '0');
 	
 	const shouldUpDo = shouldUp && this.menu.children.M_0.children.M_a.children.m_0.current === '0';
 	const shouldUpCreate = shouldUpDo && !upg.canUpgrade();
@@ -205,7 +221,7 @@ Game.prototype.intro = function(){
 	upg.content.u?.classList.toggle('hintAnimate', shouldUpTransmute);
 	if(shouldUpTransmute){ setElementText(hintZone, 'Upgrade the Up Quark Transmuter with the (++) button.'); }
 
-	const shouldDown = shouldQuark && upg.l > 3 && downg.l < 4;
+	const shouldDown = shouldQuark && upg.l >= qglt && downg.l < qglt;
 	this.menu.children.M_0.children.M_a.children.m_0.children['1'].b.classList.toggle('hintAnimate', shouldDown && this.menu.children.M_0.children.M_a.children.m_0.current !== '1');
 	if(shouldDown){ setElementText(hintZone, 'Go to Down Quark.'); }
 	
@@ -218,7 +234,7 @@ Game.prototype.intro = function(){
 	downg.content.u?.classList.toggle('hintAnimate', shouldDownTransmute);
 	if(shouldDownTransmute){ setElementText(hintZone, 'Upgrade the Down Quark Transmuter.'); }
 	
-	const shouldDiscover = (upg.l > 3 && downg.l > 3 && !gic['4'].isUnlocked() && !gic['5'].isUnlocked()) ||
+	const shouldDiscover = (upg.l >= qglt && downg.l >= qglt && !gic['4'].isUnlocked() && !gic['5'].isUnlocked()) ||
 		(gic['4'].isUnlocked() && game.menu.current !== 'M_1' && !gic['4'].isDisplayed());
 	this.menu.children.M_1.b.classList.toggle('hintAnimate', shouldDiscover && this.menu.current !== 'M_1');
 	if(shouldDiscover && this.menu.current !== 'M_1'){ setElementText(hintZone, 'Go to the Discover tab at the top of the screen.'); }
@@ -409,7 +425,7 @@ onkeydown = (e) => {
 					b.forEach(x => x.click());
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][0]?.click();
 					break;
 				}
@@ -437,11 +453,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyM();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('h');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][1]?.click();
 					break;
 				}
@@ -473,11 +489,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyG();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('i');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][2]?.click();
 					break;
 				}
@@ -498,11 +514,11 @@ onkeydown = (e) => {
 					else{game.enhancements.buyD();}
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('u');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][3]?.click();
 					break;
 				}
@@ -519,11 +535,11 @@ onkeydown = (e) => {
 					toggleSetting('mn');
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					toggleSetting('c');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][4]?.click();
 					break;
 				}
@@ -536,12 +552,12 @@ onkeydown = (e) => {
 					toggleSetting('mt');
 					break;
 				}
-				case 'M_4':{
+				case 'M_8':{
 					save();
 					game.menu.route();
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][5]?.click();
 					break;
 				}
@@ -554,7 +570,7 @@ onkeydown = (e) => {
 					toggleSetting('mu');
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][6]?.click();
 					break;
 				}
@@ -566,7 +582,7 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('mx');
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][7]?.click();
 					break;
 				}
@@ -578,11 +594,11 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('my');
 				}
-				case 'M_4':{
+				case 'M_8':{
 					resetSettings();
 					break;
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][8]?.click();
 					break;
 				}
@@ -594,7 +610,7 @@ onkeydown = (e) => {
 				case 'M_2':{
 					toggleSetting('mz');
 				}
-				case 'M_5':{
+				case 'M_9':{
 					[...document.getElementsByClassName('helpTopic')][9]?.click();
 					break;
 				}

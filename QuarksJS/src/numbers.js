@@ -53,7 +53,7 @@ function toSigFigsFraction(input, sigFigs, decimal){
 
     const int = input.replace(regex, '').slice(0,1);
     const frac = input.replace(regex, '').slice(1,sigFigs);
-    const shift = (fracTrim.length+1)*-1;
+    const shift = (fracTrim.length)*-1;
     
     const output = {b:`${int}${decimal}${frac?frac:'0'}`, s:shift};
     return output;
@@ -133,7 +133,6 @@ function toBase64(input, sigFigs=15){
     }
     return parts.reverse().join('');
 }
-
 function toBase(input, base, sigFigs){
     if(base === 12){return toDozenal(Number(input));}
     if(base === 64){return toBase64(Number(input), sigFigs);}
