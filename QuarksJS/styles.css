@@ -39,6 +39,13 @@ button{
 	margin:10vw;
 }
 
+.welcomeText{
+	position: fixed;
+    top: calc(50vh + 100px);
+    left: 25vw;
+    width: 50vw;
+}
+
 .smallButton{
 	padding: 0 15px;
 }
