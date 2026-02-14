@@ -345,7 +345,7 @@ function load() {
 			g.f = value.f ?? 0;
 		});
 	} catch(error) {
-		const failedSave = `FAILED_${new Date().getTime()}`;
+		const failedSave = `Q_FAILED_${new Date().getTime()}`;
 		if(window.confirm(`Error loading data:${error}. Do you want to reset data? This failed save will be kept in localStorage as ${failedSave}.`)){
 			localStorage.setItem(failedSave, temp);
 			hardReset();
@@ -544,6 +544,7 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
 
 
 
