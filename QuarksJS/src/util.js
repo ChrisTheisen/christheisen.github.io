@@ -267,11 +267,9 @@ function enforceLimits(a, b, value){
 function load() {
 	let temp = localStorage.getItem('Q');
 	try{
-		temp = 'INVALID JSON!;[]{::::::}l;';
 		if(!temp){return;}
 		
 		if(!temp.includes('"')){
-			alert('Repairing data "');
 			temp = temp.replaceAll('{', '{"');
 			temp = temp.replaceAll(',', ',"');
 			temp = temp.replaceAll(':', '":');
@@ -544,6 +542,7 @@ async function copyText(input, success='Copy Succeeded', failure='Copy Failed'){
 		makeToast(failure, 10);
 	}
 }
+
 
 
 
