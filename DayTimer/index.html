@@ -12,20 +12,24 @@
         <h1>Day Timer</h1>
         <hr/>
         <div id='inputs' class='center'>
-            <input type="time" id="time" value="10:00" required/>
-            <input id="label" required/>
-            <select id='song'></select>
-            <button id='testSong' onclick="play()" title="Play Alarm Test">></button>
-            <button id='addTimer' onclick="addTimer()">+</button>
-
+            <div class='inputWrapper'>
+                <div>
+                    <input id='inHR' type="number" min='0' max='23' value='10' required onchange='setTime()'>:
+                    <input id='inMIN' type="number" min='0' max='59' value='0' required onchange='setTime()'>
+                    <input id='time' type="time" id="time" value="10:00" readonly style='display:none;'/>
+                    <select id='song'></select>
+                    <button id='testSong' onclick="play()" title="Play Alarm Test">></button>
+                    <br/>
+                    <textarea id="label" rows='2' cols='32' required></textarea>
+                </div>
+                <div>
+                    <button id='addTimer' onclick="addTimer()">+</button>
+                </div>
+            </div>
         </div>
         <hr/>
         <div id='currentTime' class='fatness'>
-            <span id='hr'></span>
-            :
-            <span id='min'></span>
-            :
-            <span id='sec'></span>
+            <span id='hr'></span>:<span id='min'></span>:<span id='sec'></span>
             <div class='hide'>
             .
             <span id='ms'></span>

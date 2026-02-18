@@ -1,13 +1,26 @@
 const timers = [];
 const wrapper = document.getElementById('alarms')
-const input = document.getElementById('time');
 const label = document.getElementById('label');
+const inHR = document.getElementById('inHR');
+const inMIN = document.getElementById('inMIN');
 const hr = document.getElementById('hr');
 const min = document.getElementById('min');
 const sec = document.getElementById('sec');
 const ms = document.getElementById('ms');
 let d = new Date();
 const beepContext = new AudioContext();
+
+function setTime(){
+
+    if(inHR.value > 23){ inHR.value = 23; }
+    if(inHR.value < 0){ inHR = 0; }
+
+    if(inMIN.value > 59){ inMIN.value = 59; }
+    if(inMIN.value < 0){ inMIN.value = 0; }
+
+    const time = document.getElementById('time');
+    time.value = `${inHR}:${inMIN}`;
+}
 
 const songlector = document.getElementById('song');
 for(let i=0;i<Songs.length;i++){
@@ -20,11 +33,11 @@ class Timer{
     div;
     song;
 
-    constructor(time, label, song){
+    constructor(hr, min, label, song){
         this.createdAt = new Date();
         this.time = new Date();
-        this.time.setHours(time.split(':')[0]);
-        this.time.setMinutes(time.split(':')[1]);
+        this.time.setHours(hr);
+        this.time.setMinutes(min);
         this.time.setSeconds(0);
         this.time.setMilliseconds(0);
         this.label = label;
@@ -142,7 +155,7 @@ function play(){
 }
 
 function addTimer() {
-    timers.push(new Timer(input.value, label.value, songlector.value));
+    timers.push(new Timer(inHR.value, inMIN.value, label.value, songlector.value));
 }
 
 function delTimer(index){

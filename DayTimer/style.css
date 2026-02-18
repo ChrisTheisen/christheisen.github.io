@@ -34,22 +34,31 @@ h1{
 }
 
 .center{
-    margin:auto;
-    width: 25%;
     white-space: nowrap;
+    text-align: center;
+}
+
+.inputWrapper{
+    margin-left: calc(50vw - 125px);
+    width: 250px;
+    display: flex;
 }
 
 .fatness{
-    margin:auto;
     font-size:48pt;
-    width: 500px;
     white-space: nowrap;
+    text-align: center;
 }
 
 .footer{
     position: fixed;
     bottom: 5px;
     color: lightgrey;
+}
+
+#addTimer{
+    height: 64px;
+    margin-left: 10px;
 }
 
 .hide{
