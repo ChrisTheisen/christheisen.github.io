@@ -41,13 +41,14 @@ button{
 .welcomeTitle{
     position: fixed;
     top: calc(50vh - 200px);
-	left: calc(50vw - 173px);
+	width: 100vw;
 }
 
 .welcomeText{
 	position: fixed;
     top: calc(50vh + 100px);
 	margin: 0px 10px;
+	width: 100vw;
 }
 
 .smallButton{
