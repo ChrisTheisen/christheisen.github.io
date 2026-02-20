@@ -265,7 +265,6 @@ Game.prototype.intro = function(){
 
 function buildUI(){
 	const root = getUIElement('nav');
-	createUIElement({type:'h1', parent:root, textContent:'Quarks'});
 	game.menu = new Menu(null, root, tabs);
 }
 
@@ -634,5 +633,6 @@ onkeydown = (e) => {
 		default:{}
 	}
 };
+
 
 
