@@ -48,7 +48,7 @@ button{
 	position: fixed;
     top: calc(50vh + 100px);
 	margin: 0px 10px;
-	width: 100vw;
+	width: calc(100vw - 20px);
 }
 
 .smallButton{
