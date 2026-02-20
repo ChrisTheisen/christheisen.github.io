@@ -151,6 +151,7 @@ hr {
 
 .menuButtons{
 	flex: 0 0;
+	white-space: nowrap;
 }
 
 .menuContentWrapper{
