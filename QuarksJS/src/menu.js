@@ -28,10 +28,12 @@ function Menu(parent, parentDiv, input, id, name, b){
 		if(x.info?.length){
 			x.info.forEach(info => createUIElement({type:'p', parent:div, textContent:info, cssClasses:['info']}));
 		}
-	
-		const intro = createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']});
-		intro.classList.toggle('hide', x.intro && !game.settings.h)
 
+		if(x.intro){
+			const intro = createUIElement({type:'p', parent:div, textContent:x.intro, cssClasses:['tutorial']});
+			intro.classList.toggle('hide', x.intro && !game.settings.h)
+		}
+		
 		this.children[x.id||x.n] = new Menu(this, div, x.c, x.id, x.n, btn);
 	});
 }
@@ -672,4 +674,5 @@ Menu.prototype.renderSettings = function(parent){
 	});
 
 }
+
 
