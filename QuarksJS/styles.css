@@ -35,22 +35,19 @@ button{
 
 .welcome{
 	display:block;
-	width:80vw;
-	margin:10vw;
+	width:100vw;
 }
 
 .welcomeTitle{
     position: fixed;
-    width: 50vw;
-    left: 25vw;
     top: calc(50vh - 200px);
+	left: calc(50vw - 173px);
 }
 
 .welcomeText{
 	position: fixed;
     top: calc(50vh + 100px);
-    left: 25vw;
-    width: 50vw;
+	margin: 0px 10px;
 }
 
 .smallButton{
