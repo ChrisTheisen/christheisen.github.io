@@ -3,9 +3,16 @@ const T_TM = 'TM';//total mass (magnitude)
 const T_MTL = 'MTL';//max transmuter level
 const T_OSL = 'OSL';//object scanner level
 const T_EB = 'EB';//enhance bonus
+
+//Race: Omnikreinto
+//Rank/Grade: novulo > gefrato
+//Your name: ???
+//rival: Remitrom
+//Rival's sister: Yllom
+
 const storyChapters = [
     //id, trigger, value, story text
-    {id:'INIT', n:'Welcome', t:null, v:null, s:['You just aced your test on quantum vibrations and transmutation. The last thing you need to do to graduate from Cynosure Nexus is to create your own universe.',
+    {id:'INIT', n:'Welcome', t:null, v:null, s:['As a novulo at Cynosure Nexus you have learned to control quantum vibrations and basic transmutations. To advance to a gefrato you must create your own universe.',
             'Start by creating some basic items. Then use your Object Scanner to discover new ways to transmute them into items of increasing complexity.']},
     {id:'TU_0', n:'Outputs into Inputs', t:T_TU, v:'M_2', //manage tab
         s:["Having inputs coming from other transmutation outputs could start to get messy, even if it is only three dimentional objects. You'll need a place to track and manage the flow of matter."]},

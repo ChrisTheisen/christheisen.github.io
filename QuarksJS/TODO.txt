@@ -24,7 +24,8 @@ X		Collapsable chapters by name
 2			-Allow multiple response selections for player
 2				-can change at retroactivly; not permanent (no prestige/just single play through)
 2				-responses available tree based on previous responses
-
+2	Indicate when a chapter is unlocked
+		-button color?
 
 	Saved target flow loadouts?
 		-in manage tab
