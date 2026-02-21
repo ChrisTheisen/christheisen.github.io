@@ -12,7 +12,7 @@ const T_EB = 'EB';//enhance bonus
 
 const storyChapters = [
     //id, trigger, value, story text
-    {id:'INIT', n:'Welcome', t:null, v:null, s:['As a novulo at Cynosure Nexus you have learned to control quantum vibrations and basic transmutations. To advance to a gefrato you must create your own universe.',
+    {id:'INIT', n:'Welcome', t:null, v:null, s:['As a novulo at Cynosure Nexus you have learned to control quantum vibrations and basic transmutations. To advance to gefrato you must create your own universe.',
             'Start by creating some basic items. Then use your Object Scanner to discover new ways to transmute them into items of increasing complexity.']},
     {id:'TU_0', n:'Outputs into Inputs', t:T_TU, v:'M_2', //manage tab
         s:["Having inputs coming from other transmutation outputs could start to get messy, even if it is only three dimentional objects. You'll need a place to track and manage the flow of matter."]},
