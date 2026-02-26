@@ -21,11 +21,11 @@ X		Collapsable chapters by name
 2			-Being graduating needs to do a final project of creating a universe
 2			-Track cycles with cheater mode enabled
 2				-Final story effected; something like: "Rival: 'I bet you cheated to beat me'" || "You: 'And I didn't even cheat!'"
-2			-Allow multiple response selections for player
-2				-can change at retroactivly; not permanent (no prestige/just single play through)
-2				-responses available tree based on previous responses
-2	Indicate when a chapter is unlocked
-		-button color?
+3			-Allow multiple response selections for player
+3				-can change at retroactivly; not permanent (no prestige/just single play through)
+3				-responses available tree based on previous responses
+3	Indicate when a chapter is unlocked
+3		-button color?
 
 	Saved target flow loadouts?
 		-in manage tab

@@ -19,7 +19,7 @@ body{
 	color: var(--c1);
 	font-family: monospace;
 	text-align:center;
-	font-size:12pt;
+	font-size:14pt;
 }
 
 button{
@@ -31,6 +31,10 @@ button{
 	margin: 1px 5px;
 	padding: 10px 15px;
 	cursor: pointer;
+}
+
+input[type="radio"] {
+	margin-left: 20px;
 }
 
 .welcome{
@@ -287,6 +291,11 @@ hr {
 	padding-left: 10px;
 }
 
+.response{
+	white-space:pre-wrap;
+	margin-left: 10px;
+}
+
 .nowrap{
 	white-space:nowrap;
 }
@@ -394,11 +403,13 @@ hr {
 .discoverLeft{
 	margin-left:10px;
 	width: 300px;
+	border-right:solid 1px var(--c4);
 }
 
 .discoverRight{
 	margin-right:10px;
 	width: 300px;
+	border-left:solid 1px var(--c4);
 }
 
 .objectScanner{

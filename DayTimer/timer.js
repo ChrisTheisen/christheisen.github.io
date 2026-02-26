@@ -156,6 +156,7 @@ function play(){
 
 function addTimer() {
     timers.push(new Timer(inHR.value, inMIN.value, label.value, songlector.value));
+    label.value = null;
 }
 
 function delTimer(index){

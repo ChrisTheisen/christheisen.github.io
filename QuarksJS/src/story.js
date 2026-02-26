@@ -41,9 +41,9 @@ const storyChapters = [
 
 const storyResponses = [
     //id, chapID, morality, order, story text
-    {id:'INIT_0', cid:'INIT', m:1, o:0, s:['RI0']},
-    {id:'INIT_1', cid:'INIT', m:0, o:0, s:['RI1']},
-    {id:'INIT_2', cid:'INIT', m:-1, o:0, s:['RI1']},
+    {id:'INIT_0', cid:'INIT', m:1, o:0, s:['Awesome!','I can\'t wait to get started']},
+    {id:'INIT_1', cid:'INIT', m:0, o:0, s:['Whatever, I can if I have to.']},
+    {id:'INIT_2', cid:'INIT', m:-1, o:0, s:['Finally! I can rule my own universe the way it should be!']},
 
     {id:'TU_2', cid:'A_2', m:-1, o:0, s:['You: You can take those ']},
 
@@ -111,6 +111,25 @@ function renderChapter(parent, input){
 
     chapter.s.forEach(x => {
         createUIElement({type:'p', parent:chapWrap, textContent:x});
+    });
+
+    const responseWrapper = createUIElement({parent:chapWrap, cssClasses:['responsesWrapper']});
+    renderResponses(responseWrapper, chapter.id);
+}
+
+function renderResponses(parent, chapter){
+    const responses = storyResponses.filter(x => x.cid === chapter);
+    console.log(parent, chapter, responses);
+    responses.forEach(r => {
+        createUIElement({type:'input', id:`R__${r.id}`, parent: parent,
+            attr:{type:'radio', name:chapter}
+        });
+        const s = r.s.join('\n');
+        createUIElement({type:'label', parent: parent, textContent:s, cssClasses:['response'],
+            attr:{for:`R__${r.id}`}
+        });
+
+        createUIElement({type:'hr', parent: parent});
     });
 }
 

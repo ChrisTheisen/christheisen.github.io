@@ -381,7 +381,7 @@ Menu.prototype.renderDiscover = function(parent){
 	}
 
 	const objectScanner = createUIElement({parent: w, cssClasses:['discoverCol', 'discoverRight']});
-	createUIElement({type:'h3', parent:objectScanner, textContent:`Object Scanner (Level: ${game.osl})`});
+	createUIElement({type:'h3', parent:objectScanner, textContent:`Object Scanner (Lvl:${game.osl})`});
 	game.dContent.mm = createUIElement({parent: objectScanner, cssClasses:['objectScanner']});
 	this.updateMM();
 }
