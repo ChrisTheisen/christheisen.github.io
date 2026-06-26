@@ -16,6 +16,7 @@
 
 body{
 	background-color: var(--bg0);
+	min-width: 800px;
 	color: var(--c1);
 	font-family: monospace;
 	text-align:center;
@@ -155,7 +156,6 @@ hr {
 
 .menuButtons{
 	flex: 0 0;
-	white-space: nowrap;
 }
 
 .menuContentWrapper{
@@ -206,6 +206,12 @@ hr {
 .cell{
 	display: table-cell;
 	padding: 0 5px;
+	vertical-align:middle;
+}
+
+.paddedCell{
+	display: table-cell;
+	padding: 0 15px;
 	vertical-align:middle;
 }
 
@@ -347,7 +353,7 @@ hr {
 	position:fixed;
 	top:0;
 	left:0;
-	min-height:2px;
+	min-height:5px;
 	background-color: var(--c2);
 }
 
@@ -450,7 +456,13 @@ hr {
 
 .flow{
 	font-size:22px;
-	width:150px;
+	width:200px;
+}
+
+.maxFlow{
+	width: 233px;
+	font-size:12px;
+
 }
 
 .componentWrapper{
@@ -522,7 +534,7 @@ hr {
 	color:var(--c0);
 	font-size:10pt;
 	cursor:pointer;
-}
+}i
 .toastContent{
 	padding-right:25px;
 	margin-top:-10px;
@@ -540,6 +552,7 @@ hr {
 	width: 40px;
 	height: 40px;
 	transform: rotate(45deg);
+	border: solid 2px var(--c1);
 	background-color: var(--bg1);
 	position: fixed;
 	right: 50px;

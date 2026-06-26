@@ -31,7 +31,6 @@ GameClock.prototype.tick = function(){
 	
 	if(game.h){game.intro();}
 	if(this.duration < this.updateRate){ return; }
-	if(game.settings.c){game.cc++;}
 
 	this.update(p);
 }
@@ -65,6 +64,7 @@ GameClock.prototype.update = function(input = 1){
 	game.enhancements.setPowers();
 	
 	input = Math.min(game.settings.s, input);
+	let cycles = 0;
 	while(--input > 0){
 		this.duration -= this.updateRate;
 		//do transmutes
@@ -72,6 +72,10 @@ GameClock.prototype.update = function(input = 1){
 		ActualCreated = {};
 		Demand = {};
 		game.transmuters.forEach(x => {x.autoUpgrade(); x.transmute();});
+		cycles++;
+	}
+	if(game.settings.c && cycles > 0){
+		game.cc += cycles;
 	}
 	this.toggleTabs();
 	

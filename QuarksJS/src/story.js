@@ -11,7 +11,7 @@ const T_EB = 'EB';//enhance bonus
 //Rival's sister: Yllom
 
 const storyChapters = [
-    //id, trigger, value, story text
+    //unique id, trigger, value, story text
     {id:'INIT', n:'Welcome', t:null, v:null, s:['As a novulo at Cynosure Nexus you have learned to control quantum vibrations and basic transmutations. To advance to gefrato you must create your own universe.',
             'Start by creating some basic items. Then use your Object Scanner to discover new ways to transmute them into items of increasing complexity.']},
     {id:'TU_0', n:'Outputs into Inputs', t:T_TU, v:'M_2', //manage tab
@@ -19,38 +19,61 @@ const storyChapters = [
     {id:'TU_1', n:'Breaking Physics', t:T_TU, v:'M_3', //enhance tab
         s:['You just made a brilliant discovery! There is a way to adjust the physics in your new universe to increase the outputs without increasing the inputs.', 'Remitrom will never be able to keep up with you now.']},
     {id:'TU_2', n:'Remitrom', t:T_TU, v:'M_7', //story tab
-        s:["Remitrom: \"Ha! You're still just transmuting Baryons? I've already transmuted Hydrogen. With a Brain Smartness Quotient of only 4w you can't expect to keep up with my BS Quotient of 4x.\"",
-        "Remitrom has been your lifelong rival, always just one step ahead. Without him you would easily be the top Omni in your class."]},
+        s:["Remitrom has been your lifelong rival, always just one step ahead. Without him you would easily be the top Omni in your class.",
+        "Remitrom: \"Ha! You're still just transmuting Baryons? I've already transmuted Hydrogen. With a Brain Smartness Quotient of only 4w you can't expect to keep up with my BS Quotient of 4x.\""]},
 
-    {id:'TM_0', n:'M_0', t:T_TM, v:1, s:['TM_0']},
+    {id:'TM_0', n:'M_0', t:T_TM, v:1,
+        s:['Need to rehome this mass, it is getting too large for its enclosure.']},
     {id:'TM_1', n:'M_1', t:T_TM, v:2, s:['TM_1']},
     {id:'TM_2', n:'M_2', t:T_TM, v:3, s:['TM_2']},
     {id:'TM_3', n:'M_3', t:T_TM, v:4, s:['TM_3']},
     {id:'TM_4', n:'M_4', t:T_TM, v:5, s:['TM_4']},
 
-    {id:'MTL_0', n:'Transmuter L_0', t:T_MTL, v:12, s:['MTL_0']},
-    {id:'MTL_1', n:'Transmuter L_1', t:T_MTL, v:13, s:['MTL_1']},
-    {id:'MTL_2', n:'Transmuter L_2', t:T_MTL, v:14, s:['MTL_2']},
-    {id:'MTL_3', n:'Transmuter L_3', t:T_MTL, v:15, s:['MTL_3']},
-    {id:'MTL_4', n:'Transmuter L_4', t:T_MTL, v:16, s:['MTL_4']},
-    {id:'MTL_5', n:'Transmuter L_5', t:T_MTL, v:17, s:['MTL_5']},
-    {id:'MTL_6', n:'Transmuter L_6', t:T_MTL, v:18, s:['MTL_6']},
+    {id:'MTL_0', n:'A good start', t:T_MTL, v:16, s:['I am now making enough base level items to start on something a little more complex.']},
+    {id:'MTL_1', n:'Making progress', t:T_MTL, v:64, s:['In order to continue making larger more complex items I need to continue to level up the base item synthesis.']},
+    {id:'MTL_2', n:'Speeding up', t:T_MTL, v:256, s:['With this much throughput I\'ll have plenty of mass to work with.']},
+    {id:'MTL_3', n:'Zoom Zoom', t:T_MTL, v:1024, s:['Is there a limit to these transmuters?']},
+//max level without cheating is 1025
+    {id:'MTL_4', n:'Something isn\'t right here', t:T_MTL, v:2048, s:['Not sure how this happened. This seems bigger than it should be.']},
 
-    {id:'OSL_0', n:'O_0', t:T_OSL, v:1, s:['OSL_0']},
+    {id:'OSL_0', n:'Scanner Lvl 1', t:T_OSL, v:1, s:['With this improved scanner I can start to discover larger items.']},
+    {id:'OSL_1', n:'Scanner Lvl 2', t:T_OSL, v:2, s:['Level up, time to discover larger items.']},
+    {id:'OSL_2', n:'Scanner Lvl 3', t:T_OSL, v:3, s:['']},
+    {id:'OSL_3', n:'Scanner Lvl 4', t:T_OSL, v:4, s:['It won\'t be long now, things are getting pretty big.']},
+    {id:'OSL_4', n:'Scanner Lvl 5', t:T_OSL, v:5, s:['These things have significantly more mass than a quark.']},
 ];
 
 const storyResponses = [
-    //id, chapID, morality, order, story text
+    //unique id, chapID, morality, order, story text
     {id:'INIT_0', cid:'INIT', m:1, o:0, s:['Awesome!','I can\'t wait to get started']},
     {id:'INIT_1', cid:'INIT', m:0, o:0, s:['Whatever, I can if I have to.']},
     {id:'INIT_2', cid:'INIT', m:-1, o:0, s:['Finally! I can rule my own universe the way it should be!']},
 
-    {id:'TU_2', cid:'A_2', m:-1, o:0, s:['You: You can take those ']},
+    {id:'TU_0_0', cid:'TU_0', m:1, o:1, s:['Wonderful, I look forward to tackling this new challenge.']},
+    {id:'TU_0_1', cid:'TU_0', m:0, o:-1, s:['Meh, one atom is like another. No need to label everything.']},
+
+    {id:'TU_1_0', cid:'TU_1', m:1, o:0, s:['This is great! I can\'t wait to tell everyone.']},
+    {id:'TU_1_1', cid:'TU_1', m:-1, o:0, s:['Nobody will be able to keep up with my universe now!']},
+
+    {id:'TU_2_0', cid:'TU_2', m:1, o:0, s:['Good work Remetrom, I\'m glad you always push me to work harder.']},
+    {id:'TU_2_1', cid:'TU_2', m:-1, o:0, s:['You can take those Hydrogens and shove them up  your downspout.']},
 
 
-    {id:'OSL_0_0', cid:'OSL_0', m:1, o:0, s:['R00']},
-    {id:'OSL_0_1', cid:'OSL_0', m:0, o:0, s:['R01']},
-    {id:'OSL_0_2', cid:'OSL_0', m:-1, o:0, s:['R01']},
+
+    {id:'OSL_0_0', cid:'OSL_0', m:1, o:0, s:['Wow! There are so many possibilities!']},
+    {id:'OSL_0_1', cid:'OSL_0', m:0, o:0, s:['Oh great, more buttons.']},
+
+    {id:'OSL_1_0', cid:'OSL_1', m:1, o:0, s:['I like these things, they are really starting to have fun and unique uses.']},
+    {id:'OSL_1_1', cid:'OSL_1', m:0, o:0, s:['Just more stuff stuck together.']},
+
+    {id:'OSL_2_0', cid:'OSL_2', m:1, o:0, s:['']},
+    {id:'OSL_2_1', cid:'OSL_2', m:0, o:0, s:['']},
+
+    {id:'OSL_3_0', cid:'OSL_3', m:1, o:0, s:['These things are getting so big, I love it!']},
+    {id:'OSL_3_1', cid:'OSL_3', m:0, o:0, s:['Does this ever end?']},
+
+    {id:'OSL_4_0', cid:'OSL_4', m:1, o:0, s:['Awesome! These discovered items are getting massive!']},
+    {id:'OSL_4_1', cid:'OSL_4', m:-1, o:0, s:['Just great, what am I supposed to do with all this stuff.']},
 
 ];
 

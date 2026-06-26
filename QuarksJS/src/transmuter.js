@@ -133,6 +133,13 @@ Transmuter.prototype.render0 = function(parent){
 	this.content.f.value = this.f;
 
 	this.content.fl = createUIElement({type:'span', parent:flowParent, title:'Base converted flow' });
+
+
+	//Max Flow
+	const mw = createUIElement({parent:flowParent, cssClasses:['cell', 'nowrap', 'pointer', 'maxFlow'], title:'Click to set flow to maximum', onclick:() => this.setFlow(this.maxFlow())});
+	createUIElement({type:'span', parent:mw, textContent:'Max Flow: '});
+	this.content.m = createUIElement({type:'span', parent:mw, textContent:'-'});
+
 }
 Transmuter.prototype.render1 = function(parent){
 	//upgrade
@@ -141,26 +148,25 @@ Transmuter.prototype.render1 = function(parent){
 
 	//const w0 = createUIElement({parent:parent, cssClasses:['cell', 'nowrap']});;
 	//upgrade cost
-	const cw = createUIElement({parent:parent, cssClasses:['nowrap', 'cell']});
+	const cw = createUIElement({parent:parent, cssClasses:['nowrap', 'paddedCell']});
 	createUIElement({type:'span', parent:cw, textContent:'Cost: '});
 	this.content.c = createUIElement({type:'span', parent:cw, textContent:'-'});
 	createUIElement({type:'span', parent:cw, textContent:` ${this.o.map(x => x.inv.f.n).join()}`});
 
+	//spacer
+	const s = createUIElement({parent:parent, cssClasses:['nowrap', 'paddedCell']});
+
 	//level
-	const lw = createUIElement({parent:parent, cssClasses:['nowrap', 'cell']});
+	const lw = createUIElement({parent:parent, cssClasses:['nowrap', 'paddedCell']});
 	createUIElement({type:'span', parent:lw, textContent:'LVL: '});
 	this.content.l = createUIElement({type:'span', parent:lw, textContent:'-'});
- 	
+
+
 	//auto upgrade
-	const aw = createUIElement({type:'label', parent:parent, cssClasses:['cell', 'nowrap'], textContent:'Auto-Upgrade: '});
+	const aw = createUIElement({type:'label', parent:parent, cssClasses:['paddedCell', 'nowrap'], textContent:'Auto-Upgrade: '});
 	this.content.a = createUIElement({type:'input', parent:aw,
 		attr:{type:'checkbox'}, onclick:() => this.a = !this.a});
 	createInfoElement({parent: aw, title: 'Automatically upgrade this transmuter when this inventory contains at least double the cost. This helps avoid other transmuters having insufficient input.'});
-
-	//Max Flow 
-	const mw = createUIElement({parent:parent, cssClasses:['cell', 'nowrap', 'pointer'], title:'Click to set flow to maximum', onclick:() => this.setFlow(this.maxFlow())});
-	createUIElement({type:'span', parent:mw, textContent:'Max Flow: '});
-	this.content.m = createUIElement({type:'span', parent:mw, textContent:'-'});
 }
 
 Transmuter.prototype.update = function(){

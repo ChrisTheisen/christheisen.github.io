@@ -253,7 +253,7 @@ function resetSettings(){
 }
 
 function loadSaveData(){
-	localStorage.setItem('Q', game.settings.content.s.value);
+	localStorage.setItem('Q', game.settings.content.s.s.value);
 	load();
 }
 

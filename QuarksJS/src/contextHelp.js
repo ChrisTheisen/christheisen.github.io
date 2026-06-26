@@ -32,6 +32,15 @@ function getHelpContents(){
         case 'M_3': {//Enhance
             return help.find(x => x.t === 'Enhance');
         }
+        case 'M_7': {//Story
+            const storyHelp = {t:'Story', c:[]};
+            storyHelp.c.push('The story has no real impact on the rest of the game, just a fun setting to frame all the transmuting.');
+            storyHelp.c.push('Story chapters can come in a different order depending on when you do different things. Check back periodically for updates.');
+            storyHelp.c.push('');
+            storyHelp.c.push('The language of the Omnikreinto is incomprehensible for someone of your intellect, the story has been translated for your feeble mind to comprehend.');
+            storyHelp.c.push('Any inconsistencies or strange language use is a limitation of your language.');
+            return storyHelp;
+        }
         case 'M_8': {//Settings
             return help.find(x => x.t === 'Settings');
         }
