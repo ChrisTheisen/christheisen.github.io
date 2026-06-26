@@ -197,11 +197,11 @@ Enhancements.prototype.render = function(parent){
 	this.content.d.l = createUIElement({parent:rowD, cssClasses:['cell'], textContent:'[Level]' });
 
 	createInfoElement({parent:rowG, title:'Multiply all transmuter output while keeping input the same.'});
-	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Output'});
+	createUIElement({parent:rowG, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Transmuter Output'});
 	createInfoElement({parent:rowM, title:'Multiply the output when the (->) button is clicked while keeping the input the same.'});
 	createUIElement({parent:rowM, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Manual Output'});
 	createInfoElement({parent:rowD, title:'Reduce transmuter upgrade cost.'});
-	createUIElement({parent:rowD, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Gen. Cost'});
+	createUIElement({parent:rowD, cssClasses:['cell'], style:{textAlign:'left'}, textContent:'Transmuter Cost'});
 
 	this.content.g.p = createUIElement({parent:rowG, cssClasses:['cell'], textContent:'[Power]' });
 	this.content.m.p = createUIElement({parent:rowM, cssClasses:['cell'], textContent:'[Power]' });

@@ -22,7 +22,7 @@ const MassUnits = {
 	pg:{i: 1, s:'pg',n:'Picogram',		c:1000000000000,	emb:4,emr:16},
 	g: {i: 2, s:'g', n:'Gram',			c:1000000000000,	emb:16,emr:64},
 	Tg:{i: 3, s:'Tg',n:'Teragram',		c:1000000000000,	emb:64,emr:256},
-	Yg:{i: 4, s:'Yg',n:'Yattogram',		c:1988000000,		emb:256,emr:1024},
+	Yg:{i: 4, s:'Yg',n:'Yottagram',		c:1988550000,		emb:256,emr:1024},
 	MO:{i: 5, s:'M☉',n:'Solar Mass',	c:1000000000000,	emb:1024,emr:4096},
 	GM:{i: 6, s:'GM',n:'Galactic Mass',	c:1000000000000,	emb:4096,emr:16384},
 	CM:{i: 7, s:'CM',n:'Cosmic Mass',	c:Number.MAX_VALUE,	emb:16384,emr:65536}

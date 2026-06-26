@@ -156,6 +156,7 @@ function play(){
 
 function addTimer() {
     timers.push(new Timer(inHR.value, inMIN.value, label.value, songlector.value));
+    label.value = null;
 }
 
 function delTimer(index){
@@ -172,5 +173,57 @@ function currentTime(){
     timers.forEach(x => x.update());
 }
 
+function q(){
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 7);
+    const later = new Date(now.getTime());
+    later.setMinutes(now.getMinutes() + 7);
+    const latest = new Date(later.getTime());
+    latest.setMinutes(later.getMinutes() + 7);
+
+    const offset = now.getTimezoneOffset() / 60;
+    console.log("OFFSET:", offset);
+
+    const alarms = [
+        new Timer(now.getHours(), now.getMinutes(),'Check Schedule (work, google, todoist)',3),
+        new Timer(later.getHours(), later.getMinutes(),'Salt & Vinegar',3),
+        new Timer(latest.getHours(), latest.getMinutes(),'Home/Converters (LI)',3),
+        new Timer(9,30,'SCRUM',4),
+        new Timer(11,57,'Violin',0),
+        new Timer(15,00,'PT',2),
+
+        new Timer(16 - offset,20,'Leyline (ST)',3),//6
+    ];
+
+    switch(new Date().getDay()) {
+        case 0:{break;}//Sunday
+        case 1:{//Monday
+            alarms.push(new Timer(13,30,'Weights (fly, plank, curl)',2));
+            break;
+        }
+        case 2:{//Tuesday
+            alarms.push(new Timer(13,30,'Cardio',2));
+            break;
+        }
+        case 3:{//Wednesday
+            alarms.push(new Timer(13,30,'Weights (fly, plank, curl)',2));
+            break;
+        }
+        case 4:{//Thursday
+            alarms.push(new Timer(13,30,'Cardio',2));
+            break;
+        }
+        case 5:{//Friday
+            alarms.push(new Timer(13,30,'Weights (fly, plank, curl)',2));
+            alarms.push(new Timer(15,00,'Pay CC',2));
+            break;
+        }
+        case 6:{break;}//Saturday
+    }
+
+    alarms.forEach(a => timers.push(a));
+}
+
 currentTime();
 setInterval(() => currentTime(), 137);
+//document.getElementById('hr').addEventListener("dblclick", (e) => {q();})

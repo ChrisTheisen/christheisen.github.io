@@ -416,7 +416,9 @@ const items = {
 	//mnt
 	//dnt
 	//tnt
-	
+
+	//HMX
+
 	//fat
 	//protein
 	

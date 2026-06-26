@@ -10,6 +10,8 @@
 
 //Test here: https://noteheads.net/
 
+//add a Caleb's Song
+
 const BEEP = {//A,C,C
     n:'BEEP',
     g:[.2,.2,.2,.2],
@@ -60,8 +62,8 @@ const Songs = [
         ]
     },
     {
-        g:[1],
         n:'Elise',
+        g:[1],
         c:[
             [{f:E5,t:.15},{f:DS5,t:.15},{f:E5,t:.15},{f:DS5,t:.15},{f:E5,t:.15},{f:B4,t:.15},{f:D5,t:.15},{f:C5,t:.15},{f:A4,t:.25}]
         ]

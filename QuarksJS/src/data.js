@@ -891,8 +891,8 @@ const tabs = [
 	{id:'M_0', n:'Create', u:true, c:itemsMenu, info:['Imagination is the beginning of creation.'], intro:'This is where you will create items. Items are grouped by categories; some items may be in more than one category.'}, 
 	{id:'M_1', n:'Discover', u:false, info:['He who never made a mistake never made a discovery.', 'Use the "Get Recipe" button if you are stuck.'], intro:'This is the main place for discovering new items. Click a (+>) button to add an item to the Object Scanner. Click a (--) button to remove an item from the Object Scanner. Try different combinations and click the "Scan" button. You can only add an item if you have some and it is not already in the Object Scanner. Scanning items does not destroy them.'},
 	{id:'M_2', n:'Manage', u:false, info:['If demand is greater than supply you have a deficit.'], intro:'This is a central location to monitor item flow. This table is one of the few places that will only update when "Refresh Table" is clicked.'},
-	{id:'M_3', n:'Enhance', u:false, info:['Transmuter Output increases the output, but not the components or max setpoint.', 'The enhancements upgrade increases the effect of the other enhancements.'], intro:'These are global Enhancements that increase transmuter output and reduce transmuter upgrade cost. They do not change the set-point limits or transmuter levels.'},
-	{id:'M_7', n:'Story', u:false, info:['The original language is incomprehensible by someone of your intellect, this has all been translated for your feeble mind to comprehend.'], intro:'The story has no real impact on the rest of the game, just a fun setting to frame all the transmuting. Story chapters can sometimes come in a different order depending on when you do different things. Check back periodically for updates.'},
+	{id:'M_3', n:'Enhance', u:false, info:['Transmuter Output increases the output, but not the inputs or max setpoint.'], intro:'These are global Enhancements that increase transmuter output and reduce transmuter upgrade cost. They do not change the set-point limits or transmuter levels.'},
+	{id:'M_7', n:'Story', u:false, info:['The original language is incomprehensible for someone of your intellect, it has been translated for your feeble mind to comprehend.'], intro:'The story has no real impact on the rest of the game, just a fun setting to frame all the transmuting. Story chapters can sometimes come in a different order depending on when you do different things. Check back periodically for updates.'},
 	{id:'M_8', n:'Settings', u:true, info:['Settings can effect game mechanics and page contents.'], intro:'This is where you can change settings.'},
 	{id:'M_9', n:'Help', u:true, info:['This is an idle crafting game focusing on discovery and supply flow management.'], intro:'Click on a subject category below for more information.'}
 ];
@@ -919,7 +919,7 @@ const help = [
 		'Item symbols are not unique, if you hover over an item\'s symbol it will show the name.',
 		'The Spacebar pauses the game'
 	]},
-	{t:'Number Syntax', c:[
+	{t:'Number Syntax And Units', c:[
 		'This game uses "," as a thousands separator and "." to denote the whole vs fractional components.',
 		'1,500 = 1500 = one thousand five hundred',
 		'1.500 = 1.5 = one and one half',
@@ -931,6 +931,16 @@ const help = [
 		'Examples:',
 		'5 <<3 shifts 5 to the left 3 places resulting in 5,000',
 		'5 >>3 shifts 5 to the right 3 places resulting in 0.0005',
+		'',
+		'This game uses a variety of units in an attempt to keep numbers fathomable.',
+		'Dalton (Da): is approximately the mass of one hydrogen atom. In this game many masses of this magnitude are rounded for simplicity.',
+		'Picogram (pg): is one trillionth of a gram. DNA sequencing often measures in picograms.',
+		'Gram (g): is the mass in one cubic centimeter of water. The base SI unit of mass.',
+		'Teragram (Tg): is one trillion grams or one million metric tons. Used for large terrestrial measurements like world carbon emissions.',
+		'Yottagram (Yg): is one trillion teragrams. Pluto is about 13 Yg, our moon is about 73 Yg.',
+		'Solar Mass (M☉): is the mass of our sun. Our sun is just under 2 billion Yg (1988550000 Yg).',
+		'Galactic Mass (GM): is a unit I use to approximate the baryonic mass in a galaxy. I rounded to 1 trillion solar masses for simplicity; in reality this will vary depending on the galaxy.',
+		'Cosmic Mass (CM): is a unit I use to approximate the baryonic mass of the known universe. I rounded to a nice 1 trillion galactic masses for simplicity.',
 	]},
 	{t:'FAQ', c:[
 		'I Can\'t seem to generate any of a certain item',
@@ -1043,7 +1053,10 @@ const help = [
 		'You can add all the recipe items you own to the Matter Mutator with the (+>) button next to the recipe.',
 		'It will randomly choose a recipe for an item that is currently locked and you have all of the inputs unlocked.',
 		'',
-		'The Discover tab is unlocked when any transmuter is level 4+.'
+		'The scanner level limits the magnitude of items it can discover.',
+		'To increase the scanner level you need to discover and create the largest item it is currently able to discover.',
+		'',
+		'The Discover tab is unlocked when any transmuter is level 4+.',
 	]},
 	{t:'Manage', c:[
 		'The Manage tab is where you can manage your transmuters. It displays the input and output of each transmuter and the amount created and used during the last update.',
@@ -1071,8 +1084,8 @@ const help = [
 		'This does not change the flow limits. It multiplies the created amount by the effect power.',
 		'',
 		'Manual Output : Multiplies a transmuter output when manually run with the (->) button.',
-		'Gen. Output : Increases all transmuter output, this multiplies both manually run and automatic.',
-		'Gen. Cost : Multiplies transmuter upgrade costs. This value is less than 1 so a higher level reduces the cost.',
+		'Transmuter Output : Increases all transmuter output, this multiplies both manually run and automatic.',
+		'Transmuter Cost : Multiplies transmuter upgrade costs. This value is less than 1 so a higher level reduces the cost.',
 		'',
 		'Enhancement costs are calculated programmatically based on a list of all items and the enhancement level. This means that when new items are added to the game it can affect the enhancement costs.',
 		'',
