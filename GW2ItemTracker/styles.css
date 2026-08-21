@@ -25,9 +25,11 @@ a:visited{
 }
 
 .loading{
-	position:fixed;
-	bottom:0;
-	right:0;
+	height: 95vh;
+	width: 95vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .headRow img{
@@ -122,7 +124,6 @@ a:visited{
 	left: 0;
 	padding: 10px;
 	border-bottom: solid 1px #777;
-	height: 90px;
 }
 
 .outputArea{
@@ -143,6 +144,11 @@ a:visited{
 	white-space: break-spaces;
 	text-align: center;
 	border: solid 1px #222;
+}
+
+.dailyFish{
+	border: solid 1px #77B;
+
 }
 
 .hidden{

@@ -6,14 +6,18 @@
 	//add a clear cache button in settings.
 
 const storageKey = 'GW2TPT_IP';
+const fishStorageKey = 'GW2TPT_F';
 const apiStorageKey = 'GW2TPT_API';
 const root='https://api.guildwars2.com/v2/';
 const IdPrices = JSON.parse(localStorage.getItem(storageKey)) || [];
+const IdFish = JSON.parse(localStorage.getItem(fishStorageKey)) || [];
 const itemPrices = [];
 let materials = [];
 let bank = [];
 let inventory = [];
 let characters = [];
+let fish = [];
+let dailyFish = [];
 let isLoading = false;
 let apiKey = null;
 let tokenInfo = null;
@@ -36,6 +40,18 @@ function addIdPrice(id, buyTarget, sellTarget){
 	localStorage.setItem(storageKey, JSON.stringify(IdPrices));
 }
 
+function addIdFish(id, warn=true){
+	id = Number(id);
+	if(!id || id === 0){return;}
+	if(IdFish.includes(id)){
+		if(warn){ alert('Fish is already tracked'); }
+		return;
+	}
+
+	IdFish.push(id);
+	localStorage.setItem(fishStorageKey, JSON.stringify(IdFish));
+}
+
 function removeItem(id){
 	const index = IdPrices.map(x => x.id).indexOf(id);
 	if(index < 0){return;}
@@ -45,7 +61,11 @@ function removeItem(id){
 }
 
 function addItemPrice(item, price, buyTarget, sellTarget){
-	
+	if(!item){
+		console.error('Missing item');
+		return;
+	}
+
 	if(!price?.id){
 		if(activeTab === 1 && document.getElementById('chkHideNoPriceStorage').checked){return;}
 		if(activeTab === 2 && document.getElementById('chkHideNoPriceBank').checked){return;}
@@ -115,13 +135,14 @@ async function getItems(payload){
 	const items = await (await fetch(getItems)).json() || [];
 	return items;
 }
+
 async function getPrices(payload){
 	const getPrices = `${root}commerce/prices?ids=${payload}`;
 	const prices = await (await fetch(getPrices)).json() || [];
 	return prices;
 }
 
-async function getCostData(){
+async function getCostData(render=true){
 	const ids = IdPrices.map(x => x.id).filter(x => x > 0);
 	if(ids.length === 0){return;}
 	
@@ -137,14 +158,16 @@ async function getCostData(){
 		materials = Array.isArray(tempMaterials) ? tempMaterials : [];
 	}
 	
+	if(!render){return;}
 	IdPrices.forEach(temp => {
 		const item = items.find(x => x.id === temp.id);
 		const price = prices.find(x => x.id === temp.id);
+		if(!item || !price){console.warn('Missing', temp, item, price); return;}
 		addItemPrice(item, price, temp.buyTarget || 0, temp.sellTarget || 0);
 	})
 }
 
-async function getMaterialStorageData(){
+async function getMaterialStorageData(render=true){
 	const authToken=getApi();
 	const getStorage = `${root}account/materials?access_token=${authToken}`;
 	if(!authToken){
@@ -178,6 +201,7 @@ async function getMaterialStorageData(){
 		prices = prices.concat(tempPrices);
 	}
 	
+	if(!render){return;}
 	materials.forEach(temp => {
 		const item = items.find(x => x.id === temp.id);
 		const price = prices.find(x => x.id === temp.id);
@@ -185,7 +209,7 @@ async function getMaterialStorageData(){
 	});
 }
 
-async function getBankData(){
+async function getBankData(render=true){
 	const authToken=getApi();
 	const getBank = `${root}account/bank?access_token=${authToken}`;
 	if(!authToken){
@@ -228,16 +252,16 @@ async function getBankData(){
 		const tempPrices = await getPrices(payload);
 		prices = prices.concat(tempPrices);
 	}
-	
+
+	if(!render){return;}
 	bank.forEach(temp => {
 		const item = items.find(x => x.id === temp.id);
 		const price = prices.find(x => x.id === temp.id);
-		if(!item){return;}
 		addItemPrice(item, price);
 	});
 }
 
-async function getSharedInventory(){
+async function getSharedInventory(render=true){
 	const authToken=getApi();
 	const getStorage = `${root}account/inventory?access_token=${authToken}`;
 	if(!authToken){
@@ -254,6 +278,7 @@ async function getSharedInventory(){
 	const items = itemPayload ? await getItems(itemPayload) : [];
 	const prices = pricesPayload ? await getPrices(pricesPayload) : [];
 	
+	if(!render){return;}
 	inventory.forEach(temp => {
 		const item = items.find(x => x.id === temp.id);
 		const price = prices.find(x => x.id === temp.id);
@@ -261,12 +286,13 @@ async function getSharedInventory(){
 	})
 }
 
-async function getCharacters(){
+async function getCharacters(render=true){
 	const authToken = getApi();
 	const getChars = `${root}characters?ids=all&access_token=${authToken}`;
 	const chars = await (await fetch(getChars)).json() || [];
 	if(!Array.isArray(chars)){return;}
 	characters = chars;
+	console.log("Characters", characters);
 	
 	const ddl = document.getElementById('ddlCharacters');
 	characters.forEach((x, index) => {
@@ -276,6 +302,7 @@ async function getCharacters(){
 		ddl.appendChild(opt);
 	});
 	
+	if(!render){return;}
 	getBags();
 }
 
@@ -363,17 +390,60 @@ async function searchBags(){
 	buildSearchResults(outputDiv, hits);
 }
 
-async function getWallet(){
+async function getWallet(render=false){
 	const authToken = getApi();
 	const get = `${root}account/wallet?access_token=${authToken}`;
 	const wallet = await (await fetch(get)).json() || [];
 	const currencies = await (await fetch(`${root}currencies?ids=all`)).json() || [];
 
 	console.log(wallet, currencies);
+	if(!render){return;}
 	wallet.forEach(x => {
 		const currency = currencies.find(c => x.id === c.id);
 		itemPrices.push({...x, ...currency});
 	});
+}
+
+async function getFish(render=true){
+	if(IdFish.length === 0){return;}
+	const payload = IdFish.join(',');
+	fish = (await getItems(payload));
+}
+
+function renderFish(){
+	const out = [];
+	fish.forEach(f => {
+		ownedBank = bank ? bank.find(x => x.id === f.id) : null;
+		ownedInventory = inventory ? inventory.find(x => x.id === f.id) : null;
+
+		let bagCount = []
+		characters.forEach(c => {
+			let sum = 0;
+			c.bags.forEach(b => {
+				b?.inventory.filter(x => x).filter(x => x.id === f.id).forEach(x => sum += x.count);
+			});
+
+			if(sum > 0) {
+				const temp = {};
+				temp[c.name] = sum;
+				bagCount.push(temp);
+				console.log(temp);
+			}
+		});
+
+		out.push({
+			fish:f,
+			bank: ownedBank?.count || 0,
+			inv: ownedInventory?.count || 0,
+			bags: bagCount
+		});
+
+	});
+
+	out.sort((a,b) => a.fish.name.localeCompare(b.fish.name));
+	const outputDiv = document.getElementById('output');
+	while(outputDiv?.firstChild){outputDiv.removeChild(outputDiv.firstChild);}
+	buildFish(outputDiv, out);
 }
 
 async function getTokenInfo(){
@@ -387,24 +457,68 @@ function populateData(){
 	const outputDiv = document.getElementById('output');
 	while(outputDiv?.firstChild){outputDiv.removeChild(outputDiv.firstChild);}
 	
-	itemPrices.sort((a,b) => a.name.localeCompare(b.name));
-	buildHeadRow(outputDiv);
-	itemPrices.forEach(x => buildItemPriceRow(outputDiv, x, false));
-	
-	if(activeTab === 7){buildTokenInfo(outputDiv, tokenInfo);}
+	if(activeTab === 6){renderFish();}
+	else if(activeTab === 8){buildTokenInfo(outputDiv, tokenInfo);}
+	else{
+		itemPrices.sort((a,b) => a.name.localeCompare(b.name));
+		buildHeadRow(outputDiv);
+		itemPrices.forEach(x => buildItemPriceRow(outputDiv, x, false));
+	}
 }
 
 async function getData(){
 	isLoading = true;
 	document.getElementById('loading').classList.remove('hidden');
+	document.getElementById('output').classList.add('hidden');
 	itemPrices.length = 0;
-	populateData();
 	sortCol = 'name';
 	sortDir = 1;
 	
-	await tabs[activeTab].data();
+	if(activeTab>=0){
+		await tabs[activeTab].data();
+	}
 	
 	populateData();
 	document.getElementById('loading').classList.add('hidden');
+	document.getElementById('output').classList.remove('hidden');
 	isLoading = false;
 }
+
+function decodeGw2ItemLink(link) {
+	const bytes = Uint8Array.fromBase64(link);
+
+	//bytes[0] is the item type
+	//bytes[1] is the quantity
+	//bytes[2-5] is the item id
+	//bytes[6+] is other info
+	let out = 0;
+	for(let i=2;i<Math.min(6, bytes.length);i++){ out |= bytes[i] << (8*(i-2)); }
+	return out;
+}
+
+async function getDailyCatches() {
+	// 1. Fetch only the parsed content of the Daily Catch page
+	const url = 'https://wiki.guildwars2.com/api.php?action=parse&page=Daily_Catch&format=json&origin=*'
+
+	const response = await fetch(url);
+	const data = await response.json();
+	const htmlString = data.parse.text['*'];
+
+	// 2. Load the HTML string into a temporary browser DOM parser
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(htmlString, 'text/html');
+
+	// 3. Find all spans with the 'gamelink' class and extract their attributes then filter to get the items
+	// This currently gets the daily fish
+	const gameLinks = doc.querySelectorAll('.gamelink');
+	const results = Array.from(gameLinks).map(span => ({
+		id: span.getAttribute('data-id'),
+		type: span.getAttribute('data-type')
+	})).filter(x => x.type === 'item');
+
+	results.forEach(x => addIdFish(x.id, false));
+	dailyFish = results.map(x => Number(x.id));
+
+	console.log('Daily Catch', results, dailyFish);
+}
+

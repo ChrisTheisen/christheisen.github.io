@@ -8,15 +8,17 @@
 		<title>GW2 TP Tracker</title>
 	</head>
 	<body>
+		<div id="loading" class='loading hidden'>
+			<span>Loading...</span>
+			<span id="status_a"></span>
+			<span id="status_b"></span>
+		</div>
 		<div id="input" class="inputArea">
-			<div id="loading" class='loading hidden'>
-				Loading...
-			</div>
 			<div id="tabSelector">
 			</div>
 			<hr/>
 			<div id="tabContent">
-				<div id="tabCostWatcher">
+				<div id="tabCostWatcher" class="hidden">
 					<div class="inputRow">
 						<button id='export' onclick='exportStorage()'>Export</button>
 						||
@@ -42,7 +44,6 @@
 					<label for='chkHideNoPriceBank'>Hide items with no TP listings:</label><input type="checkbox" id="chkHideNoPriceBank" checked />
 					|
 					<button onclick="getData()">Refresh</button>
-					
 				</div>
 				<div id="tabSharedInventory" class="hidden">
 				</div>
@@ -52,9 +53,13 @@
 					<br/>
 					<label for='itemSearch'>Find Item:</label><input type="text" id="itemSearch" onkeypress="bagsFilter(event)"/>
 					<button onclick="searchBags('TBD')">Search</button>
-					
 				</div>
 				<div id="tabWallet" class="hidden">
+				</div>
+				<div id="tabFish" class="hidden">
+					<div class="inputRow">
+						Adds today's daily catch to the list and looks up how many of each fish you have.
+					</div>
 				</div>
 				<div id="tabCrafting" class="hidden">
 					In Progress
@@ -70,11 +75,7 @@
 		</div>
 		<div id="output" class='outputArea'></div>
 		<script>
-			document.getElementById('api').value = localStorage.getItem('GW2TPT_API');
-			getData();
-			getMaterialStorageData();
-			getBankData();
-			buildTabs();
+			init();
 		</script>
 	</body>
 </html>		

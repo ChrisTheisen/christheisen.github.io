@@ -33,7 +33,6 @@ const tabs = [
 		id: 'tabCostWatcher', 
 		text: 'Price Watcher',
 		data: getCostData,
-		height: 90,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -49,7 +48,6 @@ const tabs = [
 		id: 'tabMaterialStorage',
 		text: 'Material Value',
 		data: getMaterialStorageData,
-		height: 80,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -65,7 +63,6 @@ const tabs = [
 		id: 'tabBank',
 		text: 'Bank',
 		data: getBankData,
-		height: 55,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -81,7 +78,6 @@ const tabs = [
 		id: 'tabSharedInventory',
 		text: 'Shared Inventory',
 		data: getSharedInventory,
-		height: 25,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -97,7 +93,6 @@ const tabs = [
 		id: 'tabBags',
 		text: 'Character Bags',
 		data: getCharacters,
-		height: 80,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -113,7 +108,6 @@ const tabs = [
 		id: 'tabWallet',
 		text: 'Wallet',
 		data: getWallet,
-		height: 25,
 		columns: [
 			columns.icon, 
 			columns.name, 
@@ -122,21 +116,25 @@ const tabs = [
 			]
 	},
 	{
+		id: 'tabFish',
+		text: 'Fish Finder',
+		data: getFish,
+		columns: []
+	},
+	{
 		id: 'tabCrafting',
 		text: 'Crafting',
 		data: () => {},
-		height: 55,
 		columns: []
 	},
 	{
 		id: 'tabSettings',
 		text: 'Settings',
 		data: getTokenInfo,
-		height: 55,
 		columns: []
 	}	
 ];
-let activeTab = 0;
+let activeTab = -1;
 let sortCol = 'name';
 let sortDir = 1;
 
@@ -178,6 +176,7 @@ function buildHeadRow(parent){
 	div.classList.add('tableRow');
 	div.classList.add('headRow');
 	
+	if(activeTab<0){return;}
 	tabs[activeTab].columns.forEach(col => {
 		if(col.type === colTypes.img){
 			const img = document.createElement('img');
@@ -282,7 +281,7 @@ function buildBagRow(parent, text, bag){
 	addText(div, text);
 	addImg(div, bag.icon, bag.name);
 	addText(div, bag.details.size);
-	addText(div, `Hidden: ${bag.details.no_sell_or_sort}`);
+	addText(div, `Hidden: ${bag.details.no_sell_or_sort?'T':'F'}`);
 	
 	parent.appendChild(div);
 	
@@ -319,6 +318,24 @@ function buildSearchResults(parent, hits){
 	})
 }
 
+function buildFish(parent, fish){
+	fish.forEach(f => {
+		const div = document.createElement('div');
+		div.className = 'tableRow';
+
+		if(dailyFish.includes(f.fish.id)){
+			div.className += ' dailyFish';
+		}
+		addImg(div, f.fish.icon, f.fish.name);
+		addLink(div, f.fish.name, 'wideTableCell');
+		addText(div, `Bank: ${f.bank}`);
+		addText(div, `Inv: ${f.inv}`);
+		addText(div, JSON.stringify(f.bags).replaceAll('"',''), 'wideTableCell');
+
+		parent.appendChild(div);
+	});
+}
+
 function buildBagItem(parent, item, qty){
 	addImg(parent, item.icon, item.name);
 	parent.appendChild(document.createElement('br'));
@@ -345,6 +362,10 @@ function buildTokenInfo(parent, tokenInfo){
 
 function buildTabs(){
 	const parent = document.getElementById('tabSelector');
+	if(!parent){
+		console.warn('No Parent: tabSelector');
+		return;
+	}
 	
 	tabs.forEach((tab, index)=> {
 		const btn = document.createElement('button');
@@ -385,18 +406,33 @@ function addItem(){
 	getData();
 }
 
+function addFish(){
+	const id = document.getElementById('idFish').value;
+	document.getElementById('idFish').value = '';
+	addIdFish(Number(id));
+
+	getData();
+}
+
 function setTab(sender, input){
 	if(isLoading){return;}
+
 	const selected = document.getElementsByClassName('selectedTab');
 	Array.from(selected).forEach(x => x.classList.remove('selectedTab'));
-	tabs.forEach(x => document.getElementById(x.id).classList.add('hidden'));
+	tabs.forEach(x => {
+		const elem = document.getElementById(x.id)
+		if(!elem){console.warn('Unable to find: ' + x.id); return;}
+		const cl = elem.classList;
+		if(!cl){console.warn('Unable to hidden: ' + x.id); return;}
+		cl.add('hidden')
+	});
+
 
 	sender.classList.add('selectedTab');
 	activeTab = input;
 	document.getElementById(tabs[activeTab].id)?.classList.remove('hidden');
-	document.getElementById('input').style.height = `${tabs[activeTab].height}px`;
-	document.getElementById('output').style.marginTop = `${tabs[activeTab].height+27}px`;
-	
+
+	setMargin();
 	getData();
 }
 
@@ -437,3 +473,31 @@ function importStorage(sender){
 		window.location.reload();
 	});
 }
+
+function setMargin(){
+	const height = document.getElementById("input")?.offsetHeight;
+	document.getElementById("output").style.marginTop = height + 'px';
+}
+
+async function init() {
+	document.getElementById('loading').classList.remove('hidden');
+	document.getElementById('output').classList.add('hidden');
+
+	//initial cache some IDs.
+	//could rely on this more in the future instead of regetting.
+	//regetting mostly goes fast and gets updated information
+	await Promise.all([
+		getMaterialStorageData(false),
+		getBankData(false),
+		getSharedInventory(false),
+		getCharacters(false),
+		getDailyCatches()
+		]);
+
+	buildTabs();
+	setMargin();
+	document.getElementById('loading').classList.add('hidden');
+	document.getElementById('output').classList.remove('hidden');
+}
+
+addEventListener("resize", (event) => setMargin());
