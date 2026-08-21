@@ -9,6 +9,7 @@ New Items:
 
 Bugs: 
 
+
 TODO:
 X	Story:
 1		plot
@@ -16,8 +17,6 @@ X	Story:
 2			-Allow multiple response selections for player
 2				-can change at retroactivly; not permanent (no prestige/just single play through)
 3				-responses available tree based on previous responses
-3	Indicate when a chapter is unlocked?
-3		-button color?
 
 	Add more items & POLISH
 

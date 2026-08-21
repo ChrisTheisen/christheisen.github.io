@@ -188,11 +188,11 @@ function q(){
         new Timer(now.getHours(), now.getMinutes(),'Check Schedule (work, google, todoist)',3),
         new Timer(later.getHours(), later.getMinutes(),'Salt & Vinegar',3),
         new Timer(latest.getHours(), latest.getMinutes(),'Home/Converters (LI)',3),
-        new Timer(9,30,'SCRUM',4),
+        new Timer(9,00,'SCRUM',4),
         new Timer(11,57,'Violin',0),
         new Timer(15,00,'PT',2),
 
-        new Timer(16 - offset,20,'Leyline (ST)',3),//6
+        new Timer(16 - offset,20,'Ley(5); Garrent(6); Basin(7)',3),//6
     ];
 
     switch(new Date().getDay()) {
